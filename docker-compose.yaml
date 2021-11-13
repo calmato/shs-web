@@ -1,0 +1,15 @@
+version: '3.9'
+
+services:
+  firebase:
+    container_name: firebase
+    build:
+      context: ./infra/docker/infra/firebase
+      dockerfile: Dockerfile
+    working_dir: /var/firebase
+    volumes:
+      - ./infra/firebase:/var/firebase:cached
+    ports:
+      - 4000:4000
+      - 8080:8080
+      - 9099:9099

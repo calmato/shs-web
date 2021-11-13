@@ -1,0 +1,21 @@
+# not ignore file
+!.keep
+
+# proto file
+*.pb.go
+*.pb.validate.go
+
+# coverage file
+coverage.txt
+
+# build file
+app
+
+# external library
+third_party
+
+# binary file
+bin
+
+# tmp file
+tmp
