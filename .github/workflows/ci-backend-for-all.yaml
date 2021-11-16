@@ -1,0 +1,115 @@
+name: '[Backend] Build and Test'
+on:
+  push:
+    paths:
+    - '.github/workflows/ci-backend-for-all.yaml'
+    - 'api/**'
+    - 'infra/docker/api/**'
+    - 'infra/kubernetes/**'
+
+env:
+  FIREBASE_AUTH_EMULATOR_HOST: 127.0.0.1:9099
+  FIRESTORE_EMULATOR_HOST: 127.0.0.1:8080
+  GCP_SERVICE_KEY_JSON: ${{ secrets.STG_GCP_SA_KEY }}
+
+jobs:
+  build_and_test:
+    name: Build and Test
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./api
+    strategy:
+      matrix:
+        os: [ubuntu-latest] # exclude: macos-latest, windows-latest
+        golang: ['^1.17.2']
+        protobuf: ['3.x']
+
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v2
+
+    - name: Use Golang ${{ matrix.golang }}
+      uses: actions/setup-go@v2
+      with:
+        go-version: ${{ matrix.golang }}
+
+    # https://github.com/marketplace/actions/setup-protoc
+    - name: Use Protobuf ${{ matrix.protobuf }}
+      uses: arduino/setup-protoc@v1
+      with:
+        version: ${{ matrix.protobuf }}
+
+    ############################################
+    # Setup container
+    ############################################
+    - name: Start Firebase emulator container
+      working-directory: .
+      run: docker-compose -f docker-compose.ci.yaml up --build --detach firebase
+
+    - name: Wait start Firebase Authentication and Firestore
+      run: |
+        #!/bin/bash
+
+        until curl ${FIREBASE_AUTH_EMULATOR_HOST}; do
+          echo 'firebase authentication is unavailable - sleeping'
+          sleep 3
+        done
+        echo 'firebase authentication is up - executing command'
+
+        until curl ${FIRESTORE_EMULATOR_HOST}; do
+          echo 'firestore is unavailable - sleeping'
+          sleep 3
+        done
+        echo 'firestore is up - executing command'
+
+    ############################################
+    # Setup project
+    ############################################
+    - name: Setup
+      run: make setup
+
+    - name: Protoc
+      run: make protoc
+
+    - name: Restore cache
+      uses: actions/cache@v2
+      with:
+        path: ~/go/pkg/mod
+        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+        restore-keys: |
+          ${{ runner.os }}-go-
+
+    - name: Download modules
+      if: steps.cache.outputs.cache-hit != 'true'
+      run: go mod download
+
+    ############################################
+    # Test and syntax check
+    ############################################
+    - name: Fmt
+      run: make fmt
+
+    - name: Vet
+      run: make vet
+
+    - name: Lint
+      run: make lint
+
+    - name: Test
+      run: make test
+
+    ############################################
+    # Build check
+    ############################################
+
+    ############################################
+    # Notifications, etc.
+    ############################################
+    - uses: codecov/codecov-action@v2
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        fail_ci_if_error: true
+        flags: service
+        verbose: true
