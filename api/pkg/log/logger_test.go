@@ -11,12 +11,12 @@ func TestLogger(t *testing.T) {
 	t.Parallel()
 	tests := []struct {
 		name   string
-		params *LoggerParams
+		params *Params
 		isErr  bool
 	}{
 		{
 			name: "success only stdout",
-			params: &LoggerParams{
+			params: &Params{
 				Level: "debug",
 				Path:  "",
 			},

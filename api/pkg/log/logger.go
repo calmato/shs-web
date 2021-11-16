@@ -8,13 +8,13 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
-type LoggerParams struct {
+type Params struct {
 	Level string
 	Path  string
 }
 
 // NewLogger - ログ出力用クライアントの生成
-func NewLogger(params *LoggerParams) (*zap.Logger, error) {
+func NewLogger(params *Params) (*zap.Logger, error) {
 	level := getLogLevel(params.Level)
 	encoderConfig := zapcore.EncoderConfig{}
 
