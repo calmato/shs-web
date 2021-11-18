@@ -1,4 +1,4 @@
-package teacher
+package cmd
 
 import (
 	"net/http"

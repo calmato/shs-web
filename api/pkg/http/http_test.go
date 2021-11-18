@@ -33,7 +33,7 @@ func TestHTTPServer(t *testing.T) {
 				}))
 				return mux
 			}(),
-			port:   8080,
+			port:   20080,
 			expect: http.StatusOK,
 			isErr:  false,
 		},

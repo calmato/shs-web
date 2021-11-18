@@ -7,16 +7,18 @@ import (
 	"syscall"
 	"time"
 
-	config "github.com/calmato/shs-web/api/config/gateway/teacher"
-	"github.com/calmato/shs-web/api/pkg/cors"
+	config "github.com/calmato/shs-web/api/config/user/server"
 	"github.com/calmato/shs-web/api/pkg/firebase"
 	"github.com/calmato/shs-web/api/pkg/firebase/authentication"
+	"github.com/calmato/shs-web/api/pkg/firebase/storage"
+	"github.com/calmato/shs-web/api/pkg/grpc"
 	"github.com/calmato/shs-web/api/pkg/http"
 	"github.com/calmato/shs-web/api/pkg/log"
-	"github.com/gin-gonic/gin"
+	"github.com/calmato/shs-web/api/proto/user"
 	"go.uber.org/zap"
 	"golang.org/x/sync/errgroup"
 	"google.golang.org/api/option"
+	ggrpc "google.golang.org/grpc"
 )
 
 //nolint:funlen
@@ -52,30 +54,33 @@ func Exec() error {
 		return err
 	}
 
+	// Cloud Storageの設定
+	gcs, err := storage.NewClient(ctx, fb.App, conf.GCPStorageBucketName)
+	if err != nil {
+		return err
+	}
+
 	// 依存関係の解決
 	regParams := &params{
-		insecure: conf.GRPCInsecure,
-		auth:     fa,
+		logger:  logger,
+		auth:    fa,
+		storage: gcs,
 	}
-	reg, err := newRegistry(regParams)
+	reg := newRegistry(regParams)
+
+	// gRPC Serverの設定
+	gRPCParams := &grpc.OptionParams{
+		Logger: logger,
+	}
+	gRPCOpts := grpc.NewGRPCServerOptions(gRPCParams)
+
+	s := ggrpc.NewServer(gRPCOpts)
+	user.RegisterUserServiceServer(s, reg.userServer)
+
+	gs, err := grpc.NewGRPCServer(s, conf.Port)
 	if err != nil {
 		return err
 	}
-
-	// HTTP Serverの設定
-	httpOpts := []gin.HandlerFunc{gin.Recovery()}
-
-	cm := cors.NewGinMiddleware()
-	httpOpts = append(httpOpts, cm)
-
-	lm, err := log.NewGinMiddleware(logParams)
-	if err != nil {
-		return err
-	}
-	httpOpts = append(httpOpts, lm)
-
-	rt := newRouter(reg, httpOpts...)
-	hs := http.NewHTTPServer(rt, conf.Port)
 
 	// Metrics Serverの設定
 	ms := http.NewMetricsServer(conf.MetricsPort)
@@ -90,9 +95,9 @@ func Exec() error {
 		return
 	})
 	eg.Go(func() (err error) {
-		err = hs.Serve()
+		err = gs.Serve()
 		if err != nil {
-			logger.Error("Failed to run http server", zap.Error(err))
+			logger.Error("Failed to run gRPC server", zap.Error(err))
 		}
 		return
 	})
@@ -112,11 +117,9 @@ func Exec() error {
 	}
 
 	logger.Info("Shutdown...")
-	if err = hs.Stop(ectx); err != nil {
-		return err
-	}
 	if err = ms.Stop(ectx); err != nil {
 		return err
 	}
+	gs.Stop()
 	return eg.Wait()
 }

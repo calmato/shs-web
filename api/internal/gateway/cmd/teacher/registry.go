@@ -1,4 +1,4 @@
-package teacher
+package cmd
 
 import (
 	"crypto/tls"
@@ -12,8 +12,8 @@ import (
 type registry struct{}
 
 type params struct {
-	Insecure     bool
-	FirebaseAuth authentication.Client
+	insecure bool
+	auth     authentication.Client
 }
 
 type gRPCClient struct{}
@@ -33,7 +33,7 @@ func newGRPCClient(params *params) (*gRPCClient, error) {
 
 func newGRPCOptions(params *params) ([]grpc.DialOption, error) {
 	var opts []grpc.DialOption
-	if params.Insecure {
+	if params.insecure {
 		opts = append(opts, grpc.WithInsecure())
 	} else {
 		systemRoots, err := x509.SystemCertPool()

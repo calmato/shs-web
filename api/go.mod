@@ -6,9 +6,13 @@ require (
 	cloud.google.com/go/firestore v1.5.0
 	cloud.google.com/go/storage v1.10.0
 	firebase.google.com/go/v4 v4.6.1
+	github.com/envoyproxy/protoc-gen-validate v0.1.0
 	github.com/gin-contrib/zap v0.0.1
 	github.com/gin-gonic/gin v1.7.4
+	github.com/golang/mock v1.4.4
 	github.com/google/uuid v1.1.2
+	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0
+	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.0.0-rc.2
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/prometheus/client_golang v1.11.0
 	github.com/rs/cors v1.8.0
@@ -16,7 +20,9 @@ require (
 	go.uber.org/zap v1.19.1
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c
 	google.golang.org/api v0.40.0
+	google.golang.org/genproto v0.0.0-20210222152913-aa3ee6e6a81c
 	google.golang.org/grpc v1.35.0
+	google.golang.org/protobuf v1.26.0-rc.1
 )
 
 require (
@@ -57,8 +63,6 @@ require (
 	golang.org/x/tools v0.1.5 // indirect
 	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
-	google.golang.org/genproto v0.0.0-20210222152913-aa3ee6e6a81c // indirect
-	google.golang.org/protobuf v1.26.0-rc.1 // indirect
 	gopkg.in/yaml.v2 v2.3.0 // indirect
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
 )

@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package user;
+
+option go_package = "github.com/camato/shs-web/api/proto/user";
+
+import "github.com/envoyproxy/protoc-gen-validate/validate/validate.proto";
+
+service UserService {
+  rpc Hello(HelloRequest) returns (HelloResponse) {};
+}
+
+message HelloRequest {
+  string name = 1 [(validate.rules).string = {min_len: 1}];
+}
+
+message HelloResponse {
+  string message = 1;
+}
