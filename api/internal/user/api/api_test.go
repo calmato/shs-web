@@ -11,7 +11,6 @@ import (
 	"github.com/calmato/shs-web/api/internal/user/validation"
 	mock_validation "github.com/calmato/shs-web/api/mock/user/validation"
 	"github.com/calmato/shs-web/api/pkg/jst"
-	"github.com/calmato/shs-web/api/proto/user"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -99,20 +98,7 @@ func testGRPC(
 
 func TestUserService(t *testing.T) {
 	t.Parallel()
-	tests := []struct {
-		name   string
-		expect user.UserServiceServer
-	}{
-		{name: "success"},
-	}
-
-	for _, tt := range tests {
-		tt := tt
-		t.Run(tt.name, func(t *testing.T) {
-			t.Parallel()
-			assert.NotNil(t, NewUserService(&Params{}))
-		})
-	}
+	assert.NotNil(t, NewUserService(&Params{}))
 }
 
 func TestGRPCError(t *testing.T) {
