@@ -74,7 +74,7 @@ func Exec() error {
 	}
 	gRPCOpts := grpc.NewGRPCServerOptions(gRPCParams)
 
-	s := ggrpc.NewServer(gRPCOpts)
+	s := ggrpc.NewServer(gRPCOpts...)
 	user.RegisterUserServiceServer(s, reg.userServer)
 
 	gs, err := grpc.NewGRPCServer(s, conf.Port)

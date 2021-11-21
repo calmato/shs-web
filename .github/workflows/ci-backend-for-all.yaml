@@ -103,6 +103,11 @@ jobs:
     ############################################
     # Build check
     ############################################
+    - name: Build teacher gateway
+      run: make build SERVICE=gateway/teacher
+
+    - name: Build user server
+      run: make build SERVICE=user/server
 
     ############################################
     # Notifications, etc.

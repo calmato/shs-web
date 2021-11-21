@@ -14,6 +14,7 @@ type Config struct {
 	GRPCInsecure         bool   `envconfig:"GRPC_INSECURE" default:"true"`
 	GCPServiceKeyJSON    string `envconfig:"GCP_SERVICE_KEY_JSON" required:"true"`
 	GCPStorageBucketName string `envconfig:"GCP_STORAGE_BUCKET_NAME" default:""`
+	UserServiceURL       string `envconfig:"USER_SERVICE_URL" default:""`
 }
 
 func NewConfig() (*Config, error) {

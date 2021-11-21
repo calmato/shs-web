@@ -10,6 +10,10 @@ func newRouter(reg *registry, opts ...gin.HandlerFunc) *gin.Engine {
 	rt := gin.Default()
 	rt.Use(opts...)
 
+	reg.v1.AdminRoutes(rt.Group(""))
+	reg.v1.AuthRoutes(rt.Group(""))
+	reg.v1.NoAuthRoutes(rt.Group(""))
+
 	// other routes
 	rt.GET("/health", func(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, "ok")

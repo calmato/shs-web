@@ -53,3 +53,7 @@ test:
 
 build:
 	go build -o ./app ./cmd/${SERVICE}/main.go
+
+dev:
+	$(MAKE) build SERVICE=${SERVICE}
+	./app

@@ -10,6 +10,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 	"golang.org/x/sync/singleflight"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 /**
@@ -72,7 +74,7 @@ func httpError(ctx *gin.Context, err error) {
 }
 
 func badRequest(ctx *gin.Context, err error) {
-	httpError(ctx, err)
+	httpError(ctx, status.Error(codes.InvalidArgument, err.Error()))
 }
 
 /**

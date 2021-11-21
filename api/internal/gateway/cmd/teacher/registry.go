@@ -3,32 +3,63 @@ package cmd
 import (
 	"crypto/tls"
 	"crypto/x509"
+	"sync"
 
+	v1 "github.com/calmato/shs-web/api/internal/gateway/teacher/v1/handler"
 	"github.com/calmato/shs-web/api/pkg/firebase/authentication"
+	"github.com/calmato/shs-web/api/proto/user"
+	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 )
 
-type registry struct{}
+type registry struct {
+	v1 v1.APIV1Handler
+}
 
 type params struct {
-	insecure bool
-	auth     authentication.Client
+	insecure       bool
+	logger         *zap.Logger
+	auth           authentication.Client
+	userServiceURL string
 }
 
-type gRPCClient struct{}
+type gRPCClient struct {
+	user user.UserServiceClient
+}
 
 func newRegistry(params *params) (*registry, error) {
-	return &registry{}, nil
-}
-
-func newGRPCClient(params *params) (*gRPCClient, error) {
-	_, err := newGRPCOptions(params)
+	cli, err := newGRPCClient(params)
 	if err != nil {
 		return nil, err
 	}
 
-	return &gRPCClient{}, nil
+	v1Params := &v1.Params{
+		UserService: cli.user,
+		Logger:      params.logger,
+		WaitGroup:   &sync.WaitGroup{},
+	}
+	v1Handler := v1.NewAPIV1Handler(v1Params)
+
+	return &registry{
+		v1: v1Handler,
+	}, nil
+}
+
+func newGRPCClient(params *params) (*gRPCClient, error) {
+	opts, err := newGRPCOptions(params)
+	if err != nil {
+		return nil, err
+	}
+
+	userConn, err := grpc.Dial(params.userServiceURL, opts...)
+	if err != nil {
+		return nil, err
+	}
+
+	return &gRPCClient{
+		user: user.NewUserServiceClient(userConn),
+	}, nil
 }
 
 func newGRPCOptions(params *params) ([]grpc.DialOption, error) {

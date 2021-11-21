@@ -1,15 +1,45 @@
 version: '3.9'
 
 services:
-  firebase:
-    container_name: firebase
+  teacher_gateway:
+    container_name: teacher_gateway
     build:
-      context: ./infra/docker/infra/firebase
-      dockerfile: Dockerfile
-    working_dir: /var/firebase
+      context: .
+      dockerfile: ./infra/docker/api/gateway/teacher/Dockerfile.development
+    working_dir: /go/src/github.com/calmato/shs-web/api
     volumes:
-      - ./infra/firebase:/var/firebase:cached
+      - ./api:/go/src/github.com/calmato/shs-web/api:cached
+      - ./tmp/data/go/pkg/mod:/go/pkg/mod:delegated
+      - ./tmp/logs/gateway/teacher:/var/log/api:delegated
+    environment:
+      - PORT=8080
+      - METRICS_PORT=9090
+      - LOG_PATH=/var/log/api
+      - GCP_SERVICE_KEY_JSON=${GCP_SERVICE_KEY_JSON}
+      - GCP_STORAGE_BUCKET_NAME=${GCP_STORAGE_BUCKET_NAME}
+      - USER_SERVICE_URL=user_api:8080
     ports:
-      - 4000:4000
-      - 8080:8080
-      - 9099:9099
+      - 18000:8080
+      - 18001:9090
+    command: make dev SERVICE=gateway/teacher
+
+  user_api:
+    container_name: user_api
+    build:
+      context: .
+      dockerfile: ./infra/docker/api/user/server/Dockerfile.development
+    working_dir: /go/src/github.com/calmato/shs-web/api
+    volumes:
+      - ./api:/go/src/github.com/calmato/shs-web/api:cached
+      - ./tmp/data/go/pkg/mod:/go/pkg/mod:delegated
+      - ./tmp/logs/gateway/teacher:/var/log/api:delegated
+    environment:
+      - PORT=8080
+      - METRICS_PORT=9090
+      - LOG_PATH=/var/log/api
+      - GCP_SERVICE_KEY_JSON=${GCP_SERVICE_KEY_JSON}
+      - GCP_STORAGE_BUCKET_NAME=${GCP_STORAGE_BUCKET_NAME}
+    ports:
+      - 19000:8080
+      - 19001:9090
+    command: make dev SERVICE=user/server
