@@ -44,6 +44,16 @@ services:
       - 19001:9090
     command: make dev SERVICE=user/server
 
+  proto:
+    container_name: proto
+    build:
+      context: ./infra/docker/infra/proto
+      dockerfile: Dockerfile
+    working_dir: /go/src/github.com/calmato/shs-web
+    volumes:
+      - ./api:/go/src/github.com/calmato/shs-web/api:cached
+      - ./tmp/data/go/pkg/mod:/go/pkg/mod:delegated
+
   swagger_generator:
     container_name: swagger_generator
     build:
