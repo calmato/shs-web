@@ -1,0 +1,6 @@
+helloResponse:
+  type: object
+  properties:
+    message:
+      type: string
+      description: メッセージ

@@ -1,0 +1,30 @@
+openapi: 3.0.3
+info:
+  title: SHS Web
+  description: 管理者・講師用API
+  version: 0.1.0
+servers:
+- url: http://localhost:18000
+  description: 開発環境
+tags:
+- name: UserService
+  description: ユーザ関連
+paths:
+  # User Service
+  /v1/hello:
+    $ref: './paths/v1/hello.index.yaml'
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+  schemas:
+    # Common
+    errorResponse:
+      $ref: './components/schemas/common.yaml#/errorResponse'
+    # Request
+    v1HelloRequest:
+      $ref: './components/schemas/v1/user.request.yaml#/helloRequest'
+    # Response
+    v1HelloResponse:
+      $ref: './components/schemas/v1/user.response.yaml#/helloResponse'

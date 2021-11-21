@@ -43,3 +43,28 @@ services:
       - 19000:8080
       - 19001:9090
     command: make dev SERVICE=user/server
+
+  swagger_generator:
+    container_name: swagger_generator
+    build:
+      context: ./infra/docker/infra/swagger/generator
+      dockerfile: Dockerfile
+    working_dir: /var/swagger/src
+    volumes:
+      - ./docs/swagger:/var/swagger/src:cached
+      - ./tmp/data/swagger:/tmp/data/swagger:cached
+    command: yarn watch
+
+  swagger_teacher:
+    container_name: swagger_ui_teacher
+    build:
+      context: ./infra/docker/infra/swagger/teacher
+      dockerfile: Dockerfile
+    volumes:
+      - ./tmp/data/swagger/teacher/openapi:/var/swagger:cached
+    ports:
+      - 9000:8080
+    environment:
+      SWAGGER_JSON: /var/swagger/openapi.yaml
+    depends_on:
+      - swagger_generator
