@@ -72,7 +72,7 @@ func Exec() error {
 	gRPCParams := &grpc.OptionParams{
 		Logger: logger,
 	}
-	gRPCOpts := grpc.NewGRPCServerOptions(gRPCParams)
+	gRPCOpts := grpc.NewGRPCOptions(gRPCParams)
 
 	s := ggrpc.NewServer(gRPCOpts...)
 	user.RegisterUserServiceServer(s, reg.userServer)

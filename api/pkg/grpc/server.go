@@ -7,7 +7,7 @@ import (
 	"google.golang.org/grpc"
 )
 
-type GRPCServer interface {
+type Server interface {
 	Serve() error
 	Stop()
 }
@@ -17,7 +17,8 @@ type gRPCServer struct {
 	lister net.Listener
 }
 
-func NewGRPCServer(server *grpc.Server, port int64) (GRPCServer, error) {
+// NewGRPCServer - gRPCサーバーの生成
+func NewGRPCServer(server *grpc.Server, port int64) (Server, error) {
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
 	if err != nil {
 		return nil, fmt.Errorf("grpc: failed to listen port: %w", err)

@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-type HTTPServer interface {
+type Server interface {
 	Serve() error
 	Stop(ctx context.Context) error
 }
@@ -16,7 +16,7 @@ type httpServer struct {
 }
 
 // NewHTTPServer - HTTPサーバーの生成
-func NewHTTPServer(handler http.Handler, port int64) HTTPServer {
+func NewHTTPServer(handler http.Handler, port int64) Server {
 	s := &http.Server{
 		Addr:    fmt.Sprintf(":%d", port),
 		Handler: handler,

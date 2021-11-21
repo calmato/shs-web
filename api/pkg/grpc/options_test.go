@@ -22,7 +22,7 @@ func TestGrpcServerOptions(t *testing.T) {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			assert.NotNil(t, NewGRPCServerOptions(tt.params))
+			assert.NotNil(t, NewGRPCOptions(tt.params))
 		})
 	}
 }

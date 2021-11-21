@@ -13,7 +13,7 @@ type metricsServer struct {
 }
 
 // NewMetricsServer - メトリクス取得用サーバーの生成
-func NewMetricsServer(port int64) HTTPServer {
+func NewMetricsServer(port int64) Server {
 	mux := http.NewServeMux()
 	mux.Handle("/metrics", promhttp.Handler())
 

@@ -20,7 +20,7 @@ func NewErrorResponse(err error) (*ErrorResponse, int) {
 	switch status.Code(err) {
 	case codes.OK:
 		res.Status = http.StatusInternalServerError
-		res.Message = fmt.Sprintf("util: error handling but not error")
+		res.Message = fmt.Sprintf("util: error handling but not error: %s", err.Error())
 		return res, http.StatusInternalServerError
 	case codes.Canceled:
 		res.Status = 499 // client closed request

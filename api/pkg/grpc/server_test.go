@@ -12,7 +12,7 @@ func TestGRPCServer(t *testing.T) {
 		name   string
 		server *grpc.Server
 		port   int64
-		expect GRPCServer
+		expect Server
 		isErr  bool
 	}{
 		{

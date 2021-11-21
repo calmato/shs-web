@@ -25,7 +25,7 @@ type OptionParams struct {
 	Logger *zap.Logger
 }
 
-func NewGRPCServerOptions(params *OptionParams) []grpc.ServerOption {
+func NewGRPCOptions(params *OptionParams) []grpc.ServerOption {
 	streamInterceptors := grpcStreamServerInterceptors(params.Logger)
 	unaryInterceptors := grpcUnaryServerInterceptors(params.Logger)
 
