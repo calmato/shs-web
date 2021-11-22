@@ -9,7 +9,7 @@
     "generate": "nuxt generate",
     "lint": "eslint --ext \".js,.ts,.vue\" --ignore-path .gitignore .",
     "lint:fix": "yarn lint --fix",
-    "test": "jest"
+    "test": "jest --config jest.config.js --coverage --verbose"
   },
   "dependencies": {
     "@nuxtjs/axios": "^5.13.6",
@@ -20,6 +20,8 @@
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.14.7",
+    "@babel/preset-env": "^7.16.4",
+    "@babel/preset-typescript": "^7.16.0",
     "@nuxt/types": "^2.15.7",
     "@nuxt/typescript-build": "^2.1.0",
     "@nuxtjs/eslint-config-typescript": "^6.0.1",

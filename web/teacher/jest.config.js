@@ -23,12 +23,11 @@ module.exports = {
     '<rootDir>/src/assets/',
     '<rootDir>/src/middleware/',
     '<rootDir>/src/plugins/',
-    '<rootDir>/src/store/',
     '<rootDir>/src/types/',
     '<rootDir>/tmp/',
   ],
   testEnvironment: 'jsdom',
   testURL: 'http://localhost/',
   testRegex: '(/__tests__/.*|(\\.|/)(test|spec))\\.(js?|ts?)$',
-  // setupFiles: ['<rootDir>/test/helpers/setup.ts'],
+  setupFiles: ['<rootDir>/test/helpers/setup.ts'],
 }

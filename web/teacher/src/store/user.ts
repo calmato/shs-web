@@ -1,6 +1,8 @@
 import { Module, VuexModule, Mutation, Action } from 'vuex-module-decorators'
 import { $axios } from '~/plugins/axios'
+import { ErrorResponse } from '~/types/api/exception'
 import { HelloRequest, HelloResponse } from '~/types/api/v1'
+import { ApiError } from '~/types/exception'
 import { UserState } from '~/types/store'
 
 const initialState: UserState = {
@@ -38,8 +40,9 @@ export default class UserModule extends VuexModule {
       .then((res: HelloResponse) => {
         this.setMessage(res.message)
       })
-      .catch((err: Error) => {
-        throw err
+      .catch((err: any) => {
+        const res: ErrorResponse = err.response
+        throw new ApiError(res.status, res.message, res)
       })
   }
 }

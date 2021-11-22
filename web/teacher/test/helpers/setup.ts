@@ -6,5 +6,7 @@ import Vuetify from 'vuetify'
 Vue.use(Vuex)
 Vue.use(Vuetify)
 
+Vue.config.productionTip = false
+
 // Vue.component('ValidationProvider', ValidationProvider)
 // Vue.component('ValidationObserver', ValidationObserver)
