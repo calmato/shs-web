@@ -29,8 +29,8 @@ export default defineComponent({
           console.log('failed to hello', err)
         })
         .finally(() => {
-        CommonStore.endConnection()
-      })
+          CommonStore.endConnection()
+        })
     }
 
     const handleClick = () => {
@@ -44,4 +44,3 @@ export default defineComponent({
   },
 })
 </script>
-

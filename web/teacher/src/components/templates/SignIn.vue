@@ -13,7 +13,7 @@ export default defineComponent({
     message: {
       type: String,
       default: '',
-    }
+    },
   },
 
   setup(_, { emit }: SetupContext) {
@@ -27,4 +27,3 @@ export default defineComponent({
   },
 })
 </script>
-

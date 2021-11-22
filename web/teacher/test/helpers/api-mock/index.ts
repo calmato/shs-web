@@ -10,15 +10,12 @@ const err: { response: ErrorResponse } = {
 }
 
 export default {
-  get: {
-  },
+  get: {},
   post: {
     ...UserStore.hello,
   },
-  patch: {
-  },
+  patch: {},
   put: {},
-  delete: {
-  },
+  delete: {},
   error: err,
 }

@@ -1,5 +1,5 @@
 import { Module, VuexModule, Mutation, Action } from 'vuex-module-decorators'
-import { CommonState, PromiseState } from "~/types/store";
+import { CommonState, PromiseState } from '~/types/store'
 
 const initialState: CommonState = {
   promiseState: PromiseState.NONE,
