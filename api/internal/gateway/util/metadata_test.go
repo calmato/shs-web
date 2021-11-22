@@ -8,6 +8,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
+	gmd "google.golang.org/grpc/metadata"
 )
 
 func TestSetMetadata(t *testing.T) {
@@ -28,8 +29,13 @@ func TestSetMetadata(t *testing.T) {
 
 	actual := SetMetadata(c)
 	assert.IsType(t, ctx, actual)
-	assert.Equal(t, ctx.Value("Authorization").(string), c.GetHeader("Authorization"))
-	assert.Equal(t, ctx.Value("userId").(string), c.GetHeader("userId"))
-	assert.Equal(t, ctx.Value("role").(string), c.GetHeader("role"))
-	assert.NotZero(t, c.GetHeader("X-Request-ID"))
+	md, ok := gmd.FromOutgoingContext(actual)
+	if ok {
+		assert.Contains(t, md.Get("Authorization"), "Bearer xxxxxx")
+		assert.Contains(t, md.Get("userId"), "userid")
+		assert.Contains(t, md.Get("role"), "role")
+		assert.NotContains(t, md.Get("X-Request-ID"), "")
+	} else {
+		t.FailNow()
+	}
 }

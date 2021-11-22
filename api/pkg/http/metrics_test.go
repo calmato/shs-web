@@ -12,7 +12,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestMetricsServer_ServeAndStop(t *testing.T) {
+func TestMetricsServer(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
@@ -24,7 +24,7 @@ func TestMetricsServer_ServeAndStop(t *testing.T) {
 	}{
 		{
 			name:   "success",
-			port:   8080,
+			port:   20081,
 			expect: http.StatusOK,
 			isErr:  false,
 		},

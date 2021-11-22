@@ -19,15 +19,6 @@ func TestErrorResponse(t *testing.T) {
 		expectStatus int
 	}{
 		{
-			name: "ok",
-			err:  status.Error(codes.OK, msg),
-			expect: &ErrorResponse{
-				Status:  http.StatusInternalServerError,
-				Message: "util: error handling but not error",
-			},
-			expectStatus: http.StatusInternalServerError,
-		},
-		{
 			name: "cancel",
 			err:  status.Error(codes.Canceled, msg),
 			expect: &ErrorResponse{
@@ -146,6 +137,16 @@ func TestErrorResponse(t *testing.T) {
 				Detail:  status.Error(codes.Unauthenticated, msg).Error(),
 			},
 			expectStatus: http.StatusUnauthorized,
+		},
+		{
+			name: "default",
+			err:  nil,
+			expect: &ErrorResponse{
+				Status:  http.StatusInternalServerError,
+				Message: "unknown error code",
+				Detail:  "util: <nil>",
+			},
+			expectStatus: http.StatusInternalServerError,
 		},
 	}
 

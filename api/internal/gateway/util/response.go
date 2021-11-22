@@ -18,10 +18,6 @@ func NewErrorResponse(err error) (*ErrorResponse, int) {
 	res := &ErrorResponse{}
 
 	switch status.Code(err) {
-	case codes.OK:
-		res.Status = http.StatusInternalServerError
-		res.Message = fmt.Sprintf("util: error handling but not error: %s", err.Error())
-		return res, http.StatusInternalServerError
 	case codes.Canceled:
 		res.Status = 499 // client closed request
 	case codes.Unknown, codes.Internal, codes.DataLoss:
@@ -46,6 +42,11 @@ func NewErrorResponse(err error) (*ErrorResponse, int) {
 		res.Status = http.StatusBadGateway
 	case codes.Unauthenticated:
 		res.Status = http.StatusUnauthorized
+	default:
+		res.Status = http.StatusInternalServerError
+		res.Message = "unknown error code"
+		res.Detail = fmt.Sprintf("util: %v", err)
+		return res, http.StatusInternalServerError
 	}
 
 	res.Message = http.StatusText(res.Status)
