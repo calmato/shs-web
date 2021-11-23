@@ -1,0 +1,72 @@
+name: '[Frontend] Build and Test'
+on:
+  push:
+    paths:
+    - '.github/workflows/ci-frontend-for-all.yaml'
+    - 'web/**'
+    - 'infra/docker/web/**'
+
+jobs:
+  teacher_web:
+    name: Teacher Web
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./web/teacher
+    strategy:
+      matrix:
+        os: [ubuntu-latest] # exclude: macos-latest, windows-latest
+        golang: ['16.13.0']
+
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v2
+
+    - name: Use Node.js ${{ matrix.node }}
+      uses: actions/setup-node@v2
+      with:
+        node-version: ${{ matrix.node }}
+
+    ############################################
+    # Setup project
+    ############################################
+    - name: Get yarn cache directory path
+      id: yarn-cache-dir-path
+      run: echo "::set-output name=dir::$(yarn config get cacheFolder)"
+
+    - uses: actions/cache@v2
+      id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
+      with:
+        path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+        key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-yarn-
+
+    - name: Install
+      run: yarn --check-files --frozen-lockfile --non-interactive
+
+    ############################################
+    # Test and syntax check
+    ############################################
+    - name: Lint
+      run: yarn lint
+
+    - name: Test
+      run: yarn test
+
+    ############################################
+    # Build check
+    ############################################
+    - name: Build
+      run: yarn build
+
+    ############################################
+    # Notifications, etc.
+    ############################################
+    - uses: codecov/codecov-action@v2
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        fail_ci_if_error: true
+        flags: teacher-web
+        verbose: true

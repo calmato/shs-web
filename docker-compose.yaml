@@ -1,6 +1,20 @@
 version: '3.9'
 
 services:
+  teacher_web:
+    container_name: teacher_web
+    build:
+      context: ./infra/docker/web/teacher
+      dockerfile: Dockerfile.development
+    working_dir: /var/web
+    volumes:
+      - ./web/teacher:/var/web:cached
+    ports:
+      - 3000:3000
+    environment:
+      - API_URL=${TEACHER_API_URL}
+    command: yarn dev -H 0.0.0.0 -p 3000
+
   teacher_gateway:
     container_name: teacher_gateway
     build:
