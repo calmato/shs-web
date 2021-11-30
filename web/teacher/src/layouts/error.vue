@@ -1,41 +1,34 @@
 <template>
-  <v-app dark>
-    <h1 v-if="error.statusCode === 404">
-      {{ pageNotFound }}
-    </h1>
-    <h1 v-else>
-      {{ otherError }}
-    </h1>
-    <NuxtLink to="/"> Home page </NuxtLink>
+  <v-app>
+    <v-content>
+      <v-container>
+        <v-layout column align-center>
+          <h1>不明なエラーが発生しました</h1>
+          <v-img src="/error-500.png" />
+
+          <v-btn @click="handleClick">ホームへ戻る</v-btn>
+        </v-layout>
+      </v-container>
+    </v-content>
   </v-app>
 </template>
 
-<script>
-export default {
-  layout: 'empty',
-  props: {
-    error: {
-      type: Object,
-      default: null,
-    },
-  },
-  data() {
-    return {
-      pageNotFound: '404 Not Found',
-      otherError: 'An error occurred',
-    }
-  },
-  head() {
-    const title = this.error.statusCode === 404 ? this.pageNotFound : this.otherError
-    return {
-      title,
-    }
-  },
-}
-</script>
+<script lang="ts">
+import { defineComponent, SetupContext } from '@nuxtjs/composition-api'
 
-<style scoped>
-h1 {
-  font-size: 20px;
-}
-</style>
+export default defineComponent({
+  layout: 'empty',
+
+  setup(_, { root }: SetupContext) {
+    const router = root.$router
+
+    const handleClick = () => {
+      router.push('/')
+    }
+
+    return {
+      handleClick,
+    }
+  },
+})
+</script>
