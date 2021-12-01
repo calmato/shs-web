@@ -17,7 +17,7 @@ env:
 
 jobs:
   deploy_for_development:
-    name: Deploy for Staging
+    name: Deploy for Development
     runs-on: ${{ matrix.os }}
     defaults:
       run:
