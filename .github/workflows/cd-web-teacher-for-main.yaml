@@ -61,4 +61,4 @@ jobs:
     - name: Deploy to Firebase Hosting
       run: |
         firebase use development
-        firebase deploy --only hosting:development --token ${FIREBASE_TOKEN}
+        firebase deploy --only hosting:shs-web-dev-teacher --token ${FIREBASE_TOKEN}
