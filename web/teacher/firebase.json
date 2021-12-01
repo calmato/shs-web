@@ -1,7 +1,6 @@
 {
   "hosting": [
     {
-      "target": "development",
       "site": "shs-web-dev-teacher",
       "public": "dist",
       "ignore": [
