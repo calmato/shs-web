@@ -1,5 +1,14 @@
 {
   "projects": {
     "development": "shs-web-dev-a9b64"
+  },
+  "targets": {
+    "shs-web-dev-a9b64": {
+      "hosting": {
+        "development": [
+          "shs-web-dev-teacher"
+        ]
+      }
+    }
   }
 }
