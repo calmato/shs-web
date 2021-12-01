@@ -1,0 +1,64 @@
+name: '[Frontend] Build and Deploy (Teacher Web)'
+on:
+  push:
+    branches:
+    - 'main'
+    paths:
+    - '.github/workflows/cd-web-teacher-for-main.yaml'
+    - 'web/teacher/**'
+    - 'infra/docker/web/teacher/**'
+
+env:
+  FIREBASE_TOKEN: ${{ secrets.DEV_FIREBASE_TOKEN }}
+  FIREBASE_API_KEY: ${{ secrets.DEV_FIREBASE_API_KEY }}
+  FIREBASE_PROJECT_ID: ${{ secrets.DEV_FIREBASE_PROJECT_ID }}
+  FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.DEV_FIREBASE_MESSAGING_SENDER_ID }}
+  API_URL: ${{ secrets.DEV_TEACHER_API_URL }}
+
+jobs:
+  deploy_for_development:
+    name: Deploy for Staging
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./web/teacher
+    strategy:
+      matrix:
+        os: [ubuntu-latest] # exclude: macos-latest, windows-latest
+        node: ['16.13.0']
+
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v2
+
+    - name: Use Node.js ${{ matrix.node }}
+      uses: actions/setup-node@v2
+      with:
+        node-version: ${{ matrix.node }}
+
+    - name: Get yarn cache directory path
+      id: yarn-cache-dir-path
+      run: echo "::set-output name=dir::$(yarn config get cacheFolder)"
+
+    - uses: actions/cache@v2
+      id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
+      with:
+        path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+        key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-yarn-
+
+    - name: Install
+      run: yarn --check-files --frozen-lockfile --non-interactive
+
+    - name: Build
+      run: yarn generate
+
+    - name: Install firebase-tools
+      run: yarn global add firebase-tools
+
+    - name: Deploy to Firebase Hosting
+      run: |
+        firebase use development
+        firebase deploy --only hosting --token ${FIREBASE_TOKEN}
