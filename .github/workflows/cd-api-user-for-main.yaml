@@ -23,13 +23,13 @@ env:
   GCR_IMAGE_NAME: user-api
   GCR_IMAGE_TAG: ${{ github.sha }}
   ### For Cloud Run and GKE
-  GCP_PROJECT_ID: ${{ secrets.STG_GCP_PROJECT_ID }}
-  GCP_REGION: ${{ secrets.STG_GCP_REGION }}
+  GCP_PROJECT_ID: ${{ secrets.DEV_GCP_PROJECT_ID }}
+  GCP_REGION: ${{ secrets.DEV_GCP_REGION }}
   ### For Cloud Run only
   # CLOUD_RUN_NAME: user-api
   ### For GKE only
-  # GKE_ZONE: ${{ secrets.STG_GKE_ZONE }}
-  # GKE_CLUSTER_NAME: ${{ secrets.STG_GKE_CLUSTER_NAME }}
+  # GKE_ZONE: ${{ secrets.DEV_GKE_ZONE }}
+  # GKE_CLUSTER_NAME: ${{ secrets.DEV_GKE_CLUSTER_NAME }}
   # GKE_DEPLOYMENT_NAME: user-api
 
 jobs:
