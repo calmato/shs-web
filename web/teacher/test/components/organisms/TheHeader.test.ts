@@ -11,6 +11,19 @@ describe('components/organisms/TheHeader', () => {
   })
 
   describe('script', () => {
+    describe('props', () => {
+      describe('overlay', () => {
+        it('初期値', () => {
+          expect(wrapper.props().overlay).toBeFalsy()
+        })
+
+        it('値が代入されること', async () => {
+          await wrapper.setProps({ overlay: true })
+          expect(wrapper.props().overlay).toBeTruthy()
+        })
+      })
+    })
+
     describe('methods', () => {
       describe('onClick', () => {
         it('emitted', async () => {
