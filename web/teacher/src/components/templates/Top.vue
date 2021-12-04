@@ -1,5 +1,5 @@
 <template>
-  <v-row class="fill-height">
+  <v-row align="stretch" justify="center">
     <v-col>
       <v-sheet height="64">
         <the-calendar-header

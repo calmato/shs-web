@@ -16,6 +16,54 @@ describe('store/user', () => {
     it('getMessage', () => {
       expect(UserStore.getMessage).toBe('')
     })
+
+    it('getStudents', () => {
+      expect(UserStore.getStudents).toEqual([
+        {
+          id: '123456789012345678901',
+          lastname: '浜田',
+          firstname: '二郎',
+          createdAt: '',
+          updatedAt: '',
+        },
+      ])
+    })
+
+    it('getStudentMap', () => {
+      expect(UserStore.getStudentMap).toEqual({
+        '123456789012345678901': {
+          id: '123456789012345678901',
+          lastname: '浜田',
+          firstname: '二郎',
+          createdAt: '',
+          updatedAt: '',
+        },
+      })
+    })
+
+    it('getTeachers', () => {
+      expect(UserStore.getTeachers).toEqual([
+        {
+          id: '000000000000000000001',
+          lastname: '中村',
+          firstname: '太郎',
+          createdAt: '',
+          updatedAt: '',
+        },
+      ])
+    })
+
+    it('getTeacherMap', () => {
+      expect(UserStore.getTeacherMap).toEqual({
+        '000000000000000000001': {
+          id: '000000000000000000001',
+          lastname: '中村',
+          firstname: '太郎',
+          createdAt: '',
+          updatedAt: '',
+        },
+      })
+    })
   })
 
   describe('actions', () => {

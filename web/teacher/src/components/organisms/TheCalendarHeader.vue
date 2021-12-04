@@ -20,7 +20,7 @@
       </template>
       <v-list v-for="(item, index) in types" :key="index">
         <v-list-item @click="updateType(item)">
-          <v-list-item-title>{{ item.value }}</v-list-item-title>
+          <v-list-item-title>{{ item.name }}</v-list-item-title>
         </v-list-item>
       </v-list>
     </v-menu>
