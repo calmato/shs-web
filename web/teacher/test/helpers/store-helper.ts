@@ -1,10 +1,11 @@
 import Vue from 'vue'
 import Vuex, { Store } from 'vuex'
 import { createLocalVue } from '@vue/test-utils'
-import { CommonStore, UserStore, initialiseStores } from '~/store'
+import { CommonStore, UserStore, initialiseStores, LessonStore } from '~/store'
 import CommonModule from '~/store/common'
 import UserModule from '~/store/user'
 import response from '~~/test/helpers/api-mock'
+import LessonModule from '~/store/lesson'
 
 const localVue: Vue.VueConstructor<Vue> = createLocalVue()
 localVue.use(Vuex)
@@ -12,6 +13,7 @@ localVue.use(Vuex)
 const store = new Store({
   modules: {
     common: CommonModule,
+    lesson: LessonModule,
     user: UserModule,
   },
 })
@@ -22,6 +24,7 @@ function setup(): void {
 
 function refresh(): void {
   CommonStore.factory()
+  LessonStore.factory()
   UserStore.factory()
 }
 
