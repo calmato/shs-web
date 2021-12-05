@@ -2,7 +2,7 @@
   <v-calendar
     ref="calendar"
     v-model="calendarFocus"
-    :events="events"
+    :events="getParseEvents()"
     :event-color="getEventColor"
     :type="calendarType"
     :now="currentTime"
@@ -126,6 +126,22 @@ export default defineComponent({
       calendarInstance().next()
     }
 
+    const getParseEvents = (): Event[] => {
+      const target = props.events.map((event: Event): Event => {
+        const format: string = 'YYYY-MM-DD HH:mm:ss'
+        const res: Event = {
+          lessonId: event.lessonId,
+          name: event.name,
+          start: dayjs(event.start).tz().format(format),
+          end: dayjs(event.end).tz().format(format),
+          color: event.color,
+        }
+        return res
+      })
+
+      return target
+    }
+
     const getEventColor = (event: Event): string => {
       return event?.color || 'primary'
     }
@@ -148,6 +164,7 @@ export default defineComponent({
       currentTime,
       calendarFocus,
       calendarType,
+      getParseEvents,
       getEventColor,
       viewDay,
       showEvent,
