@@ -11,8 +11,6 @@ frontend (teacher):
 ##################################################
 # Backend
 ##################################################
-backend (admin):
-- api/**/admin/**/*
 backend (classroom):
 - api/**/classroom/**/*
 backend (gateway):
@@ -25,22 +23,14 @@ backend (user):
 - api/**/user/**/*
 backend (workbook):
 - api/**/workbook/**/*
-backend (other):
-- '!api/**/admin/**/*'
-- '!api/**/classroom/**/*'
-- '!api/**/gateway/**/*'
-- '!api/**/lesson/**/*'
-- '!api/**/messenger/**/*'
-- '!api/**/user/**/*'
-- '!api/**/workbook/**/*'
 
 ##################################################
 # Infrastructure
 ##################################################
 infra (docker):
 - infra/docker/**/*
-infra (firestore):
-- infra/firestore/**/*
+infra (functions):
+- infra/functions/**/*
 infra (terraform):
 - infra/terraform/**/*
 
@@ -49,8 +39,6 @@ infra (terraform):
 ##################################################
 docs:
 - docs/**/*
-proto:
-- proto/**/*
 test:
 - api/**/*_test.go
 - web/**/*.spec.ts
