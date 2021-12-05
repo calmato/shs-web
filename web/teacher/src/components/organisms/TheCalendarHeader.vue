@@ -29,7 +29,8 @@
 
 <script lang="ts">
 import { computed, defineComponent, PropType, SetupContext } from '@nuxtjs/composition-api'
-import dayjs, { Dayjs } from 'dayjs'
+import { Dayjs } from 'dayjs'
+import dayjs from '~/plugins/dayjs'
 import { Date, CalendarType } from '~/types/props/calendar'
 
 export default defineComponent({
@@ -69,7 +70,7 @@ export default defineComponent({
     const getTitle = (): string => {
       const format = 'YYYY年MM月'
       if (props.start && props.end) {
-        return dayjs(props.start.date).format(format)
+        return dayjs(props.start.date).tz().format(format)
       }
       return props.now?.format(format) || ''
     }
