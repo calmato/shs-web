@@ -43,7 +43,7 @@ export default defineComponent({
       {
         name: 'シフト作成',
         icon: 'mdi-chart-box-plus-outline',
-        path: '#シフト作成', // TODO: update
+        path: '/shifts',
       },
       {
         name: 'ユーザ一覧',
@@ -65,6 +65,7 @@ export default defineComponent({
 
     const handleClickMenuItem = (item: Menu): void => {
       router.push(item.path)
+      handleClickMenu()
     }
 
     return {
