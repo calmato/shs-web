@@ -64,8 +64,8 @@ describe('components/organisms/TheCalendarBody', () => {
             {
               lessonId: 1,
               name: '月次報告',
-              start: '2021-11-25 09:00',
-              end: '2021-11-26 17:00',
+              start: '2021-11-25T09:00:00+09:00',
+              end: '2021-11-26T17:00:00+09:00',
               color: 'primary',
             },
             {

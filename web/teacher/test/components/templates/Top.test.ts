@@ -24,8 +24,8 @@ describe('components/templates/SignIn', () => {
             subject: '国語',
             teacher: '中村 一郎',
             student: '市川 二郎',
-            start: '2021-11-25 09:00:00',
-            end: '2021-11-26 17:00:00',
+            start: '2021-11-25T09:00:00:+09:00',
+            end: '2021-11-26T17:00:00+09:00',
             remark: '漢字テスト3~4ページを行う',
           }
           await wrapper.setProps({ detail })
@@ -43,8 +43,8 @@ describe('components/templates/SignIn', () => {
             {
               lessonId: 1,
               name: '月次報告',
-              start: '2021-11-25 09:00',
-              end: '2021-11-26 17:00',
+              start: '2021-11-25T09:00:00:+09:00',
+              end: '2021-11-26T17:00:00+09:00',
               color: 'primary',
             },
             {
@@ -110,8 +110,8 @@ describe('components/templates/SignIn', () => {
           event = {
             lessonId: 1,
             name: '月次報告',
-            start: '2021-11-25 09:00',
-            end: '2021-11-26 17:00',
+            start: '2021-11-25T09:00:00:+09:00',
+            end: '2021-11-26T17:00:00+09:00',
             color: 'primary',
           }
         })

@@ -24,8 +24,8 @@ describe('components/organisms/TheCalendarDetail', () => {
             subject: '国語',
             teacher: '中村 一郎',
             student: '市川 二郎',
-            start: '2021-11-25 18:30:00',
-            end: '2021-11-25 20:00:00',
+            start: '2021-11-25T18:30:00+09:00',
+            end: '2021-11-25T20:00:00+09:00',
             remark: '漢字テスト3~4ページを行う',
           }
           await wrapper.setProps({ detail })
@@ -42,8 +42,8 @@ describe('components/organisms/TheCalendarDetail', () => {
             subject: '国語',
             teacher: '中村 一郎',
             student: '市川 二郎',
-            start: '2021-11-25 18:30:00',
-            end: '2021-11-25 20:00:00',
+            start: '2021-11-25T18:30:00+09:00',
+            end: '2021-11-25T20:00:00+09:00',
             remark: '漢字テスト3~4ページを行う',
           }
           await wrapper.setProps({ detail })
@@ -58,8 +58,8 @@ describe('components/organisms/TheCalendarDetail', () => {
             subject: '国語',
             teacher: '中村 一郎',
             student: '市川 二郎',
-            start: '2021-11-25 18:30:00',
-            end: '2021-11-25 20:00:00',
+            start: '2021-11-25T18:30:00+09:00',
+            end: '2021-11-25T20:00:00+09:00',
             remark: '漢字テスト3~4ページを行う',
           }
           await wrapper.setProps({ detail })

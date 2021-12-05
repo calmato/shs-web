@@ -73,7 +73,7 @@ export default defineComponent({
     const end = ref<Date>()
     const focus = ref<string>('')
     const type = ref<String>('month')
-    const today = ref<String>(now.tz().format('YYYY-MM-DD hh:mm:ss'))
+    const today = ref<String>(now.tz().format('YYYY-MM-DD HH:mm:ss'))
     const dialog = ref<boolean>(false)
 
     const toggleDialog = (): void => {

@@ -98,7 +98,7 @@ export default defineComponent({
       set: (val: Date) => emit('update:end', val),
     })
     const currentTime = computed<string>({
-      get: () => props.now?.tz().format('YYYY-MM-DD hh:mm:ss') || '2021-07-23 20:00:00',
+      get: () => props.now?.tz().format('YYYY-MM-DD HH:mm:ss') || '2021-07-23 20:00:00',
       set: (val: string) => emit('update:now', dayjs(val)),
     })
     const calendarFocus = computed<string>({
