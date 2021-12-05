@@ -1,8 +1,19 @@
 export interface Event {
+  lessonId: number
   name: string
   start: string
   end: string
   color?: string
+}
+
+export interface EventDetail {
+  lessonId: number
+  subject: string
+  teacher: string
+  student: string
+  start: string
+  end: string
+  remark: string
 }
 
 export interface Date {

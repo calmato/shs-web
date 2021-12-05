@@ -1,7 +1,7 @@
 import { shallowMount } from '@vue/test-utils'
 import * as Options from '~~/test/helpers/component-helper'
 import Top from '~/components/templates/Top.vue'
-import { Event } from '~/types/props/calendar'
+import { Event, EventDetail } from '~/types/props/calendar'
 
 describe('components/templates/SignIn', () => {
   let wrapper: any
@@ -13,6 +13,26 @@ describe('components/templates/SignIn', () => {
 
   describe('script', () => {
     describe('props', () => {
+      describe('detail', () => {
+        it('初期値', () => {
+          expect(wrapper.props().detail).toEqual({})
+        })
+
+        it('値が代入されること', async () => {
+          const detail: EventDetail = {
+            lessonId: 1,
+            subject: '国語',
+            teacher: '中村 一郎',
+            student: '市川 二郎',
+            start: '2021-11-25 09:00:00',
+            end: '2021-11-26 17:00:00',
+            remark: '漢字テスト3~4ページを行う',
+          }
+          await wrapper.setProps({ detail })
+          expect(wrapper.props().detail).toBe(detail)
+        })
+      })
+
       describe('events', () => {
         it('初期値', () => {
           expect(wrapper.props().events).toEqual([])
@@ -21,12 +41,14 @@ describe('components/templates/SignIn', () => {
         it('値が代入されること', async () => {
           const events: Event[] = [
             {
+              lessonId: 1,
               name: '月次報告',
               start: '2021-11-25 09:00',
               end: '2021-11-26 17:00',
               color: 'primary',
             },
             {
+              lessonId: 2,
               name: '出張',
               start: '2021-11-26',
               end: '2021-11-28',
@@ -67,10 +89,47 @@ describe('components/templates/SignIn', () => {
       it('type', () => {
         expect(wrapper.vm.type).toBe('month')
       })
+
+      it('dialog', () => {
+        expect(wrapper.vm.dialog).toBeFalsy()
+      })
     })
 
     describe('methods', () => {
-      describe('onClick', () => {
+      describe('toggleDialog', () => {
+        it('updated dialog', async () => {
+          await wrapper.setData({ dialog: false })
+          await wrapper.vm.toggleDialog()
+          expect(wrapper.vm.dialog).toBeTruthy()
+        })
+      })
+
+      describe('showEvent', () => {
+        let event: Event
+        beforeEach(() => {
+          event = {
+            lessonId: 1,
+            name: '月次報告',
+            start: '2021-11-25 09:00',
+            end: '2021-11-26 17:00',
+            color: 'primary',
+          }
+        })
+
+        it('updated dialog', async () => {
+          await wrapper.setData({ dialog: false })
+          await wrapper.vm.showEvent(event)
+          expect(wrapper.vm.dialog).toBeTruthy()
+        })
+
+        it('emitted', async () => {
+          await wrapper.vm.showEvent(event)
+          expect(wrapper.emitted('click')).toBeTruthy()
+          expect(wrapper.emitted('click')[0][0]).toBe(event)
+        })
+      })
+
+      describe('setToday', () => {
         it('updated focus', async () => {
           await wrapper.setData({ focus: '' })
           await wrapper.vm.setToday()

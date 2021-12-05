@@ -1,5 +1,8 @@
 <template>
   <v-row align="stretch" justify="center">
+    <v-dialog v-model="dialog" width="600px" scrollable @click:outside="toggleDialog">
+      <the-calendar-detail :detail="detail" @click:close="toggleDialog" />
+    </v-dialog>
     <v-col>
       <v-sheet height="64">
         <the-calendar-header
@@ -33,18 +36,24 @@
 
 <script lang="ts">
 import { defineComponent, PropType, ref, SetupContext } from '@nuxtjs/composition-api'
-import dayjs from 'dayjs'
+import dayjs from '~/plugins/dayjs'
 import TheCalendarBody from '~/components/organisms/TheCalendarBody.vue'
+import TheCalendarDetail from '~/components/organisms/TheCalendarDetail.vue'
 import TheCalendarHeader from '~/components/organisms/TheCalendarHeader.vue'
-import { CalendarType, Date, Event } from '~/types/props/calendar'
+import { CalendarType, Date, Event, EventDetail } from '~/types/props/calendar'
 
 export default defineComponent({
   components: {
     TheCalendarBody,
+    TheCalendarDetail,
     TheCalendarHeader,
   },
 
   props: {
+    detail: {
+      type: Object as PropType<EventDetail>,
+      default: () => ({}),
+    },
     events: {
       type: Array as PropType<Event[]>,
       default: () => [],
@@ -64,10 +73,16 @@ export default defineComponent({
     const end = ref<Date>()
     const focus = ref<string>('')
     const type = ref<String>('month')
-    const today = ref<String>(now.format('YYYY-MM-DD hh:mm:ss'))
+    const today = ref<String>(now.tz().format('YYYY-MM-DD hh:mm:ss'))
+    const dialog = ref<boolean>(false)
+
+    const toggleDialog = (): void => {
+      dialog.value = !dialog.value
+    }
 
     const showEvent = (event: Event): void => {
       emit('click', event)
+      toggleDialog()
     }
 
     const setToday = (): void => {
@@ -76,12 +91,14 @@ export default defineComponent({
 
     return {
       now,
+      dialog,
       end,
       focus,
       start,
       type,
       types,
       weekdays,
+      toggleDialog,
       showEvent,
       setToday,
     }

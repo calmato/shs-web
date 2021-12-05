@@ -16,7 +16,8 @@
 
 <script lang="ts">
 import { computed, defineComponent, onMounted, PropType, SetupContext } from '@nuxtjs/composition-api'
-import dayjs, { Dayjs } from 'dayjs'
+import { Dayjs } from 'dayjs'
+import dayjs from '~/plugins/dayjs'
 import { Event, Date, CalendarType, CalendarRef } from '~/types/props/calendar'
 
 export default defineComponent({
@@ -97,7 +98,7 @@ export default defineComponent({
       set: (val: Date) => emit('update:end', val),
     })
     const currentTime = computed<string>({
-      get: () => props.now?.format('YYYY-MM-DD hh:mm:ss') || '2021-07-23 20:00:00',
+      get: () => props.now?.tz().format('YYYY-MM-DD hh:mm:ss') || '2021-07-23 20:00:00',
       set: (val: string) => emit('update:now', dayjs(val)),
     })
     const calendarFocus = computed<string>({
@@ -134,7 +135,7 @@ export default defineComponent({
       calendarType.value = 'day'
     }
 
-    const showEvent = (event: Event): void => {
+    const showEvent = ({ event }: { event: Event }): void => {
       emit('click', event)
     }
 

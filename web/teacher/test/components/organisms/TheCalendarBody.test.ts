@@ -62,12 +62,14 @@ describe('components/organisms/TheCalendarBody', () => {
         it('値が代入されること', async () => {
           const events: Event[] = [
             {
+              lessonId: 1,
               name: '月次報告',
               start: '2021-11-25 09:00',
               end: '2021-11-26 17:00',
               color: 'primary',
             },
             {
+              lessonId: 2,
               name: '出張',
               start: '2021-11-26',
               end: '2021-11-28',
@@ -208,6 +210,7 @@ describe('components/organisms/TheCalendarBody', () => {
 
         it('return: event is not null', () => {
           const event: Event = {
+            lessonId: 1,
             name: '出張',
             start: '2021-11-26',
             end: '2021-11-28',
@@ -218,20 +221,6 @@ describe('components/organisms/TheCalendarBody', () => {
       })
 
       describe('viewDay', () => {
-        it('emitted', async () => {
-          const event: Event = {
-            name: '出張',
-            start: '2021-11-26',
-            end: '2021-11-28',
-            color: 'secondary',
-          }
-          await wrapper.vm.showEvent(event)
-          expect(wrapper.emitted('click')).toBeTruthy()
-          expect(wrapper.emitted('click')[0][0]).toBe(event)
-        })
-      })
-
-      describe('showEvent', () => {
         it('emitted', async () => {
           const date: Date = {
             date: '2021-08-02',
@@ -252,6 +241,21 @@ describe('components/organisms/TheCalendarBody', () => {
           expect(wrapper.emitted('update:focus')).toBeTruthy()
           expect(wrapper.emitted('update:type')).toBeTruthy()
           expect(wrapper.emitted('update:type')[0][0]).toBe('day')
+        })
+      })
+
+      describe('showEvent', () => {
+        it('emitted', async () => {
+          const event: Event = {
+            lessonId: 1,
+            name: '出張',
+            start: '2021-11-26',
+            end: '2021-11-28',
+            color: 'secondary',
+          }
+          await wrapper.vm.showEvent({ event })
+          expect(wrapper.emitted('click')).toBeTruthy()
+          expect(wrapper.emitted('click')[0][0]).toBe(event)
         })
       })
 
