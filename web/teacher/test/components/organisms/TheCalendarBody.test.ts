@@ -203,6 +203,44 @@ describe('components/organisms/TheCalendarBody', () => {
     })
 
     describe('methods', () => {
+      describe('getParseEvents', () => {
+        it('return', async () => {
+          const events: Event[] = [
+            {
+              lessonId: 1,
+              name: '月次報告',
+              start: '2021-11-25T09:00:00+09:00',
+              end: '2021-11-26T17:00:00+09:00',
+              color: 'primary',
+            },
+            {
+              lessonId: 2,
+              name: '出張',
+              start: '2021-11-26',
+              end: '2021-11-28',
+              color: 'secondary',
+            },
+          ]
+          await wrapper.setProps({ events })
+          expect(wrapper.vm.getParseEvents()).toEqual([
+            {
+              lessonId: 1,
+              name: '月次報告',
+              start: '2021-11-25 09:00:00',
+              end: '2021-11-26 17:00:00',
+              color: 'primary',
+            },
+            {
+              lessonId: 2,
+              name: '出張',
+              start: '2021-11-26 09:00:00',
+              end: '2021-11-28 09:00:00',
+              color: 'secondary',
+            },
+          ])
+        })
+      })
+
       describe('getEventColor', () => {
         it('return: event is null', () => {
           expect(wrapper.vm.getEventColor()).toBe('primary')
