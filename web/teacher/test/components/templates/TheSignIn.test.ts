@@ -1,11 +1,11 @@
 import { shallowMount } from '@vue/test-utils'
 import * as Options from '~~/test/helpers/component-helper'
-import SignIn from '~/components/templates/SignIn.vue'
+import TheSignIn from '~/components/templates/TheSignIn.vue'
 
-describe('components/templates/SignIn', () => {
+describe('components/templates/TheSignIn', () => {
   let wrapper: any
   beforeEach(() => {
-    wrapper = shallowMount(SignIn, {
+    wrapper = shallowMount(TheSignIn, {
       ...Options,
     })
   })

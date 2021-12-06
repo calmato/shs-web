@@ -1,15 +1,15 @@
 <template>
-  <sign-in :message="message" @click="handleClick" />
+  <the-sign-in :message="message" @click="handleClick" />
 </template>
 
 <script lang="ts">
 import { computed, defineComponent, useAsync, SetupContext } from '@nuxtjs/composition-api'
 import { UserStore, CommonStore } from '~/store'
-import SignIn from '~/components/templates/SignIn.vue'
+import TheSignIn from '~/components/templates/TheSignIn.vue'
 
 export default defineComponent({
   components: {
-    SignIn,
+    TheSignIn,
   },
 
   setup(_, { root }: SetupContext) {
