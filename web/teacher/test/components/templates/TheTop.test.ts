@@ -1,12 +1,12 @@
 import { shallowMount } from '@vue/test-utils'
 import * as Options from '~~/test/helpers/component-helper'
-import Top from '~/components/templates/Top.vue'
+import TheTop from '~/components/templates/TheTop.vue'
 import { Event, EventDetail } from '~/types/props/calendar'
 
-describe('components/templates/SignIn', () => {
+describe('components/templates/TheTop', () => {
   let wrapper: any
   beforeEach(() => {
-    wrapper = shallowMount(Top, {
+    wrapper = shallowMount(TheTop, {
       ...Options,
     })
   })

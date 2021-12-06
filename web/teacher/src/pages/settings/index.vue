@@ -1,15 +1,15 @@
 <template>
-  <setting-top :user-items="userItems" :system-items="systemItems" @click="handleClick" />
+  <the-setting-top :user-items="userItems" :system-items="systemItems" @click="handleClick" />
 </template>
 
 <script lang="ts">
 import { defineComponent, SetupContext } from '@nuxtjs/composition-api'
-import SettingTop from '~/components/templates/SettingTop.vue'
+import TheSettingTop from '~/components/templates/TheSettingTop.vue'
 import { Menu } from '~/types/props/setting'
 
 export default defineComponent({
   components: {
-    SettingTop,
+    TheSettingTop,
   },
 
   setup(_, { root }: SetupContext) {

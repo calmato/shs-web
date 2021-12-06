@@ -1,12 +1,12 @@
 import { shallowMount } from '@vue/test-utils'
 import * as Options from '~~/test/helpers/component-helper'
-import SettingTop from '~/components/templates/SettingTop.vue'
+import TheSettingTop from '~/components/templates/TheSettingTop.vue'
 import { Menu } from '~/types/props/setting'
 
-describe('components/templates/SettingTop', () => {
+describe('components/templates/TheSettingTop', () => {
   let wrapper: any
   beforeEach(() => {
-    wrapper = shallowMount(SettingTop, {
+    wrapper = shallowMount(TheSettingTop, {
       ...Options,
     })
   })

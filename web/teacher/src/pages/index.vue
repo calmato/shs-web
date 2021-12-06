@@ -1,17 +1,17 @@
 <template>
-  <top :events="getEvents()" :detail="detail" @click="handleClick" @save="handleSave" />
+  <the-top :events="getEvents()" :detail="detail" @click="handleClick" @save="handleSave" />
 </template>
 
 <script lang="ts">
 import { computed, defineComponent, ref, SetupContext } from '@nuxtjs/composition-api'
-import Top from '~/components/templates/Top.vue'
+import TheTop from '~/components/templates/TheTop.vue'
 import { Event, EventDetail } from '~/types/props/calendar'
 import { Student, StudentMap, Teacher, TeacherMap } from '~/types/store'
 import { Lesson, Subject, SubjectMap } from '~/types/store/lesson'
 
 export default defineComponent({
   components: {
-    Top,
+    TheTop,
   },
 
   setup(_, { root }: SetupContext) {
