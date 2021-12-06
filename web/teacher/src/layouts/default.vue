@@ -1,5 +1,5 @@
 <template>
-  <v-app>
+  <v-app :style="{ background }">
     <the-header :overlay="overlay" @click="handleClickMenu" />
     <v-main>
       <nuxt />
@@ -15,7 +15,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, SetupContext } from '@nuxtjs/composition-api'
+import { defineComponent, ref, SetupContext, watch } from '@nuxtjs/composition-api'
+import { VuetifyThemeItem } from 'vuetify/types/services/theme'
 import TheHeader from '~/components/organisms/TheHeader.vue'
 import TheMenu from '~/components/organisms/TheMenu.vue'
 import { Menu } from '~/types/props/menu'
@@ -28,7 +29,9 @@ export default defineComponent({
 
   setup(_, { root }: SetupContext) {
     const router = root.$router
+    const vuetify = root.$vuetify
 
+    const greyBackgroundPaths = ['/settings']
     const items: Menu[] = [
       {
         name: 'トップ',
@@ -53,11 +56,30 @@ export default defineComponent({
       {
         name: '設定',
         icon: 'mdi-cogs',
-        path: '#設定', // TODO: update
+        path: '/settings',
       },
     ]
 
+    const getBackgroundColor = (path: string): VuetifyThemeItem => {
+      const theme = vuetify.theme.dark ? 'dark' : 'light'
+
+      let color: VuetifyThemeItem = vuetify.theme.themes[theme].white
+      if (greyBackgroundPaths.includes(path)) {
+        color = vuetify.theme.themes[theme].grey
+      }
+
+      return color
+    }
+
     const overlay = ref<boolean>(false)
+    const background = ref<VuetifyThemeItem>(getBackgroundColor(root.$route.path))
+
+    watch(
+      () => root.$route,
+      (): void => {
+        background.value = getBackgroundColor(root.$route.path)
+      }
+    )
 
     const handleClickMenu = (): void => {
       overlay.value = !overlay.value
@@ -71,6 +93,7 @@ export default defineComponent({
     return {
       items,
       overlay,
+      background,
       handleClickMenu,
       handleClickMenuItem,
     }

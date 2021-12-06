@@ -57,6 +57,8 @@ export default {
           warning: colors.amber.base,
           error: colors.deepOrange.accent4,
           success: colors.green.accent4,
+          white: colors.shades.white,
+          grey: colors.grey.lighten4,
         },
         dark: {
           primary: colors.lightBlue.accent2,
@@ -67,6 +69,8 @@ export default {
           warning: colors.amber.base,
           error: colors.deepOrange.accent4,
           success: colors.green.accent4,
+          white: colors.shades.white,
+          grey: colors.grey.lighten4,
         },
       },
     },

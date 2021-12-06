@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import Vuetify from 'vuetify'
+import '~/plugins/dayjs'
 // import { ValidationProvider, ValidationObserver } from 'vee-validate'
 
 Vue.use(Vuex)

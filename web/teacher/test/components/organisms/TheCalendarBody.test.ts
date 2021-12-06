@@ -233,8 +233,8 @@ describe('components/organisms/TheCalendarBody', () => {
             {
               lessonId: 2,
               name: '出張',
-              start: '2021-11-26 09:00:00',
-              end: '2021-11-28 09:00:00',
+              start: '2021-11-26 00:00:00',
+              end: '2021-11-28 00:00:00',
               color: 'secondary',
             },
           ])
