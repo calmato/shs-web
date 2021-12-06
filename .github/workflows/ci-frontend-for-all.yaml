@@ -6,6 +6,9 @@ on:
     - 'web/**'
     - 'infra/docker/web/**'
 
+env:
+  TZ: 'Asia/Tokyo'
+
 jobs:
   teacher_web:
     name: Teacher Web
