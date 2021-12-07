@@ -51,7 +51,7 @@ export default defineComponent({
       {
         name: 'ユーザ一覧',
         icon: 'mdi-format-list-bulleted',
-        path: '#ユーザ一覧', // TODO: update
+        path: '/users',
       },
       {
         name: '設定',
