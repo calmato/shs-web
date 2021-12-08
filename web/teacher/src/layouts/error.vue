@@ -1,15 +1,14 @@
 <template>
   <v-app>
-    <v-content>
-      <v-container>
-        <v-layout column align-center>
-          <h1>不明なエラーが発生しました</h1>
+    <v-main>
+      <v-row column align-center>
+        <v-col class="d-flex flex-column text-center px-8">
           <v-img src="/error-500.png" />
-
+          <h2 class="my-4">不明なエラーが発生しました</h2>
           <v-btn @click="handleClick">ホームへ戻る</v-btn>
-        </v-layout>
-      </v-container>
-    </v-content>
+        </v-col>
+      </v-row>
+    </v-main>
   </v-app>
 </template>
 
