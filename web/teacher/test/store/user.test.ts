@@ -22,8 +22,12 @@ describe('store/user', () => {
         {
           id: '123456789012345678901',
           name: '浜田 二郎',
-          lastname: '浜田',
-          firstname: '二郎',
+          nameKana: 'はまだ じろう',
+          lastName: '浜田',
+          firstName: '二郎',
+          lastNameKana: 'はまだ',
+          firstNameKana: 'じろう',
+          mail: 'student-001@calmato.jp',
           type: 1,
           grade: 2,
           createdAt: '',
@@ -37,8 +41,12 @@ describe('store/user', () => {
         '123456789012345678901': {
           id: '123456789012345678901',
           name: '浜田 二郎',
-          lastname: '浜田',
-          firstname: '二郎',
+          nameKana: 'はまだ じろう',
+          lastName: '浜田',
+          firstName: '二郎',
+          lastNameKana: 'はまだ',
+          firstNameKana: 'じろう',
+          mail: 'student-001@calmato.jp',
           type: 1,
           grade: 2,
           createdAt: '',
@@ -52,8 +60,12 @@ describe('store/user', () => {
         {
           id: '000000000000000000001',
           name: '中村 太郎',
-          lastname: '中村',
-          firstname: '太郎',
+          nameKana: 'なかむら たろう',
+          lastName: '中村',
+          firstName: '太郎',
+          lastNameKana: 'なかむら',
+          firstNameKana: 'たろう',
+          mail: 'teacher-001@calmato.jp',
           role: 0,
           createdAt: '',
           updatedAt: '',
@@ -61,8 +73,12 @@ describe('store/user', () => {
         {
           id: '000000000000000000002',
           name: '西山 幸子',
-          lastname: '西山',
-          firstname: '幸子',
+          nameKana: 'にしやま さちこ',
+          lastName: '西山',
+          firstName: '幸子',
+          lastNameKana: 'にしやま',
+          firstNameKana: 'さちこ',
+          mail: 'teacher-002@calmato.jp',
           role: 0,
           createdAt: '',
           updatedAt: '',
@@ -70,8 +86,12 @@ describe('store/user', () => {
         {
           id: '000000000000000000003',
           name: '鈴木 小太郎',
-          lastname: '鈴木',
-          firstname: '小太郎',
+          nameKana: 'すずき こたろう',
+          lastName: '鈴木',
+          firstName: '小太郎',
+          lastNameKana: 'すずき',
+          firstNameKana: 'こたろう',
+          mail: 'teacher-003@calmato.jp',
           role: 1,
           createdAt: '',
           updatedAt: '',
@@ -84,8 +104,12 @@ describe('store/user', () => {
         '000000000000000000001': {
           id: '000000000000000000001',
           name: '中村 太郎',
-          lastname: '中村',
-          firstname: '太郎',
+          nameKana: 'なかむら たろう',
+          lastName: '中村',
+          firstName: '太郎',
+          lastNameKana: 'なかむら',
+          firstNameKana: 'たろう',
+          mail: 'teacher-001@calmato.jp',
           role: 0,
           createdAt: '',
           updatedAt: '',
@@ -93,8 +117,12 @@ describe('store/user', () => {
         '000000000000000000002': {
           id: '000000000000000000002',
           name: '西山 幸子',
-          lastname: '西山',
-          firstname: '幸子',
+          nameKana: 'にしやま さちこ',
+          lastName: '西山',
+          firstName: '幸子',
+          lastNameKana: 'にしやま',
+          firstNameKana: 'さちこ',
+          mail: 'teacher-002@calmato.jp',
           role: 0,
           createdAt: '',
           updatedAt: '',
@@ -102,8 +130,12 @@ describe('store/user', () => {
         '000000000000000000003': {
           id: '000000000000000000003',
           name: '鈴木 小太郎',
-          lastname: '鈴木',
-          firstname: '小太郎',
+          nameKana: 'すずき こたろう',
+          lastName: '鈴木',
+          firstName: '小太郎',
+          lastNameKana: 'すずき',
+          firstNameKana: 'こたろう',
+          mail: 'teacher-003@calmato.jp',
           role: 1,
           createdAt: '',
           updatedAt: '',
@@ -117,10 +149,6 @@ describe('store/user', () => {
       describe('success', () => {
         beforeEach(() => {
           setSafetyMode(true)
-        })
-
-        it('resolveが返されること', async () => {
-          await expect(UserStore.hello()).resolves.toBeUndefined()
         })
 
         it('stateが更新されていること', async () => {
