@@ -14,8 +14,12 @@ export enum SchoolType {
 export interface Teacher {
   id: string
   name?: string
-  lastname: string
-  firstname: string
+  nameKana?: string
+  lastName: string
+  firstName: string
+  lastNameKana: string
+  firstNameKana: string
+  mail: string
   role: Role
   createdAt: string
   updatedAt: string
@@ -24,8 +28,12 @@ export interface Teacher {
 export interface Student {
   id: string
   name?: string
-  lastname: string
-  firstname: string
+  nameKana?: string
+  lastName: string
+  firstName: string
+  lastNameKana: string
+  firstNameKana: string
+  mail: string
   type: SchoolType
   grade: number
   createdAt: string

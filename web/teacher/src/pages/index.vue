@@ -1,5 +1,5 @@
 <template>
-  <the-top :events="getEvents()" :detail="detail" @click="handleClick" @save="handleSave" />
+  <the-top :events="getEvents()" :detail="detail" @click="handleClick" />
 </template>
 
 <script lang="ts">
@@ -39,18 +39,13 @@ export default defineComponent({
 
         return {
           lessonId: lesson.id,
-          name: `[${subject.name}] ${student.lastname} ${student.firstname}`,
+          name: `[${subject.name}] ${student.name}`,
           start: lesson.startAt,
           end: lesson.endAt,
           color: subject.color,
         }
       })
       return events
-    }
-
-    const getName = (lastName: string, firstName: string): string => {
-      const space: string = lastName && firstName ? ' ' : ''
-      return lastName + space + firstName
     }
 
     const setDetail = (event: Event): void => {
@@ -68,8 +63,8 @@ export default defineComponent({
       const target: EventDetail = {
         lessonId: lesson.id,
         subject: subject?.name || '',
-        student: getName(student.lastname, student.firstname),
-        teacher: getName(teacher.lastname, teacher.firstname),
+        student: `${student.name} (${student.nameKana})`,
+        teacher: `${teacher.name} (${teacher.nameKana})`,
         start: lesson.startAt,
         end: lesson.endAt,
         remark: '',
@@ -82,15 +77,10 @@ export default defineComponent({
       setDetail(event)
     }
 
-    const handleSave = () => {
-      console.log('debug', 'save')
-    }
-
     return {
       detail,
       getEvents,
       handleClick,
-      handleSave,
     }
   },
 })
