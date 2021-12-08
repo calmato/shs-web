@@ -10,8 +10,28 @@ const initialState: UserState = {
   teachers: [
     {
       id: '000000000000000000001',
+      name: '中村 太郎',
       lastname: '中村',
       firstname: '太郎',
+      role: 0,
+      createdAt: '',
+      updatedAt: '',
+    },
+    {
+      id: '000000000000000000002',
+      name: '西山 幸子',
+      lastname: '西山',
+      firstname: '幸子',
+      role: 0,
+      createdAt: '',
+      updatedAt: '',
+    },
+    {
+      id: '000000000000000000003',
+      name: '鈴木 小太郎',
+      lastname: '鈴木',
+      firstname: '小太郎',
+      role: 1,
       createdAt: '',
       updatedAt: '',
     },
@@ -19,8 +39,11 @@ const initialState: UserState = {
   students: [
     {
       id: '123456789012345678901',
+      name: '浜田 二郎',
       lastname: '浜田',
       firstname: '二郎',
+      type: 1,
+      grade: 2,
       createdAt: '',
       updatedAt: '',
     },
@@ -72,12 +95,18 @@ export default class UserModule extends VuexModule {
 
   @Mutation
   private setStudents(students: Student[]): void {
-    this.students = students
+    this.students = students.map((student: Student): Student => {
+      const name: string = `${student.lastname} ${student.firstname}`
+      return { ...student, name }
+    })
   }
 
   @Mutation
   private setTeachers(teachers: Teacher[]): void {
-    this.teachers = teachers
+    this.teachers = teachers.map((teacher: Teacher): Teacher => {
+      const name: string = `${teacher.lastname} ${teacher.firstname}`
+      return { ...teacher, name }
+    })
   }
 
   @Action({})
