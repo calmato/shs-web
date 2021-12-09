@@ -1,6 +1,19 @@
 version: '3.9'
 
 services:
+  mysql:
+    container_name: mysql
+    build:
+      context: ./infra/docker/infra/mysql
+      dockerfile: Dockerfile.test
+    volumes:
+      - ./infra/mysql/test.ci.cnf:/etc/mysql/conf.d/my.cnf
+      - ./infra/mysql/schema:/docker-entrypoint-initdb.d
+    environment:
+      - MYSQL_ROOT_PASSWORD=12345678
+    ports:
+      - 3306:3306
+
   firebase:
     container_name: firebase
     build:

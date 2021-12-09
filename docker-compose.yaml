@@ -58,6 +58,49 @@ services:
       - 19001:9090
     command: make dev SERVICE=user/server
 
+  mysql:
+    container_name: mysql
+    build:
+      context: ./infra/docker/infra/mysql
+      dockerfile: Dockerfile
+    volumes:
+      - ./infra/mysql/development.cnf:/etc/mysql/conf.d/my.cnf
+      - ./infra/mysql/schema:/docker-entrypoint-initdb.d
+      - ./tmp/logs/mysql:/var/log/mysql:delegated
+      - ./tmp/data/mysql:/var/lib/mysql:delegated
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+    ports:
+      - 3316:3306
+
+  mysql_test:
+    container_name: mysql_test
+    build:
+      context: ./infra/docker/infra/mysql
+      dockerfile: Dockerfile
+    volumes:
+      - ./infra/mysql/test.cnf:/etc/mysql/conf.d/my.cnf
+      - ./infra/mysql/schema:/docker-entrypoint-initdb.d
+      - ./tmp/logs/mysql_test:/var/log/mysql:delegated
+      - ./tmp/data/mysql_test:/var/lib/mysql:delegated
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+    ports:
+      - 3326:3306
+
+  firebase_test:
+    container_name: firebase_test
+    build:
+      context: ./infra/docker/infra/firebase
+      dockerfile: Dockerfile
+    working_dir: /var/firebase
+    volumes:
+      - ./infra/firebase:/var/firebase:cached
+    ports:
+      - 4000:4000
+      - 8080:8080
+      - 9099:9099
+
   proto:
     container_name: proto
     build:
