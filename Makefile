@@ -32,13 +32,16 @@ logs:
 ##################################################
 # Container Commands - Run Container Group
 ##################################################
-.PHONY: start-api start-swagger
+.PHONY: start-api start-swagger start-test
 
 start-api:
-	docker-compose up teacher_gateway user_api
+	docker-compose up teacher_gateway user_api mysql
 
 start-swagger:
 	docker-compose up swagger_generator swagger_ui_teacher
+
+start-test:
+	docker-compose up mysql_test firebase_test
 
 ##################################################
 # Container Commands - Single

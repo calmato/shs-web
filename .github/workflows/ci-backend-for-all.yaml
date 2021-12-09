@@ -8,6 +8,11 @@ on:
     - 'infra/kubernetes/**'
 
 env:
+  TZ: 'Asia/Tokyo'
+  DB_HOST: 127.0.0.1
+  DB_PORT: 3306
+  DB_USERNAME: root
+  DB_PASSWORD: 12345678
   FIREBASE_AUTH_EMULATOR_HOST: 127.0.0.1:9099
   FIRESTORE_EMULATOR_HOST: 127.0.0.1:8080
   GCP_SERVICE_KEY_JSON: ${{ secrets.STG_GCP_SA_KEY }}
@@ -44,6 +49,19 @@ jobs:
     ############################################
     # Setup container
     ############################################
+    - name: Start MySQL container
+      working-directory: .
+      run: docker-compose -f docker-compose.ci.yaml up --build --detach mysql
+
+    - name: Wait start MySQL
+      run: |
+        #!/bin/bash
+        until mysqladmin ping -h${DB_HOST} -P${DB_PORT} -u${DB_USERNAME} -p${DB_PASSWORD}; do
+          echo 'mysql is unavailable - sleeping'
+          sleep 3
+        done
+        echo 'mysql is up - executing command'
+
     - name: Start Firebase emulator container
       working-directory: .
       run: docker-compose -f docker-compose.ci.yaml up --build --detach firebase
