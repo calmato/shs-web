@@ -60,6 +60,7 @@ services:
 
   mysql:
     container_name: mysql
+    platform: linux/x86_64
     build:
       context: ./infra/docker/infra/mysql
       dockerfile: Dockerfile
@@ -75,6 +76,7 @@ services:
 
   mysql_test:
     container_name: mysql_test
+    platform: linux/x86_64
     build:
       context: ./infra/docker/infra/mysql
       dockerfile: Dockerfile
@@ -90,6 +92,7 @@ services:
 
   firebase_test:
     container_name: firebase_test
+    platform: linux/x86_64
     build:
       context: ./infra/docker/infra/firebase
       dockerfile: Dockerfile
@@ -103,6 +106,7 @@ services:
 
   proto:
     container_name: proto
+    platform: linux/x86_64
     build:
       context: ./infra/docker/infra/proto
       dockerfile: Dockerfile
