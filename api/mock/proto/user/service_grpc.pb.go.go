@@ -36,6 +36,26 @@ func (m *MockUserServiceClient) EXPECT() *MockUserServiceClientMockRecorder {
 	return m.recorder
 }
 
+// CreateTeacher mocks base method.
+func (m *MockUserServiceClient) CreateTeacher(ctx context.Context, in *user.CreateTeacherRequest, opts ...grpc.CallOption) (*user.CreateTeacherResponse, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "CreateTeacher", varargs...)
+	ret0, _ := ret[0].(*user.CreateTeacherResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CreateTeacher indicates an expected call of CreateTeacher.
+func (mr *MockUserServiceClientMockRecorder) CreateTeacher(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateTeacher", reflect.TypeOf((*MockUserServiceClient)(nil).CreateTeacher), varargs...)
+}
+
 // Hello mocks base method.
 func (m *MockUserServiceClient) Hello(ctx context.Context, in *user.HelloRequest, opts ...grpc.CallOption) (*user.HelloResponse, error) {
 	m.ctrl.T.Helper()
@@ -77,6 +97,21 @@ func NewMockUserServiceServer(ctrl *gomock.Controller) *MockUserServiceServer {
 // EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockUserServiceServer) EXPECT() *MockUserServiceServerMockRecorder {
 	return m.recorder
+}
+
+// CreateTeacher mocks base method.
+func (m *MockUserServiceServer) CreateTeacher(arg0 context.Context, arg1 *user.CreateTeacherRequest) (*user.CreateTeacherResponse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateTeacher", arg0, arg1)
+	ret0, _ := ret[0].(*user.CreateTeacherResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CreateTeacher indicates an expected call of CreateTeacher.
+func (mr *MockUserServiceServerMockRecorder) CreateTeacher(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateTeacher", reflect.TypeOf((*MockUserServiceServer)(nil).CreateTeacher), arg0, arg1)
 }
 
 // Hello mocks base method.

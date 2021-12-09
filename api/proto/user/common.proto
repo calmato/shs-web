@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package user;
+
+option go_package = "github.com/calmato/shs-web/api/proto/user";
+
+enum Role {
+  ROLE_TEACHER       = 0; // 講師
+  ROLE_ADMINISTRATOR = 1; // 管理者
+}

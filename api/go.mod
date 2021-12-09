@@ -9,13 +9,16 @@ require (
 	github.com/envoyproxy/protoc-gen-validate v0.1.0
 	github.com/gin-contrib/zap v0.0.1
 	github.com/gin-gonic/gin v1.7.4
+	github.com/go-sql-driver/mysql v1.6.0
 	github.com/golang/mock v1.4.4
 	github.com/google/uuid v1.1.2
 	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0
 	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.0.0-rc.2
+	github.com/jbenet/go-base58 v0.0.0-20150317085156-6237cf65f3a6
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/prometheus/client_golang v1.11.0
 	github.com/rs/cors v1.8.0
+	github.com/satori/go.uuid v1.2.0
 	github.com/stretchr/testify v1.7.0
 	go.uber.org/zap v1.19.1
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c
@@ -23,6 +26,8 @@ require (
 	google.golang.org/genproto v0.0.0-20210222152913-aa3ee6e6a81c
 	google.golang.org/grpc v1.35.0
 	google.golang.org/protobuf v1.26.0-rc.1
+	gorm.io/driver/mysql v1.2.1
+	gorm.io/gorm v1.22.4
 )
 
 require (
@@ -38,6 +43,8 @@ require (
 	github.com/golang/protobuf v1.4.3 // indirect
 	github.com/google/go-cmp v0.5.5 // indirect
 	github.com/googleapis/gax-go/v2 v2.0.5 // indirect
+	github.com/jinzhu/inflection v1.0.0 // indirect
+	github.com/jinzhu/now v1.1.3 // indirect
 	github.com/json-iterator/go v1.1.11 // indirect
 	github.com/jstemmer/go-junit-report v0.9.1 // indirect
 	github.com/leodido/go-urn v1.2.0 // indirect

@@ -9,10 +9,13 @@ import (
 	"github.com/calmato/shs-web/api/proto/user"
 )
 
+const eqFieldMessage = "%s must be a match %s"
+
 var ErrRequestValidation = errors.New("validation: invalid argument")
 
 type RequestValidation interface {
 	Hello(req *user.HelloRequest) error
+	CreateTeacher(req *user.CreateTeacherRequest) error
 }
 
 type requestValidation struct{}
