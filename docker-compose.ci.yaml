@@ -5,7 +5,7 @@ services:
     container_name: mysql
     build:
       context: ./infra/docker/infra/mysql
-      dockerfile: Dockerfile.test
+      dockerfile: Dockerfile
     volumes:
       - ./infra/mysql/test.ci.cnf:/etc/mysql/conf.d/my.cnf
       - ./infra/mysql/schema:/docker-entrypoint-initdb.d
