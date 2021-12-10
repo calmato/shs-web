@@ -1,7 +1,7 @@
 ##################################################
 # Container Commands - Run All
 ##################################################
-.PHONY: setup build install start stop down remove logs
+.PHONY: setup build install start stop down remove logs ps
 
 setup: build install proto swagger
 	if [ ! -f $(PWD)/.env ]; then \
@@ -28,6 +28,9 @@ remove:
 
 logs:
 	docker-compose logs
+
+ps:
+	docker-compose ps
 
 ##################################################
 # Container Commands - Run Container Group
