@@ -42,6 +42,14 @@ type testOptions struct {
 
 type testOption func(opt *testOptions)
 
+func withNow(now time.Time) testOption {
+	return func(opts *testOptions) {
+		opts.now = func() time.Time {
+			return now
+		}
+	}
+}
+
 func newMocks(ctrl *gomock.Controller) *mocks {
 	return &mocks{
 		userService: mock_user.NewMockUserServiceClient(ctrl),
