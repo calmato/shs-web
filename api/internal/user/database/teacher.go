@@ -12,10 +12,10 @@ import (
 
 const teacherTable = "teachers"
 
-var teacherFields = []string{
-	"id", "last_name", "first_name", "last_name_kana", "first_name_kana",
-	"mail", "role", "created_at", "updated_at", "deleted_at",
-}
+// var teacherFields = []string{
+// 	"id", "last_name", "first_name", "last_name_kana", "first_name_kana",
+// 	"mail", "role", "created_at", "updated_at", "deleted_at",
+// }
 
 type teacher struct {
 	db   *database.Client
