@@ -56,7 +56,9 @@ func NewAPIV1Handler(params *Params) APIV1Handler {
  */
 func (h *apiV1Handler) AuthRoutes(rg *gin.RouterGroup) {}
 
-func (h *apiV1Handler) AdminRoutes(rg *gin.RouterGroup) {}
+func (h *apiV1Handler) AdminRoutes(rg *gin.RouterGroup) {
+	rg.POST("/v1/teachers", h.CreateTeacher)
+}
 
 func (h *apiV1Handler) NoAuthRoutes(rg *gin.RouterGroup) {
 	rg.POST("/v1/hello", h.Hello)
