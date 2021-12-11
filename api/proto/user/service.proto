@@ -2,12 +2,16 @@ syntax = "proto3";
 
 package user;
 
-option go_package = "github.com/camato/shs-web/api/proto/user";
+option go_package = "github.com/calmato/shs-web/api/proto/user";
 
 import "github.com/envoyproxy/protoc-gen-validate/validate/validate.proto";
 
+import "user/common.proto";
+import "user/teacher.proto";
+
 service UserService {
-  rpc Hello(HelloRequest) returns (HelloResponse) {};
+  rpc Hello(HelloRequest) returns (HelloResponse);
+  rpc CreateTeacher(CreateTeacherRequest) returns (CreateTeacherResponse);
 }
 
 message HelloRequest {
@@ -16,4 +20,19 @@ message HelloRequest {
 
 message HelloResponse {
   string message = 1;
+}
+
+message CreateTeacherRequest {
+  string last_name             = 1 [(validate.rules).string = { min_len: 1 max_len: 16 }];
+  string first_name            = 2 [(validate.rules).string = { min_len: 1 max_len: 16 }];
+  string last_name_kana        = 3 [(validate.rules).string = { min_len: 1 max_len: 32, pattern: "^[ぁ-ゔー]*$" }];
+  string first_name_kana       = 4 [(validate.rules).string = { min_len: 1 max_len: 32, pattern: "^[ぁ-ゔー]*$" }];
+  string mail                  = 5 [(validate.rules).string = { min_len: 1 max_len: 256 email: true }];
+  Role   role                  = 6 [(validate.rules).enum = { defined_only: true }];
+  string password              = 7 [(validate.rules).string = { min_len: 6 max_len: 32 pattern: "^[a-zA-Z0-9_!@#$_%^&*.?()-=+]*$" }];
+  string password_confirmation = 8 [(validate.rules).string = { min_len: 1 }];
+}
+
+message CreateTeacherResponse {
+  Teacher teacher = 1;
 }

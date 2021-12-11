@@ -8,7 +8,9 @@ import (
 	"testing"
 	"time"
 
+	"github.com/calmato/shs-web/api/internal/user/database"
 	"github.com/calmato/shs-web/api/internal/user/validation"
+	mock_database "github.com/calmato/shs-web/api/mock/user/database"
 	mock_validation "github.com/calmato/shs-web/api/mock/user/validation"
 	"github.com/calmato/shs-web/api/pkg/jst"
 	"github.com/golang/mock/gomock"
@@ -24,7 +26,12 @@ import (
 var errmock = errors.New("some error")
 
 type mocks struct {
+	db        *dbMocks
 	validator *mock_validation.MockRequestValidation
+}
+
+type dbMocks struct {
+	Teacher *mock_database.MockTeacher
 }
 
 type testResponse struct {
@@ -41,7 +48,14 @@ type grpcCaller func(ctx context.Context, service *userService) (proto.Message, 
 
 func newMocks(ctrl *gomock.Controller) *mocks {
 	return &mocks{
+		db:        newDBMocks(ctrl),
 		validator: mock_validation.NewMockRequestValidation(ctrl),
+	}
+}
+
+func newDBMocks(ctrl *gomock.Controller) *dbMocks {
+	return &dbMocks{
+		Teacher: mock_database.NewMockTeacher(ctrl),
 	}
 }
 
@@ -51,7 +65,10 @@ func newUserService(mocks *mocks, opts *testOptions) *userService {
 		logger:      zap.NewNop(),
 		sharedGroup: &singleflight.Group{},
 		waitGroup:   &sync.WaitGroup{},
-		validator:   mocks.validator,
+		db: &database.Database{
+			Teacher: mocks.db.Teacher,
+		},
+		validator: mocks.validator,
 	}
 }
 
@@ -119,9 +136,19 @@ func TestGRPCError(t *testing.T) {
 			expect: codes.InvalidArgument,
 		},
 		{
+			name:   "not found",
+			err:    fmt.Errorf("%w: %s", database.ErrNotFound, "test"),
+			expect: codes.NotFound,
+		},
+		{
+			name:   "unimplemented",
+			err:    fmt.Errorf("%w: %s", database.ErrNotImplemented, "test"),
+			expect: codes.Unimplemented,
+		},
+		{
 			name:   "other error",
 			err:    errmock,
-			expect: codes.Unknown,
+			expect: codes.Internal,
 		},
 	}
 

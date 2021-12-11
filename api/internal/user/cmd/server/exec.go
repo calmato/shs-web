@@ -8,6 +8,7 @@ import (
 	"time"
 
 	config "github.com/calmato/shs-web/api/config/user/server"
+	"github.com/calmato/shs-web/api/pkg/database"
 	"github.com/calmato/shs-web/api/pkg/firebase"
 	"github.com/calmato/shs-web/api/pkg/firebase/authentication"
 	"github.com/calmato/shs-web/api/pkg/firebase/storage"
@@ -54,6 +55,20 @@ func Exec() error {
 		return err
 	}
 
+	// MySQLの設定
+	dbParams := &database.Params{
+		Socket:   conf.DBSocket,
+		Host:     conf.DBHost,
+		Port:     conf.DBPort,
+		Database: conf.DBDatabase,
+		Username: conf.DBUsername,
+		Password: conf.DBPassword,
+	}
+	db, err := database.NewClient(dbParams)
+	if err != nil {
+		return err
+	}
+
 	// Cloud Storageの設定
 	gcs, err := storage.NewClient(ctx, fb.App, conf.GCPStorageBucketName)
 	if err != nil {
@@ -64,6 +79,7 @@ func Exec() error {
 	regParams := &params{
 		logger:  logger,
 		auth:    fa,
+		db:      db,
 		storage: gcs,
 	}
 	reg := newRegistry(regParams)
