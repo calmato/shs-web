@@ -38,7 +38,13 @@ func NewDatabase(params *Params) *Database {
 }
 
 type Teacher interface {
+	List(ctx context.Context, p *ListTeachersParams, fields ...string) (entity.Teachers, error)
 	Create(ctx context.Context, t *entity.Teacher) error
+}
+
+type ListTeachersParams struct {
+	Limit  int
+	Offset int
 }
 
 func dbError(err error) error {

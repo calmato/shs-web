@@ -61,3 +61,17 @@ func (mr *MockRequestValidationMockRecorder) Hello(req interface{}) *gomock.Call
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Hello", reflect.TypeOf((*MockRequestValidation)(nil).Hello), req)
 }
+
+// ListTeachers mocks base method.
+func (m *MockRequestValidation) ListTeachers(req *user.ListTeachersRequest) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ListTeachers", req)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// ListTeachers indicates an expected call of ListTeachers.
+func (mr *MockRequestValidationMockRecorder) ListTeachers(req interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListTeachers", reflect.TypeOf((*MockRequestValidation)(nil).ListTeachers), req)
+}

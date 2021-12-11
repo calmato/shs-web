@@ -12,10 +12,10 @@ import (
 
 const teacherTable = "teachers"
 
-// var teacherFields = []string{
-// 	"id", "last_name", "first_name", "last_name_kana", "first_name_kana",
-// 	"mail", "role", "created_at", "updated_at", "deleted_at",
-// }
+var teacherFields = []string{
+	"id", "last_name", "first_name", "last_name_kana", "first_name_kana",
+	"mail", "role", "created_at", "updated_at", "deleted_at",
+}
 
 type teacher struct {
 	db   *database.Client
@@ -29,6 +29,24 @@ func NewTeacher(db *database.Client, auth authentication.Client) Teacher {
 		auth: auth,
 		now:  jst.Now,
 	}
+}
+
+func (t *teacher) List(ctx context.Context, params *ListTeachersParams, fields ...string) (entity.Teachers, error) {
+	var teachers entity.Teachers
+	if len(fields) == 0 {
+		fields = teacherFields
+	}
+
+	stmt := t.db.DB.Table(teacherTable).Select(fields)
+	if params.Limit > 0 {
+		stmt.Limit(params.Limit)
+	}
+	if params.Offset > 0 {
+		stmt.Offset(params.Offset)
+	}
+
+	err := stmt.Find(&teachers).Error
+	return teachers, dbError(err)
 }
 
 func (t *teacher) Create(ctx context.Context, teacher *entity.Teacher) error {

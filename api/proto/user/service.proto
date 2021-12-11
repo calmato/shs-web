@@ -11,6 +11,7 @@ import "user/teacher.proto";
 
 service UserService {
   rpc Hello(HelloRequest) returns (HelloResponse);
+  rpc ListTeachers(ListTeachersRequest) returns (ListTeachersResponse);
   rpc CreateTeacher(CreateTeacherRequest) returns (CreateTeacherResponse);
 }
 
@@ -20,6 +21,15 @@ message HelloRequest {
 
 message HelloResponse {
   string message = 1;
+}
+
+message ListTeachersRequest {
+  int64 limit  = 1 [(validate.rules).int64 = { gte: 0 }];
+  int64 offset = 2 [(validate.rules).int64 = { gte: 0 }];
+}
+
+message ListTeachersResponse {
+  repeated Teacher teachers = 1;
 }
 
 message CreateTeacherRequest {
