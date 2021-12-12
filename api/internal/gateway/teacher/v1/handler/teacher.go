@@ -27,7 +27,7 @@ func (h *apiV1Handler) CreateTeacher(ctx *gin.Context) {
 			LastNameKana:  "なかむら",
 			FirstNameKana: "こうだい",
 			Mail:          "teacher-test001@calmato.jp",
-			Role:          entity.Role(entity.RoleTeacher),
+			Role:          entity.RoleTeacher,
 			CreatedAt:     h.now().String(),
 			UpdatedAt:     h.now().String(),
 		},

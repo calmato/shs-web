@@ -22,7 +22,7 @@ func (h *apiV1Handler) GetAuth(ctx *gin.Context) {
 			LastNameKana:  "なかむら",
 			FirstNameKana: "こうだい",
 			Mail:          "teacher-test001@calmato.jp",
-			Role:          entity.Role(entity.RoleTeacher),
+			Role:          entity.RoleTeacher,
 		},
 	}
 	ctx.JSON(http.StatusOK, res)

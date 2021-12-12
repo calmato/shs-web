@@ -31,7 +31,7 @@ func TestGetAuth(t *testing.T) {
 						LastNameKana:  "なかむら",
 						FirstNameKana: "こうだい",
 						Mail:          "teacher-test001@calmato.jp",
-						Role:          entity.Role(entity.RoleTeacher),
+						Role:          entity.RoleTeacher,
 					},
 				},
 			},
