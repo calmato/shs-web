@@ -73,6 +73,7 @@ func TestTeacher_List(t *testing.T) {
 	for _, tt := range tests {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			ctx, cancel := context.WithCancel(context.Background())
 			defer cancel()
 
@@ -85,6 +86,81 @@ func TestTeacher_List(t *testing.T) {
 				teacher.CreatedAt = actual[i].CreatedAt // ignore
 				teacher.UpdatedAt = actual[i].UpdatedAt // ignore
 				assert.Contains(t, actual, tt.want.teachers[i])
+			}
+		})
+	}
+}
+
+func TestTeacher_Get(t *testing.T) {
+	m, err := newMock()
+	require.NoError(t, err)
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	_ = m.dbDelete(ctx, teacherTable)
+
+	now := jst.Now()
+
+	teacher := testTeacher("cvcTyJFfgoDQrqC1KDHbRe", "teacher01@calmato.jp", now)
+	err = m.db.DB.Create(&teacher).Error
+	require.NoError(t, err)
+
+	type args struct {
+		id string
+	}
+	type want struct {
+		teacher *entity.Teacher
+		isErr   bool
+	}
+	tests := []struct {
+		name  string
+		setup func(ctx context.Context, t *testing.T, m *mocks)
+		args  args
+		want  want
+	}{
+		{
+			name:  "success",
+			setup: func(ctx context.Context, t *testing.T, m *mocks) {},
+			args: args{
+				id: "cvcTyJFfgoDQrqC1KDHbRe",
+			},
+			want: want{
+				teacher: teacher,
+				isErr:   false,
+			},
+		},
+		{
+			name:  "not found",
+			setup: func(ctx context.Context, t *testing.T, m *mocks) {},
+			args: args{
+				id: "jx2NB7t3xodUu53LYtYTf2",
+			},
+			want: want{
+				teacher: nil,
+				isErr:   true,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			ctx, cancel := context.WithCancel(context.Background())
+			defer cancel()
+
+			tt.setup(ctx, t, m)
+
+			db := NewTeacher(m.db, m.auth)
+			actual, err := db.Get(ctx, tt.args.id)
+			if tt.want.isErr {
+				assert.Error(t, err)
+				assert.Nil(t, actual)
+			} else {
+				teacher.CreatedAt = actual.CreatedAt // ignore
+				teacher.UpdatedAt = actual.UpdatedAt // ignore
+				assert.NoError(t, err)
+				assert.Equal(t, tt.want.teacher, actual)
 			}
 		})
 	}

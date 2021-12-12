@@ -31,6 +31,22 @@ func (s *userService) ListTeachers(
 	return res, nil
 }
 
+func (s *userService) GetTeacher(ctx context.Context, req *user.GetTeacherRequest) (*user.GetTeacherResponse, error) {
+	if err := s.validator.GetTeacher(req); err != nil {
+		return nil, gRPCError(err)
+	}
+
+	teacher, err := s.db.Teacher.Get(ctx, req.Id)
+	if err != nil {
+		return nil, gRPCError(err)
+	}
+
+	res := &user.GetTeacherResponse{
+		Teacher: teacher.Proto(),
+	}
+	return res, nil
+}
+
 func (s *userService) CreateTeacher(
 	ctx context.Context, req *user.CreateTeacherRequest,
 ) (*user.CreateTeacherResponse, error) {

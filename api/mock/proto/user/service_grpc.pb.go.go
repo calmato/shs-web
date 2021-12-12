@@ -56,6 +56,26 @@ func (mr *MockUserServiceClientMockRecorder) CreateTeacher(ctx, in interface{}, 
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateTeacher", reflect.TypeOf((*MockUserServiceClient)(nil).CreateTeacher), varargs...)
 }
 
+// GetTeacher mocks base method.
+func (m *MockUserServiceClient) GetTeacher(ctx context.Context, in *user.GetTeacherRequest, opts ...grpc.CallOption) (*user.GetTeacherResponse, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "GetTeacher", varargs...)
+	ret0, _ := ret[0].(*user.GetTeacherResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetTeacher indicates an expected call of GetTeacher.
+func (mr *MockUserServiceClientMockRecorder) GetTeacher(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTeacher", reflect.TypeOf((*MockUserServiceClient)(nil).GetTeacher), varargs...)
+}
+
 // Hello mocks base method.
 func (m *MockUserServiceClient) Hello(ctx context.Context, in *user.HelloRequest, opts ...grpc.CallOption) (*user.HelloResponse, error) {
 	m.ctrl.T.Helper()
@@ -132,6 +152,21 @@ func (m *MockUserServiceServer) CreateTeacher(arg0 context.Context, arg1 *user.C
 func (mr *MockUserServiceServerMockRecorder) CreateTeacher(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateTeacher", reflect.TypeOf((*MockUserServiceServer)(nil).CreateTeacher), arg0, arg1)
+}
+
+// GetTeacher mocks base method.
+func (m *MockUserServiceServer) GetTeacher(arg0 context.Context, arg1 *user.GetTeacherRequest) (*user.GetTeacherResponse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetTeacher", arg0, arg1)
+	ret0, _ := ret[0].(*user.GetTeacherResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetTeacher indicates an expected call of GetTeacher.
+func (mr *MockUserServiceServerMockRecorder) GetTeacher(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTeacher", reflect.TypeOf((*MockUserServiceServer)(nil).GetTeacher), arg0, arg1)
 }
 
 // Hello mocks base method.

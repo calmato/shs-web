@@ -2,7 +2,7 @@ package jst
 
 import "time"
 
-var jst = time.FixedZone("JST", 9*60*60)
+var jst = time.FixedZone("Asia/Tokyo", 9*60*60)
 
 func Now() time.Time {
 	return time.Now().In(jst)

@@ -16,6 +16,7 @@ var ErrRequestValidation = errors.New("validation: invalid argument")
 type RequestValidation interface {
 	Hello(req *user.HelloRequest) error
 	ListTeachers(req *user.ListTeachersRequest) error
+	GetTeacher(req *user.GetTeacherRequest) error
 	CreateTeacher(req *user.CreateTeacherRequest) error
 }
 
