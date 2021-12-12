@@ -10,8 +10,16 @@ func newRouter(reg *registry, opts ...gin.HandlerFunc) *gin.Engine {
 	rt := gin.Default()
 	rt.Use(opts...)
 
-	reg.v1.AdminRoutes(rt.Group(""))
-	reg.v1.AuthRoutes(rt.Group(""))
+	// auth required routes
+	authV1Group := rt.Group("")
+	authV1Group.Use(reg.v1.Authentication())
+	reg.v1.AuthRoutes(authV1Group)
+
+	// TODO: auth required with admin role routes
+	adminV1Group := rt.Group("")
+	reg.v1.AdminRoutes(adminV1Group)
+
+	// public routes
 	reg.v1.NoAuthRoutes(rt.Group(""))
 
 	// other routes

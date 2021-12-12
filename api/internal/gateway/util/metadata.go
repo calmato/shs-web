@@ -2,12 +2,26 @@ package util
 
 import (
 	"context"
+	"errors"
+	"strings"
 
 	"github.com/calmato/shs-web/api/pkg/metadata"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	gmd "google.golang.org/grpc/metadata"
 )
+
+var errNotExistsAuthorizationHeader = errors.New("util: authorization header is not contain")
+
+func GetAuthToken(c *gin.Context) (string, error) {
+	authorization := c.GetHeader("Authorization")
+	if authorization == "" {
+		return "", errNotExistsAuthorizationHeader
+	}
+
+	token := strings.Replace(authorization, "Bearer ", "", 1)
+	return token, nil
+}
 
 func SetMetadata(c *gin.Context) context.Context {
 	ctx := metadata.GinContextToContext(c)
