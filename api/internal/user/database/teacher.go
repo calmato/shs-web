@@ -49,6 +49,22 @@ func (t *teacher) List(ctx context.Context, params *ListTeachersParams, fields .
 	return teachers, dbError(err)
 }
 
+func (t *teacher) Get(ctx context.Context, id string, fields ...string) (*entity.Teacher, error) {
+	var teacher *entity.Teacher
+	if len(fields) == 0 {
+		fields = teacherFields
+	}
+
+	stmt := t.db.DB.Table(teacherTable).Select(fields).
+		Where("id = ?", id)
+
+	err := stmt.First(&teacher).Error
+	if err != nil {
+		return nil, dbError(err)
+	}
+	return teacher, nil
+}
+
 func (t *teacher) Create(ctx context.Context, teacher *entity.Teacher) error {
 	teacher.CreatedAt = t.now()
 	teacher.UpdatedAt = t.now()

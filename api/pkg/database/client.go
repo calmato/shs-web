@@ -3,6 +3,7 @@ package database
 import (
 	"database/sql"
 	"fmt"
+	"strings"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -21,6 +22,7 @@ type Params struct {
 	Database      string
 	Username      string
 	Password      string
+	TimeZone      string
 	DisableLogger bool
 }
 
@@ -72,12 +74,13 @@ func getConfig(params *Params) string {
 	switch params.Socket {
 	case "tcp":
 		return fmt.Sprintf(
-			"%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
+			"%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=%s",
 			params.Username,
 			params.Password,
 			params.Host,
 			params.Port,
 			params.Database,
+			getTimeZone(params.TimeZone),
 		)
 	case "unix":
 		return fmt.Sprintf(
@@ -90,4 +93,11 @@ func getConfig(params *Params) string {
 	default:
 		return ""
 	}
+}
+
+func getTimeZone(tz string) string {
+	if tz == "" {
+		tz = "Asia/Tokyo"
+	}
+	return strings.Replace(tz, "/", "%2F", -1)
 }

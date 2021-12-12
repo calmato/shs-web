@@ -12,6 +12,7 @@ import "user/teacher.proto";
 service UserService {
   rpc Hello(HelloRequest) returns (HelloResponse);
   rpc ListTeachers(ListTeachersRequest) returns (ListTeachersResponse);
+  rpc GetTeacher(GetTeacherRequest) returns (GetTeacherResponse);
   rpc CreateTeacher(CreateTeacherRequest) returns (CreateTeacherResponse);
 }
 
@@ -30,6 +31,14 @@ message ListTeachersRequest {
 
 message ListTeachersResponse {
   repeated Teacher teachers = 1;
+}
+
+message GetTeacherRequest {
+  string id = 1 [(validate.rules).string = { min_len: 1 }];
+}
+
+message GetTeacherResponse {
+  Teacher teacher = 1;
 }
 
 message CreateTeacherRequest {

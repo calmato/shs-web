@@ -48,6 +48,20 @@ func (mr *MockRequestValidationMockRecorder) CreateTeacher(req interface{}) *gom
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateTeacher", reflect.TypeOf((*MockRequestValidation)(nil).CreateTeacher), req)
 }
 
+// GetTeacher mocks base method.
+func (m *MockRequestValidation) GetTeacher(req *user.GetTeacherRequest) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetTeacher", req)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// GetTeacher indicates an expected call of GetTeacher.
+func (mr *MockRequestValidationMockRecorder) GetTeacher(req interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTeacher", reflect.TypeOf((*MockRequestValidation)(nil).GetTeacher), req)
+}
+
 // Hello mocks base method.
 func (m *MockRequestValidation) Hello(req *user.HelloRequest) error {
 	m.ctrl.T.Helper()

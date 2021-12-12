@@ -104,6 +104,87 @@ func TestListTeachers(t *testing.T) {
 	}
 }
 
+func TestGetTeacher(t *testing.T) {
+	t.Parallel()
+	now := jst.Now()
+
+	req := &user.GetTeacherRequest{
+		Id: "kSByoE6FetnPs5Byk3a9Zx",
+	}
+	teacher := &entity.Teacher{
+		ID:            "kSByoE6FetnPs5Byk3a9Zx",
+		LastName:      "中村",
+		FirstName:     "広大",
+		LastNameKana:  "なかむら",
+		FirstNameKana: "こうだい",
+		Mail:          "teacher-test001@calmato.jp",
+		Role:          int32(user.Role_ROLE_TEACHER),
+		CreatedAt:     now,
+		UpdatedAt:     now,
+	}
+
+	tests := []struct {
+		name   string
+		setup  func(ctx context.Context, t *testing.T, mocks *mocks)
+		req    *user.GetTeacherRequest
+		expect *testResponse
+	}{
+		{
+			name: "success",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				mocks.validator.EXPECT().GetTeacher(req).Return(nil)
+				mocks.db.Teacher.EXPECT().Get(ctx, "kSByoE6FetnPs5Byk3a9Zx").Return(teacher, nil)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.OK,
+				body: &user.GetTeacherResponse{
+					Teacher: &user.Teacher{
+						Id:            "kSByoE6FetnPs5Byk3a9Zx",
+						LastName:      "中村",
+						FirstName:     "広大",
+						LastNameKana:  "なかむら",
+						FirstNameKana: "こうだい",
+						Mail:          "teacher-test001@calmato.jp",
+						Role:          user.Role_ROLE_TEACHER,
+						CreatedAt:     now.Unix(),
+						UpdatedAt:     now.Unix(),
+					},
+				},
+			},
+		},
+		{
+			name: "invalid argument",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				req := &user.GetTeacherRequest{}
+				mocks.validator.EXPECT().GetTeacher(req).Return(validation.ErrRequestValidation)
+			},
+			req: &user.GetTeacherRequest{},
+			expect: &testResponse{
+				code: codes.InvalidArgument,
+			},
+		},
+		{
+			name: "failed to list teacher",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				mocks.validator.EXPECT().GetTeacher(req).Return(nil)
+				mocks.db.Teacher.EXPECT().Get(ctx, "kSByoE6FetnPs5Byk3a9Zx").Return(nil, errmock)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.Internal,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, testGRPC(tt.setup, tt.expect, func(ctx context.Context, service *userService) (proto.Message, error) {
+			return service.GetTeacher(ctx, tt.req)
+		}))
+	}
+}
+
 func TestCreateTeacher(t *testing.T) {
 	t.Parallel()
 
