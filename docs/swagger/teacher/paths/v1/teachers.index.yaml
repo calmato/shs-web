@@ -1,13 +1,33 @@
+get:
+  summary: 講師一覧取得
+  tags:
+  - Teacher
+  security:
+    - BearerAuth: []
+  responses:
+    200:
+      description: A successful response.
+      content:
+        application/json:
+          schema:
+            $ref: './../../openapi.yaml#/components/schemas/v1TeachersResponse'
+    default:
+      description: An unexpected error response.
+      content:
+        application/json:
+          schema:
+            $ref: './../../openapi.yaml#/components/schemas/errorResponse'
 post:
   summary: 講師登録
   tags:
-  - UserService
+  - Teacher
   requestBody:
     required: true
     content:
       application/json:
         schema:
           $ref: './../../openapi.yaml#/components/schemas/v1CreateTeacherRequest'
+  responses:
     200:
       description: A successful response.
       content:
@@ -20,4 +40,3 @@ post:
         application/json:
           schema:
             $ref: './../../openapi.yaml#/components/schemas/errorResponse'
-

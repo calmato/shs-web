@@ -1,20 +1,16 @@
-post:
-  summary: サンプルAPI TODO:不要になったら削除
+get:
+  summary: ユーザー情報取得
   tags:
-  - UserService
-  requestBody:
-    required: true
-    content:
-      application/json:
-        schema:
-          $ref: './../../openapi.yaml#/components/schemas/v1HelloRequest'
+  - Auth
+  security:
+    - BearerAuth: []
   responses:
     200:
       description: A successful response.
       content:
         application/json:
           schema:
-            $ref: './../../openapi.yaml#/components/schemas/v1HelloResponse'
+            $ref: './../../openapi.yaml#/components/schemas/v1AuthResponse'
     default:
       description: An unexpected error response.
       content:

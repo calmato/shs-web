@@ -1,6 +1,0 @@
-helloRequest:
-  type: object
-  properties:
-    name:
-      type: string
-      description: 名前
