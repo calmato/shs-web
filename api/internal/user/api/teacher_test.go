@@ -4,12 +4,105 @@ import (
 	"context"
 	"testing"
 
+	"github.com/calmato/shs-web/api/internal/user/database"
+	"github.com/calmato/shs-web/api/internal/user/entity"
 	"github.com/calmato/shs-web/api/internal/user/validation"
+	"github.com/calmato/shs-web/api/pkg/jst"
 	"github.com/calmato/shs-web/api/proto/user"
 	"github.com/golang/mock/gomock"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/protobuf/proto"
 )
+
+func TestListTeachers(t *testing.T) {
+	t.Parallel()
+	now := jst.Now()
+
+	req := &user.ListTeachersRequest{
+		Limit:  30,
+		Offset: 0,
+	}
+	params := &database.ListTeachersParams{
+		Limit:  30,
+		Offset: 0,
+	}
+	teachers := entity.Teachers{
+		{
+			ID:            "kSByoE6FetnPs5Byk3a9Zx",
+			LastName:      "中村",
+			FirstName:     "広大",
+			LastNameKana:  "なかむら",
+			FirstNameKana: "こうだい",
+			Mail:          "teacher-test001@calmato.jp",
+			Role:          int32(user.Role_ROLE_TEACHER),
+			CreatedAt:     now,
+			UpdatedAt:     now,
+		},
+	}
+
+	tests := []struct {
+		name   string
+		setup  func(ctx context.Context, t *testing.T, mocks *mocks)
+		req    *user.ListTeachersRequest
+		expect *testResponse
+	}{
+		{
+			name: "success",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				mocks.validator.EXPECT().ListTeachers(req).Return(nil)
+				mocks.db.Teacher.EXPECT().List(ctx, params).Return(teachers, nil)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.OK,
+				body: &user.ListTeachersResponse{
+					Teachers: []*user.Teacher{
+						{
+							Id:            "kSByoE6FetnPs5Byk3a9Zx",
+							LastName:      "中村",
+							FirstName:     "広大",
+							LastNameKana:  "なかむら",
+							FirstNameKana: "こうだい",
+							Mail:          "teacher-test001@calmato.jp",
+							Role:          user.Role_ROLE_TEACHER,
+							CreatedAt:     now.Unix(),
+							UpdatedAt:     now.Unix(),
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "invalid argument",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				req := &user.ListTeachersRequest{}
+				mocks.validator.EXPECT().ListTeachers(req).Return(validation.ErrRequestValidation)
+			},
+			req: &user.ListTeachersRequest{},
+			expect: &testResponse{
+				code: codes.InvalidArgument,
+			},
+		},
+		{
+			name: "failed to list teacher",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				mocks.validator.EXPECT().ListTeachers(req).Return(nil)
+				mocks.db.Teacher.EXPECT().List(ctx, params).Return(nil, errmock)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.Internal,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, testGRPC(tt.setup, tt.expect, func(ctx context.Context, service *userService) (proto.Message, error) {
+			return service.ListTeachers(ctx, tt.req)
+		}))
+	}
+}
 
 func TestCreateTeacher(t *testing.T) {
 	t.Parallel()

@@ -9,6 +9,51 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestListTeachers(t *testing.T) {
+	t.Parallel()
+	validator := NewRequestValidation()
+
+	tests := []struct {
+		name  string
+		req   *user.ListTeachersRequest
+		isErr bool
+	}{
+		{
+			name: "success",
+			req: &user.ListTeachersRequest{
+				Limit:  30,
+				Offset: 0,
+			},
+			isErr: false,
+		},
+		{
+			name: "Lismit is gte 0",
+			req: &user.ListTeachersRequest{
+				Limit:  -1,
+				Offset: 0,
+			},
+			isErr: true,
+		},
+		{
+			name: "Offset is gte 0",
+			req: &user.ListTeachersRequest{
+				Limit:  30,
+				Offset: -1,
+			},
+			isErr: true,
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			err := validator.ListTeachers(tt.req)
+			assert.Equal(t, tt.isErr, err != nil, err)
+		})
+	}
+}
+
 func TestCreateTeacher(t *testing.T) {
 	t.Parallel()
 	validator := NewRequestValidation()

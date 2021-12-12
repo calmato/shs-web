@@ -8,6 +8,7 @@ import (
 	context "context"
 	reflect "reflect"
 
+	database "github.com/calmato/shs-web/api/internal/user/database"
 	entity "github.com/calmato/shs-web/api/internal/user/entity"
 	gomock "github.com/golang/mock/gomock"
 )
@@ -47,4 +48,24 @@ func (m *MockTeacher) Create(ctx context.Context, t *entity.Teacher) error {
 func (mr *MockTeacherMockRecorder) Create(ctx, t interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockTeacher)(nil).Create), ctx, t)
+}
+
+// List mocks base method.
+func (m *MockTeacher) List(ctx context.Context, p *database.ListTeachersParams, fields ...string) (entity.Teachers, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, p}
+	for _, a := range fields {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "List", varargs...)
+	ret0, _ := ret[0].(entity.Teachers)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// List indicates an expected call of List.
+func (mr *MockTeacherMockRecorder) List(ctx, p interface{}, fields ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, p}, fields...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "List", reflect.TypeOf((*MockTeacher)(nil).List), varargs...)
 }

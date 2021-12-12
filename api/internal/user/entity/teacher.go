@@ -21,6 +21,8 @@ type Teacher struct {
 	DeletedAt     gorm.DeletedAt `gorm:"default:null"`
 }
 
+type Teachers []*Teacher
+
 func (t *Teacher) Proto() *user.Teacher {
 	return &user.Teacher{
 		Id:            t.ID,
@@ -33,4 +35,12 @@ func (t *Teacher) Proto() *user.Teacher {
 		CreatedAt:     t.CreatedAt.Unix(),
 		UpdatedAt:     t.CreatedAt.Unix(),
 	}
+}
+
+func (ts Teachers) Proto() []*user.Teacher {
+	teachers := make([]*user.Teacher, len(ts))
+	for i := range ts {
+		teachers[i] = ts[i].Proto()
+	}
+	return teachers
 }
