@@ -1,0 +1,26 @@
+get:
+  summary: 講師詳細取得
+  tags:
+  - Teacher
+  security:
+    - BearerAuth: []
+  parameters:
+    - in: path
+      name: id
+      required: true
+      schema:
+        type: string
+      description: 講師ID
+  responses:
+    200:
+      description: A successful response.
+      content:
+        application/json:
+          schema:
+            $ref: './../../openapi.yaml#/components/schemas/v1TeacherResponse'
+    default:
+      description: An unexpected error response.
+      content:
+        application/json:
+          schema:
+            $ref: './../../openapi.yaml#/components/schemas/errorResponse'

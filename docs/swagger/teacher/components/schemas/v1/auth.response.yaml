@@ -1,0 +1,33 @@
+authResponse:
+  type: object
+  properties:
+    id:
+      type: string
+      description: 講師ID
+    lastName:
+      type: string
+      description: 姓
+    firstName:
+      type: string
+      description: 名
+    lastNameKana:
+      type: string
+      description: 姓(かな)
+    firstNameKana:
+      type: string
+      description: 名(かな)
+    mail:
+      type: string
+      description: メールアドレス
+    role:
+      type: integer
+      format: int32
+      description: 権限
+  example:
+    id: 'kSByoE6FetnPs5Byk3a9Zx'
+    lastName: '中村'
+    firstName: '広大'
+    lastNameKana: 'なかむら'
+    firstNamaKana: 'こうだい'
+    mail: 'teacher-test01@calmato.jp'
+    role: 0

@@ -7,12 +7,19 @@ servers:
 - url: http://localhost:18000
   description: 開発環境
 tags:
-- name: UserService
-  description: ユーザ関連
+- name: Auth
+  description: 認証関連
+- name: Teacher
+  description: 講師関連
 paths:
-  # User Service
-  /v1/hello:
-    $ref: './paths/v1/hello.index.yaml'
+  # Auth
+  /v1/auth:
+    $ref: './paths/v1/auth.index.yaml'
+  # Teachers
+  /v1/teachers:
+    $ref: './paths/v1/teachers.index.yaml'
+  /v1/teachers/{id}:
+    $ref: './paths/v1/teachers.id.yaml'
 components:
   securitySchemes:
     BearerAuth:
@@ -23,8 +30,12 @@ components:
     errorResponse:
       $ref: './components/schemas/common.yaml#/errorResponse'
     # Request
-    v1HelloRequest:
-      $ref: './components/schemas/v1/user.request.yaml#/helloRequest'
+    v1CreateTeacherRequest:
+      $ref: './components/schemas/v1/teachers.request.yaml#/createTeacherRequest'
     # Response
-    v1HelloResponse:
-      $ref: './components/schemas/v1/user.response.yaml#/helloResponse'
+    v1AuthResponse:
+      $ref: './components/schemas/v1/auth.response.yaml#/authResponse'
+    v1TeacherResponse:
+      $ref: './components/schemas/v1/teachers.response.yaml#/teacherResponse'
+    v1TeachersResponse:
+      $ref: './components/schemas/v1/teachers.response.yaml#/teachersResponse'
