@@ -68,9 +68,7 @@ func (h *apiV1Handler) AdminRoutes(rg *gin.RouterGroup) {
 	rg.POST("/v1/teachers", h.CreateTeacher)
 }
 
-func (h *apiV1Handler) NoAuthRoutes(rg *gin.RouterGroup) {
-	rg.POST("/v1/hello", h.Hello)
-}
+func (h *apiV1Handler) NoAuthRoutes(rg *gin.RouterGroup) {}
 
 /**
  * ###############################################
