@@ -27,6 +27,8 @@ import (
 	"golang.org/x/sync/singleflight"
 )
 
+var idMock = "kSByoE6FetnPs5Byk3a9Zx"
+
 type mocks struct {
 	userService *mock_user.MockUserServiceClient
 }
@@ -130,6 +132,7 @@ func newHTTPRequest(t *testing.T, method, path string, body interface{}) *http.R
 	require.NoError(t, err, err)
 
 	req.Header.Add("Content-Type", "application/json")
+	req.Header.Add("userId", idMock)
 	return req
 }
 
@@ -161,6 +164,7 @@ func newMultipartRequest(t *testing.T, method, path, field string) *http.Request
 	require.NoError(t, err, err)
 
 	req.Header.Add("Content-Type", writer.FormDataContentType())
+	req.Header.Add("userId", idMock)
 	return req
 }
 
