@@ -10,18 +10,9 @@ import "user/common.proto";
 import "user/teacher.proto";
 
 service UserService {
-  rpc Hello(HelloRequest) returns (HelloResponse);
   rpc ListTeachers(ListTeachersRequest) returns (ListTeachersResponse);
   rpc GetTeacher(GetTeacherRequest) returns (GetTeacherResponse);
   rpc CreateTeacher(CreateTeacherRequest) returns (CreateTeacherResponse);
-}
-
-message HelloRequest {
-  string name = 1 [(validate.rules).string = {min_len: 1}];
-}
-
-message HelloResponse {
-  string message = 1;
 }
 
 message ListTeachersRequest {
