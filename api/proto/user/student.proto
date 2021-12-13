@@ -1,0 +1,17 @@
+syntax = "proto3" ;
+
+package user;
+
+option go_package = "github.com/calmato/shs-web/api/proto/user";
+
+message Student {
+  string id              = 1; // 生徒ID
+  string last_name       = 2; // 姓
+  string first_name      = 3; // 名
+  string last_name_kana  = 4; // 姓(かな)
+  string first_name_kana = 5; // 名(かな)
+  string mail            = 6; // メールアドレス
+  int4   birth_year      = 7; // 誕生年
+  int64  created_at      = 8; // 登録日時
+  int64  updated_at      = 9; // 更新日時
+}
