@@ -24,7 +24,7 @@ func TestHello(t *testing.T) {
 			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
 				in := &user.HelloRequest{Name: "test"}
 				out := &user.HelloResponse{Message: "Hello, test"}
-				mocks.userService.EXPECT().Hello(gomock.Any(), in).Return(out, nil)
+				mocks.user.EXPECT().Hello(gomock.Any(), in).Return(out, nil)
 			},
 			req: &request.HelloRequest{
 				Name: "test",

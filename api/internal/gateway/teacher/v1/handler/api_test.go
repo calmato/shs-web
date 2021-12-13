@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"mime/multipart"
@@ -27,10 +28,13 @@ import (
 	"golang.org/x/sync/singleflight"
 )
 
-var idMock = "kSByoE6FetnPs5Byk3a9Zx"
+var (
+	idmock  = "kSByoE6FetnPs5Byk3a9Zx"
+	errmock = errors.New("some error")
+)
 
 type mocks struct {
-	userService *mock_user.MockUserServiceClient
+	user *mock_user.MockUserServiceClient
 }
 
 type testResponse struct {
@@ -54,7 +58,7 @@ func withNow(now time.Time) testOption {
 
 func newMocks(ctrl *gomock.Controller) *mocks {
 	return &mocks{
-		userService: mock_user.NewMockUserServiceClient(ctrl),
+		user: mock_user.NewMockUserServiceClient(ctrl),
 	}
 }
 
@@ -64,7 +68,7 @@ func newAPIV1Handler(mocks *mocks, opts *testOptions) APIV1Handler {
 		logger:      zap.NewNop(),
 		sharedGroup: &singleflight.Group{},
 		waitGroup:   &sync.WaitGroup{},
-		user:        mocks.userService,
+		user:        mocks.user,
 	}
 }
 
@@ -132,7 +136,7 @@ func newHTTPRequest(t *testing.T, method, path string, body interface{}) *http.R
 	require.NoError(t, err, err)
 
 	req.Header.Add("Content-Type", "application/json")
-	req.Header.Add("userId", idMock)
+	req.Header.Add("userId", idmock)
 	return req
 }
 
@@ -164,7 +168,7 @@ func newMultipartRequest(t *testing.T, method, path, field string) *http.Request
 	require.NoError(t, err, err)
 
 	req.Header.Add("Content-Type", writer.FormDataContentType())
-	req.Header.Add("userId", idMock)
+	req.Header.Add("userId", idmock)
 	return req
 }
 
