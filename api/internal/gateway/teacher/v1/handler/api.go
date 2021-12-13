@@ -25,6 +25,7 @@ type APIV1Handler interface {
 	AdminRoutes(rg *gin.RouterGroup)  // 管理者のみアクセス可能なエンドポイント一覧
 	NoAuthRoutes(rg *gin.RouterGroup) // 未認証でもアクセス可能なエンドポイント一覧
 	Authentication() gin.HandlerFunc  // 認証情報の検証
+	Authorization() gin.HandlerFunc   // 認可情報の検証
 }
 
 type apiV1Handler struct {
