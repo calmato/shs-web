@@ -28,8 +28,8 @@ func (h *apiV1Handler) CreateTeacher(ctx *gin.Context) {
 			FirstNameKana: "こうだい",
 			Mail:          "teacher-test001@calmato.jp",
 			Role:          entity.RoleTeacher,
-			CreatedAt:     h.now().String(),
-			UpdatedAt:     h.now().String(),
+			CreatedAt:     h.now(),
+			UpdatedAt:     h.now(),
 		},
 	}
 	ctx.JSON(http.StatusOK, res)

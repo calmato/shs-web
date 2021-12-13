@@ -57,3 +57,7 @@ func Parse(format, target string) (time.Time, error) {
 func ParseFromYYYYMMDD(yyyymmdd string) (time.Time, error) {
 	return time.ParseInLocation("20060102", yyyymmdd, jst)
 }
+
+func ParseFromUnix(unix int64) time.Time {
+	return time.Unix(unix, 0).In(jst)
+}
