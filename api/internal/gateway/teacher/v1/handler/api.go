@@ -91,6 +91,10 @@ func unauthorized(ctx *gin.Context, err error) {
 	httpError(ctx, status.Error(codes.Unauthenticated, err.Error()))
 }
 
+func forbidden(ctx *gin.Context, err error) {
+	httpError(ctx, status.Error(codes.PermissionDenied, err.Error()))
+}
+
 /**
  * ###############################################
  * other
@@ -107,6 +111,38 @@ func (h *apiV1Handler) Authentication() gin.HandlerFunc {
 		teacherID, err := h.auth.VerifyIDToken(ctx, token)
 		if err != nil || teacherID == "" {
 			unauthorized(ctx, err)
+			return
+		}
+
+		setAuth(ctx, teacherID)
+
+		ctx.Next()
+	}
+}
+
+func (h *apiV1Handler) Authorization() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		token, err := util.GetAuthToken(ctx)
+		if err != nil {
+			unauthorized(ctx, err)
+			return
+		}
+
+		teacherID, err := h.auth.VerifyIDToken(ctx, token)
+		if err != nil || teacherID == "" {
+			unauthorized(ctx, err)
+			return
+		}
+
+		c := util.SetMetadata(ctx)
+		teacher, err := h.getTeacher(c, teacherID)
+		if err != nil {
+			unauthorized(ctx, err)
+			return
+		}
+
+		if !teacher.AdminRole() {
+			forbidden(ctx, err)
 			return
 		}
 

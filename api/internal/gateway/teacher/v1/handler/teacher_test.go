@@ -85,7 +85,18 @@ func TestGetTeacher(t *testing.T) {
 
 func TestCreateTeacher(t *testing.T) {
 	t.Parallel()
-	now := jst.Now()
+	now := jst.Date(2021, 8, 2, 18, 30, 0, 0)
+	teacher := &user.Teacher{
+		Id:            idmock,
+		LastName:      "中村",
+		FirstName:     "広大",
+		LastNameKana:  "なかむら",
+		FirstNameKana: "こうだい",
+		Mail:          "teacher-test001@calmato.jp",
+		Role:          user.Role_ROLE_TEACHER,
+		CreatedAt:     now.Unix(),
+		UpdatedAt:     now.Unix(),
+	}
 	tests := []struct {
 		name   string
 		setup  func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller)
@@ -93,8 +104,21 @@ func TestCreateTeacher(t *testing.T) {
 		expect *testResponse
 	}{
 		{
-			name:  "success",
-			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {},
+			name: "success",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
+				in := &user.CreateTeacherRequest{
+					LastName:             "中村",
+					FirstName:            "広大",
+					LastNameKana:         "なかむら",
+					FirstNameKana:        "こうだい",
+					Mail:                 "teacher-test001@calmato.jp",
+					Role:                 user.Role_ROLE_TEACHER,
+					Password:             "12345678",
+					PasswordConfirmation: "12345678",
+				}
+				out := &user.CreateTeacherResponse{Teacher: teacher}
+				mocks.user.EXPECT().CreateTeacher(gomock.Any(), in).Return(out, nil)
+			},
 			req: &request.CreateTeacherRequest{
 				LastName:             "中村",
 				FirstName:            "広大",
@@ -109,7 +133,7 @@ func TestCreateTeacher(t *testing.T) {
 				code: http.StatusOK,
 				body: &response.TeacherResponse{
 					Teacher: &entity.Teacher{
-						ID:            "123456789012345678901",
+						ID:            idmock,
 						LastName:      "中村",
 						FirstName:     "広大",
 						LastNameKana:  "なかむら",
@@ -120,6 +144,53 @@ func TestCreateTeacher(t *testing.T) {
 						UpdatedAt:     now,
 					},
 				},
+			},
+		},
+		{
+			name:  "bad request",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {},
+			req:   nil,
+			expect: &testResponse{
+				code: http.StatusBadRequest,
+			},
+		},
+		{
+			name:  "bad request with role",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {},
+			req: &request.CreateTeacherRequest{
+				Role: int32(entity.RoleUnknown),
+			},
+			expect: &testResponse{
+				code: http.StatusBadRequest,
+			},
+		},
+		{
+			name: "success",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
+				in := &user.CreateTeacherRequest{
+					LastName:             "中村",
+					FirstName:            "広大",
+					LastNameKana:         "なかむら",
+					FirstNameKana:        "こうだい",
+					Mail:                 "teacher-test001@calmato.jp",
+					Role:                 user.Role_ROLE_TEACHER,
+					Password:             "12345678",
+					PasswordConfirmation: "12345678",
+				}
+				mocks.user.EXPECT().CreateTeacher(gomock.Any(), in).Return(nil, errmock)
+			},
+			req: &request.CreateTeacherRequest{
+				LastName:             "中村",
+				FirstName:            "広大",
+				LastNameKana:         "なかむら",
+				FirstNameKana:        "こうだい",
+				Mail:                 "teacher-test001@calmato.jp",
+				Role:                 int32(entity.RoleTeacher),
+				Password:             "12345678",
+				PasswordConfirmation: "12345678",
+			},
+			expect: &testResponse{
+				code: http.StatusInternalServerError,
 			},
 		},
 	}

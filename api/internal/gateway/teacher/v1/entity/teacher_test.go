@@ -87,3 +87,42 @@ func TestRole(t *testing.T) {
 		})
 	}
 }
+
+func TestRole_UserRole(t *testing.T) {
+	t.Parallel()
+	tests := []struct {
+		name   string
+		role   Role
+		expect user.Role
+		isErr  bool
+	}{
+		{
+			name:   "success administrator role",
+			role:   RoleAdministrator,
+			expect: user.Role_ROLE_ADMINISTRATOR,
+			isErr:  false,
+		},
+		{
+			name:   "success teacher role",
+			role:   RoleTeacher,
+			expect: user.Role_ROLE_TEACHER,
+			isErr:  false,
+		},
+		{
+			name:   "success invalid role",
+			role:   RoleUnknown,
+			expect: user.Role_ROLE_TEACHER,
+			isErr:  true,
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			actual, err := tt.role.UserRole()
+			assert.Equal(t, tt.isErr, err != nil, err)
+			assert.Equal(t, tt.expect, actual)
+		})
+	}
+}

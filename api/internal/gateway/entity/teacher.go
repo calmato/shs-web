@@ -11,3 +11,7 @@ func NewTeacher(teacher *user.Teacher) *Teacher {
 		Teacher: teacher,
 	}
 }
+
+func (t *Teacher) AdminRole() bool {
+	return t.Role == user.Role_ROLE_ADMINISTRATOR
+}

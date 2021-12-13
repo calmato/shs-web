@@ -1,12 +1,15 @@
 package entity
 
 import (
+	"errors"
 	"time"
 
 	"github.com/calmato/shs-web/api/internal/gateway/entity"
 	"github.com/calmato/shs-web/api/pkg/jst"
 	"github.com/calmato/shs-web/api/proto/user"
 )
+
+var errInvalidRole = errors.New("entity: invalid role")
 
 type Teacher struct {
 	ID            string    `json:"id"`            // 講師ID
@@ -50,5 +53,16 @@ func NewRole(role user.Role) Role {
 		return RoleAdministrator
 	default:
 		return RoleUnknown
+	}
+}
+
+func (r Role) UserRole() (user.Role, error) {
+	switch r {
+	case RoleAdministrator:
+		return user.Role_ROLE_ADMINISTRATOR, nil
+	case RoleTeacher:
+		return user.Role_ROLE_TEACHER, nil
+	default:
+		return user.Role_ROLE_TEACHER, errInvalidRole
 	}
 }
