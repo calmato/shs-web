@@ -13,7 +13,7 @@ tags:
   description: 講師関連
 paths:
   # Auth
-  /v1/auth:
+  /v1/me:
     $ref: './paths/v1/auth.index.yaml'
   # Teachers
   /v1/teachers:
