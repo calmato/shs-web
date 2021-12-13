@@ -29,28 +29,39 @@ func (h *apiV1Handler) GetTeacher(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, res)
 }
 
-// mock
 func (h *apiV1Handler) CreateTeacher(ctx *gin.Context) {
+	c := util.SetMetadata(ctx)
+
 	req := &request.CreateTeacherRequest{}
 	if err := ctx.BindJSON(req); err != nil {
 		badRequest(ctx, err)
 		return
 	}
+	role, err := entity.Role(req.Role).UserRole()
+	if err != nil {
+		badRequest(ctx, err)
+		return
+	}
 
-	// TODO: get teacher
+	in := &user.CreateTeacherRequest{
+		LastName:             req.LastName,
+		FirstName:            req.FirstName,
+		LastNameKana:         req.LastNameKana,
+		FirstNameKana:        req.FirstNameKana,
+		Mail:                 req.Mail,
+		Role:                 role,
+		Password:             req.Password,
+		PasswordConfirmation: req.PasswordConfirmation,
+	}
+	out, err := h.user.CreateTeacher(c, in)
+	if err != nil {
+		httpError(ctx, err)
+		return
+	}
+	teacher := gentity.NewTeacher(out.Teacher)
 
 	res := &response.TeacherResponse{
-		Teacher: &entity.Teacher{
-			ID:            "123456789012345678901",
-			LastName:      "中村",
-			FirstName:     "広大",
-			LastNameKana:  "なかむら",
-			FirstNameKana: "こうだい",
-			Mail:          "teacher-test001@calmato.jp",
-			Role:          entity.RoleTeacher,
-			CreatedAt:     h.now(),
-			UpdatedAt:     h.now(),
-		},
+		Teacher: entity.NewTeacher(teacher),
 	}
 	ctx.JSON(http.StatusOK, res)
 }
