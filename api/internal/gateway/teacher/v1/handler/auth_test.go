@@ -29,7 +29,6 @@ func TestGetAuth(t *testing.T) {
 	tests := []struct {
 		name   string
 		setup  func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller)
-		userID string
 		expect *testResponse
 	}{
 		{
