@@ -8,11 +8,15 @@ import "github.com/envoyproxy/protoc-gen-validate/validate/validate.proto";
 
 import "user/common.proto";
 import "user/teacher.proto";
+import "user/student.proto";
 
 service UserService {
   rpc ListTeachers(ListTeachersRequest) returns (ListTeachersResponse);
   rpc GetTeacher(GetTeacherRequest) returns (GetTeacherResponse);
   rpc CreateTeacher(CreateTeacherRequest) returns (CreateTeacherResponse);
+  rpc ListStudents(ListStudentsRequest) returns (ListStudentsResponse);
+  rpc GetStudent(GetStudentRequest) returns (GetStudentResponse);
+  rpc CreateStudent(CreateStudentRequest) returns (CreateStudentResponse);
 }
 
 message ListTeachersRequest {
@@ -45,4 +49,36 @@ message CreateTeacherRequest {
 
 message CreateTeacherResponse {
   Teacher teacher = 1;
+}
+
+message ListStudentsRequest {
+  int64 limit  = 1 [(validate.rules).int64 = { gte: 0 }];
+  int64 offset = 2 [(validate.rules).int64 = { gte: 0 }];
+}
+
+message ListStudentsResponse {
+  repeated Student students = 1;
+}
+
+message GetStudentRequest {
+  string id = 1 [(validate.rules).string = { min_len: 1 }];
+}
+
+message GetStudentResponse {
+  Student student = 1;
+}
+
+message CreateStudentRequest {
+  string last_name             = 1 [(validate.rules).string = { min_len: 1 max_len: 16 }];
+  string first_name            = 2 [(validate.rules).string = { min_len: 1 max_len: 16 }];
+  string last_name_kana        = 3 [(validate.rules).string = { min_len: 1 max_len: 32, pattern: "^[ぁ-ゔー]*$" }];
+  string first_name_kana       = 4 [(validate.rules).string = { min_len: 1 max_len: 32, pattern: "^[ぁ-ゔー]*$" }];
+  string mail                  = 5 [(validate.rules).string = { min_len: 1 max_len: 256 email: true }];
+  int64  birth_year            = 6 [(validate.rules).int64  = { gte: 1900 }];
+  string password              = 7 [(validate.rules).string = { min_len: 6 max_len: 32 pattern: "^[a-zA-Z0-9_!@#$_%^&*.?()-=+]*$" }];
+  string password_confirmation = 8 [(validate.rules).string = { min_len: 1 }];
+}
+
+message CreateStudentResponse {
+  Student student = 1;
 }
