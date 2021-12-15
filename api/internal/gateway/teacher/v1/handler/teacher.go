@@ -3,6 +3,7 @@ package handler
 import (
 	"context"
 	"net/http"
+	"strconv"
 
 	gentity "github.com/calmato/shs-web/api/internal/gateway/entity"
 	"github.com/calmato/shs-web/api/internal/gateway/teacher/v1/entity"
@@ -12,6 +13,41 @@ import (
 	"github.com/calmato/shs-web/api/proto/user"
 	"github.com/gin-gonic/gin"
 )
+
+func (h *apiV1Handler) ListTeachers(ctx *gin.Context) {
+	c := util.SetMetadata(ctx)
+	const (
+		defaultLimit  = "30"
+		defaultOffset = "0"
+	)
+
+	limit, err := strconv.ParseInt(ctx.DefaultQuery("limit", defaultLimit), 10, 64)
+	if err != nil {
+		badRequest(ctx, err)
+		return
+	}
+	offset, err := strconv.ParseInt(ctx.DefaultQuery("offset", defaultOffset), 10, 64)
+	if err != nil {
+		badRequest(ctx, err)
+		return
+	}
+
+	in := &user.ListTeachersRequest{
+		Limit:  limit,
+		Offset: offset,
+	}
+	out, err := h.user.ListTeachers(c, in)
+	if err != nil {
+		httpError(ctx, err)
+		return
+	}
+	teachers := gentity.NewTeachers(out.Teachers)
+
+	res := &response.TeachersResponse{
+		Teachers: entity.NewTeachers(teachers),
+	}
+	ctx.JSON(http.StatusOK, res)
+}
 
 func (h *apiV1Handler) GetTeacher(ctx *gin.Context) {
 	c := util.SetMetadata(ctx)

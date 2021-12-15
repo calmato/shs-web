@@ -23,6 +23,8 @@ type Teacher struct {
 	UpdatedAt     time.Time `json:"updatedAt"`     // 更新日時
 }
 
+type Teachers []*Teacher
+
 type Role int32
 
 const (
@@ -43,6 +45,14 @@ func NewTeacher(teacher *entity.Teacher) *Teacher {
 		CreatedAt:     jst.ParseFromUnix(teacher.CreatedAt),
 		UpdatedAt:     jst.ParseFromUnix(teacher.UpdatedAt),
 	}
+}
+
+func NewTeachers(teachers entity.Teachers) Teachers {
+	ts := make(Teachers, len(teachers))
+	for i := range teachers {
+		ts[i] = NewTeacher(teachers[i])
+	}
+	return ts
 }
 
 func NewRole(role user.Role) Role {

@@ -14,6 +14,79 @@ import (
 	"github.com/golang/mock/gomock"
 )
 
+func TestListTeachers(t *testing.T) {
+	t.Parallel()
+	now := jst.Date(2021, 8, 2, 18, 30, 0, 0)
+	teachers := []*user.Teacher{
+		{
+			Id:            idmock,
+			LastName:      "中村",
+			FirstName:     "広大",
+			LastNameKana:  "なかむら",
+			FirstNameKana: "こうだい",
+			Mail:          "teacher-test001@calmato.jp",
+			Role:          user.Role_ROLE_TEACHER,
+			CreatedAt:     now.Unix(),
+			UpdatedAt:     now.Unix(),
+		},
+	}
+	tests := []struct {
+		name   string
+		setup  func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller)
+		query  string
+		expect *testResponse
+	}{
+		{
+			name: "success",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
+				in := &user.ListTeachersRequest{Limit: 100, Offset: 20}
+				out := &user.ListTeachersResponse{Teachers: teachers}
+				mocks.user.EXPECT().ListTeachers(gomock.Any(), in).Return(out, nil)
+			},
+			query: "?limit=100&offset=20",
+			expect: &testResponse{
+				code: http.StatusOK,
+				body: &response.TeachersResponse{
+					Teachers: entity.Teachers{
+						{
+							ID:            idmock,
+							LastName:      "中村",
+							FirstName:     "広大",
+							LastNameKana:  "なかむら",
+							FirstNameKana: "こうだい",
+							Mail:          "teacher-test001@calmato.jp",
+							Role:          entity.RoleTeacher,
+							CreatedAt:     now,
+							UpdatedAt:     now,
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "failed to list teachers",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
+				in := &user.ListTeachersRequest{Limit: 30, Offset: 0}
+				mocks.user.EXPECT().ListTeachers(gomock.Any(), in).Return(nil, errmock)
+			},
+			query: "",
+			expect: &testResponse{
+				code: http.StatusInternalServerError,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			path := "/v1/teachers" + tt.query
+			req := newHTTPRequest(t, http.MethodGet, path, nil)
+			testHTTP(t, tt.setup, tt.expect, req)
+		})
+	}
+}
+
 func TestGetTeacher(t *testing.T) {
 	t.Parallel()
 	now := jst.Date(2021, 8, 2, 18, 30, 0, 0)
