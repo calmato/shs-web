@@ -35,6 +35,7 @@ func newRegistry(params *params) (*registry, error) {
 	}
 
 	v1Params := &v1.Params{
+		Auth:        params.auth,
 		UserService: cli.user,
 		Logger:      params.logger,
 		WaitGroup:   &sync.WaitGroup{},

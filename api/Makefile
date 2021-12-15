@@ -54,5 +54,5 @@ build:
 	go build -o ./app ./cmd/${SERVICE}/main.go
 
 dev:
-	$(MAKE) build SERVICE=${SERVICE}
-	./app
+	go build -o ./cmd/${SERVICE}/app ./cmd/${SERVICE}/main.go
+	./cmd/${SERVICE}/app

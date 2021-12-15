@@ -154,7 +154,7 @@ func (h *apiV1Handler) Authorization() gin.HandlerFunc {
 
 func setAuth(ctx *gin.Context, userID string) {
 	if userID != "" {
-		ctx.Set("userId", userID)
+		ctx.Request.Header.Set("userId", userID)
 	}
 }
 

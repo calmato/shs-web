@@ -28,6 +28,7 @@ services:
     environment:
       - PORT=8080
       - METRICS_PORT=9090
+      - SHUTDOWN_DELAY_SEC=0
       - LOG_PATH=/var/log/api
       - GCP_SERVICE_KEY_JSON=${GCP_SERVICE_KEY_JSON}
       - GCP_STORAGE_BUCKET_NAME=${GCP_STORAGE_BUCKET_NAME}
@@ -50,6 +51,7 @@ services:
     environment:
       - PORT=8080
       - METRICS_PORT=9090
+      - SHUTDOWN_DELAY_SEC=0
       - LOG_PATH=/var/log/api
       - DB_HOST=mysql
       - DB_PORT=3306
