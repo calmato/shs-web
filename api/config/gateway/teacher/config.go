@@ -9,6 +9,7 @@ import (
 type Config struct {
 	Port                 int64  `envconfig:"PORT" default:"8080"`
 	MetricsPort          int64  `envconfig:"METRICS_PORT" default:"9090"`
+	ShutdownDelaySec     int64  `envconfig:"SHUTDOWN_DELAY_SEC" default:"20"`
 	LogPath              string `envconfig:"LOG_PATH" default:""`
 	LogLevel             string `envconfig:"LOG_LEVEL" default:"info"`
 	GRPCInsecure         bool   `envconfig:"GRPC_INSECURE" default:"true"`

@@ -108,7 +108,7 @@ func Exec() error {
 		logger.Error("Done context", zap.Error(ectx.Err()))
 	case <-signalCh:
 		logger.Info("Received signal")
-		delay := 20 * time.Second
+		delay := time.Duration(conf.ShutdownDelaySec) * time.Second
 		logger.Info("Pre-shutdown", zap.String("delay", delay.String()))
 		time.Sleep(delay)
 	}
