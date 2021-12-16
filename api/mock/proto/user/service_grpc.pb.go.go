@@ -56,6 +56,26 @@ func (mr *MockUserServiceClientMockRecorder) CreateTeacher(ctx, in interface{}, 
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateTeacher", reflect.TypeOf((*MockUserServiceClient)(nil).CreateTeacher), varargs...)
 }
 
+// GetStudent mocks base method.
+func (m *MockUserServiceClient) GetStudent(ctx context.Context, in *user.GetStudentRequest, opts ...grpc.CallOption) (*user.GetStudentResponse, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "GetStudent", varargs...)
+	ret0, _ := ret[0].(*user.GetStudentResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetStudent indicates an expected call of GetStudent.
+func (mr *MockUserServiceClientMockRecorder) GetStudent(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetStudent", reflect.TypeOf((*MockUserServiceClient)(nil).GetStudent), varargs...)
+}
+
 // GetTeacher mocks base method.
 func (m *MockUserServiceClient) GetTeacher(ctx context.Context, in *user.GetTeacherRequest, opts ...grpc.CallOption) (*user.GetTeacherResponse, error) {
 	m.ctrl.T.Helper()
@@ -132,6 +152,21 @@ func (m *MockUserServiceServer) CreateTeacher(arg0 context.Context, arg1 *user.C
 func (mr *MockUserServiceServerMockRecorder) CreateTeacher(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateTeacher", reflect.TypeOf((*MockUserServiceServer)(nil).CreateTeacher), arg0, arg1)
+}
+
+// GetStudent mocks base method.
+func (m *MockUserServiceServer) GetStudent(arg0 context.Context, arg1 *user.GetStudentRequest) (*user.GetStudentResponse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetStudent", arg0, arg1)
+	ret0, _ := ret[0].(*user.GetStudentResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetStudent indicates an expected call of GetStudent.
+func (mr *MockUserServiceServerMockRecorder) GetStudent(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetStudent", reflect.TypeOf((*MockUserServiceServer)(nil).GetStudent), arg0, arg1)
 }
 
 // GetTeacher mocks base method.

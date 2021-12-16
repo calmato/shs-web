@@ -8,11 +8,13 @@ import "github.com/envoyproxy/protoc-gen-validate/validate/validate.proto";
 
 import "user/common.proto";
 import "user/teacher.proto";
+import "user/student.proto";
 
 service UserService {
   rpc ListTeachers(ListTeachersRequest) returns (ListTeachersResponse);
   rpc GetTeacher(GetTeacherRequest) returns (GetTeacherResponse);
   rpc CreateTeacher(CreateTeacherRequest) returns (CreateTeacherResponse);
+  rpc GetStudent(GetStudentRequest) returns (GetStudentResponse);
 }
 
 message ListTeachersRequest {
@@ -45,4 +47,12 @@ message CreateTeacherRequest {
 
 message CreateTeacherResponse {
   Teacher teacher = 1;
+}
+
+message GetStudentRequest {
+  string id = 1 [(validate.rules).string = { min_len: 1 }];
+}
+
+message GetStudentResponse {
+  Student student = 1;
 }
