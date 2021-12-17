@@ -62,6 +62,4 @@ swagger:
 	docker-compose run --rm swagger_generator yarn generate
 
 migrate:
-	docker-compose down mysql mysql_test
-	rm -rf ./tmp/data/mysql
-	rm -rf ./tmp/data/mysql_test
+	$(PWD)/bin/database-migrate.sh
