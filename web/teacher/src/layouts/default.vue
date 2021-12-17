@@ -1,5 +1,5 @@
 <template>
-  <v-app :style="{ background }">
+  <v-app class="root" :style="{ background }">
     <the-header :overlay="overlay" @click="handleClickMenu" />
     <v-main>
       <nuxt />
@@ -100,3 +100,9 @@ export default defineComponent({
   },
 })
 </script>
+
+<style lang="css" scoped>
+.root {
+  overflow: hidden;
+}
+</style>
