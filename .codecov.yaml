@@ -26,7 +26,7 @@ flags:
     paths:
     - api/
     carryforward: true
-  web:
+  teacher-web:
     paths:
     - web/
     carryforward: true
