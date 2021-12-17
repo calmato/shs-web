@@ -1,5 +1,5 @@
 import { Module, VuexModule, Mutation, Action } from 'vuex-module-decorators'
-import { Lesson, LessonState, Subject, SubjectMap } from '~/types/store/lesson'
+import { Lesson, LessonState, Subject, SubjectMap } from '~/types/store'
 
 const initialState: LessonState = {
   subjects: [

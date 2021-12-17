@@ -1,15 +1,4 @@
-// Role 権限
-export enum Role {
-  TEACHER = 0, // 講師
-  ADMINISTRATOR = 1, // 管理者
-}
-
-// SchoolType 校種
-export enum SchoolType {
-  ElementarySchool = 0, // 小学校
-  JuniorHighSchool = 1, // 中学校
-  HighSchool = 2, // 高等学校
-}
+import { SchoolType, Role } from './common'
 
 export interface Teacher {
   id: string
@@ -41,7 +30,6 @@ export interface Student {
 }
 
 export interface UserState {
-  message: string // TODO: remove
   teachers: Teacher[]
   students: Student[]
 }

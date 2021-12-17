@@ -1,6 +1,7 @@
 import { shallowMount } from '@vue/test-utils'
 import * as Options from '~~/test/helpers/component-helper'
 import TheSignIn from '~/components/templates/TheSignIn.vue'
+import { SignInForm } from '~/types/form'
 
 describe('components/templates/TheSignIn', () => {
   let wrapper: any
@@ -12,14 +13,37 @@ describe('components/templates/TheSignIn', () => {
 
   describe('script', () => {
     describe('props', () => {
-      describe('message', () => {
+      describe('form', () => {
         it('初期値', () => {
-          expect(wrapper.props().message).toEqual('')
+          expect(wrapper.props().form).toEqual({ mail: '', password: '' })
+        })
+
+        it('値だ代入されること', async () => {
+          const form: SignInForm = {
+            mail: 'teacher-test01@calmato.jp',
+            password: '12345678',
+          }
+          await wrapper.setProps({ form })
+          expect(wrapper.props().form).toBe(form)
+        })
+      })
+
+      describe('loading', () => {
+        it('初期値', () => {
+          expect(wrapper.props().loading).toBeFalsy()
         })
 
         it('値が代入されること', async () => {
-          await wrapper.setProps({ message: 'test message' })
-          expect(wrapper.props().message).toEqual('test message')
+          await wrapper.setProps({ loading: true })
+          expect(wrapper.props().loading).toBeTruthy()
+        })
+      })
+    })
+
+    describe('computed', () => {
+      describe('signInForm', () => {
+        it('getter', () => {
+          expect(wrapper.vm.signInForm).toEqual({ mail: '', password: '' })
         })
       })
     })

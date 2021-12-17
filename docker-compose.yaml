@@ -13,6 +13,9 @@ services:
       - 3000:3000
     environment:
       - API_URL=${TEACHER_API_URL}
+      - FIREBASE_API_KEY=${FIREBASE_API_KEY}
+      - FIREBASE_PROJECT_ID=${FIREBASE_PROJECT_ID}
+      - FIREBASE_MESSAGING_SENDER_ID=${FIREBASE_MESSAGING_SENDER_ID}
     command: yarn dev -H 0.0.0.0 -p 3000
 
   teacher_gateway:
@@ -53,12 +56,12 @@ services:
       - METRICS_PORT=9090
       - SHUTDOWN_DELAY_SEC=0
       - LOG_PATH=/var/log/api
+      - GCP_SERVICE_KEY_JSON=${GCP_SERVICE_KEY_JSON}
+      - GCP_STORAGE_BUCKET_NAME=${GCP_STORAGE_BUCKET_NAME}
       - DB_HOST=mysql
       - DB_PORT=3306
       - DB_USERNAME=root
       - DB_PASSWORD=${MYSQL_ROOT_PASSWORD}
-      - GCP_SERVICE_KEY_JSON=${GCP_SERVICE_KEY_JSON}
-      - GCP_STORAGE_BUCKET_NAME=${GCP_STORAGE_BUCKET_NAME}
     ports:
       - 19000:8080
       - 19001:9090
