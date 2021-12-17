@@ -1,11 +1,13 @@
 <template>
-  <the-sign-in :message="message" @click="handleClick" />
+  <the-sign-in :form.sync="form" :loading="loading" @click="handleClick" />
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, useAsync, SetupContext } from '@nuxtjs/composition-api'
-import { UserStore, CommonStore } from '~/store'
+import { defineComponent, SetupContext, reactive, computed } from '@nuxtjs/composition-api'
+import { AuthStore, CommonStore } from '~/store'
 import TheSignIn from '~/components/templates/TheSignIn.vue'
+import { SignInForm } from '~/types/form'
+import { PromiseState } from '~/types/store'
 
 export default defineComponent({
   components: {
@@ -16,29 +18,32 @@ export default defineComponent({
     const store = root.$store
     const router = root.$router
 
-    const message = computed(() => store.getters['user/getMessage'])
-
-    useAsync(async () => {
-      await hello()
+    const form = reactive<SignInForm>({
+      mail: '',
+      password: '',
     })
 
-    async function hello(): Promise<void> {
+    const loading = computed<boolean>(() => {
+      return store.getters['common/getPromiseState'] === PromiseState.LOADING
+    })
+
+    const handleClick = async () => {
       CommonStore.startConnection()
-      await UserStore.hello()
+      await AuthStore.signIn(form)
+        .then(() => {
+          router.push('/')
+        })
         .catch((err: Error) => {
-          console.log('failed to hello', err)
+          console.log('failed to sign in', err)
         })
         .finally(() => {
           CommonStore.endConnection()
         })
     }
 
-    const handleClick = () => {
-      router.push('/')
-    }
-
     return {
-      message,
+      form,
+      loading,
       handleClick,
     }
   },

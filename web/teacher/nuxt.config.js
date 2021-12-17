@@ -28,7 +28,7 @@ export default {
   css: [],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
-  plugins: ['~/plugins/axios', '~/plugins/axios-accessor'],
+  plugins: ['~/plugins/axios', '~/plugins/axios-accessor', '~/plugins/firebase'],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
   components: true,
@@ -38,6 +38,10 @@ export default {
 
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: ['@nuxtjs/axios'],
+
+  router: {
+    middleware: ['authenticated'],
+  },
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {},
@@ -86,6 +90,9 @@ export default {
 
   env: {
     apiURL: process.env.API_URL,
+    firebaseApiKey: process.env.FIREBASE_API_KEY,
+    firebaseProjectId: process.env.FIREBASE_PROJECT_ID,
+    firebaseMessagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
   },
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
