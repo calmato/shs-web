@@ -1,10 +1,15 @@
-/**
- * Hello - テスト用API (TODO: remove)
- */
-export interface HelloRequest {
-  name: string
+export interface Teacher {
+  id: string
+  lastName: string
+  firstName: string
+  lastNameKana: string
+  firstNameKana: string
+  mail: string
+  role: number
+  createdAt: string
+  updatedAt: string
 }
 
-export interface HelloResponse {
-  message: string
+export interface TeachersResponse {
+  teachers: Teacher[]
 }

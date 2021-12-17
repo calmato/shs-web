@@ -35,11 +35,11 @@ export default defineComponent({
 
     const getSchoolType = (typ: SchoolType): string => {
       switch (typ) {
-        case SchoolType.ElementarySchool:
+        case SchoolType.ELEMENTARY_SCHOOL:
           return '小学校'
-        case SchoolType.JuniorHighSchool:
+        case SchoolType.JUNIOR_HIGH_SCHOOL:
           return '中学校'
-        case SchoolType.HighSchool:
+        case SchoolType.HIGH_SCHOOL:
           return '高等学校'
         default:
           return ''
@@ -48,11 +48,11 @@ export default defineComponent({
 
     const getSchoolTypeColor = (typ: SchoolType): string => {
       switch (typ) {
-        case SchoolType.ElementarySchool:
+        case SchoolType.ELEMENTARY_SCHOOL:
           return 'primary'
-        case SchoolType.JuniorHighSchool:
+        case SchoolType.JUNIOR_HIGH_SCHOOL:
           return 'secondary'
-        case SchoolType.HighSchool:
+        case SchoolType.HIGH_SCHOOL:
           return 'info'
         default:
           return ''
