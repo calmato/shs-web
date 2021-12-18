@@ -90,6 +90,6 @@ func (t *teacher) Create(ctx context.Context, teacher *entity.Teacher) error {
 
 func (t *teacher) Count(ctx context.Context) (int64, error) {
 	var total int64
-	err := t.db.DB.Table(teacherTable).Count(&total).Error
+	err := t.db.DB.Table(teacherTable).Where("deleted_at IS NULL").Count(&total).Error
 	return total, dbError(err)
 }
