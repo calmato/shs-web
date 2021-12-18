@@ -127,6 +127,9 @@ jobs:
     - name: Build user server
       run: make build SERVICE=user/server
 
+    - name: Build classroom server
+      run: make build SERVICE=classroom/server
+
     ############################################
     # Notifications, etc.
     ############################################

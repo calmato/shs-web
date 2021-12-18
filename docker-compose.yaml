@@ -50,7 +50,7 @@ services:
     volumes:
       - ./api:/go/src/github.com/calmato/shs-web/api:cached
       - ./tmp/data/go/pkg/mod:/go/pkg/mod:delegated
-      - ./tmp/logs/gateway/teacher:/var/log/api:delegated
+      - ./tmp/logs/api/user:/var/log/api:delegated
     environment:
       - PORT=8080
       - METRICS_PORT=9090
@@ -66,6 +66,30 @@ services:
       - 19000:8080
       - 19001:9090
     command: make dev SERVICE=user/server
+
+  classroom_api:
+    container_name: classroom_api
+    build:
+      context: .
+      dockerfile: ./infra/docker/api/classroom/server/Dockerfile.development
+    working_dir: /go/src/github.com/calmato/shs-web/api
+    volumes:
+      - ./api:/go/src/github.com/calmato/shs-web/api:cached
+      - ./tmp/data/go/pkg/mod:/go/pkg/mod:delegated
+      - ./tmp/logs/api/classroom:/var/log/api:delegated
+    environment:
+      - PORT=8080
+      - METRICS_PORT=9090
+      - SHUTDOWN_DELAY_SEC=0
+      - LOG_PATH=/var/log/api
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_USERNAME=root
+      - DB_PASSWORD=${MYSQL_ROOT_PASSWORD}
+    ports:
+      - 19010:8080
+      - 19011:9090
+    command: make dev SERVICE=classroom/server
 
   mysql:
     container_name: mysql
