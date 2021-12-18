@@ -5,6 +5,7 @@
 <script lang="ts">
 import { defineComponent, SetupContext } from '@nuxtjs/composition-api'
 import TheSettingTop from '~/components/templates/TheSettingTop.vue'
+import { AuthStore } from '~/store'
 import { Menu } from '~/types/props/setting'
 
 export default defineComponent({
@@ -21,12 +22,16 @@ export default defineComponent({
         path: '#ユーザー情報の変更',
       },
       {
+        title: 'メールアドレスの変更',
+        path: '#メールアドレスの変更',
+      },
+      {
         title: 'パスワードの変更',
         path: '#パスワードの変更',
       },
       {
         title: 'サインアウト',
-        path: '#サインアウト',
+        path: '/signout',
       },
     ]
     const systemItems: Menu[] = [
@@ -41,6 +46,12 @@ export default defineComponent({
     ]
 
     const handleClick = (item: Menu): void => {
+      if (item.path === '/signout') {
+        AuthStore.signOut()
+        router.push('/signin')
+        return
+      }
+
       router.push(item.path)
     }
 
