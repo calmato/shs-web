@@ -1,8 +1,8 @@
-import { shallowMount } from "@vue/test-utils";
+import { shallowMount } from '@vue/test-utils'
 import * as Options from '~~/test/helpers/component-helper'
 import TheTeacherNewForm from '~/components/organisms/TheTeacherNewForm.vue'
-import { TeacherNewForm, TeacherNewOptions, TeacherNewParams } from "~/types/form";
-import { Role } from "~/types/store";
+import { TeacherNewForm, TeacherNewOptions, TeacherNewParams } from '~/types/form'
+import { Role } from '~/types/store'
 
 describe('components/organisms/TheTeacherNewForm', () => {
   let wrapper: any
