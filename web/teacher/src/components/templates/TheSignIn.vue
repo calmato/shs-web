@@ -2,6 +2,9 @@
   <v-container fill-height>
     <v-row class="justify-center align-center">
       <v-col cols="12" sm="8">
+        <the-alert :show="hasError" type="error" @update:show="$emit('update:has-error', $event)">
+          メールアドレス もしくは パスワード が間違っています
+        </the-alert>
         <v-card>
           <v-toolbar color="primary" dark flat>SHS Web 講師ログイン画面</v-toolbar>
           <v-card-text class="my-4">
@@ -17,9 +20,14 @@
 
 <script lang="ts">
 import { computed, defineComponent, PropType, SetupContext } from '@nuxtjs/composition-api'
+import TheAlert from '~/components/atoms/TheAlert.vue'
 import { SignInForm } from '~/types/form'
 
 export default defineComponent({
+  components: {
+    TheAlert,
+  },
+
   props: {
     form: {
       type: Object as PropType<SignInForm>,
@@ -27,6 +35,10 @@ export default defineComponent({
         mail: '',
         password: '',
       }),
+    },
+    hasError: {
+      type: Boolean,
+      default: false,
     },
     loading: {
       type: Boolean,

@@ -1,9 +1,9 @@
 <template>
-  <the-sign-in :form.sync="form" :loading="loading" @click="handleClick" />
+  <the-sign-in :form.sync="form" :loading="loading" :has-error.sync="hasError" @click="handleClick" />
 </template>
 
 <script lang="ts">
-import { defineComponent, SetupContext, reactive, computed } from '@nuxtjs/composition-api'
+import { defineComponent, SetupContext, reactive, computed, ref } from '@nuxtjs/composition-api'
 import { AuthStore, CommonStore } from '~/store'
 import TheSignIn from '~/components/templates/TheSignIn.vue'
 import { SignInForm } from '~/types/form'
@@ -18,6 +18,7 @@ export default defineComponent({
     const store = root.$store
     const router = root.$router
 
+    const hasError = ref<Boolean>(false)
     const form = reactive<SignInForm>({
       mail: '',
       password: '',
@@ -33,8 +34,8 @@ export default defineComponent({
         .then(() => {
           router.push('/')
         })
-        .catch((err: Error) => {
-          console.log('failed to sign in', err)
+        .catch(() => {
+          hasError.value = true
         })
         .finally(() => {
           CommonStore.endConnection()
@@ -44,6 +45,7 @@ export default defineComponent({
     return {
       form,
       loading,
+      hasError,
       handleClick,
     }
   },

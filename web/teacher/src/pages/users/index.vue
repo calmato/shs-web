@@ -6,6 +6,7 @@
     :teachers-total="teachersTotal"
     :teachers-page.sync="teachersPage"
     :teachers-items-per-page.sync="teachersItemsPerPage"
+    @click:new="handleClickNew"
   />
 </template>
 
@@ -21,6 +22,7 @@ export default defineComponent({
   },
 
   setup(_, { root }: SetupContext) {
+    const router = root.$router
     const store = root.$store
 
     const teachersPage = ref<number>(1)
@@ -58,6 +60,10 @@ export default defineComponent({
         })
     }
 
+    const handleClickNew = (actor: string): void => {
+      router.push(`/users/${actor}/new`)
+    }
+
     return {
       loading,
       students,
@@ -65,6 +71,7 @@ export default defineComponent({
       teachersTotal,
       teachersPage,
       teachersItemsPerPage,
+      handleClickNew,
     }
   },
 })
