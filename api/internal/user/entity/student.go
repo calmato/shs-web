@@ -31,7 +31,7 @@ func (s *Student) Proto() *user.Student {
 		LastNameKana:  s.LastNameKana,
 		FirstNameKana: s.FirstNameKana,
 		Mail:          s.Mail,
-		BirthYear:     s.BirthYear
+		BirthYear:     s.BirthYear,
 		CreatedAt:     s.CreatedAt.Unix(),
 		UpdatedAt:     s.CreatedAt.Unix(),
 	}
