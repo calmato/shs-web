@@ -1,37 +1,39 @@
 <template>
-  <v-row align="stretch" justify="center">
-    <v-dialog v-model="dialog" width="600px" scrollable @click:outside="toggleDialog">
-      <the-calendar-detail :detail="detail" @click:close="toggleDialog" />
-    </v-dialog>
-    <v-col>
-      <v-sheet height="64">
-        <the-calendar-header
-          :type.sync="type"
-          :now="now"
-          :start="start"
-          :end="end"
-          :types="types"
-          @click:today="setToday"
-          @click:prev="$refs.calendar.prev()"
-          @click:next="$refs.calendar.next()"
-        />
-      </v-sheet>
-      <v-sheet height="600">
-        <the-calendar-body
-          ref="calendar"
-          :focus.sync="focus"
-          :now.sync="now"
-          :start.sync="start"
-          :end.sync="end"
-          :type.sync="type"
-          :events="events"
-          :types="types"
-          :weekdays="weekdays"
-          @click="showEvent"
-        />
-      </v-sheet>
-    </v-col>
-  </v-row>
+  <v-container fill-height class="px-0">
+    <v-row class="justiry-center align-stretch">
+      <v-dialog v-model="dialog" width="600px" scrollable @click:outside="toggleDialog">
+        <the-calendar-detail :detail="detail" @click:close="toggleDialog" />
+      </v-dialog>
+      <v-col>
+        <v-sheet height="64">
+          <the-calendar-header
+            :type.sync="type"
+            :now="now"
+            :start="start"
+            :end="end"
+            :types="types"
+            @click:today="setToday"
+            @click:prev="$refs.calendar.prev()"
+            @click:next="$refs.calendar.next()"
+          />
+        </v-sheet>
+        <v-sheet height="600">
+          <the-calendar-body
+            ref="calendar"
+            :focus.sync="focus"
+            :now.sync="now"
+            :start.sync="start"
+            :end.sync="end"
+            :type.sync="type"
+            :events="events"
+            :types="types"
+            :weekdays="weekdays"
+            @click="showEvent"
+          />
+        </v-sheet>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script lang="ts">
