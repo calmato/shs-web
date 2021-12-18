@@ -123,5 +123,15 @@ describe('components/templates/TheUserTop', () => {
         expect(wrapper.vm.selector).toBe('teachers')
       })
     })
+
+    describe('methods', () => {
+      describe('onClickNew', () => {
+        it('emitが実行されること', async () => {
+          await wrapper.vm.onClickNew('teachers')
+          expect(wrapper.emitted('click:new')).toBeTruthy()
+          expect(wrapper.emitted('click:new')[0][0]).toBe('teachers')
+        })
+      })
+    })
   })
 })

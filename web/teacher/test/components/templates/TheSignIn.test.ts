@@ -28,6 +28,17 @@ describe('components/templates/TheSignIn', () => {
         })
       })
 
+      describe('hasError', () => {
+        it('初期値', () => {
+          expect(wrapper.props().hasError).toBeFalsy()
+        })
+
+        it('値が代入されること', async () => {
+          await wrapper.setProps({ hasError: true })
+          expect(wrapper.props().hasError).toBeTruthy()
+        })
+      })
+
       describe('loading', () => {
         it('初期値', () => {
           expect(wrapper.props().loading).toBeFalsy()

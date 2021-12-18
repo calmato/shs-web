@@ -20,5 +20,7 @@ export enum SchoolType {
 }
 
 export interface CommonState {
+  snackbarColor: string
+  snackbarMessage: string
   promiseState: PromiseState
 }

@@ -32,9 +32,10 @@ export default defineComponent({
       await UserStore.createTeacher({ form })
         .then(() => {
           router.push('/users')
+          CommonStore.showSnackbar({ color: 'success', message: '講師を新規登録しました。' })
         })
         .catch((err: Error) => {
-          console.log('failed to create teacher', err)
+          CommonStore.showErrorInSnackbar(err)
         })
         .finally(() => {
           CommonStore.endConnection()

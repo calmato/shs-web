@@ -1,15 +1,18 @@
 <template>
   <v-container class="px-0 pt-0">
-    <v-row>
-      <v-col cols="12">
-        <v-tabs v-model="selector" grow class="pb-4">
-          <v-tab v-for="actor in actors" :key="actor.value" :href="`#tab-${actor.value}`">
-            {{ actor.name }}
-          </v-tab>
-        </v-tabs>
+    <v-tabs v-model="selector" grow class="pb-4">
+      <v-tab v-for="actor in actors" :key="actor.value" :href="`#tab-${actor.value}`">
+        {{ actor.name }}
+      </v-tab>
+    </v-tabs>
 
-        <v-tabs-items v-model="selector">
-          <v-tab-item value="tab-teachers">
+    <v-tabs-items v-model="selector">
+      <v-tab-item value="tab-teachers">
+        <v-row>
+          <v-col class="d-flex flex-column align-end px-8">
+            <v-btn color="primary" @click="onClickNew('teachers')">新規登録</v-btn>
+          </v-col>
+          <v-col cols="12">
             <the-teacher-list
               :items="teachers"
               :total="teachersTotal"
@@ -19,18 +22,18 @@
               @update:page="$emit('update:teachers-page', $event)"
               @update:items-per-page="$emit('update:teachers-items-per-page', $event)"
             />
-          </v-tab-item>
-          <v-tab-item value="tab-students">
-            <the-student-list :items="students" :loading="loading" />
-          </v-tab-item>
-        </v-tabs-items>
-      </v-col>
-    </v-row>
+          </v-col>
+        </v-row>
+      </v-tab-item>
+      <v-tab-item value="tab-students">
+        <the-student-list :items="students" :loading="loading" />
+      </v-tab-item>
+    </v-tabs-items>
   </v-container>
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, ref } from '@nuxtjs/composition-api'
+import { defineComponent, PropType, ref, SetupContext } from '@nuxtjs/composition-api'
 import TheStudentList from '~/components/organisms/TheStudentList.vue'
 import TheTeacherList from '~/components/organisms/TheTeacherList.vue'
 import { Actor } from '~/types/props/user'
@@ -69,7 +72,7 @@ export default defineComponent({
     },
   },
 
-  setup() {
+  setup(_, { emit }: SetupContext) {
     const actors: Actor[] = [
       { name: '講師', value: 'teachers' },
       { name: '生徒', value: 'students' },
@@ -77,9 +80,14 @@ export default defineComponent({
 
     const selector = ref<string>('teachers')
 
+    const onClickNew = (actor: string): void => {
+      emit('click:new', actor)
+    }
+
     return {
       actors,
       selector,
+      onClickNew,
     }
   },
 })
