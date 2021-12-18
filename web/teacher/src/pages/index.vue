@@ -30,7 +30,26 @@ export default defineComponent({
     const lessons = computed<Lesson[]>(() => store.getters['lesson/getLessons'])
     const subjects = computed<SubjectMap>(() => store.getters['lesson/getSubjectMap'])
     const students = computed<StudentMap>(() => store.getters['user/getStudentMap'])
-    const teachers = computed<TeacherMap>(() => store.getters['user/getTeacherMap'])
+    // const teachers = computed<TeacherMap>(() => store.getters['user/getTeacherMap'])
+
+    // mock
+    const teachers = computed<TeacherMap>(() => {
+      return {
+        '000000000000000000001': {
+          id: '000000000000000000001',
+          name: '中村 太郎',
+          nameKana: 'なかむら たろう',
+          lastName: '中村',
+          firstName: '太郎',
+          lastNameKana: 'なかむら',
+          firstNameKana: 'たろう',
+          mail: 'teacher-001@calmato.jp',
+          role: 0,
+          createdAt: '',
+          updatedAt: '',
+        },
+      }
+    })
 
     const getEvents = (): Event[] => {
       const events: Event[] = lessons.value.map((lesson: Lesson): Event => {
