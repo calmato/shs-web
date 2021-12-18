@@ -50,7 +50,8 @@ func TestListTeachers(t *testing.T) {
 			name: "success",
 			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
 				mocks.validator.EXPECT().ListTeachers(req).Return(nil)
-				mocks.db.Teacher.EXPECT().List(ctx, params).Return(teachers, nil)
+				mocks.db.Teacher.EXPECT().List(gomock.Any(), params).Return(teachers, nil)
+				mocks.db.Teacher.EXPECT().Count(gomock.Any()).Return(int64(1), nil)
 			},
 			req: req,
 			expect: &testResponse{
@@ -69,6 +70,7 @@ func TestListTeachers(t *testing.T) {
 							UpdatedAt:     now.Unix(),
 						},
 					},
+					Total: 1,
 				},
 			},
 		},
@@ -87,7 +89,20 @@ func TestListTeachers(t *testing.T) {
 			name: "failed to list teacher",
 			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
 				mocks.validator.EXPECT().ListTeachers(req).Return(nil)
-				mocks.db.Teacher.EXPECT().List(ctx, params).Return(nil, errmock)
+				mocks.db.Teacher.EXPECT().List(gomock.Any(), params).Return(nil, errmock)
+				mocks.db.Teacher.EXPECT().Count(gomock.Any()).Return(int64(3), nil)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.Internal,
+			},
+		},
+		{
+			name: "failed to count",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				mocks.validator.EXPECT().ListTeachers(req).Return(nil)
+				mocks.db.Teacher.EXPECT().List(gomock.Any(), params).Return(teachers, nil)
+				mocks.db.Teacher.EXPECT().Count(gomock.Any()).Return(int64(0), errmock)
 			},
 			req: req,
 			expect: &testResponse{

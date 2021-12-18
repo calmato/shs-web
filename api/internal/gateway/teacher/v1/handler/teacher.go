@@ -45,6 +45,7 @@ func (h *apiV1Handler) ListTeachers(ctx *gin.Context) {
 
 	res := &response.TeachersResponse{
 		Teachers: entity.NewTeachers(teachers),
+		Total:    out.Total,
 	}
 	ctx.JSON(http.StatusOK, res)
 }

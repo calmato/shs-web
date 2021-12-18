@@ -76,6 +76,10 @@ teachersResponse:
           updatedAt:
             type: string
             description: 更新日時
+    total:
+      type: integer
+      format: int64
+      description: 講師合計数
   example:
     teachers:
     - id: 'kSByoE6FetnPs5Byk3a9Zx'
@@ -96,3 +100,4 @@ teachersResponse:
       role: 1
       createdAt: '2021-12-12T12:12:30.100Z'
       updatedAt: '2021-12-12T12:12:30.100Z'
+    total: 2
