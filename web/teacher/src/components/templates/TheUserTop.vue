@@ -10,7 +10,15 @@
 
         <v-tabs-items v-model="selector">
           <v-tab-item value="tab-teachers">
-            <the-teacher-list :items="teachers" :loading="loading" />
+            <the-teacher-list
+              :items="teachers"
+              :total="teachersTotal"
+              :loading="loading"
+              :page="teachersPage"
+              :items-per-page="teachersItemsPerPage"
+              @update:page="$emit('update:teachers-page', $event)"
+              @update:items-per-page="$emit('update:teachers-items-per-page', $event)"
+            />
           </v-tab-item>
           <v-tab-item value="tab-students">
             <the-student-list :items="students" :loading="loading" />
@@ -46,6 +54,18 @@ export default defineComponent({
     teachers: {
       type: Array as PropType<Teacher[]>,
       default: () => [],
+    },
+    teachersTotal: {
+      type: Number,
+      default: 0,
+    },
+    teachersPage: {
+      type: Number,
+      default: 1,
+    },
+    teachersItemsPerPage: {
+      type: Number,
+      default: 10,
     },
   },
 

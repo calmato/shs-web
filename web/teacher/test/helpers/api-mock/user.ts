@@ -37,5 +37,22 @@ export const listTeachers: { [key: string]: TeachersResponse } = {
         updatedAt: '2021-12-02T18:30:00+09:00',
       },
     ],
+    total: 3,
+  },
+  '/v1/teachers?limit=20&offset=2': {
+    teachers: [
+      {
+        id: '000000000000000000003',
+        lastName: '鈴木',
+        firstName: '小太郎',
+        lastNameKana: 'すずき',
+        firstNameKana: 'こたろう',
+        mail: 'teacher-003@calmato.jp',
+        role: 2,
+        createdAt: '2021-12-02T18:30:00+09:00',
+        updatedAt: '2021-12-02T18:30:00+09:00',
+      },
+    ],
+    total: 3,
   },
 }

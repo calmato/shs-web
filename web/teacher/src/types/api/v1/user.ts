@@ -12,4 +12,5 @@ export interface Teacher {
 
 export interface TeachersResponse {
   teachers: Teacher[]
+  total: number
 }

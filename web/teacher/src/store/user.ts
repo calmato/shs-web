@@ -7,7 +7,6 @@ import { ErrorResponse } from '~/types/api/exception'
 import { ApiError } from '~/types/exception'
 
 const initialState: UserState = {
-  teachers: [],
   students: [
     {
       id: '123456789012345678901',
@@ -24,6 +23,8 @@ const initialState: UserState = {
       updatedAt: '',
     },
   ],
+  teachers: [],
+  teachersTotal: 0,
 }
 
 @Module({
@@ -34,6 +35,7 @@ const initialState: UserState = {
 export default class UserModule extends VuexModule {
   private students: UserState['students'] = initialState.students
   private teachers: UserState['teachers'] = initialState.teachers
+  private teachersTotal: UserState['teachersTotal'] = initialState.teachersTotal
 
   public get getStudents(): Student[] {
     return this.students
@@ -59,6 +61,10 @@ export default class UserModule extends VuexModule {
     return teachers
   }
 
+  public get getTeachersTotal(): number {
+    return this.teachersTotal
+  }
+
   @Mutation
   private setStudents(students: Student[]): void {
     this.students = students.map((student: Student): Student => {
@@ -69,30 +75,35 @@ export default class UserModule extends VuexModule {
   }
 
   @Mutation
-  private setTeachers(teachers: Teacher[]): void {
+  private setTeachers({ teachers, total }: { teachers: Teacher[]; total: number }): void {
     this.teachers = teachers.map((teacher: Teacher): Teacher => {
       const name: string = `${teacher.lastName} ${teacher.firstName}`
       const nameKana: string = `${teacher.lastNameKana} ${teacher.firstNameKana}`
       return { ...teacher, name, nameKana }
     })
+    this.teachersTotal = total
   }
 
   @Action({})
   public factory(): void {
     this.setStudents(initialState.students)
-    this.setTeachers(initialState.teachers)
+    this.setTeachers({ teachers: initialState.teachers, total: initialState.teachersTotal })
   }
 
   @Action({ rawError: true })
-  public async listTeachers(): Promise<void> {
-    // TODO: limit, offset周りの対応
+  public async listTeachers({ limit, offset }: { limit: number; offset: number }): Promise<void> {
+    let query: string = ''
+    if (limit !== 0 || offset !== 0) {
+      query = `?limit=${limit}&offset=${offset}`
+    }
+
     await $axios
-      .$get('/v1/teachers')
+      .$get('/v1/teachers' + query)
       .then((res: TeachersResponse) => {
         const teachers: Teacher[] = res.teachers.map((data: TeacherResponse): Teacher => {
           return { ...data }
         })
-        this.setTeachers(teachers)
+        this.setTeachers({ teachers, total: res.total })
       })
       .catch((err: AxiosError) => {
         const res: ErrorResponse = { ...err.response?.data }
