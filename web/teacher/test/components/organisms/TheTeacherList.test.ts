@@ -39,6 +39,17 @@ describe('components/organisms/TheTeacherList', () => {
         })
       })
 
+      describe('itemsPerPage', () => {
+        it('初期値', () => {
+          expect(wrapper.props().itemsPerPage).toBe(10)
+        })
+
+        it('値が代入されること', async () => {
+          await wrapper.setProps({ itemsPerPage: 50 })
+          expect(wrapper.props().itemsPerPage).toBe(50)
+        })
+      })
+
       describe('loading', () => {
         it('初期値', () => {
           expect(wrapper.props().loading).toBeFalsy()
@@ -49,6 +60,28 @@ describe('components/organisms/TheTeacherList', () => {
           expect(wrapper.props().loading).toBeTruthy()
         })
       })
+
+      describe('page', () => {
+        it('初期値', () => {
+          expect(wrapper.props().page).toBe(1)
+        })
+
+        it('値が代入されること', async () => {
+          await wrapper.setProps({ page: 2 })
+          expect(wrapper.props().page).toBe(2)
+        })
+      })
+
+      describe('total', () => {
+        it('初期値', () => {
+          expect(wrapper.props().total).toBe(0)
+        })
+
+        it('値が代入されること', async () => {
+          await wrapper.setProps({ total: 100 })
+          expect(wrapper.props().total).toBe(100)
+        })
+      })
     })
 
     describe('data', () => {
@@ -57,6 +90,13 @@ describe('components/organisms/TheTeacherList', () => {
           { text: '講師名', value: 'name', sortable: false },
           { text: '役職', value: 'role', sortable: false },
         ])
+      })
+
+      it('footer', () => {
+        expect(wrapper.vm.footer).toEqual({
+          itemsPerPageText: '表示件数',
+          itemsPerPageOptions: [10, 20, 30, 50],
+        })
       })
     })
 

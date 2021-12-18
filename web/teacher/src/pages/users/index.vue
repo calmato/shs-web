@@ -1,11 +1,19 @@
 <template>
-  <the-user-top :loading="loading" :teachers="teachers" :students="students" />
+  <the-user-top
+    :loading="loading"
+    :students="students"
+    :teachers="teachers"
+    :teachers-total="teachersTotal"
+    :teachers-page.sync="teachersPage"
+    :teachers-items-per-page.sync="teachersItemsPerPage"
+  />
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref, SetupContext, useAsync } from '@nuxtjs/composition-api'
+import { computed, defineComponent, ref, SetupContext, useAsync, watch } from '@nuxtjs/composition-api'
 import TheUserTop from '~/components/templates/TheUserTop.vue'
 import { CommonStore, UserStore } from '~/store'
+import { PromiseState } from '~/types/store'
 
 export default defineComponent({
   components: {
@@ -15,26 +23,48 @@ export default defineComponent({
   setup(_, { root }: SetupContext) {
     const store = root.$store
 
-    const loading = ref<boolean>(false)
+    const teachersPage = ref<number>(1)
+    const teachersItemsPerPage = ref<number>(10)
 
-    const teachers = computed(() => store.getters['user/getTeachers'])
+    const loading = computed(() => store.getters['common/getPromiseState'] === PromiseState.LOADING)
     const students = computed(() => store.getters['user/getStudents'])
+    const teachers = computed(() => store.getters['user/getTeachers'])
+    const teachersTotal = computed(() => store.getters['user/getTeachersTotal'])
+
+    watch(teachersPage, async () => {
+      await listTeachers()
+    })
+
+    watch(teachersItemsPerPage, async () => {
+      await listTeachers()
+    })
 
     useAsync(async () => {
+      await listTeachers()
+    })
+
+    async function listTeachers(): Promise<void> {
       CommonStore.startConnection()
-      await UserStore.listTeachers()
+
+      const limit: number = teachersItemsPerPage.value
+      const offset: number = (teachersPage.value - 1) * limit
+
+      await UserStore.listTeachers({ limit, offset })
         .catch((err: Error) => {
           console.log('feiled to list teachers', err)
         })
         .finally(() => {
           CommonStore.endConnection()
         })
-    })
+    }
 
     return {
       loading,
-      teachers,
       students,
+      teachers,
+      teachersTotal,
+      teachersPage,
+      teachersItemsPerPage,
     }
   },
 })

@@ -76,6 +76,39 @@ describe('components/templates/TheUserTop', () => {
           expect(wrapper.props().teachers).toBe(teachers)
         })
       })
+
+      describe('teachersTotal', () => {
+        it('初期値', () => {
+          expect(wrapper.props().teachersTotal).toBe(0)
+        })
+
+        it('値が代入されること', async () => {
+          await wrapper.setProps({ teachersTotal: 100 })
+          expect(wrapper.props().teachersTotal).toBe(100)
+        })
+      })
+
+      describe('teachersPage', () => {
+        it('初期値', () => {
+          expect(wrapper.props().teachersPage).toBe(1)
+        })
+
+        it('値が代入されること', async () => {
+          await wrapper.setProps({ teachersPage: 2 })
+          expect(wrapper.props().teachersPage).toBe(2)
+        })
+      })
+
+      describe('teachersItemsPerPage', () => {
+        it('初期値', () => {
+          expect(wrapper.props().teachersItemsPerPage).toBe(10)
+        })
+
+        it('値が代入されること', async () => {
+          await wrapper.setProps({ teachersItemsPerPage: 50 })
+          expect(wrapper.props().teachersItemsPerPage).toBe(50)
+        })
+      })
     })
 
     describe('data', () => {

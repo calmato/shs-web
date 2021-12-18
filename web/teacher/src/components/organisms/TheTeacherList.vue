@@ -1,5 +1,16 @@
 <template>
-  <v-data-table :mobile-breakpoint="0" :headers="headers" :items="items" :loading="loading">
+  <v-data-table
+    :mobile-breakpoint="0"
+    :headers="headers"
+    :footer-props="footer"
+    :items="items"
+    :items-per-page="itemsPerPage"
+    :loading="loading"
+    :page="page"
+    :server-items-length="total"
+    @update:page="$emit('update:page', $event)"
+    @update:items-per-page="$emit('update:items-per-page', $event)"
+  >
     <template #[`item.role`]="{ item }">
       <v-chip :color="getRoleColor(item.role)" dark>
         {{ getRole(item.role) }}
@@ -10,7 +21,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from '@nuxtjs/composition-api'
-import { TableHeader } from '~/types/props/user'
+import { TableFooter, TableHeader } from '~/types/props/user'
 import { Role, Teacher } from '~/types/store'
 
 export default defineComponent({
@@ -19,9 +30,21 @@ export default defineComponent({
       type: Array as PropType<Teacher[]>,
       default: () => [],
     },
+    itemsPerPage: {
+      type: Number,
+      default: 10,
+    },
     loading: {
       type: Boolean,
       default: false,
+    },
+    page: {
+      type: Number,
+      default: 1,
+    },
+    total: {
+      type: Number,
+      default: 0,
     },
   },
 
@@ -30,6 +53,10 @@ export default defineComponent({
       { text: '講師名', value: 'name', sortable: false },
       { text: '役職', value: 'role', sortable: false },
     ]
+    const footer: TableFooter = {
+      itemsPerPageText: '表示件数',
+      itemsPerPageOptions: [10, 20, 30, 50],
+    }
 
     const getRole = (role: Role): string => {
       switch (role) {
@@ -55,6 +82,7 @@ export default defineComponent({
 
     return {
       headers,
+      footer,
       getRole,
       getRoleColor,
     }

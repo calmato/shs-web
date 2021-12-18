@@ -58,6 +58,10 @@ describe('store/user', () => {
     it('getTeacherMap', () => {
       expect(UserStore.getTeacherMap).toEqual({})
     })
+
+    it('getTeachersTotal', () => {
+      expect(UserStore.getTeachersTotal).toBe(0)
+    })
   })
 
   describe('actions', () => {
@@ -67,8 +71,8 @@ describe('store/user', () => {
           setSafetyMode(true)
         })
 
-        it('stateが更新されていること', async () => {
-          await UserStore.listTeachers()
+        it('changing state when limit 0 and offset 0', async () => {
+          await UserStore.listTeachers({ limit: 0, offset: 0 })
           expect(UserStore.getTeachers).toEqual([
             {
               id: '000000000000000000001',
@@ -110,6 +114,27 @@ describe('store/user', () => {
               updatedAt: '2021-12-02T18:30:00+09:00',
             },
           ])
+          expect(UserStore.getTeachersTotal).toBe(3)
+        })
+
+        it('changing state when limit 20 and offset 2', async () => {
+          await UserStore.listTeachers({ limit: 20, offset: 2 })
+          expect(UserStore.getTeachers).toEqual([
+            {
+              id: '000000000000000000003',
+              name: '鈴木 小太郎',
+              nameKana: 'すずき こたろう',
+              lastName: '鈴木',
+              firstName: '小太郎',
+              lastNameKana: 'すずき',
+              firstNameKana: 'こたろう',
+              mail: 'teacher-003@calmato.jp',
+              role: 2,
+              createdAt: '2021-12-02T18:30:00+09:00',
+              updatedAt: '2021-12-02T18:30:00+09:00',
+            },
+          ])
+          expect(UserStore.getTeachersTotal).toBe(3)
         })
       })
 
@@ -124,7 +149,7 @@ describe('store/user', () => {
             message: 'api error',
             details: 'some error',
           } as ErrorResponse)
-          await expect(UserStore.listTeachers()).rejects.toThrow(err)
+          await expect(UserStore.listTeachers({ limit: 0, offset: 0 })).rejects.toThrow(err)
         })
       })
     })

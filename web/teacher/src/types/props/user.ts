@@ -8,3 +8,8 @@ export interface TableHeader {
   value: string
   sortable: boolean
 }
+
+export interface TableFooter {
+  itemsPerPageText: string
+  itemsPerPageOptions: number[]
+}
