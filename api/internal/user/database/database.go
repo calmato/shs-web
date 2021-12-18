@@ -28,14 +28,21 @@ type Params struct {
 }
 
 type Database struct {
+	Student Student
 	Teacher Teacher
 }
 
 func NewDatabase(params *Params) *Database {
 	return &Database{
+		Student: NewStudent(params.Database, params.Auth),
 		Teacher: NewTeacher(params.Database, params.Auth),
 	}
 }
+
+/**
+ * interface
+ */
+type Student interface{}
 
 type Teacher interface {
 	List(ctx context.Context, p *ListTeachersParams, fields ...string) (entity.Teachers, error)
@@ -44,11 +51,17 @@ type Teacher interface {
 	Count(ctx context.Context) (int64, error)
 }
 
+/**
+ * params
+ */
 type ListTeachersParams struct {
 	Limit  int
 	Offset int
 }
 
+/**
+ * private methods
+ */
 func dbError(err error) error {
 	if err == nil {
 		return nil
