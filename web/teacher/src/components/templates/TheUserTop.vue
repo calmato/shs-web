@@ -1,22 +1,24 @@
 <template>
-  <v-row>
-    <v-col cols="12">
-      <v-tabs v-model="selector" grow class="pb-4">
-        <v-tab v-for="actor in actors" :key="actor.value" :href="`#tab-${actor.value}`">
-          {{ actor.name }}
-        </v-tab>
-      </v-tabs>
+  <v-container class="px-0 pt-0">
+    <v-row>
+      <v-col cols="12">
+        <v-tabs v-model="selector" grow class="pb-4">
+          <v-tab v-for="actor in actors" :key="actor.value" :href="`#tab-${actor.value}`">
+            {{ actor.name }}
+          </v-tab>
+        </v-tabs>
 
-      <v-tabs-items v-model="selector">
-        <v-tab-item value="tab-teachers">
-          <the-teacher-list :items="teachers" :loading="loading" />
-        </v-tab-item>
-        <v-tab-item value="tab-students">
-          <the-student-list :items="students" :loading="loading" />
-        </v-tab-item>
-      </v-tabs-items>
-    </v-col>
-  </v-row>
+        <v-tabs-items v-model="selector">
+          <v-tab-item value="tab-teachers">
+            <the-teacher-list :items="teachers" :loading="loading" />
+          </v-tab-item>
+          <v-tab-item value="tab-students">
+            <the-student-list :items="students" :loading="loading" />
+          </v-tab-item>
+        </v-tabs-items>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script lang="ts">

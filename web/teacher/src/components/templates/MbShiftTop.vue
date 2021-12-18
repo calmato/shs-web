@@ -1,11 +1,13 @@
 <template>
-  <v-row>
-    <v-col class="d-flex flex-column text-center px-8">
-      <v-img src="/exception.png" />
-      <h2 class="my-4">スマホレイアウトに<br />対応していません</h2>
-      <v-btn @click="onClick">トップへ戻る</v-btn>
-    </v-col>
-  </v-row>
+  <v-container>
+    <v-row>
+      <v-col class="d-flex flex-column text-center px-8">
+        <v-img src="/exception.png" />
+        <h2 class="my-4">スマホレイアウトに<br />対応していません</h2>
+        <v-btn @click="onClick">トップへ戻る</v-btn>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script lang="ts">

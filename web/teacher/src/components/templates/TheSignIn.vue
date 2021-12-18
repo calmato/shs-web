@@ -1,12 +1,18 @@
 <template>
-  <!-- TODO: デザインの整形 -->
-  <v-row justify="center" align="center">
-    <v-col cols="12" sm="8">
-      <v-text-field v-model="signInForm.mail" label="メールアドレス" autofocus outlined />
-      <v-text-field v-model="signInForm.password" label="パスワード" outlined />
-      <v-btn color="primary" block :loading="loading" :disabled="loading" @click="onClick">サインイン</v-btn>
-    </v-col>
-  </v-row>
+  <v-container fill-height>
+    <v-row class="justify-center align-center">
+      <v-col cols="12" sm="8">
+        <v-card>
+          <v-toolbar color="primary" dark flat>SHS Web 講師ログイン画面</v-toolbar>
+          <v-card-text class="my-4">
+            <v-text-field v-model="signInForm.mail" label="メールアドレス" autofocus outlined />
+            <v-text-field v-model="signInForm.password" label="パスワード" outlined />
+            <v-btn color="primary" block :loading="loading" :disabled="loading" @click="onClick">サインイン</v-btn>
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script lang="ts">
