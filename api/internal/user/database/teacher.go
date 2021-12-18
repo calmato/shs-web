@@ -87,3 +87,9 @@ func (t *teacher) Create(ctx context.Context, teacher *entity.Teacher) error {
 	}
 	return dbError(tx.Commit().Error)
 }
+
+func (t *teacher) Count(ctx context.Context) (int64, error) {
+	var total int64
+	err := t.db.DB.Table(teacherTable).Count(&total).Error
+	return total, dbError(err)
+}

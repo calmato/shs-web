@@ -24,6 +24,7 @@ message ListTeachersRequest {
 
 message ListTeachersResponse {
   repeated Teacher teachers = 1;
+  int64            total    = 2;
 }
 
 message GetTeacherRequest {

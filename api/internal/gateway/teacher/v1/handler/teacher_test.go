@@ -40,7 +40,7 @@ func TestListTeachers(t *testing.T) {
 			name: "success",
 			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
 				in := &user.ListTeachersRequest{Limit: 100, Offset: 20}
-				out := &user.ListTeachersResponse{Teachers: teachers}
+				out := &user.ListTeachersResponse{Teachers: teachers, Total: 1}
 				mocks.user.EXPECT().ListTeachers(gomock.Any(), in).Return(out, nil)
 			},
 			query: "?limit=100&offset=20",
@@ -60,6 +60,7 @@ func TestListTeachers(t *testing.T) {
 							UpdatedAt:     now,
 						},
 					},
+					Total: 1,
 				},
 			},
 		},

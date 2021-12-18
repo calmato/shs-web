@@ -262,3 +262,59 @@ func testTeacher(id string, mail string, now time.Time) *entity.Teacher {
 		UpdatedAt:     now,
 	}
 }
+
+func TestTeacher_Count(t *testing.T) {
+	m, err := newMock()
+	require.NoError(t, err)
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	_ = m.dbDelete(ctx, teacherTable)
+
+	now := jst.Now()
+
+	teachers := make(entity.Teachers, 3)
+	teachers[0] = testTeacher("cvcTyJFfgoDQrqC1KDHbRe", "teacher01@calmato.jp", now)
+	teachers[1] = testTeacher("jx2NB7t3xodUu53LYtYTf2", "teacher02@calmato.jp", now)
+	teachers[2] = testTeacher("kvnMftmwoVsCzZRKNTEZtg", "teacher03@calmato.jp", now)
+	err = m.db.DB.Create(&teachers).Error
+	require.NoError(t, err)
+
+	type args struct{}
+	type want struct {
+		total int64
+		isErr bool
+	}
+	tests := []struct {
+		name  string
+		setup func(ctx context.Context, t *testing.T, m *mocks)
+		args  args
+		want  want
+	}{
+		{
+			name:  "success",
+			setup: func(ctx context.Context, t *testing.T, m *mocks) {},
+			args:  args{},
+			want: want{
+				total: int64(3),
+				isErr: false,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			ctx, cancel := context.WithCancel(context.Background())
+			defer cancel()
+
+			tt.setup(ctx, t, m)
+
+			db := NewTeacher(m.db, m.auth)
+			actual, err := db.Count(ctx)
+			assert.Equal(t, tt.want.isErr, err != nil, err)
+			assert.Equal(t, tt.want.total, actual)
+		})
+	}
+}

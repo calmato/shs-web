@@ -41,6 +41,7 @@ type Teacher interface {
 	List(ctx context.Context, p *ListTeachersParams, fields ...string) (entity.Teachers, error)
 	Get(ctx context.Context, id string, fields ...string) (*entity.Teacher, error)
 	Create(ctx context.Context, t *entity.Teacher) error
+	Count(ctx context.Context) (int64, error)
 }
 
 type ListTeachersParams struct {
