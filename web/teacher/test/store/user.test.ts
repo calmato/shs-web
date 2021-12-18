@@ -2,6 +2,7 @@ import { setup, refresh, setSafetyMode } from '~~/test/helpers/store-helper'
 import { UserStore } from '~/store'
 import { ApiError } from '~/types/exception'
 import { ErrorResponse } from '~/types/api/exception'
+import { TeacherNewForm, TeacherNewOptions } from '~/types/form'
 
 describe('store/user', () => {
   beforeEach(() => {
@@ -143,13 +144,72 @@ describe('store/user', () => {
           setSafetyMode(false)
         })
 
-        it('rejectが返されること', async () => {
+        it('return reject', async () => {
           const err = new ApiError(400, 'api error', {
             status: 400,
             message: 'api error',
             details: 'some error',
           } as ErrorResponse)
           await expect(UserStore.listTeachers({ limit: 0, offset: 0 })).rejects.toThrow(err)
+        })
+      })
+    })
+
+    describe('createTeacher', () => {
+      let form: TeacherNewForm
+      beforeEach(() => {
+        form = {
+          params: {
+            lastName: '中村',
+            firstName: '太郎',
+            lastNameKana: 'なかむら',
+            firstNameKana: 'たろう',
+            mail: 'teacher-001@calmato.jp',
+            password: '12345678',
+            passwordConfirmation: '12345678',
+            role: 1,
+          },
+          options: TeacherNewOptions,
+        }
+      })
+
+      describe('success', () => {
+        beforeEach(() => {
+          setSafetyMode(true)
+        })
+
+        it('changing state', async () => {
+          await UserStore.createTeacher({ form })
+          expect(UserStore.getTeachers).toEqual([
+            {
+              id: '000000000000000000001',
+              name: '中村 太郎',
+              nameKana: 'なかむら たろう',
+              lastName: '中村',
+              firstName: '太郎',
+              lastNameKana: 'なかむら',
+              firstNameKana: 'たろう',
+              mail: 'teacher-001@calmato.jp',
+              role: 1,
+              createdAt: '2021-12-02T18:30:00+09:00',
+              updatedAt: '2021-12-02T18:30:00+09:00',
+            },
+          ])
+        })
+      })
+
+      describe('failure', () => {
+        beforeEach(() => {
+          setSafetyMode(false)
+        })
+
+        it('return reject', async () => {
+          const err = new ApiError(400, 'api error', {
+            status: 400,
+            message: 'api error',
+            details: 'some error',
+          } as ErrorResponse)
+          await expect(UserStore.createTeacher({ form })).rejects.toThrow(err)
         })
       })
     })

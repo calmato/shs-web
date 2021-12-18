@@ -17,7 +17,9 @@ export default {
     ...AuthStore.showAuth,
     ...UserStore.listTeachers,
   },
-  post: {},
+  post: {
+    ...UserStore.createTeacher,
+  },
   patch: {},
   put: {},
   delete: {},
