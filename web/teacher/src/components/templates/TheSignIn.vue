@@ -5,8 +5,8 @@
         <v-card>
           <v-toolbar color="primary" dark flat>SHS Web 講師ログイン画面</v-toolbar>
           <v-card-text class="my-4">
-            <v-text-field v-model="signInForm.mail" label="メールアドレス" autofocus outlined />
-            <v-text-field v-model="signInForm.password" label="パスワード" outlined />
+            <v-text-field v-model="signInForm.mail" label="メールアドレス" type="email" autofocus outlined />
+            <v-text-field v-model="signInForm.password" label="パスワード" type="password" outlined />
             <v-btn color="primary" block :loading="loading" :disabled="loading" @click="onClick">サインイン</v-btn>
           </v-card-text>
         </v-card>
