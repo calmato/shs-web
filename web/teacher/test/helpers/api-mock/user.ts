@@ -1,4 +1,4 @@
-import { TeachersResponse } from '~/types/api/v1'
+import { TeacherResponse, TeachersResponse } from '~/types/api/v1'
 
 export const listTeachers: { [key: string]: TeachersResponse } = {
   '/v1/teachers': {
@@ -54,5 +54,19 @@ export const listTeachers: { [key: string]: TeachersResponse } = {
       },
     ],
     total: 3,
+  },
+}
+
+export const createTeacher: { [key: string]: TeacherResponse } = {
+  '/v1/teachers': {
+    id: '000000000000000000001',
+    lastName: '中村',
+    firstName: '太郎',
+    lastNameKana: 'なかむら',
+    firstNameKana: 'たろう',
+    mail: 'teacher-001@calmato.jp',
+    role: 1,
+    createdAt: '2021-12-02T18:30:00+09:00',
+    updatedAt: '2021-12-02T18:30:00+09:00',
   },
 }

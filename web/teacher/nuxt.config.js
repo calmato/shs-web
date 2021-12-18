@@ -28,7 +28,7 @@ export default {
   css: [],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
-  plugins: ['~/plugins/axios', '~/plugins/axios-accessor', '~/plugins/firebase'],
+  plugins: ['~/plugins/axios', '~/plugins/axios-accessor', '~/plugins/firebase', '~/plugins/vee-validate'],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
   components: true,

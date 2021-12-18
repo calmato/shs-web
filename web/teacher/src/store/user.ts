@@ -1,10 +1,11 @@
 import { Module, VuexModule, Mutation, Action } from 'vuex-module-decorators'
 import { AxiosError } from 'axios'
 import { $axios } from '~/plugins/axios'
-import { TeachersResponse, Teacher as TeacherResponse } from '~/types/api/v1'
+import { TeachersResponse, Teacher as TeacherResponse, CreateTeacherRequest } from '~/types/api/v1'
 import { Student, StudentMap, Teacher, TeacherMap, UserState } from '~/types/store'
 import { ErrorResponse } from '~/types/api/exception'
 import { ApiError } from '~/types/exception'
+import { TeacherNewForm } from '~/types/form'
 
 const initialState: UserState = {
   students: [
@@ -84,6 +85,14 @@ export default class UserModule extends VuexModule {
     this.teachersTotal = total
   }
 
+  @Mutation
+  private addTeacher(teacher: Teacher): void {
+    const name: string = `${teacher.lastName} ${teacher.firstName}`
+    const nameKana: string = `${teacher.lastNameKana} ${teacher.firstNameKana}`
+    this.teachers.push({ ...teacher, name, nameKana })
+    this.teachersTotal += 1
+  }
+
   @Action({})
   public factory(): void {
     this.setStudents(initialState.students)
@@ -104,6 +113,21 @@ export default class UserModule extends VuexModule {
           return { ...data }
         })
         this.setTeachers({ teachers, total: res.total })
+      })
+      .catch((err: AxiosError) => {
+        const res: ErrorResponse = { ...err.response?.data }
+        throw new ApiError(res.status, res.message, res)
+      })
+  }
+
+  @Action({ rawError: true })
+  public async createTeacher({ form }: { form: TeacherNewForm }): Promise<void> {
+    const req: CreateTeacherRequest = { ...form.params }
+
+    await $axios
+      .$post('/v1/teachers', req)
+      .then((res: TeacherResponse) => {
+        this.addTeacher(res)
       })
       .catch((err: AxiosError) => {
         const res: ErrorResponse = { ...err.response?.data }
