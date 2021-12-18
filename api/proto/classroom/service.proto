@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+package classroom;
+
+option go_package = "github.com/calmato/shs-web/api/proto/classroom";
+
+import "github.com/envoyproxy/protoc-gen-validate/validate/validate.proto";
+
+import "classroom/subject.proto";
+
+service ClassroomService {
+  rpc ListSubjects(ListSubjectsRequest) returns (ListSubjectsResponse);
+  rpc MultiGetSubjects(MultiGetSubjectsRequest) returns (MultiGetSubjectsResponse);
+  rpc GetSubject(GetSubjectRequest) returns (GetSubjectResponse);
+}
+
+message ListSubjectsRequest {
+  int64 limit  = 1 [(validate.rules).int64 = { gte: 0 }];
+  int64 offset = 2 [(validate.rules).int64 = { gte: 0 }];
+}
+
+message ListSubjectsResponse {
+  repeated Subject subjects = 1;
+  int64            total    = 2;
+}
+
+message MultiGetSubjectsRequest {
+  repeated int64 ids = 1 [(validate.rules).repeated = { min_items: 1, unique: true, items: { int64: { gt: 0 }}}];
+}
+
+message MultiGetSubjectsResponse {
+  repeated Subject subjects = 1;
+}
+
+message GetSubjectRequest {
+  int64 id = 1 [(validate.rules).int64 = { gt: 0 }];
+}
+
+message GetSubjectResponse {
+  Subject subject = 1;
+}
