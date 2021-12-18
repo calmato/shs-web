@@ -16,7 +16,13 @@
       </v-col>
       <v-col>
         <div class="text-subtitle-1">教室設定</div>
-        <v-card v-for="item in systemItems" :key="`sys-${item.title}`" elevation="0" class="my-1" @click="onClick(item)">
+        <v-card
+          v-for="item in systemItems"
+          :key="`sys-${item.title}`"
+          elevation="0"
+          class="my-1"
+          @click="onClick(item)"
+        >
           <v-list-item>
             <v-list-item-content>
               <v-list-item-title>{{ item.title }}</v-list-item-title>
