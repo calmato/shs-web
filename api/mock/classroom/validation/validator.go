@@ -5,6 +5,9 @@
 package mock_validation
 
 import (
+	reflect "reflect"
+
+	classroom "github.com/calmato/shs-web/api/proto/classroom"
 	gomock "github.com/golang/mock/gomock"
 )
 
@@ -29,4 +32,46 @@ func NewMockRequestValidation(ctrl *gomock.Controller) *MockRequestValidation {
 // EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockRequestValidation) EXPECT() *MockRequestValidationMockRecorder {
 	return m.recorder
+}
+
+// GetSubject mocks base method.
+func (m *MockRequestValidation) GetSubject(req *classroom.GetSubjectRequest) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetSubject", req)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// GetSubject indicates an expected call of GetSubject.
+func (mr *MockRequestValidationMockRecorder) GetSubject(req interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetSubject", reflect.TypeOf((*MockRequestValidation)(nil).GetSubject), req)
+}
+
+// ListSubjects mocks base method.
+func (m *MockRequestValidation) ListSubjects(req *classroom.ListSubjectsRequest) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ListSubjects", req)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// ListSubjects indicates an expected call of ListSubjects.
+func (mr *MockRequestValidationMockRecorder) ListSubjects(req interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListSubjects", reflect.TypeOf((*MockRequestValidation)(nil).ListSubjects), req)
+}
+
+// MultiGetSubjects mocks base method.
+func (m *MockRequestValidation) MultiGetSubjects(req *classroom.MultiGetSubjectsRequest) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "MultiGetSubjects", req)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// MultiGetSubjects indicates an expected call of MultiGetSubjects.
+func (mr *MockRequestValidationMockRecorder) MultiGetSubjects(req interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MultiGetSubjects", reflect.TypeOf((*MockRequestValidation)(nil).MultiGetSubjects), req)
 }

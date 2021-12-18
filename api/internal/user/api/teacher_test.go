@@ -86,7 +86,7 @@ func TestListTeachers(t *testing.T) {
 			},
 		},
 		{
-			name: "failed to list teacher",
+			name: "failed to list teachers",
 			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
 				mocks.validator.EXPECT().ListTeachers(req).Return(nil)
 				mocks.db.Teacher.EXPECT().List(gomock.Any(), params).Return(nil, errmock)

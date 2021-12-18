@@ -27,7 +27,7 @@ func TestListTeachers(t *testing.T) {
 			isErr: false,
 		},
 		{
-			name: "Lismit is gte 0",
+			name: "Lismit is gte",
 			req: &user.ListTeachersRequest{
 				Limit:  -1,
 				Offset: 0,
@@ -35,7 +35,7 @@ func TestListTeachers(t *testing.T) {
 			isErr: true,
 		},
 		{
-			name: "Offset is gte 0",
+			name: "Offset is gte",
 			req: &user.ListTeachersRequest{
 				Limit:  30,
 				Offset: -1,
