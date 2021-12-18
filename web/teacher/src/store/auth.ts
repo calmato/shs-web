@@ -105,6 +105,8 @@ export default class AuthModule extends VuexModule {
 
   @Action({ rawError: true })
   public signOut(): void {
+    const auth = getAuth(app)
+    auth.signOut()
     this.factory()
   }
 

@@ -40,26 +40,6 @@ describe('store/auth', () => {
   })
 
   describe('actions', () => {
-    describe('signOut', () => {
-      describe('success', () => {
-        it('factory', async () => {
-          await AuthStore.signOut()
-          expect(AuthStore.getUid).toBe('')
-          expect(AuthStore.getToken).toBe('')
-          expect(AuthStore.getEmailVerified).toBeFalsy()
-          expect(AuthStore.getAuth).toEqual({
-            id: '',
-            lastName: '',
-            firstName: '',
-            lastNameKana: '',
-            firstNameKana: '',
-            mail: '',
-            role: Role.TEACHER,
-          })
-        })
-      })
-    })
-
     describe('showAuth', () => {
       describe('success', () => {
         beforeEach(() => {

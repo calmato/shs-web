@@ -69,8 +69,8 @@ export default class UserModule extends VuexModule {
   @Mutation
   private setStudents(students: Student[]): void {
     this.students = students.map((student: Student): Student => {
-      const name: string = `${student.lastName} ${student.firstName}`
-      const nameKana: string = `${student.lastNameKana} ${student.firstNameKana}`
+      const name = getName(student.lastName, student.firstName)
+      const nameKana = getName(student.lastNameKana, student.firstNameKana)
       return { ...student, name, nameKana }
     })
   }
@@ -78,8 +78,8 @@ export default class UserModule extends VuexModule {
   @Mutation
   private setTeachers({ teachers, total }: { teachers: Teacher[]; total: number }): void {
     this.teachers = teachers.map((teacher: Teacher): Teacher => {
-      const name: string = `${teacher.lastName} ${teacher.firstName}`
-      const nameKana: string = `${teacher.lastNameKana} ${teacher.firstNameKana}`
+      const name = getName(teacher.lastName, teacher.firstName)
+      const nameKana = getName(teacher.lastNameKana, teacher.firstNameKana)
       return { ...teacher, name, nameKana }
     })
     this.teachersTotal = total
@@ -87,8 +87,8 @@ export default class UserModule extends VuexModule {
 
   @Mutation
   private addTeacher(teacher: Teacher): void {
-    const name: string = `${teacher.lastName} ${teacher.firstName}`
-    const nameKana: string = `${teacher.lastNameKana} ${teacher.firstNameKana}`
+    const name = getName(teacher.lastName, teacher.firstName)
+    const nameKana = getName(teacher.lastNameKana, teacher.firstNameKana)
     this.teachers.push({ ...teacher, name, nameKana })
     this.teachersTotal += 1
   }
@@ -134,4 +134,8 @@ export default class UserModule extends VuexModule {
         throw new ApiError(res.status, res.message, res)
       })
   }
+}
+
+function getName(lastName: string, firstName: string): string {
+  return `${lastName} ${firstName}`
 }
