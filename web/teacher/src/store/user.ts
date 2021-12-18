@@ -1,48 +1,13 @@
 import { Module, VuexModule, Mutation, Action } from 'vuex-module-decorators'
+import { AxiosError } from 'axios'
+import { $axios } from '~/plugins/axios'
+import { TeachersResponse, Teacher as TeacherResponse } from '~/types/api/v1'
 import { Student, StudentMap, Teacher, TeacherMap, UserState } from '~/types/store'
+import { ErrorResponse } from '~/types/api/exception'
+import { ApiError } from '~/types/exception'
 
 const initialState: UserState = {
-  teachers: [
-    {
-      id: '000000000000000000001',
-      name: '中村 太郎',
-      nameKana: 'なかむら たろう',
-      lastName: '中村',
-      firstName: '太郎',
-      lastNameKana: 'なかむら',
-      firstNameKana: 'たろう',
-      mail: 'teacher-001@calmato.jp',
-      role: 0,
-      createdAt: '',
-      updatedAt: '',
-    },
-    {
-      id: '000000000000000000002',
-      name: '西山 幸子',
-      nameKana: 'にしやま さちこ',
-      lastName: '西山',
-      firstName: '幸子',
-      lastNameKana: 'にしやま',
-      firstNameKana: 'さちこ',
-      mail: 'teacher-002@calmato.jp',
-      role: 0,
-      createdAt: '',
-      updatedAt: '',
-    },
-    {
-      id: '000000000000000000003',
-      name: '鈴木 小太郎',
-      nameKana: 'すずき こたろう',
-      lastName: '鈴木',
-      firstName: '小太郎',
-      lastNameKana: 'すずき',
-      firstNameKana: 'こたろう',
-      mail: 'teacher-003@calmato.jp',
-      role: 1,
-      createdAt: '',
-      updatedAt: '',
-    },
-  ],
+  teachers: [],
   students: [
     {
       id: '123456789012345678901',
@@ -116,5 +81,22 @@ export default class UserModule extends VuexModule {
   public factory(): void {
     this.setStudents(initialState.students)
     this.setTeachers(initialState.teachers)
+  }
+
+  @Action({ rawError: true })
+  public async listTeachers(): Promise<void> {
+    // TODO: limit, offset周りの対応
+    await $axios
+      .$get('/v1/teachers')
+      .then((res: TeachersResponse) => {
+        const teachers: Teacher[] = res.teachers.map((data: TeacherResponse): Teacher => {
+          return { ...data }
+        })
+        this.setTeachers(teachers)
+      })
+      .catch((err: AxiosError) => {
+        const res: ErrorResponse = { ...err.response?.data }
+        throw new ApiError(res.status, res.message, res)
+      })
   }
 }

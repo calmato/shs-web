@@ -1,4 +1,5 @@
 import * as AuthStore from './auth'
+import * as UserStore from './user'
 import { ErrorResponse } from '~/types/api/exception'
 
 const err: { response: { data: ErrorResponse } } = {
@@ -14,6 +15,7 @@ const err: { response: { data: ErrorResponse } } = {
 export default {
   get: {
     ...AuthStore.showAuth,
+    ...UserStore.listTeachers,
   },
   post: {},
   patch: {},
