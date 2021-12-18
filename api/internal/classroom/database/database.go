@@ -3,9 +3,11 @@
 package database
 
 import (
+	"context"
 	"errors"
 	"fmt"
 
+	"github.com/calmato/shs-web/api/internal/classroom/entity"
 	"github.com/calmato/shs-web/api/pkg/database"
 	"github.com/go-sql-driver/mysql"
 	"gorm.io/gorm"
@@ -36,11 +38,20 @@ func NewDatabase(params *Params) *Database {
 /**
  * interface
  */
-type Subject interface{}
+type Subject interface {
+	List(ctx context.Context, p *ListSubjectsParams, fields ...string) (entity.Subjects, error)
+	MultiGet(ctx context.Context, ids []int64, fields ...string) (entity.Subjects, error)
+	Get(ctx context.Context, id int64, fields ...string) (*entity.Subject, error)
+	Count(ctx context.Context) (int64, error)
+}
 
 /**
  * params
  */
+type ListSubjectsParams struct {
+	Limit  int
+	Offset int
+}
 
 /**
  * private methods

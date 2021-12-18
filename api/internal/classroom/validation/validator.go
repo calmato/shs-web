@@ -5,11 +5,16 @@ package validation
 import (
 	"errors"
 	"fmt"
+
+	"github.com/calmato/shs-web/api/proto/classroom"
 )
 
 var ErrRequestValidation = errors.New("validation: invalid argument")
 
 type RequestValidation interface {
+	ListSubjects(req *classroom.ListSubjectsRequest) error
+	MultiGetSubjects(req *classroom.MultiGetSubjectsRequest) error
+	GetSubject(req *classroom.GetSubjectRequest) error
 }
 
 type requestValidation struct{}

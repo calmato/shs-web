@@ -85,7 +85,7 @@ func TestTeacher_List(t *testing.T) {
 			for i, teacher := range tt.want.teachers {
 				teacher.CreatedAt = actual[i].CreatedAt // ignore
 				teacher.UpdatedAt = actual[i].UpdatedAt // ignore
-				assert.Contains(t, actual, tt.want.teachers[i])
+				assert.Contains(t, actual, teacher)
 			}
 		})
 	}
@@ -249,20 +249,6 @@ func TestTeacher_Create(t *testing.T) {
 	}
 }
 
-func testTeacher(id string, mail string, now time.Time) *entity.Teacher {
-	return &entity.Teacher{
-		ID:            id,
-		LastName:      "中村",
-		FirstName:     "広大",
-		LastNameKana:  "なかむら",
-		FirstNameKana: "こうだい",
-		Mail:          mail,
-		Role:          int32(user.Role_ROLE_TEACHER),
-		CreatedAt:     now,
-		UpdatedAt:     now,
-	}
-}
-
 func TestTeacher_Count(t *testing.T) {
 	m, err := newMock()
 	require.NoError(t, err)
@@ -296,7 +282,7 @@ func TestTeacher_Count(t *testing.T) {
 			setup: func(ctx context.Context, t *testing.T, m *mocks) {},
 			args:  args{},
 			want: want{
-				total: int64(3),
+				total: 3,
 				isErr: false,
 			},
 		},
@@ -316,5 +302,19 @@ func TestTeacher_Count(t *testing.T) {
 			assert.Equal(t, tt.want.isErr, err != nil, err)
 			assert.Equal(t, tt.want.total, actual)
 		})
+	}
+}
+
+func testTeacher(id string, mail string, now time.Time) *entity.Teacher {
+	return &entity.Teacher{
+		ID:            id,
+		LastName:      "中村",
+		FirstName:     "広大",
+		LastNameKana:  "なかむら",
+		FirstNameKana: "こうだい",
+		Mail:          mail,
+		Role:          int32(user.Role_ROLE_TEACHER),
+		CreatedAt:     now,
+		UpdatedAt:     now,
 	}
 }

@@ -5,6 +5,11 @@
 package mock_database
 
 import (
+	context "context"
+	reflect "reflect"
+
+	database "github.com/calmato/shs-web/api/internal/classroom/database"
+	entity "github.com/calmato/shs-web/api/internal/classroom/entity"
 	gomock "github.com/golang/mock/gomock"
 )
 
@@ -29,4 +34,79 @@ func NewMockSubject(ctrl *gomock.Controller) *MockSubject {
 // EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockSubject) EXPECT() *MockSubjectMockRecorder {
 	return m.recorder
+}
+
+// Count mocks base method.
+func (m *MockSubject) Count(ctx context.Context) (int64, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Count", ctx)
+	ret0, _ := ret[0].(int64)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Count indicates an expected call of Count.
+func (mr *MockSubjectMockRecorder) Count(ctx interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Count", reflect.TypeOf((*MockSubject)(nil).Count), ctx)
+}
+
+// Get mocks base method.
+func (m *MockSubject) Get(ctx context.Context, id int64, fields ...string) (*entity.Subject, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, id}
+	for _, a := range fields {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "Get", varargs...)
+	ret0, _ := ret[0].(*entity.Subject)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Get indicates an expected call of Get.
+func (mr *MockSubjectMockRecorder) Get(ctx, id interface{}, fields ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, id}, fields...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockSubject)(nil).Get), varargs...)
+}
+
+// List mocks base method.
+func (m *MockSubject) List(ctx context.Context, p *database.ListSubjectsParams, fields ...string) (entity.Subjects, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, p}
+	for _, a := range fields {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "List", varargs...)
+	ret0, _ := ret[0].(entity.Subjects)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// List indicates an expected call of List.
+func (mr *MockSubjectMockRecorder) List(ctx, p interface{}, fields ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, p}, fields...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "List", reflect.TypeOf((*MockSubject)(nil).List), varargs...)
+}
+
+// MultiGet mocks base method.
+func (m *MockSubject) MultiGet(ctx context.Context, ids []int64, fields ...string) (entity.Subjects, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, ids}
+	for _, a := range fields {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "MultiGet", varargs...)
+	ret0, _ := ret[0].(entity.Subjects)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// MultiGet indicates an expected call of MultiGet.
+func (mr *MockSubjectMockRecorder) MultiGet(ctx, ids interface{}, fields ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, ids}, fields...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MultiGet", reflect.TypeOf((*MockSubject)(nil).MultiGet), varargs...)
 }
