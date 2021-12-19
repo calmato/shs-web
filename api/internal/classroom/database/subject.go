@@ -7,12 +7,13 @@ import (
 	"github.com/calmato/shs-web/api/internal/classroom/entity"
 	"github.com/calmato/shs-web/api/pkg/database"
 	"github.com/calmato/shs-web/api/pkg/jst"
+	"github.com/calmato/shs-web/api/proto/classroom"
 )
 
 const subjectTable = "subjects"
 
 var subjectFields = []string{
-	"id", "name", "color", "created_at", "updated_at",
+	"id", "name", "color", "school_type", "created_at", "updated_at",
 }
 
 type subject struct {
@@ -27,13 +28,18 @@ func NewSubject(db *database.Client) Subject {
 	}
 }
 
-func (s *subject) List(ctx context.Context, fields ...string) (entity.Subjects, error) {
+func (s *subject) List(ctx context.Context, params *ListSubjectsParams, fields ...string) (entity.Subjects, error) {
 	var subjects entity.Subjects
 	if len(fields) == 0 {
 		fields = subjectFields
 	}
 
-	err := s.db.DB.Table(subjectTable).Select(fields).Find(&subjects).Error
+	stmt := s.db.DB.Table(subjectTable).Select(fields)
+	if params.SchoolType != classroom.SchoolType_SCHOOL_TYPE_UNKNOWN {
+		stmt.Where("school_type = ?", int32(params.SchoolType))
+	}
+
+	err := stmt.Find(&subjects).Error
 	return subjects, dbError(err)
 }
 

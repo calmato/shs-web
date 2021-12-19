@@ -4,6 +4,7 @@ import (
 	"context"
 	"testing"
 
+	"github.com/calmato/shs-web/api/internal/classroom/database"
 	"github.com/calmato/shs-web/api/internal/classroom/entity"
 	"github.com/calmato/shs-web/api/internal/classroom/validation"
 	"github.com/calmato/shs-web/api/pkg/jst"
@@ -17,11 +18,34 @@ func TestListSubjects(t *testing.T) {
 	t.Parallel()
 	now := jst.Now()
 
-	req := &classroom.ListSubjectsRequest{}
+	req := &classroom.ListSubjectsRequest{
+		SchoolType: classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL,
+	}
+	params := &database.ListSubjectsParams{
+		SchoolType: classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL,
+	}
 	subjects := entity.Subjects{
-		{ID: 1, Name: "国語", CreatedAt: now, UpdatedAt: now},
-		{ID: 2, Name: "数学", CreatedAt: now, UpdatedAt: now},
-		{ID: 3, Name: "英語", CreatedAt: now, UpdatedAt: now},
+		{
+			ID:         1,
+			Name:       "国語",
+			SchoolType: int32(classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL),
+			CreatedAt:  now,
+			UpdatedAt:  now,
+		},
+		{
+			ID:         2,
+			Name:       "数学",
+			SchoolType: int32(classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL),
+			CreatedAt:  now,
+			UpdatedAt:  now,
+		},
+		{
+			ID:         3,
+			Name:       "英語",
+			SchoolType: int32(classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL),
+			CreatedAt:  now,
+			UpdatedAt:  now,
+		},
 	}
 
 	tests := []struct {
@@ -34,7 +58,7 @@ func TestListSubjects(t *testing.T) {
 			name: "success",
 			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
 				mocks.validator.EXPECT().ListSubjects(req).Return(nil)
-				mocks.db.Subject.EXPECT().List(gomock.Any()).Return(subjects, nil)
+				mocks.db.Subject.EXPECT().List(gomock.Any(), params).Return(subjects, nil)
 				mocks.db.Subject.EXPECT().Count(gomock.Any()).Return(int64(3), nil)
 			},
 			req: req,
@@ -42,9 +66,27 @@ func TestListSubjects(t *testing.T) {
 				code: codes.OK,
 				body: &classroom.ListSubjectsResponse{
 					Subjects: []*classroom.Subject{
-						{Id: 1, Name: "国語", CreatedAt: now.Unix(), UpdatedAt: now.Unix()},
-						{Id: 2, Name: "数学", CreatedAt: now.Unix(), UpdatedAt: now.Unix()},
-						{Id: 3, Name: "英語", CreatedAt: now.Unix(), UpdatedAt: now.Unix()},
+						{
+							Id:         1,
+							Name:       "国語",
+							SchoolType: classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL,
+							CreatedAt:  now.Unix(),
+							UpdatedAt:  now.Unix(),
+						},
+						{
+							Id:         2,
+							Name:       "数学",
+							SchoolType: classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL,
+							CreatedAt:  now.Unix(),
+							UpdatedAt:  now.Unix(),
+						},
+						{
+							Id:         3,
+							Name:       "英語",
+							SchoolType: classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL,
+							CreatedAt:  now.Unix(),
+							UpdatedAt:  now.Unix(),
+						},
 					},
 					Total: 3,
 				},
@@ -65,7 +107,7 @@ func TestListSubjects(t *testing.T) {
 			name: "failed to list subjects",
 			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
 				mocks.validator.EXPECT().ListSubjects(req).Return(nil)
-				mocks.db.Subject.EXPECT().List(gomock.Any()).Return(nil, errmock)
+				mocks.db.Subject.EXPECT().List(gomock.Any(), params).Return(nil, errmock)
 				mocks.db.Subject.EXPECT().Count(gomock.Any()).Return(int64(3), nil)
 			},
 			req: req,
@@ -77,7 +119,7 @@ func TestListSubjects(t *testing.T) {
 			name: "failed to count",
 			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
 				mocks.validator.EXPECT().ListSubjects(req).Return(nil)
-				mocks.db.Subject.EXPECT().List(gomock.Any()).Return(subjects, nil)
+				mocks.db.Subject.EXPECT().List(gomock.Any(), params).Return(subjects, nil)
 				mocks.db.Subject.EXPECT().Count(gomock.Any()).Return(int64(0), errmock)
 			},
 			req: req,
@@ -103,9 +145,27 @@ func TestMultiGetSubjects(t *testing.T) {
 		Ids: []int64{1, 2, 3},
 	}
 	subjects := entity.Subjects{
-		{ID: 1, Name: "国語", CreatedAt: now, UpdatedAt: now},
-		{ID: 2, Name: "数学", CreatedAt: now, UpdatedAt: now},
-		{ID: 3, Name: "英語", CreatedAt: now, UpdatedAt: now},
+		{
+			ID:         1,
+			Name:       "国語",
+			SchoolType: int32(classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL),
+			CreatedAt:  now,
+			UpdatedAt:  now,
+		},
+		{
+			ID:         2,
+			Name:       "数学",
+			SchoolType: int32(classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL),
+			CreatedAt:  now,
+			UpdatedAt:  now,
+		},
+		{
+			ID:         3,
+			Name:       "英語",
+			SchoolType: int32(classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL),
+			CreatedAt:  now,
+			UpdatedAt:  now,
+		},
 	}
 
 	tests := []struct {
@@ -125,9 +185,27 @@ func TestMultiGetSubjects(t *testing.T) {
 				code: codes.OK,
 				body: &classroom.MultiGetSubjectsResponse{
 					Subjects: []*classroom.Subject{
-						{Id: 1, Name: "国語", CreatedAt: now.Unix(), UpdatedAt: now.Unix()},
-						{Id: 2, Name: "数学", CreatedAt: now.Unix(), UpdatedAt: now.Unix()},
-						{Id: 3, Name: "英語", CreatedAt: now.Unix(), UpdatedAt: now.Unix()},
+						{
+							Id:         1,
+							Name:       "国語",
+							SchoolType: classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL,
+							CreatedAt:  now.Unix(),
+							UpdatedAt:  now.Unix(),
+						},
+						{
+							Id:         2,
+							Name:       "数学",
+							SchoolType: classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL,
+							CreatedAt:  now.Unix(),
+							UpdatedAt:  now.Unix(),
+						},
+						{
+							Id:         3,
+							Name:       "英語",
+							SchoolType: classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL,
+							CreatedAt:  now.Unix(),
+							UpdatedAt:  now.Unix(),
+						},
 					},
 				},
 			},
@@ -172,11 +250,12 @@ func TestGetSubject(t *testing.T) {
 		Id: 1,
 	}
 	subject := &entity.Subject{
-		ID:        1,
-		Name:      "国語",
-		Color:     "#F8BBD0",
-		CreatedAt: now,
-		UpdatedAt: now,
+		ID:         1,
+		Name:       "国語",
+		Color:      "#F8BBD0",
+		SchoolType: int32(classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL),
+		CreatedAt:  now,
+		UpdatedAt:  now,
 	}
 
 	tests := []struct {
@@ -196,11 +275,12 @@ func TestGetSubject(t *testing.T) {
 				code: codes.OK,
 				body: &classroom.GetSubjectResponse{
 					Subject: &classroom.Subject{
-						Id:        1,
-						Name:      "国語",
-						Color:     "#F8BBD0",
-						CreatedAt: now.Unix(),
-						UpdatedAt: now.Unix(),
+						Id:         1,
+						Name:       "国語",
+						Color:      "#F8BBD0",
+						SchoolType: classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL,
+						CreatedAt:  now.Unix(),
+						UpdatedAt:  now.Unix(),
 					},
 				},
 			},

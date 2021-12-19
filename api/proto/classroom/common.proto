@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package classroom;
+
+option go_package = "github.com/calmato/shs-web/api/proto/classroom";
+
+enum SchoolType {
+  SCHOOL_TYPE_UNKNOWN            = 0; // 校種未指定
+  SCHOOL_TYPE_ELEMENTARY_SCHOOL  = 1; // 小学校
+  SCHOOL_TYPE_JUNIOR_HIGH_SCHOOL = 2; // 中学校
+  SCHOOL_TYPE_HIGH_SCHOOL        = 3; // 高等学校
+}
