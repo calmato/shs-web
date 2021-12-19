@@ -7,6 +7,7 @@ import (
 	"github.com/calmato/shs-web/api/internal/gateway/util"
 	"github.com/calmato/shs-web/api/pkg/firebase/authentication"
 	"github.com/calmato/shs-web/api/pkg/jst"
+	"github.com/calmato/shs-web/api/proto/classroom"
 	"github.com/calmato/shs-web/api/proto/user"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
@@ -34,14 +35,16 @@ type apiV1Handler struct {
 	sharedGroup *singleflight.Group
 	waitGroup   *sync.WaitGroup
 	auth        authentication.Client
+	classroom   classroom.ClassroomServiceClient
 	user        user.UserServiceClient
 }
 
 type Params struct {
-	Auth        authentication.Client
-	UserService user.UserServiceClient
-	Logger      *zap.Logger
-	WaitGroup   *sync.WaitGroup
+	Auth             authentication.Client
+	ClassroomService classroom.ClassroomServiceClient
+	UserService      user.UserServiceClient
+	Logger           *zap.Logger
+	WaitGroup        *sync.WaitGroup
 }
 
 func NewAPIV1Handler(params *Params) APIV1Handler {
@@ -50,6 +53,7 @@ func NewAPIV1Handler(params *Params) APIV1Handler {
 		logger:      params.Logger,
 		waitGroup:   params.WaitGroup,
 		auth:        params.Auth,
+		classroom:   params.ClassroomService,
 		user:        params.UserService,
 		sharedGroup: &singleflight.Group{},
 	}
@@ -64,6 +68,7 @@ func (h *apiV1Handler) AuthRoutes(rg *gin.RouterGroup) {
 	rg.GET("/v1/me", h.GetAuth)
 	rg.GET("/v1/teachers", h.ListTeachers)
 	rg.GET("/v1/teachers/:teacherId", h.GetTeacher)
+	rg.GET("/v1/subjects", h.ListSubjects)
 }
 
 func (h *apiV1Handler) AdminRoutes(rg *gin.RouterGroup) {

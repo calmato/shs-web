@@ -7,6 +7,7 @@ import (
 
 	v1 "github.com/calmato/shs-web/api/internal/gateway/teacher/v1/handler"
 	"github.com/calmato/shs-web/api/pkg/firebase/authentication"
+	"github.com/calmato/shs-web/api/proto/classroom"
 	"github.com/calmato/shs-web/api/proto/user"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
@@ -18,14 +19,16 @@ type registry struct {
 }
 
 type params struct {
-	insecure       bool
-	logger         *zap.Logger
-	auth           authentication.Client
-	userServiceURL string
+	insecure            bool
+	logger              *zap.Logger
+	auth                authentication.Client
+	classroomServiceURL string
+	userServiceURL      string
 }
 
 type gRPCClient struct {
-	user user.UserServiceClient
+	classroom classroom.ClassroomServiceClient
+	user      user.UserServiceClient
 }
 
 func newRegistry(params *params) (*registry, error) {
@@ -35,10 +38,11 @@ func newRegistry(params *params) (*registry, error) {
 	}
 
 	v1Params := &v1.Params{
-		Auth:        params.auth,
-		UserService: cli.user,
-		Logger:      params.logger,
-		WaitGroup:   &sync.WaitGroup{},
+		Auth:             params.auth,
+		ClassroomService: cli.classroom,
+		UserService:      cli.user,
+		Logger:           params.logger,
+		WaitGroup:        &sync.WaitGroup{},
 	}
 	v1Handler := v1.NewAPIV1Handler(v1Params)
 
@@ -53,13 +57,18 @@ func newGRPCClient(params *params) (*gRPCClient, error) {
 		return nil, err
 	}
 
+	classroomConn, err := grpc.Dial(params.classroomServiceURL, opts...)
+	if err != nil {
+		return nil, err
+	}
 	userConn, err := grpc.Dial(params.userServiceURL, opts...)
 	if err != nil {
 		return nil, err
 	}
 
 	return &gRPCClient{
-		user: user.NewUserServiceClient(userConn),
+		classroom: classroom.NewClassroomServiceClient(classroomConn),
+		user:      user.NewUserServiceClient(userConn),
 	}, nil
 }
 

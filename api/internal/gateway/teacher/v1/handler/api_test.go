@@ -18,6 +18,7 @@ import (
 	"testing"
 	"time"
 
+	mock_classroom "github.com/calmato/shs-web/api/mock/proto/classroom"
 	mock_user "github.com/calmato/shs-web/api/mock/proto/user"
 	"github.com/calmato/shs-web/api/pkg/jst"
 	"github.com/gin-gonic/gin"
@@ -34,7 +35,8 @@ var (
 )
 
 type mocks struct {
-	user *mock_user.MockUserServiceClient
+	classroom *mock_classroom.MockClassroomServiceClient
+	user      *mock_user.MockUserServiceClient
 }
 
 type testResponse struct {
@@ -58,7 +60,8 @@ func withNow(now time.Time) testOption {
 
 func newMocks(ctrl *gomock.Controller) *mocks {
 	return &mocks{
-		user: mock_user.NewMockUserServiceClient(ctrl),
+		classroom: mock_classroom.NewMockClassroomServiceClient(ctrl),
+		user:      mock_user.NewMockUserServiceClient(ctrl),
 	}
 }
 
@@ -68,6 +71,7 @@ func newAPIV1Handler(mocks *mocks, opts *testOptions) APIV1Handler {
 		logger:      zap.NewNop(),
 		sharedGroup: &singleflight.Group{},
 		waitGroup:   &sync.WaitGroup{},
+		classroom:   mocks.classroom,
 		user:        mocks.user,
 	}
 }

@@ -54,10 +54,11 @@ func Exec() error {
 
 	// 依存関係の解決
 	regParams := &params{
-		insecure:       conf.GRPCInsecure,
-		logger:         logger,
-		auth:           fa,
-		userServiceURL: conf.UserServiceURL,
+		insecure:            conf.GRPCInsecure,
+		logger:              logger,
+		auth:                fa,
+		classroomServiceURL: conf.ClassroomServiceURL,
+		userServiceURL:      conf.UserServiceURL,
 	}
 	reg, err := newRegistry(regParams)
 	if err != nil {
