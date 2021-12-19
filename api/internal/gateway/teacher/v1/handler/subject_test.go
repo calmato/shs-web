@@ -17,11 +17,12 @@ func TestListSubjects(t *testing.T) {
 	now := jst.Date(2021, 8, 2, 18, 30, 0, 0)
 	subjects := []*classroom.Subject{
 		{
-			Id:        1,
-			Name:      "国語",
-			Color:     "#f8bbd0",
-			CreatedAt: now.Unix(),
-			UpdatedAt: now.Unix(),
+			Id:         1,
+			Name:       "国語",
+			Color:      "#f8bbd0",
+			SchoolType: classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL,
+			CreatedAt:  now.Unix(),
+			UpdatedAt:  now.Unix(),
 		},
 	}
 	tests := []struct {
@@ -41,11 +42,12 @@ func TestListSubjects(t *testing.T) {
 				body: &response.SubjectsResponse{
 					Subjects: entity.Subjects{
 						{
-							ID:        1,
-							Name:      "国語",
-							Color:     "#F8BBD0",
-							CreatedAt: now,
-							UpdatedAt: now,
+							ID:         1,
+							Name:       "国語",
+							Color:      "#F8BBD0",
+							SchoolType: entity.SchoolTypeHighSchool,
+							CreatedAt:  now,
+							UpdatedAt:  now,
 						},
 					},
 				},
