@@ -6,12 +6,14 @@
           メールアドレス もしくは パスワード が間違っています
         </the-alert>
         <v-card>
-          <v-toolbar color="primary" dark flat>SHS Web 講師ログイン画面</v-toolbar>
-          <v-card-text class="my-4">
-            <v-text-field v-model="signInForm.mail" label="メールアドレス" type="email" autofocus outlined />
-            <v-text-field v-model="signInForm.password" label="パスワード" type="password" outlined />
-            <v-btn color="primary" block :loading="loading" :disabled="loading" @click="onClick">サインイン</v-btn>
-          </v-card-text>
+          <v-form @submit.prevent="onSubmit">
+            <v-toolbar color="primary" dark flat>SHS Web 講師ログイン画面</v-toolbar>
+            <v-card-text class="my-4">
+              <v-text-field v-model="signInForm.mail" label="メールアドレス" type="email" autofocus outlined />
+              <v-text-field v-model="signInForm.password" label="パスワード" type="password" outlined />
+              <v-btn color="primary" type="submit" block :loading="loading" :disabled="loading">サインイン</v-btn>
+            </v-card-text>
+          </v-form>
         </v-card>
       </v-col>
     </v-row>
@@ -52,13 +54,13 @@ export default defineComponent({
       set: (val: SignInForm) => emit('update:form', val),
     })
 
-    const onClick = () => {
+    const onSubmit = () => {
       emit('click')
     }
 
     return {
       signInForm,
-      onClick,
+      onSubmit,
     }
   },
 })
