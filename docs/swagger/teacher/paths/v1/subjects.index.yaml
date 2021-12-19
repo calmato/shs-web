@@ -1,0 +1,19 @@
+get:
+  summary: 授業科目一覧取得
+  tags:
+  - Subject
+  security:
+    - BearerAuth: []
+  responses:
+    200:
+      description: A successful response.
+      content:
+        application/json:
+          schema:
+            $ref: './../../openapi.yaml#/components/schemas/v1SubjectsResponse'
+    default:
+      description: An unexpected error response.
+      content:
+        application/json:
+          schema:
+            $ref: './../../openapi.yaml#/components/schemas/errorResponse'

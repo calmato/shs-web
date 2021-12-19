@@ -11,6 +11,8 @@ tags:
   description: 認証関連
 - name: Teacher
   description: 講師関連
+- name: Subject
+  description: 授業科目関連
 paths:
   # Auth
   /v1/me:
@@ -20,6 +22,9 @@ paths:
     $ref: './paths/v1/teachers.index.yaml'
   /v1/teachers/{id}:
     $ref: './paths/v1/teachers.id.yaml'
+  # Subjects
+  /v1/subjects:
+    $ref: './paths/v1/subjects.index.yaml'
 components:
   securitySchemes:
     BearerAuth:
@@ -39,3 +44,5 @@ components:
       $ref: './components/schemas/v1/teachers.response.yaml#/teacherResponse'
     v1TeachersResponse:
       $ref: './components/schemas/v1/teachers.response.yaml#/teachersResponse'
+    v1SubjectsResponse:
+      $ref: './components/schemas/v1/subjects.response.yaml#/subjectsResponse'
