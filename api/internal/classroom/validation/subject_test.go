@@ -17,28 +17,9 @@ func TestListSubjects(t *testing.T) {
 		isErr bool
 	}{
 		{
-			name: "success",
-			req: &classroom.ListSubjectsRequest{
-				Limit:  30,
-				Offset: 0,
-			},
+			name:  "success",
+			req:   &classroom.ListSubjectsRequest{},
 			isErr: false,
-		},
-		{
-			name: "Lismit is gte",
-			req: &classroom.ListSubjectsRequest{
-				Limit:  -1,
-				Offset: 0,
-			},
-			isErr: true,
-		},
-		{
-			name: "Offset is gte",
-			req: &classroom.ListSubjectsRequest{
-				Limit:  30,
-				Offset: -1,
-			},
-			isErr: true,
 		},
 	}
 

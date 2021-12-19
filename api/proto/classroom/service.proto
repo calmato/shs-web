@@ -14,10 +14,7 @@ service ClassroomService {
   rpc GetSubject(GetSubjectRequest) returns (GetSubjectResponse);
 }
 
-message ListSubjectsRequest {
-  int64 limit  = 1 [(validate.rules).int64 = { gte: 0 }];
-  int64 offset = 2 [(validate.rules).int64 = { gte: 0 }];
-}
+message ListSubjectsRequest {}
 
 message ListSubjectsResponse {
   repeated Subject subjects = 1;

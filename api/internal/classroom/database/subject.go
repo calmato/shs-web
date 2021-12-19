@@ -27,21 +27,13 @@ func NewSubject(db *database.Client) Subject {
 	}
 }
 
-func (s *subject) List(ctx context.Context, params *ListSubjectsParams, fields ...string) (entity.Subjects, error) {
+func (s *subject) List(ctx context.Context, fields ...string) (entity.Subjects, error) {
 	var subjects entity.Subjects
 	if len(fields) == 0 {
 		fields = subjectFields
 	}
 
-	stmt := s.db.DB.Table(subjectTable).Select(fields)
-	if params.Limit > 0 {
-		stmt.Limit(params.Limit)
-	}
-	if params.Offset > 0 {
-		stmt.Offset(params.Offset)
-	}
-
-	err := stmt.Find(&subjects).Error
+	err := s.db.DB.Table(subjectTable).Select(fields).Find(&subjects).Error
 	return subjects, dbError(err)
 }
 
