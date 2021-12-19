@@ -4,7 +4,6 @@ import (
 	"context"
 	"testing"
 
-	"github.com/calmato/shs-web/api/internal/classroom/database"
 	"github.com/calmato/shs-web/api/internal/classroom/entity"
 	"github.com/calmato/shs-web/api/internal/classroom/validation"
 	"github.com/calmato/shs-web/api/pkg/jst"
@@ -18,14 +17,7 @@ func TestListSubjects(t *testing.T) {
 	t.Parallel()
 	now := jst.Now()
 
-	req := &classroom.ListSubjectsRequest{
-		Limit:  30,
-		Offset: 0,
-	}
-	params := &database.ListSubjectsParams{
-		Limit:  30,
-		Offset: 0,
-	}
+	req := &classroom.ListSubjectsRequest{}
 	subjects := entity.Subjects{
 		{ID: 1, Name: "国語", CreatedAt: now, UpdatedAt: now},
 		{ID: 2, Name: "数学", CreatedAt: now, UpdatedAt: now},
@@ -42,7 +34,7 @@ func TestListSubjects(t *testing.T) {
 			name: "success",
 			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
 				mocks.validator.EXPECT().ListSubjects(req).Return(nil)
-				mocks.db.Subject.EXPECT().List(gomock.Any(), params).Return(subjects, nil)
+				mocks.db.Subject.EXPECT().List(gomock.Any()).Return(subjects, nil)
 				mocks.db.Subject.EXPECT().Count(gomock.Any()).Return(int64(3), nil)
 			},
 			req: req,
@@ -73,7 +65,7 @@ func TestListSubjects(t *testing.T) {
 			name: "failed to list subjects",
 			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
 				mocks.validator.EXPECT().ListSubjects(req).Return(nil)
-				mocks.db.Subject.EXPECT().List(gomock.Any(), params).Return(nil, errmock)
+				mocks.db.Subject.EXPECT().List(gomock.Any()).Return(nil, errmock)
 				mocks.db.Subject.EXPECT().Count(gomock.Any()).Return(int64(3), nil)
 			},
 			req: req,
@@ -85,7 +77,7 @@ func TestListSubjects(t *testing.T) {
 			name: "failed to count",
 			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
 				mocks.validator.EXPECT().ListSubjects(req).Return(nil)
-				mocks.db.Subject.EXPECT().List(gomock.Any(), params).Return(subjects, nil)
+				mocks.db.Subject.EXPECT().List(gomock.Any()).Return(subjects, nil)
 				mocks.db.Subject.EXPECT().Count(gomock.Any()).Return(int64(0), errmock)
 			},
 			req: req,

@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/calmato/shs-web/api/internal/classroom/database"
 	"github.com/calmato/shs-web/api/internal/classroom/entity"
 	"github.com/calmato/shs-web/api/proto/classroom"
 	"golang.org/x/sync/errgroup"
@@ -13,14 +12,13 @@ import (
 func (s *classroomService) ListSubjects(
 	ctx context.Context, req *classroom.ListSubjectsRequest,
 ) (*classroom.ListSubjectsResponse, error) {
-	const prefixKey = "listSubjects"
 	if err := s.validator.ListSubjects(req); err != nil {
 		return nil, gRPCError(err)
 	}
 
-	sharedKey := fmt.Sprintf("%s:%d:%d", prefixKey, req.Limit, req.Offset)
+	const sharedKey = "listSubjects"
 	res, err, _ := s.sharedGroup.Do(sharedKey, func() (interface{}, error) {
-		subjects, total, err := s.listSubjects(ctx, req.Limit, req.Offset)
+		subjects, total, err := s.listSubjects(ctx)
 		if err != nil {
 			return nil, err
 		}
@@ -37,15 +35,11 @@ func (s *classroomService) ListSubjects(
 	return res.(*classroom.ListSubjectsResponse), nil
 }
 
-func (s *classroomService) listSubjects(ctx context.Context, limit, offset int64) (entity.Subjects, int64, error) {
+func (s *classroomService) listSubjects(ctx context.Context) (entity.Subjects, int64, error) {
 	eg, ectx := errgroup.WithContext(ctx)
 	var subjects entity.Subjects
 	eg.Go(func() (err error) {
-		params := &database.ListSubjectsParams{
-			Limit:  int(limit),
-			Offset: int(offset),
-		}
-		subjects, err = s.db.Subject.List(ectx, params)
+		subjects, err = s.db.Subject.List(ectx)
 		return
 	})
 	var total int64

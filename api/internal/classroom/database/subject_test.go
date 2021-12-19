@@ -28,9 +28,7 @@ func TestSubject_List(t *testing.T) {
 	err = m.db.DB.Create(&subjects).Error
 	require.NoError(t, err)
 
-	type args struct {
-		params *ListSubjectsParams
-	}
+	type args struct{}
 	type want struct {
 		subjects entity.Subjects
 		isErr    bool
@@ -44,9 +42,7 @@ func TestSubject_List(t *testing.T) {
 		{
 			name:  "success",
 			setup: func(ctx context.Context, t *testing.T, m *mocks) {},
-			args: args{
-				params: &ListSubjectsParams{},
-			},
+			args:  args{},
 			want: want{
 				subjects: subjects,
 				isErr:    false,
@@ -55,12 +51,7 @@ func TestSubject_List(t *testing.T) {
 		{
 			name:  "success with limit and offset",
 			setup: func(ctx context.Context, t *testing.T, m *mocks) {},
-			args: args{
-				params: &ListSubjectsParams{
-					Limit:  1,
-					Offset: 1,
-				},
-			},
+			args:  args{},
 			want: want{
 				subjects: subjects[1:1],
 				isErr:    false,
@@ -78,7 +69,7 @@ func TestSubject_List(t *testing.T) {
 			tt.setup(ctx, t, m)
 
 			db := NewSubject(m.db)
-			actual, err := db.List(ctx, tt.args.params)
+			actual, err := db.List(ctx)
 			assert.Equal(t, tt.want.isErr, err != nil, err)
 			for i, subject := range tt.want.subjects {
 				subject.CreatedAt = actual[i].CreatedAt
