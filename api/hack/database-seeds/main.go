@@ -11,6 +11,7 @@ import (
 	"github.com/calmato/shs-web/api/pkg/database"
 	"github.com/calmato/shs-web/api/pkg/jst"
 	"github.com/calmato/shs-web/api/pkg/uuid"
+	"github.com/calmato/shs-web/api/proto/classroom"
 	"github.com/calmato/shs-web/api/proto/user"
 	"golang.org/x/sync/errgroup"
 	"gorm.io/gorm"
@@ -185,18 +186,37 @@ func (a *app) insertTeachers(tx *gorm.DB, size int) error {
 }
 
 func (a *app) insertSubjects(tx *gorm.DB) error {
-	names := []string{"国語", "数学", "社会", "理科", "英語"}
-	colors := []string{"#F8BBD0", "#BBDEFB", "#FFE0B2", "#E8F5E9", "#FEE6C9"}
+	subjectsMap := map[classroom.SchoolType]centity.Subjects{
+		classroom.SchoolType_SCHOOL_TYPE_ELEMENTARY_SCHOOL: {
+			{Name: "国語", Color: "#F8BBD0"},
+			{Name: "算数", Color: "#BBDEFB"},
+		},
+		classroom.SchoolType_SCHOOL_TYPE_JUNIOR_HIGH_SCHOOL: {
+			{Name: "国語", Color: "#F8BBD0"},
+			{Name: "数学", Color: "#BBDEFB"},
+			{Name: "社会", Color: "#FFE0B2"},
+			{Name: "理科", Color: "#E8F5E9"},
+			{Name: "英語", Color: "#FEE6C9"},
+		},
+		classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL: {
+			{Name: "国語", Color: "#F8BBD0"},
+			{Name: "数学Ⅰ", Color: "#BBDEFB"},
+			{Name: "数学Ⅱ", Color: "#BBDEFB"},
+			{Name: "数学A", Color: "#BBDEFB"},
+			{Name: "数学B", Color: "#BBDEFB"},
+			{Name: "英語", Color: "#FEE6C9"},
+		},
+	}
+
 	now := jst.Now()
-	subjects := make(centity.Subjects, len(names))
-	for i := range names {
-		subject := &centity.Subject{
-			Name:      names[i],
-			Color:     colors[i],
-			CreatedAt: now,
-			UpdatedAt: now,
+	subjects := make(centity.Subjects, 0)
+	for schoolType, ss := range subjectsMap {
+		for _, subject := range ss {
+			subject.SchoolType = int32(schoolType)
+			subject.CreatedAt = now
+			subject.UpdatedAt = now
 		}
-		subjects[i] = subject
+		subjects = append(subjects, ss...)
 	}
 	return tx.Create(&subjects).Error
 }
