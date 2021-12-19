@@ -4,10 +4,13 @@ package classroom;
 
 option go_package = "github.com/calmato/shs-web/api/proto/classroom";
 
+import "classroom/common.proto";
+
 message Subject {
-  int64  id         = 1; // 授業科目ID
-  string name       = 2; // 授業科目名
-  string color      = 3; // 表示職 (#rrggbb)
-  int64  created_at = 4; // 登録日時
-  int64  updated_at = 5; // 更新日時
+  int64      id          = 1; // 授業科目ID
+  string     name        = 2; // 授業科目名
+  string     color       = 3; // 表示職 (#rrggbb)
+  int64      created_at  = 4; // 登録日時
+  int64      updated_at  = 5; // 更新日時
+  SchoolType school_type = 6; // 校種
 }

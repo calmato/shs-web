@@ -6,6 +6,7 @@ option go_package = "github.com/calmato/shs-web/api/proto/classroom";
 
 import "github.com/envoyproxy/protoc-gen-validate/validate/validate.proto";
 
+import "classroom/common.proto";
 import "classroom/subject.proto";
 
 service ClassroomService {
@@ -14,7 +15,9 @@ service ClassroomService {
   rpc GetSubject(GetSubjectRequest) returns (GetSubjectResponse);
 }
 
-message ListSubjectsRequest {}
+message ListSubjectsRequest {
+  SchoolType school_type = 1 [(validate.rules).enum = { defined_only: true }];
+}
 
 message ListSubjectsResponse {
   repeated Subject subjects = 1;

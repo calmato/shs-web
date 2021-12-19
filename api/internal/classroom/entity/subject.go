@@ -7,22 +7,24 @@ import (
 )
 
 type Subject struct {
-	ID        int64     `gorm:"primaryKey;autoIncrement;<-:create"`
-	Name      string    `gorm:""`
-	Color     string    `gorm:""`
-	CreatedAt time.Time `gorm:"<-:create"`
-	UpdatedAt time.Time `gorm:""`
+	ID         int64     `gorm:"primaryKey;autoIncrement;<-:create"`
+	Name       string    `gorm:""`
+	Color      string    `gorm:""`
+	SchoolType int32     `gorm:""`
+	CreatedAt  time.Time `gorm:"<-:create"`
+	UpdatedAt  time.Time `gorm:""`
 }
 
 type Subjects []*Subject
 
 func (s *Subject) Proto() *classroom.Subject {
 	return &classroom.Subject{
-		Id:        s.ID,
-		Name:      s.Name,
-		Color:     s.Color,
-		CreatedAt: s.CreatedAt.Unix(),
-		UpdatedAt: s.UpdatedAt.Unix(),
+		Id:         s.ID,
+		Name:       s.Name,
+		Color:      s.Color,
+		SchoolType: classroom.SchoolType(s.SchoolType),
+		CreatedAt:  s.CreatedAt.Unix(),
+		UpdatedAt:  s.UpdatedAt.Unix(),
 	}
 }
 

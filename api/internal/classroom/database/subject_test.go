@@ -7,6 +7,7 @@ import (
 
 	"github.com/calmato/shs-web/api/internal/classroom/entity"
 	"github.com/calmato/shs-web/api/pkg/jst"
+	"github.com/calmato/shs-web/api/proto/classroom"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -22,13 +23,15 @@ func TestSubject_List(t *testing.T) {
 	now := jst.Now()
 
 	subjects := make(entity.Subjects, 3)
-	subjects[0] = testSubject(1, "国語", now)
-	subjects[1] = testSubject(2, "数学", now)
-	subjects[2] = testSubject(3, "英語", now)
+	subjects[0] = testSubject(1, "国語", classroom.SchoolType_SCHOOL_TYPE_ELEMENTARY_SCHOOL, now)
+	subjects[1] = testSubject(2, "数学", classroom.SchoolType_SCHOOL_TYPE_JUNIOR_HIGH_SCHOOL, now)
+	subjects[2] = testSubject(3, "英語", classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL, now)
 	err = m.db.DB.Create(&subjects).Error
 	require.NoError(t, err)
 
-	type args struct{}
+	type args struct {
+		params *ListSubjectsParams
+	}
 	type want struct {
 		subjects entity.Subjects
 		isErr    bool
@@ -42,16 +45,22 @@ func TestSubject_List(t *testing.T) {
 		{
 			name:  "success",
 			setup: func(ctx context.Context, t *testing.T, m *mocks) {},
-			args:  args{},
+			args: args{
+				params: &ListSubjectsParams{},
+			},
 			want: want{
 				subjects: subjects,
 				isErr:    false,
 			},
 		},
 		{
-			name:  "success with limit and offset",
+			name:  "success with school_type",
 			setup: func(ctx context.Context, t *testing.T, m *mocks) {},
-			args:  args{},
+			args: args{
+				params: &ListSubjectsParams{
+					SchoolType: classroom.SchoolType_SCHOOL_TYPE_JUNIOR_HIGH_SCHOOL,
+				},
+			},
 			want: want{
 				subjects: subjects[1:1],
 				isErr:    false,
@@ -69,7 +78,7 @@ func TestSubject_List(t *testing.T) {
 			tt.setup(ctx, t, m)
 
 			db := NewSubject(m.db)
-			actual, err := db.List(ctx)
+			actual, err := db.List(ctx, tt.args.params)
 			assert.Equal(t, tt.want.isErr, err != nil, err)
 			for i, subject := range tt.want.subjects {
 				subject.CreatedAt = actual[i].CreatedAt
@@ -91,9 +100,9 @@ func TestSubject_MultiGet(t *testing.T) {
 	now := jst.Now()
 
 	subjects := make(entity.Subjects, 3)
-	subjects[0] = testSubject(1, "国語", now)
-	subjects[1] = testSubject(2, "数学", now)
-	subjects[2] = testSubject(3, "英語", now)
+	subjects[0] = testSubject(1, "国語", classroom.SchoolType_SCHOOL_TYPE_ELEMENTARY_SCHOOL, now)
+	subjects[1] = testSubject(2, "数学", classroom.SchoolType_SCHOOL_TYPE_ELEMENTARY_SCHOOL, now)
+	subjects[2] = testSubject(3, "英語", classroom.SchoolType_SCHOOL_TYPE_ELEMENTARY_SCHOOL, now)
 	err = m.db.DB.Create(&subjects).Error
 	require.NoError(t, err)
 
@@ -166,7 +175,7 @@ func TestSubject_Get(t *testing.T) {
 
 	now := jst.Now()
 
-	subject := testSubject(1, "国語", now)
+	subject := testSubject(1, "国語", classroom.SchoolType_SCHOOL_TYPE_ELEMENTARY_SCHOOL, now)
 	err = m.db.DB.Create(&subject).Error
 	require.NoError(t, err)
 
@@ -242,9 +251,9 @@ func TestSubject_Count(t *testing.T) {
 	now := jst.Now()
 
 	subjects := make(entity.Subjects, 3)
-	subjects[0] = testSubject(1, "国語", now)
-	subjects[1] = testSubject(2, "数学", now)
-	subjects[2] = testSubject(3, "英語", now)
+	subjects[0] = testSubject(1, "国語", classroom.SchoolType_SCHOOL_TYPE_ELEMENTARY_SCHOOL, now)
+	subjects[1] = testSubject(2, "数学", classroom.SchoolType_SCHOOL_TYPE_ELEMENTARY_SCHOOL, now)
+	subjects[2] = testSubject(3, "英語", classroom.SchoolType_SCHOOL_TYPE_ELEMENTARY_SCHOOL, now)
 	err = m.db.DB.Create(&subjects).Error
 	require.NoError(t, err)
 
@@ -287,12 +296,13 @@ func TestSubject_Count(t *testing.T) {
 	}
 }
 
-func testSubject(id int64, name string, now time.Time) *entity.Subject {
+func testSubject(id int64, name string, schoolType classroom.SchoolType, now time.Time) *entity.Subject {
 	return &entity.Subject{
-		ID:        id,
-		Name:      name,
-		Color:     "#F8BBD0",
-		CreatedAt: now,
-		UpdatedAt: now,
+		ID:         id,
+		Name:       name,
+		Color:      "#F8BBD0",
+		SchoolType: int32(schoolType),
+		CreatedAt:  now,
+		UpdatedAt:  now,
 	}
 }

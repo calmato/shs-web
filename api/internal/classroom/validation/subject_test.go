@@ -17,9 +17,18 @@ func TestListSubjects(t *testing.T) {
 		isErr bool
 	}{
 		{
-			name:  "success",
-			req:   &classroom.ListSubjectsRequest{},
+			name: "success",
+			req: &classroom.ListSubjectsRequest{
+				SchoolType: classroom.SchoolType_SCHOOL_TYPE_UNKNOWN,
+			},
 			isErr: false,
+		},
+		{
+			name: "SchoolType is defined_only",
+			req: &classroom.ListSubjectsRequest{
+				SchoolType: classroom.SchoolType(-1),
+			},
+			isErr: true,
 		},
 	}
 
