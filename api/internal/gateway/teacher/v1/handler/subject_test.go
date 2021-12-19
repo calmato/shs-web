@@ -43,7 +43,7 @@ func TestListSubjects(t *testing.T) {
 						{
 							ID:        1,
 							Name:      "国語",
-							Color:     "#f8bbd0",
+							Color:     "#F8BBD0",
 							CreatedAt: now,
 							UpdatedAt: now,
 						},
