@@ -31,6 +31,7 @@ type mocks struct {
 }
 
 type dbMocks struct {
+	Student *mock_database.MockStudent
 	Teacher *mock_database.MockTeacher
 }
 
@@ -55,6 +56,7 @@ func newMocks(ctrl *gomock.Controller) *mocks {
 
 func newDBMocks(ctrl *gomock.Controller) *dbMocks {
 	return &dbMocks{
+		Student: mock_database.NewMockStudent(ctrl),
 		Teacher: mock_database.NewMockTeacher(ctrl),
 	}
 }

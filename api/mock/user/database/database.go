@@ -104,3 +104,26 @@ func (mr *MockTeacherMockRecorder) List(ctx, p interface{}, fields ...interface{
 	varargs := append([]interface{}{ctx, p}, fields...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "List", reflect.TypeOf((*MockTeacher)(nil).List), varargs...)
 }
+
+// MockStudent is a mock of Student interface.
+type MockStudent struct {
+	ctrl     *gomock.Controller
+	recorder *MockStudentMockRecorder
+}
+
+// MockStudentMockRecorder is the mock recorder for MockStudent.
+type MockStudentMockRecorder struct {
+	mock *MockStudent
+}
+
+// NewMockStudent creates a new mock instance.
+func NewMockStudent(ctrl *gomock.Controller) *MockStudent {
+	mock := &MockStudent{ctrl: ctrl}
+	mock.recorder = &MockStudentMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockStudent) EXPECT() *MockStudentMockRecorder {
+	return m.recorder
+}
