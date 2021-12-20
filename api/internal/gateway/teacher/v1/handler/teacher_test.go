@@ -221,15 +221,7 @@ func TestCreateTeacher(t *testing.T) {
 			},
 		},
 		{
-			name:  "bad request",
-			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {},
-			req:   nil,
-			expect: &testResponse{
-				code: http.StatusBadRequest,
-			},
-		},
-		{
-			name:  "bad request with role",
+			name:  "failed to invalid role",
 			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {},
 			req: &request.CreateTeacherRequest{
 				Role: int32(entity.RoleUnknown),
@@ -239,7 +231,7 @@ func TestCreateTeacher(t *testing.T) {
 			},
 		},
 		{
-			name: "success",
+			name: "failed to create teacher",
 			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
 				in := &user.CreateTeacherRequest{
 					LastName:             "中村",

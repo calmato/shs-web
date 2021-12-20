@@ -16,15 +16,17 @@ tags:
 paths:
   # Auth
   /v1/me:
-    $ref: './paths/v1/auth.index.yaml'
+    $ref: './paths/v1/me/index.yaml'
+  /v1/me/subjects:
+    $ref: './paths/v1/me/subjects.yaml'
   # Teachers
   /v1/teachers:
-    $ref: './paths/v1/teachers.index.yaml'
+    $ref: './paths/v1/teachers/index.yaml'
   /v1/teachers/{id}:
-    $ref: './paths/v1/teachers.id.yaml'
+    $ref: './paths/v1/teachers/_id.yaml'
   # Subjects
   /v1/subjects:
-    $ref: './paths/v1/subjects.index.yaml'
+    $ref: './paths/v1/subjects/index.yaml'
 components:
   securitySchemes:
     BearerAuth:
@@ -35,6 +37,8 @@ components:
     errorResponse:
       $ref: './components/schemas/common.yaml#/errorResponse'
     # Request
+    v1UpdateMySubjectsRequest:
+      $ref: './components/schemas/v1/auth.request.yaml#/updateMySubjectsRequest'
     v1CreateTeacherRequest:
       $ref: './components/schemas/v1/teachers.request.yaml#/createTeacherRequest'
     # Response
