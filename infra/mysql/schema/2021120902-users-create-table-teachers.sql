@@ -1,11 +1,5 @@
--- -----------------------------------------------
--- Database: users
--- -----------------------------------------------
 CREATE SCHEMA `users` DEFAULT CHARACTER SET utf8mb4;
 
--- -----------------------------------------------
--- Table: teachers
--- -----------------------------------------------
 CREATE TABLE `users`.`teachers` (
   `id`              VARCHAR(21)  NOT NULL,             -- ユーザーID
   `mail`            VARCHAR(256) NOT NULL,             -- メールアドレス
@@ -19,4 +13,4 @@ CREATE TABLE `users`.`teachers` (
   `deleted_at`      DATETIME     NULL     DEFAULT NULL -- 退会日時
 ) ENGINE = InnoDB;
 
-CREATE UNIQUE INDEX `mail_UNIQUE` ON `users`.`teachers` (`mail` ASC) VISIBLE;
+CREATE UNIQUE INDEX `ui_teachers_mail` ON `users`.`teachers` (`mail` ASC) VISIBLE;

@@ -1,0 +1,13 @@
+CREATE TABLE `classrooms`.`subjects_teachers` (
+  `subject_id` BIGINT      NOT NULL, -- 授業科目ID
+  `teacher_id` VARCHAR(22) NOT NULL, -- 講師ID
+  `created_at` DATETIME    NOT NULL, -- 登録日時
+  `updated_at` DATETIME    NOT NULL, -- 更新日時
+  PRIMARY KEY(`subject_id`, `teacher_id`),
+  CONSTRAINT `fk_subjects_teachers_subjects_id`
+    FOREIGN KEY (`subject_id`) REFERENCES `classrooms`.`subjects` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE = InnoDB;
+
+CREATE INDEX `idx_subjects_teachers_teacher_id_subject_id`
+  ON `classrooms`.`subjects_teachers` (`teacher_id` ASC, `subject_id` ASC) VISIBLE;

@@ -14,4 +14,4 @@ CREATE TABLE `users`.`teachers` (
   PRIMARY KEY(`id`)
 ) ENGINE = InnoDB;
 
-CREATE UNIQUE INDEX `mail_UNIQUE` ON `users`.`teachers` (`mail` ASC) VISIBLE;
+CREATE UNIQUE INDEX `ui_teachers_mail` ON `users`.`teachers` (`mail` ASC) VISIBLE;
