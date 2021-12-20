@@ -1,0 +1,15 @@
+updateMySubjectsRequest:
+  type: object
+  properties:
+    schoolType:
+      type: integer
+      format: int32
+      description: 校種
+    subjectIds:
+      type: array
+      description: 担当授業科目一覧
+      items:
+        type: integer
+        format: int64
+        description: 授業科目ID
+

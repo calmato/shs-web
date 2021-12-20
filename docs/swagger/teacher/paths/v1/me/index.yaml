@@ -1,7 +1,7 @@
 get:
-  summary: 授業科目一覧取得
+  summary: ユーザー情報取得
   tags:
-  - Subject
+  - Auth
   security:
     - BearerAuth: []
   responses:
@@ -10,10 +10,10 @@ get:
       content:
         application/json:
           schema:
-            $ref: './../../openapi.yaml#/components/schemas/v1SubjectsResponse'
+            $ref: './../../../openapi.yaml#/components/schemas/v1AuthResponse'
     default:
       description: An unexpected error response.
       content:
         application/json:
           schema:
-            $ref: './../../openapi.yaml#/components/schemas/errorResponse'
+            $ref: './../../../openapi.yaml#/components/schemas/errorResponse'

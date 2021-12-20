@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"errors"
 	"strings"
 	"time"
 
@@ -8,6 +9,8 @@ import (
 	"github.com/calmato/shs-web/api/pkg/jst"
 	"github.com/calmato/shs-web/api/proto/classroom"
 )
+
+var errInvalidSchoolType = errors.New("entity: invalid school type")
 
 type Subject struct {
 	ID         int64      `json:"id"`        // 授業科目ID
@@ -58,5 +61,18 @@ func NewSchoolType(schoolType classroom.SchoolType) SchoolType {
 		return SchoolTypeHighSchool
 	default:
 		return SchoolTypeUnknown
+	}
+}
+
+func (t SchoolType) ClassroomSchoolType() (classroom.SchoolType, error) {
+	switch t {
+	case SchoolTypeElementarySchool:
+		return classroom.SchoolType_SCHOOL_TYPE_ELEMENTARY_SCHOOL, nil
+	case SchoolTypeJuniorHighSchool:
+		return classroom.SchoolType_SCHOOL_TYPE_JUNIOR_HIGH_SCHOOL, nil
+	case SchoolTypeHighSchool:
+		return classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL, nil
+	default:
+		return classroom.SchoolType_SCHOOL_TYPE_UNKNOWN, errInvalidSchoolType
 	}
 }

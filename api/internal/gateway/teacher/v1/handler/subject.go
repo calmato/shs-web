@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"context"
 	"net/http"
 
 	gentity "github.com/calmato/shs-web/api/internal/gateway/entity"
@@ -26,4 +27,16 @@ func (h *apiV1Handler) ListSubjects(ctx *gin.Context) {
 		Subjects: entity.NewSubjects(subjects),
 	}
 	ctx.JSON(http.StatusOK, res)
+}
+
+func (h *apiV1Handler) multiGetSubjects(ctx context.Context, subjectIDs []int64) (gentity.Subjects, error) {
+	in := &classroom.MultiGetSubjectsRequest{
+		Ids: subjectIDs,
+	}
+	out, err := h.classroom.MultiGetSubjects(ctx, in)
+	if err != nil {
+		return nil, err
+	}
+	subjects := gentity.NewSubjects(out.Subjects)
+	return subjects, nil
 }
