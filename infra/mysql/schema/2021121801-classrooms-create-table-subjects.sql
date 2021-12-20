@@ -15,4 +15,4 @@ CREATE TABLE `classrooms`.`subjects` (
   PRIMARY KEY(`id`)
 ) ENGINE = InnoDB;
 
-CREATE UNIQUE INDEX `name_UNIQUE` ON `classrooms`.`subjects` (`name`) VISIBLE;
+CREATE UNIQUE INDEX `ui_subjects_name` ON `classrooms`.`subjects` (`name`) VISIBLE;

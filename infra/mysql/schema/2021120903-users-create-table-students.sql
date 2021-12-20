@@ -1,6 +1,3 @@
--- -----------------------------------------------
--- Table: students
--- -----------------------------------------------
 CREATE TABLE `users`.`students` (
   `id`              VARCHAR(21)  NOT NULL,             -- ユーザーID
   `mail`            VARCHAR(256) NOT NULL,             -- メールアドレス
@@ -14,4 +11,4 @@ CREATE TABLE `users`.`students` (
   `deleted_at`      DATETIME     NULL     DEFAULT NULL -- 退会日時
 ) ENGINE = InnoDB;
 
-CREATE UNIQUE INDEX `mail_UNIQUE` ON `users`.`students` (`mail` ASC) VISIBLE;
+CREATE UNIQUE INDEX `ui_students_mail` ON `users`.`students` (`mail` ASC) VISIBLE;
