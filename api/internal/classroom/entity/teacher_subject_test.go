@@ -46,7 +46,10 @@ func TestTeacherSubject_SubjectIDs(t *testing.T) {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			assert.Equal(t, tt.expect, tt.subjects.SubjectIDs())
+			subjectIDs := tt.subjects.SubjectIDs()
+			for _, subjectID := range tt.expect {
+				assert.Contains(t, subjectIDs, subjectID)
+			}
 		})
 	}
 }
