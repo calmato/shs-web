@@ -8,6 +8,7 @@ import (
 	"github.com/calmato/shs-web/api/internal/classroom/validation"
 	"github.com/calmato/shs-web/api/pkg/jst"
 	"github.com/calmato/shs-web/api/proto/classroom"
+	"github.com/golang/mock/gomock"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/protobuf/proto"
 )
@@ -66,10 +67,9 @@ func TestMultiGetTeacherSubjects(t *testing.T) {
 			name: "success",
 			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
 				teacherIDs := []string{"teacherid1", "teacherid2"}
-				subjectIDs := []int64{1, 2}
 				mocks.validator.EXPECT().MultiGetTeacherSubjects(req).Return(nil)
 				mocks.db.TeacherSubject.EXPECT().ListByTeacherIDs(ctx, teacherIDs).Return(teachersubjects, nil)
-				mocks.db.Subject.EXPECT().MultiGet(ctx, subjectIDs).Return(subjects, nil)
+				mocks.db.Subject.EXPECT().MultiGet(ctx, gomock.Any()).Return(subjects, nil)
 			},
 			req: req,
 			expect: &testResponse{
@@ -125,10 +125,9 @@ func TestMultiGetTeacherSubjects(t *testing.T) {
 			name: "failed to multi get subjects",
 			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
 				teacherIDs := []string{"teacherid1", "teacherid2"}
-				subjectIDs := []int64{1, 2}
 				mocks.validator.EXPECT().MultiGetTeacherSubjects(req).Return(nil)
 				mocks.db.TeacherSubject.EXPECT().ListByTeacherIDs(ctx, teacherIDs).Return(teachersubjects, nil)
-				mocks.db.Subject.EXPECT().MultiGet(ctx, subjectIDs).Return(nil, errmock)
+				mocks.db.Subject.EXPECT().MultiGet(ctx, gomock.Any()).Return(nil, errmock)
 			},
 			req: req,
 			expect: &testResponse{
@@ -195,7 +194,7 @@ func TestGetTeacherSubject(t *testing.T) {
 				teacherIDs := []string{"teacherid"}
 				mocks.validator.EXPECT().GetTeacherSubject(req).Return(nil)
 				mocks.db.TeacherSubject.EXPECT().ListByTeacherIDs(ctx, teacherIDs).Return(teachersubjects, nil)
-				mocks.db.Subject.EXPECT().MultiGet(ctx, teachersubjects.SubjectIDs()).Return(subjects, nil)
+				mocks.db.Subject.EXPECT().MultiGet(ctx, gomock.Any()).Return(subjects, nil)
 			},
 			req: req,
 			expect: &testResponse{
@@ -253,7 +252,7 @@ func TestGetTeacherSubject(t *testing.T) {
 				teacherIDs := []string{"teacherid"}
 				mocks.validator.EXPECT().GetTeacherSubject(req).Return(nil)
 				mocks.db.TeacherSubject.EXPECT().ListByTeacherIDs(ctx, teacherIDs).Return(teachersubjects, nil)
-				mocks.db.Subject.EXPECT().MultiGet(ctx, teachersubjects.SubjectIDs()).Return(nil, errmock)
+				mocks.db.Subject.EXPECT().MultiGet(ctx, gomock.Any()).Return(nil, errmock)
 			},
 			req: req,
 			expect: &testResponse{
