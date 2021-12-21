@@ -110,3 +110,46 @@ func (mr *MockSubjectMockRecorder) MultiGet(ctx, ids interface{}, fields ...inte
 	varargs := append([]interface{}{ctx, ids}, fields...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MultiGet", reflect.TypeOf((*MockSubject)(nil).MultiGet), varargs...)
 }
+
+// MockTeacherSubject is a mock of TeacherSubject interface.
+type MockTeacherSubject struct {
+	ctrl     *gomock.Controller
+	recorder *MockTeacherSubjectMockRecorder
+}
+
+// MockTeacherSubjectMockRecorder is the mock recorder for MockTeacherSubject.
+type MockTeacherSubjectMockRecorder struct {
+	mock *MockTeacherSubject
+}
+
+// NewMockTeacherSubject creates a new mock instance.
+func NewMockTeacherSubject(ctrl *gomock.Controller) *MockTeacherSubject {
+	mock := &MockTeacherSubject{ctrl: ctrl}
+	mock.recorder = &MockTeacherSubjectMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockTeacherSubject) EXPECT() *MockTeacherSubjectMockRecorder {
+	return m.recorder
+}
+
+// ListByTeacherIDs mocks base method.
+func (m *MockTeacherSubject) ListByTeacherIDs(ctx context.Context, teacherIDs []string, fields ...string) (entity.TeacherSubjects, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, teacherIDs}
+	for _, a := range fields {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "ListByTeacherIDs", varargs...)
+	ret0, _ := ret[0].(entity.TeacherSubjects)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListByTeacherIDs indicates an expected call of ListByTeacherIDs.
+func (mr *MockTeacherSubjectMockRecorder) ListByTeacherIDs(ctx, teacherIDs interface{}, fields ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, teacherIDs}, fields...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListByTeacherIDs", reflect.TypeOf((*MockTeacherSubject)(nil).ListByTeacherIDs), varargs...)
+}

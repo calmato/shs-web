@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package classroom;
+
+option go_package = "github.com/calmato/shs-web/api/proto/classroom";
+
+message TeacherSubject {
+  string         teacher_id  = 1; // 講師ID
+  repeated int64 subject_ids = 2; // 担当科目ID一覧
+}

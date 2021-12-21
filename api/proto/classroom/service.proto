@@ -8,11 +8,14 @@ import "github.com/envoyproxy/protoc-gen-validate/validate/validate.proto";
 
 import "classroom/common.proto";
 import "classroom/subject.proto";
+import "classroom/teacher_subject.proto";
 
 service ClassroomService {
   rpc ListSubjects(ListSubjectsRequest) returns (ListSubjectsResponse);
   rpc MultiGetSubjects(MultiGetSubjectsRequest) returns (MultiGetSubjectsResponse);
   rpc GetSubject(GetSubjectRequest) returns (GetSubjectResponse);
+  rpc MultiGetTeacherSubjects(MultiGetTeacherSubjectsRequest) returns (MultiGetTeacherSubjectsResponse);
+  rpc GetTeacherSubject(GetTeacherSubjectRequest) returns (GetTeacherSubjectResponse);
 }
 
 message ListSubjectsRequest {
@@ -38,4 +41,22 @@ message GetSubjectRequest {
 
 message GetSubjectResponse {
   Subject subject = 1;
+}
+
+message MultiGetTeacherSubjectsRequest {
+  repeated string teacher_ids = 1 [(validate.rules).repeated = { min_items: 1, unique: true, items: { string: { min_len: 1 }}}];
+}
+
+message MultiGetTeacherSubjectsResponse {
+  repeated TeacherSubject teacher_subjects = 1;
+  repeated Subject        subjects = 2;
+}
+
+message GetTeacherSubjectRequest {
+  string teacher_id = 1 [(validate.rules).string = { min_len: 1 }];
+}
+
+message GetTeacherSubjectResponse {
+  TeacherSubject   teacher_subject = 1;
+  repeated Subject subjects        = 2;
 }

@@ -48,6 +48,20 @@ func (mr *MockRequestValidationMockRecorder) GetSubject(req interface{}) *gomock
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetSubject", reflect.TypeOf((*MockRequestValidation)(nil).GetSubject), req)
 }
 
+// GetTeacherSubject mocks base method.
+func (m *MockRequestValidation) GetTeacherSubject(req *classroom.GetTeacherSubjectRequest) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetTeacherSubject", req)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// GetTeacherSubject indicates an expected call of GetTeacherSubject.
+func (mr *MockRequestValidationMockRecorder) GetTeacherSubject(req interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTeacherSubject", reflect.TypeOf((*MockRequestValidation)(nil).GetTeacherSubject), req)
+}
+
 // ListSubjects mocks base method.
 func (m *MockRequestValidation) ListSubjects(req *classroom.ListSubjectsRequest) error {
 	m.ctrl.T.Helper()
@@ -74,4 +88,18 @@ func (m *MockRequestValidation) MultiGetSubjects(req *classroom.MultiGetSubjects
 func (mr *MockRequestValidationMockRecorder) MultiGetSubjects(req interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MultiGetSubjects", reflect.TypeOf((*MockRequestValidation)(nil).MultiGetSubjects), req)
+}
+
+// MultiGetTeacherSubjects mocks base method.
+func (m *MockRequestValidation) MultiGetTeacherSubjects(req *classroom.MultiGetTeacherSubjectsRequest) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "MultiGetTeacherSubjects", req)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// MultiGetTeacherSubjects indicates an expected call of MultiGetTeacherSubjects.
+func (mr *MockRequestValidationMockRecorder) MultiGetTeacherSubjects(req interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MultiGetTeacherSubjects", reflect.TypeOf((*MockRequestValidation)(nil).MultiGetTeacherSubjects), req)
 }

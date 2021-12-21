@@ -27,12 +27,14 @@ type Params struct {
 }
 
 type Database struct {
-	Subject Subject
+	Subject        Subject
+	TeacherSubject TeacherSubject
 }
 
 func NewDatabase(params *Params) *Database {
 	return &Database{
-		Subject: NewSubject(params.Database),
+		Subject:        NewSubject(params.Database),
+		TeacherSubject: NewTeacherSubject(params.Database),
 	}
 }
 
@@ -44,6 +46,10 @@ type Subject interface {
 	MultiGet(ctx context.Context, ids []int64, fields ...string) (entity.Subjects, error)
 	Get(ctx context.Context, id int64, fields ...string) (*entity.Subject, error)
 	Count(ctx context.Context) (int64, error)
+}
+
+type TeacherSubject interface {
+	ListByTeacherIDs(ctx context.Context, teacherIDs []string, fields ...string) (entity.TeacherSubjects, error)
 }
 
 /**
