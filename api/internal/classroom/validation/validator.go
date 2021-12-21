@@ -15,6 +15,8 @@ type RequestValidation interface {
 	ListSubjects(req *classroom.ListSubjectsRequest) error
 	MultiGetSubjects(req *classroom.MultiGetSubjectsRequest) error
 	GetSubject(req *classroom.GetSubjectRequest) error
+	MultiGetTeacherSubjects(req *classroom.MultiGetTeacherSubjectsRequest) error
+	GetTeacherSubject(req *classroom.GetTeacherSubjectRequest) error
 }
 
 type requestValidation struct{}
