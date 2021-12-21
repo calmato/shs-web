@@ -92,3 +92,49 @@ func TestSubjects(t *testing.T) {
 		})
 	}
 }
+
+func TestSubjects_GroupBySchoolType(t *testing.T) {
+	t.Parallel()
+	now := jst.Date(2021, 8, 2, 18, 30, 0, 0)
+	tests := []struct {
+		name     string
+		subjects Subjects
+		expect   map[SchoolType]Subjects
+	}{
+		{
+			name: "success",
+			subjects: Subjects{
+				{
+					ID:         1,
+					Name:       "国語",
+					Color:      "#F8BBD0",
+					SchoolType: SchoolTypeHighSchool,
+					CreatedAt:  now,
+					UpdatedAt:  now,
+				},
+			},
+			expect: map[SchoolType]Subjects{
+				SchoolTypeElementarySchool: {},
+				SchoolTypeJuniorHighSchool: {},
+				SchoolTypeHighSchool: {
+					{
+						ID:         1,
+						Name:       "国語",
+						Color:      "#F8BBD0",
+						SchoolType: SchoolTypeHighSchool,
+						CreatedAt:  now,
+						UpdatedAt:  now,
+					},
+				},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tt.expect, tt.subjects.GroupBySchoolType())
+		})
+	}
+}
