@@ -60,9 +60,9 @@ describe('components/templates/TheSignIn', () => {
     })
 
     describe('methods', () => {
-      describe('onClick', () => {
+      describe('onSubmit', () => {
         it('emitが実行されること', async () => {
-          await wrapper.vm.onClick()
+          await wrapper.vm.onSubmit()
           expect(wrapper.emitted('click')).toBeTruthy()
         })
       })
