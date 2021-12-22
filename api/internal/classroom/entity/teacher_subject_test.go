@@ -8,6 +8,36 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestTeacherSubjects(t *testing.T) {
+	t.Parallel()
+	tests := []struct {
+		name       string
+		teacherID  string
+		subjectIDs []int64
+		expect     TeacherSubjects
+	}{
+		{
+			name:       "success",
+			teacherID:  "teacherid",
+			subjectIDs: []int64{1},
+			expect: TeacherSubjects{
+				{
+					TeacherID: "teacherid",
+					SubjectID: 1,
+				},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tt.expect, NewTeacherSubjects(tt.teacherID, tt.subjectIDs))
+		})
+	}
+}
+
 func TestTeacherSubject_SubjectIDs(t *testing.T) {
 	t.Parallel()
 	now := jst.Now()

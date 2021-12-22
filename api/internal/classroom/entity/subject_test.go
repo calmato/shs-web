@@ -87,3 +87,48 @@ func TestSubjects_Proto(t *testing.T) {
 		})
 	}
 }
+
+func TestSchoolType(t *testing.T) {
+	t.Parallel()
+	tests := []struct {
+		name       string
+		schoolType classroom.SchoolType
+		expect     SchoolType
+		isErr      bool
+	}{
+		{
+			name:       "elementary school",
+			schoolType: classroom.SchoolType_SCHOOL_TYPE_ELEMENTARY_SCHOOL,
+			expect:     SchoolTypeElementarySchool,
+			isErr:      false,
+		},
+		{
+			name:       "junior high school",
+			schoolType: classroom.SchoolType_SCHOOL_TYPE_JUNIOR_HIGH_SCHOOL,
+			expect:     SchoolTypeJuniorHighSchool,
+			isErr:      false,
+		},
+		{
+			name:       "high school",
+			schoolType: classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL,
+			expect:     SchoolTypeHighSchool,
+			isErr:      false,
+		},
+		{
+			name:       "invalid school type",
+			schoolType: classroom.SchoolType_SCHOOL_TYPE_UNKNOWN,
+			expect:     SchoolTypeUnknown,
+			isErr:      true,
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			actual, err := NewSchoolType(tt.schoolType)
+			assert.Equal(t, tt.isErr, err != nil, err)
+			assert.Equal(t, tt.expect, actual)
+		})
+	}
+}
