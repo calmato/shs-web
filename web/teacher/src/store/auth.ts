@@ -7,7 +7,7 @@ import { ErrorResponse } from '~/types/api/exception'
 import { AuthResponse } from '~/types/api/v1'
 import { ApiError } from '~/types/exception'
 import { SignInForm } from '~/types/form'
-import { Auth, AuthState, Role } from '~/types/store'
+import { Auth, AuthState, Role, SchoolType, Subject } from '~/types/store'
 
 const initialState: AuthState = {
   uid: '',
@@ -21,6 +21,7 @@ const initialState: AuthState = {
     firstNameKana: '',
     mail: '',
     role: Role.TEACHER,
+    subjects: new Map<SchoolType, Subject[]>(),
   },
 }
 

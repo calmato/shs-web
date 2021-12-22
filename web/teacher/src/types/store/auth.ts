@@ -1,4 +1,5 @@
-import { Role } from './common'
+import { Subject } from './lesson'
+import { Role, SchoolType } from './common'
 
 export interface Auth {
   id: string
@@ -8,6 +9,7 @@ export interface Auth {
   firstNameKana: string
   mail: string
   role: Role
+  subjects: Map<SchoolType, Subject[]>
 }
 
 export interface AuthState {
