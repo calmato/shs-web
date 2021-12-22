@@ -38,14 +38,14 @@ func TestMultiGetTeacherSubjects(t *testing.T) {
 		{
 			ID:         1,
 			Name:       "国語",
-			SchoolType: int32(classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL),
+			SchoolType: entity.SchoolTypeHighSchool,
 			CreatedAt:  now,
 			UpdatedAt:  now,
 		},
 		{
 			ID:         2,
 			Name:       "数学",
-			SchoolType: int32(classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL),
+			SchoolType: entity.SchoolTypeHighSchool,
 			CreatedAt:  now,
 			UpdatedAt:  now,
 		},
@@ -162,14 +162,14 @@ func TestGetTeacherSubject(t *testing.T) {
 		{
 			ID:         1,
 			Name:       "国語",
-			SchoolType: int32(classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL),
+			SchoolType: entity.SchoolTypeHighSchool,
 			CreatedAt:  now,
 			UpdatedAt:  now,
 		},
 		{
 			ID:         2,
 			Name:       "数学",
-			SchoolType: int32(classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL),
+			SchoolType: entity.SchoolTypeHighSchool,
 			CreatedAt:  now,
 			UpdatedAt:  now,
 		},
@@ -258,6 +258,160 @@ func TestGetTeacherSubject(t *testing.T) {
 		tt := tt
 		t.Run(tt.name, testGRPC(tt.setup, tt.expect, func(ctx context.Context, service *classroomService) (proto.Message, error) {
 			return service.GetTeacherSubject(ctx, tt.req)
+		}))
+	}
+}
+
+func TestUpdateTeacherSubject(t *testing.T) {
+	t.Parallel()
+
+	now := jst.Now()
+	req := &classroom.UpdateTeacherSubjectRequest{
+		TeacherId:  "teacherid",
+		SubjectIds: []int64{1, 2},
+		SchoolType: classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL,
+	}
+	subjects := entity.Subjects{
+		{
+			ID:         1,
+			Name:       "国語",
+			SchoolType: entity.SchoolTypeHighSchool,
+			CreatedAt:  now,
+			UpdatedAt:  now,
+		},
+		{
+			ID:         2,
+			Name:       "数学",
+			SchoolType: entity.SchoolTypeHighSchool,
+			CreatedAt:  now,
+			UpdatedAt:  now,
+		},
+	}
+	teachersubjects := entity.TeacherSubjects{
+		{
+			TeacherID: "teacherid",
+			SubjectID: 1,
+		},
+		{
+			TeacherID: "teacherid",
+			SubjectID: 2,
+		},
+	}
+
+	tests := []struct {
+		name   string
+		setup  func(ctx context.Context, t *testing.T, mocks *mocks)
+		req    *classroom.UpdateTeacherSubjectRequest
+		expect *testResponse
+	}{
+		{
+			name: "success",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				schoolType := entity.SchoolTypeHighSchool
+				mocks.validator.EXPECT().UpdateTeacherSubject(req).Return(nil)
+				mocks.db.Subject.EXPECT().MultiGet(ctx, gomock.Any()).Return(subjects, nil)
+				mocks.db.TeacherSubject.EXPECT().Replace(ctx, schoolType, teachersubjects).Return(nil)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.OK,
+				body: &classroom.UpdateTeacherSubjectResponse{
+					TeacherSubject: &classroom.TeacherSubject{
+						TeacherId:  "teacherid",
+						SubjectIds: []int64{1, 2},
+					},
+					Subjects: []*classroom.Subject{
+						{
+							Id:         1,
+							Name:       "国語",
+							SchoolType: classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL,
+							CreatedAt:  now.Unix(),
+							UpdatedAt:  now.Unix(),
+						},
+						{
+							Id:         2,
+							Name:       "数学",
+							SchoolType: classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL,
+							CreatedAt:  now.Unix(),
+							UpdatedAt:  now.Unix(),
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "invalid argument",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				req := &classroom.UpdateTeacherSubjectRequest{}
+				mocks.validator.EXPECT().UpdateTeacherSubject(req).Return(validation.ErrRequestValidation)
+			},
+			req: &classroom.UpdateTeacherSubjectRequest{},
+			expect: &testResponse{
+				code: codes.InvalidArgument,
+			},
+		},
+		{
+			name: "failed to invalid school type",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				req := &classroom.UpdateTeacherSubjectRequest{}
+				mocks.validator.EXPECT().UpdateTeacherSubject(req).Return(nil)
+			},
+			req: &classroom.UpdateTeacherSubjectRequest{
+				SchoolType: classroom.SchoolType_SCHOOL_TYPE_UNKNOWN,
+			},
+			expect: &testResponse{
+				code: codes.InvalidArgument,
+			},
+		},
+		{
+			name: "failed to multi get subjects",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				mocks.validator.EXPECT().UpdateTeacherSubject(req).Return(nil)
+				mocks.db.Subject.EXPECT().MultiGet(ctx, gomock.Any()).Return(nil, errmock)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.Internal,
+			},
+		},
+		{
+			name: "failed to unmatch subject ids",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				req := &classroom.UpdateTeacherSubjectRequest{
+					SubjectIds: []int64{1, 2},
+					SchoolType: classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL,
+				}
+				subjects := entity.Subjects{}
+				mocks.validator.EXPECT().UpdateTeacherSubject(req).Return(nil)
+				mocks.db.Subject.EXPECT().MultiGet(ctx, gomock.Any()).Return(subjects, nil)
+			},
+			req: &classroom.UpdateTeacherSubjectRequest{
+				SubjectIds: []int64{1, 2},
+				SchoolType: classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL,
+			},
+			expect: &testResponse{
+				code: codes.InvalidArgument,
+			},
+		},
+		{
+			name: "failed to replace teacher subjects",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				schoolType := entity.SchoolTypeHighSchool
+				mocks.validator.EXPECT().UpdateTeacherSubject(req).Return(nil)
+				mocks.db.Subject.EXPECT().MultiGet(ctx, gomock.Any()).Return(subjects, nil)
+				mocks.db.TeacherSubject.EXPECT().Replace(ctx, schoolType, teachersubjects).Return(errmock)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.Internal,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, testGRPC(tt.setup, tt.expect, func(ctx context.Context, service *classroomService) (proto.Message, error) {
+			return service.UpdateTeacherSubject(ctx, tt.req)
 		}))
 	}
 }

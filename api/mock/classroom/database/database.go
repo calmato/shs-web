@@ -153,3 +153,17 @@ func (mr *MockTeacherSubjectMockRecorder) ListByTeacherIDs(ctx, teacherIDs inter
 	varargs := append([]interface{}{ctx, teacherIDs}, fields...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListByTeacherIDs", reflect.TypeOf((*MockTeacherSubject)(nil).ListByTeacherIDs), varargs...)
 }
+
+// Replace mocks base method.
+func (m *MockTeacherSubject) Replace(ctx context.Context, schoolType entity.SchoolType, subjects entity.TeacherSubjects) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Replace", ctx, schoolType, subjects)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Replace indicates an expected call of Replace.
+func (mr *MockTeacherSubjectMockRecorder) Replace(ctx, schoolType, subjects interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Replace", reflect.TypeOf((*MockTeacherSubject)(nil).Replace), ctx, schoolType, subjects)
+}

@@ -19,3 +19,12 @@ func (v *requestValidation) GetTeacherSubject(req *classroom.GetTeacherSubjectRe
 
 	return nil
 }
+
+func (v *requestValidation) UpdateTeacherSubject(req *classroom.UpdateTeacherSubjectRequest) error {
+	if err := req.Validate(); err != nil {
+		validate := err.(classroom.UpdateTeacherSubjectRequestValidationError)
+		return validationError(validate.Error())
+	}
+
+	return nil
+}
