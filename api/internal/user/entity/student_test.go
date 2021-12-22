@@ -13,12 +13,23 @@ func TestStudent(t *testing.T) {
 	now := jst.Now()
 	tests := []struct {
 		name    string
-		student *user.Student
-		expect  *Student
+		student *Student
+		expect  *user.Student
 	}{
 		{
 			name: "success",
-			student: &user.Student{
+			student: &Student{
+				ID:            "lKEnoE6LetnMs5Byk2a7Zx",
+				LastName:      "浜田",
+				FirstName:     "直志",
+				LastNameKana:  "はまだ",
+				FirstNameKana: "ただし",
+				Mail:          "student-test001@calmato.jp",
+				BirthYear:     2021,
+				CreatedAt:     now,
+				UpdatedAt:     now,
+			},
+			expect: &user.Student{
 				Id:            "lKEnoE6LetnMs5Byk2a7Zx",
 				LastName:      "浜田",
 				FirstName:     "直志",
@@ -29,19 +40,6 @@ func TestStudent(t *testing.T) {
 				CreatedAt:     now.Unix(),
 				UpdatedAt:     now.Unix(),
 			},
-			expect: &Student{
-				Student: &user.Student{
-					Id:            "lKEnoE6LetnMs5Byk2a7Zx",
-					LastName:      "浜田",
-					FirstName:     "直志",
-					LastNameKana:  "はまだ",
-					FirstNameKana: "ただし",
-					Mail:          "student-test001@calmato.jp",
-					BirthYear:     2021,
-					CreatedAt:     now.Unix(),
-					UpdatedAt:     now.Unix(),
-				},
-			},
 		},
 	}
 
@@ -49,7 +47,7 @@ func TestStudent(t *testing.T) {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			assert.Equal(t, tt.expect, NewStudent(tt.student))
+			assert.Equal(t, tt.expect, tt.student.Proto())
 		})
 	}
 }
@@ -59,12 +57,25 @@ func TestStudents(t *testing.T) {
 	now := jst.Now()
 	tests := []struct {
 		name     string
-		students []*user.Student
-		expect   Students
+		students Students
+		expect   []*user.Student
 	}{
 		{
 			name: "success",
-			students: []*user.Student{
+			students: Students{
+				{
+					ID:            "lKEnoE6LetnMs5Byk2a7Zx",
+					LastName:      "浜田",
+					FirstName:     "直志",
+					LastNameKana:  "はまだ",
+					FirstNameKana: "ただし",
+					Mail:          "student-test001@calmato.jp",
+					BirthYear:     2021,
+					CreatedAt:     now,
+					UpdatedAt:     now,
+				},
+			},
+			expect: []*user.Student{
 				{
 					Id:            "lKEnoE6LetnMs5Byk2a7Zx",
 					LastName:      "浜田",
@@ -77,21 +88,6 @@ func TestStudents(t *testing.T) {
 					UpdatedAt:     now.Unix(),
 				},
 			},
-			expect: Students{
-				{
-					Student: &user.Student{
-						Id:            "lKEnoE6LetnMs5Byk2a7Zx",
-						LastName:      "浜田",
-						FirstName:     "直志",
-						LastNameKana:  "はまだ",
-						FirstNameKana: "ただし",
-						Mail:          "student-test001@calmato.jp",
-						BirthYear:     2021,
-						CreatedAt:     now.Unix(),
-						UpdatedAt:     now.Unix(),
-					},
-				},
-			},
 		},
 	}
 
@@ -99,7 +95,7 @@ func TestStudents(t *testing.T) {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			assert.Equal(t, tt.expect, NewStudents(tt.students))
+			assert.Equal(t, tt.expect, tt.students.Proto())
 		})
 	}
 }
