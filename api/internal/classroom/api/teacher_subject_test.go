@@ -18,7 +18,7 @@ func TestMultiGetTeacherSubjects(t *testing.T) {
 	now := jst.Now()
 
 	req := &classroom.MultiGetTeacherSubjectsRequest{
-		TeacherIds: []string{"teacherid1", "teacherid2"},
+		TeacherIds: []string{"teacherid1"},
 	}
 	teachersubjects := entity.TeacherSubjects{
 		{
@@ -30,12 +30,6 @@ func TestMultiGetTeacherSubjects(t *testing.T) {
 		{
 			TeacherID: "teacherid1",
 			SubjectID: 2,
-			CreatedAt: now,
-			UpdatedAt: now,
-		},
-		{
-			TeacherID: "teacherid2",
-			SubjectID: 1,
 			CreatedAt: now,
 			UpdatedAt: now,
 		},
@@ -66,7 +60,7 @@ func TestMultiGetTeacherSubjects(t *testing.T) {
 		{
 			name: "success",
 			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
-				teacherIDs := []string{"teacherid1", "teacherid2"}
+				teacherIDs := []string{"teacherid1"}
 				mocks.validator.EXPECT().MultiGetTeacherSubjects(req).Return(nil)
 				mocks.db.TeacherSubject.EXPECT().ListByTeacherIDs(ctx, teacherIDs).Return(teachersubjects, nil)
 				mocks.db.Subject.EXPECT().MultiGet(ctx, gomock.Any()).Return(subjects, nil)
@@ -77,7 +71,6 @@ func TestMultiGetTeacherSubjects(t *testing.T) {
 				body: &classroom.MultiGetTeacherSubjectsResponse{
 					TeacherSubjects: []*classroom.TeacherSubject{
 						{TeacherId: "teacherid1", SubjectIds: []int64{1, 2}},
-						{TeacherId: "teacherid2", SubjectIds: []int64{1}},
 					},
 					Subjects: []*classroom.Subject{
 						{
@@ -112,7 +105,7 @@ func TestMultiGetTeacherSubjects(t *testing.T) {
 		{
 			name: "failed to list by teacher ids",
 			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
-				teacherIDs := []string{"teacherid1", "teacherid2"}
+				teacherIDs := []string{"teacherid1"}
 				mocks.validator.EXPECT().MultiGetTeacherSubjects(req).Return(nil)
 				mocks.db.TeacherSubject.EXPECT().ListByTeacherIDs(ctx, teacherIDs).Return(nil, errmock)
 			},
@@ -124,7 +117,7 @@ func TestMultiGetTeacherSubjects(t *testing.T) {
 		{
 			name: "failed to multi get subjects",
 			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
-				teacherIDs := []string{"teacherid1", "teacherid2"}
+				teacherIDs := []string{"teacherid1"}
 				mocks.validator.EXPECT().MultiGetTeacherSubjects(req).Return(nil)
 				mocks.db.TeacherSubject.EXPECT().ListByTeacherIDs(ctx, teacherIDs).Return(teachersubjects, nil)
 				mocks.db.Subject.EXPECT().MultiGet(ctx, gomock.Any()).Return(nil, errmock)
