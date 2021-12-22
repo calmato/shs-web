@@ -1,18 +1,30 @@
 package entity
 
 import (
+	"errors"
 	"time"
 
 	"github.com/calmato/shs-web/api/proto/classroom"
 )
 
+var errInvalidSchoolType = errors.New("entity: invalid school type")
+
+type SchoolType int32
+
+const (
+	SchoolTypeUnknown          SchoolType = 0
+	SchoolTypeElementarySchool SchoolType = 1
+	SchoolTypeJuniorHighSchool SchoolType = 2
+	SchoolTypeHighSchool       SchoolType = 3
+)
+
 type Subject struct {
-	ID         int64     `gorm:"primaryKey;autoIncrement;<-:create"`
-	Name       string    `gorm:""`
-	Color      string    `gorm:""`
-	SchoolType int32     `gorm:""`
-	CreatedAt  time.Time `gorm:"<-:create"`
-	UpdatedAt  time.Time `gorm:""`
+	ID         int64      `gorm:"primaryKey;autoIncrement;<-:create"`
+	Name       string     `gorm:""`
+	Color      string     `gorm:""`
+	SchoolType SchoolType `gorm:""`
+	CreatedAt  time.Time  `gorm:"<-:create"`
+	UpdatedAt  time.Time  `gorm:""`
 }
 
 type Subjects []*Subject
@@ -34,4 +46,17 @@ func (ss Subjects) Proto() []*classroom.Subject {
 		subjects[i] = ss[i].Proto()
 	}
 	return subjects
+}
+
+func NewSchoolType(schoolType classroom.SchoolType) (SchoolType, error) {
+	switch schoolType {
+	case classroom.SchoolType_SCHOOL_TYPE_ELEMENTARY_SCHOOL:
+		return SchoolTypeElementarySchool, nil
+	case classroom.SchoolType_SCHOOL_TYPE_JUNIOR_HIGH_SCHOOL:
+		return SchoolTypeJuniorHighSchool, nil
+	case classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL:
+		return SchoolTypeHighSchool, nil
+	default:
+		return SchoolTypeUnknown, errInvalidSchoolType
+	}
 }

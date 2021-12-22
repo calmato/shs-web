@@ -16,6 +16,7 @@ service ClassroomService {
   rpc GetSubject(GetSubjectRequest) returns (GetSubjectResponse);
   rpc MultiGetTeacherSubjects(MultiGetTeacherSubjectsRequest) returns (MultiGetTeacherSubjectsResponse);
   rpc GetTeacherSubject(GetTeacherSubjectRequest) returns (GetTeacherSubjectResponse);
+  rpc UpdateTeacherSubject(UpdateTeacherSubjectRequest) returns (UpdateTeacherSubjectResponse);
 }
 
 message ListSubjectsRequest {
@@ -57,6 +58,17 @@ message GetTeacherSubjectRequest {
 }
 
 message GetTeacherSubjectResponse {
+  TeacherSubject   teacher_subject = 1;
+  repeated Subject subjects        = 2;
+}
+
+message UpdateTeacherSubjectRequest {
+  string         teacher_id  = 1 [(validate.rules).string = { min_len: 1 }];
+  repeated int64 subject_ids = 2 [(validate.rules).repeated = { unique: true, items: { int64: { gt: 0 }}}];
+  SchoolType     school_type = 3 [(validate.rules).enum = { defined_only: true }];
+}
+
+message UpdateTeacherSubjectResponse {
   TeacherSubject   teacher_subject = 1;
   repeated Subject subjects        = 2;
 }

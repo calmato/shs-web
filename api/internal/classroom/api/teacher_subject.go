@@ -6,6 +6,8 @@ import (
 
 	"github.com/calmato/shs-web/api/internal/classroom/entity"
 	"github.com/calmato/shs-web/api/proto/classroom"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 func (s *classroomService) MultiGetTeacherSubjects(
@@ -62,6 +64,38 @@ func (s *classroomService) GetTeacherSubject(
 	}
 
 	res := &classroom.GetTeacherSubjectResponse{
+		TeacherSubject: teacherSubjects.TeacherProto(),
+		Subjects:       subjects.Proto(),
+	}
+	return res, nil
+}
+
+func (s *classroomService) UpdateTeacherSubject(
+	ctx context.Context, req *classroom.UpdateTeacherSubjectRequest,
+) (*classroom.UpdateTeacherSubjectResponse, error) {
+	if err := s.validator.UpdateTeacherSubject(req); err != nil {
+		return nil, gRPCError(err)
+	}
+
+	schoolType, err := entity.NewSchoolType(req.SchoolType)
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+	subjects, err := s.db.Subject.MultiGet(ctx, req.SubjectIds)
+	if err != nil {
+		return nil, gRPCError(err)
+	}
+	if len(subjects) != len(req.SubjectIds) {
+		return nil, status.Error(codes.InvalidArgument, "api: subject ids length is unmatch")
+	}
+
+	teacherSubjects := entity.NewTeacherSubjects(req.TeacherId, req.SubjectIds)
+	err = s.db.TeacherSubject.Replace(ctx, schoolType, teacherSubjects)
+	if err != nil {
+		return nil, gRPCError(err)
+	}
+
+	res := &classroom.UpdateTeacherSubjectResponse{
 		TeacherSubject: teacherSubjects.TeacherProto(),
 		Subjects:       subjects.Proto(),
 	}

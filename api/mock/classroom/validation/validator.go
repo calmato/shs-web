@@ -103,3 +103,17 @@ func (mr *MockRequestValidationMockRecorder) MultiGetTeacherSubjects(req interfa
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MultiGetTeacherSubjects", reflect.TypeOf((*MockRequestValidation)(nil).MultiGetTeacherSubjects), req)
 }
+
+// UpdateTeacherSubject mocks base method.
+func (m *MockRequestValidation) UpdateTeacherSubject(req *classroom.UpdateTeacherSubjectRequest) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateTeacherSubject", req)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateTeacherSubject indicates an expected call of UpdateTeacherSubject.
+func (mr *MockRequestValidationMockRecorder) UpdateTeacherSubject(req interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateTeacherSubject", reflect.TypeOf((*MockRequestValidation)(nil).UpdateTeacherSubject), req)
+}

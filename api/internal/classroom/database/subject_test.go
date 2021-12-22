@@ -23,9 +23,9 @@ func TestSubject_List(t *testing.T) {
 	now := jst.Now()
 
 	subjects := make(entity.Subjects, 3)
-	subjects[0] = testSubject(1, "国語", classroom.SchoolType_SCHOOL_TYPE_ELEMENTARY_SCHOOL, now)
-	subjects[1] = testSubject(2, "数学", classroom.SchoolType_SCHOOL_TYPE_JUNIOR_HIGH_SCHOOL, now)
-	subjects[2] = testSubject(3, "英語", classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL, now)
+	subjects[0] = testSubject(1, "国語", entity.SchoolTypeElementarySchool, now)
+	subjects[1] = testSubject(2, "数学", entity.SchoolTypeElementarySchool, now)
+	subjects[2] = testSubject(3, "英語", entity.SchoolTypeElementarySchool, now)
 	err = m.db.DB.Create(&subjects).Error
 	require.NoError(t, err)
 
@@ -100,9 +100,9 @@ func TestSubject_MultiGet(t *testing.T) {
 	now := jst.Now()
 
 	subjects := make(entity.Subjects, 3)
-	subjects[0] = testSubject(1, "国語", classroom.SchoolType_SCHOOL_TYPE_ELEMENTARY_SCHOOL, now)
-	subjects[1] = testSubject(2, "数学", classroom.SchoolType_SCHOOL_TYPE_ELEMENTARY_SCHOOL, now)
-	subjects[2] = testSubject(3, "英語", classroom.SchoolType_SCHOOL_TYPE_ELEMENTARY_SCHOOL, now)
+	subjects[0] = testSubject(1, "国語", entity.SchoolTypeElementarySchool, now)
+	subjects[1] = testSubject(2, "数学", entity.SchoolTypeElementarySchool, now)
+	subjects[2] = testSubject(3, "英語", entity.SchoolTypeElementarySchool, now)
 	err = m.db.DB.Create(&subjects).Error
 	require.NoError(t, err)
 
@@ -175,7 +175,7 @@ func TestSubject_Get(t *testing.T) {
 
 	now := jst.Now()
 
-	subject := testSubject(1, "国語", classroom.SchoolType_SCHOOL_TYPE_ELEMENTARY_SCHOOL, now)
+	subject := testSubject(1, "国語", entity.SchoolTypeElementarySchool, now)
 	err = m.db.DB.Create(&subject).Error
 	require.NoError(t, err)
 
@@ -251,9 +251,9 @@ func TestSubject_Count(t *testing.T) {
 	now := jst.Now()
 
 	subjects := make(entity.Subjects, 3)
-	subjects[0] = testSubject(1, "国語", classroom.SchoolType_SCHOOL_TYPE_ELEMENTARY_SCHOOL, now)
-	subjects[1] = testSubject(2, "数学", classroom.SchoolType_SCHOOL_TYPE_ELEMENTARY_SCHOOL, now)
-	subjects[2] = testSubject(3, "英語", classroom.SchoolType_SCHOOL_TYPE_ELEMENTARY_SCHOOL, now)
+	subjects[0] = testSubject(1, "国語", entity.SchoolTypeElementarySchool, now)
+	subjects[1] = testSubject(2, "数学", entity.SchoolTypeElementarySchool, now)
+	subjects[2] = testSubject(3, "英語", entity.SchoolTypeElementarySchool, now)
 	err = m.db.DB.Create(&subjects).Error
 	require.NoError(t, err)
 
@@ -296,12 +296,12 @@ func TestSubject_Count(t *testing.T) {
 	}
 }
 
-func testSubject(id int64, name string, schoolType classroom.SchoolType, now time.Time) *entity.Subject {
+func testSubject(id int64, name string, schoolType entity.SchoolType, now time.Time) *entity.Subject {
 	return &entity.Subject{
 		ID:         id,
 		Name:       name,
 		Color:      "#F8BBD0",
-		SchoolType: int32(schoolType),
+		SchoolType: schoolType,
 		CreatedAt:  now,
 		UpdatedAt:  now,
 	}

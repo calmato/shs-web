@@ -50,6 +50,7 @@ type Subject interface {
 
 type TeacherSubject interface {
 	ListByTeacherIDs(ctx context.Context, teacherIDs []string, fields ...string) (entity.TeacherSubjects, error)
+	Replace(ctx context.Context, schoolType entity.SchoolType, subjects entity.TeacherSubjects) error
 }
 
 /**

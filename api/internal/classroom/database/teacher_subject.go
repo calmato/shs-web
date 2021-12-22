@@ -41,3 +41,47 @@ func (s *teacherSubject) ListByTeacherIDs(
 	err := stmt.Find(&subjects).Error
 	return subjects, dbError(err)
 }
+
+func (s *teacherSubject) Replace(
+	ctx context.Context, schoolType entity.SchoolType, subjects entity.TeacherSubjects,
+) error {
+	now := s.now()
+	for i := range subjects {
+		subjects[i].CreatedAt = now
+		subjects[i].UpdatedAt = now
+	}
+
+	tx, err := s.db.Begin()
+	if err != nil {
+		return dbError(err)
+	}
+	defer s.db.Close(tx)
+
+	teacherID := subjects.TeacherID()
+
+	var subjectIDs []int64
+	err = tx.Table(teacherSubjectTable).Select("subjects.id").
+		Joins("LEFT JOIN subjects ON teacher_subjects.subject_id = subjects.id").
+		Where("teacher_subjects.teacher_id = ?", teacherID).
+		Where("subjects.school_type = ?", schoolType).
+		Find(&subjectIDs).Error
+	if err != nil {
+		return dbError(err)
+	}
+
+	err = tx.Table(teacherSubjectTable).
+		Where("teacher_id = ?", teacherID).
+		Where("subject_id IN (?)", subjectIDs).
+		Delete(&entity.TeacherSubject{}).Error
+	if err != nil {
+		tx.Rollback()
+		return dbError(err)
+	}
+
+	err = tx.Table(teacherSubjectTable).Create(&subjects).Error
+	if err != nil {
+		tx.Rollback()
+		return dbError(err)
+	}
+	return dbError(tx.Commit().Error)
+}

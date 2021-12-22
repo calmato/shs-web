@@ -16,6 +16,25 @@ type TeacherSubject struct {
 
 type TeacherSubjects []*TeacherSubject
 
+func NewTeacherSubjects(teacherID string, subjectIDs []int64) TeacherSubjects {
+	subjects := make(TeacherSubjects, len(subjectIDs))
+	for i := range subjectIDs {
+		subject := &TeacherSubject{
+			TeacherID: teacherID,
+			SubjectID: subjectIDs[i],
+		}
+		subjects[i] = subject
+	}
+	return subjects
+}
+
+func (ss TeacherSubjects) TeacherID() string {
+	if len(ss) == 0 {
+		return ""
+	}
+	return ss[0].TeacherID
+}
+
 func (ss TeacherSubjects) SubjectIDs() []int64 {
 	set := set.New(len(ss))
 	for _, s := range ss {
