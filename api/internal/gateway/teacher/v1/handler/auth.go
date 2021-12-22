@@ -8,10 +8,9 @@ import (
 	"github.com/calmato/shs-web/api/internal/gateway/teacher/v1/request"
 	"github.com/calmato/shs-web/api/internal/gateway/teacher/v1/response"
 	"github.com/calmato/shs-web/api/internal/gateway/util"
+	"github.com/calmato/shs-web/api/proto/classroom"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/sync/errgroup"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
 func (h *apiV1Handler) GetAuth(ctx *gin.Context) {
@@ -42,34 +41,32 @@ func (h *apiV1Handler) GetAuth(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, res)
 }
 
-// mock
 func (h *apiV1Handler) UpdateMySubjects(ctx *gin.Context) {
 	c := util.SetMetadata(ctx)
+
+	teacherID := getTeacherID(ctx)
 
 	req := &request.UpdateMySubjectRequest{}
 	if err := ctx.BindJSON(req); err != nil {
 		badRequest(ctx, err)
 		return
 	}
-	_, err := entity.SchoolType(req.SchoolType).ClassroomSchoolType()
+	schoolType, err := entity.SchoolType(req.SchoolType).ClassroomSchoolType()
 	if err != nil {
 		badRequest(ctx, err)
 		return
 	}
 
-	subjects, err := h.multiGetSubjects(c, req.SubjectIDs)
+	in := &classroom.UpdateTeacherSubjectRequest{
+		TeacherId:  teacherID,
+		SubjectIds: req.SubjectIDs,
+		SchoolType: schoolType,
+	}
+	_, err = h.classroom.UpdateTeacherSubject(c, in)
 	if err != nil {
 		httpError(ctx, err)
 		return
 	}
-	if len(req.SubjectIDs) != len(subjects) {
-		err := status.Error(codes.InvalidArgument, "handler: unmatch subjects length")
-		httpError(ctx, err)
-		return
-	}
 
-	// TODO: update my subjects
-
-	res := &response.AuthResponse{}
-	ctx.JSON(http.StatusOK, res)
+	ctx.JSON(http.StatusNoContent, gin.H{})
 }

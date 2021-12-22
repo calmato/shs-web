@@ -128,6 +128,10 @@ func TestGetAuth(t *testing.T) {
 func TestUpdateMySubjects(t *testing.T) {
 	t.Parallel()
 	now := jst.Now()
+	teacherSubject := &classroom.TeacherSubject{
+		TeacherId:  idmock,
+		SubjectIds: []int64{1},
+	}
 	subjects := []*classroom.Subject{
 		{
 			Id:         1,
@@ -147,17 +151,23 @@ func TestUpdateMySubjects(t *testing.T) {
 		{
 			name: "success",
 			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
-				in := &classroom.MultiGetSubjectsRequest{Ids: []int64{1}}
-				out := &classroom.MultiGetSubjectsResponse{Subjects: subjects}
-				mocks.classroom.EXPECT().MultiGetSubjects(gomock.Any(), in).Return(out, nil)
+				in := &classroom.UpdateTeacherSubjectRequest{
+					TeacherId:  idmock,
+					SubjectIds: []int64{1},
+					SchoolType: classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL,
+				}
+				out := &classroom.UpdateTeacherSubjectResponse{
+					TeacherSubject: teacherSubject,
+					Subjects:       subjects,
+				}
+				mocks.classroom.EXPECT().UpdateTeacherSubject(gomock.Any(), in).Return(out, nil)
 			},
 			req: &request.UpdateMySubjectRequest{
 				SchoolType: int32(classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL),
 				SubjectIDs: []int64{1},
 			},
 			expect: &testResponse{
-				code: http.StatusOK,
-				body: &response.AuthResponse{},
+				code: http.StatusNoContent,
 			},
 		},
 		{
@@ -172,10 +182,14 @@ func TestUpdateMySubjects(t *testing.T) {
 			},
 		},
 		{
-			name: "failed to multi get subjects",
+			name: "failed to update teacher subject",
 			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
-				in := &classroom.MultiGetSubjectsRequest{Ids: []int64{1}}
-				mocks.classroom.EXPECT().MultiGetSubjects(gomock.Any(), in).Return(nil, errmock)
+				in := &classroom.UpdateTeacherSubjectRequest{
+					TeacherId:  idmock,
+					SubjectIds: []int64{1},
+					SchoolType: classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL,
+				}
+				mocks.classroom.EXPECT().UpdateTeacherSubject(gomock.Any(), in).Return(nil, errmock)
 			},
 			req: &request.UpdateMySubjectRequest{
 				SchoolType: int32(classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL),
@@ -183,21 +197,6 @@ func TestUpdateMySubjects(t *testing.T) {
 			},
 			expect: &testResponse{
 				code: http.StatusInternalServerError,
-			},
-		},
-		{
-			name: "failed to unmatch subjects length",
-			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
-				in := &classroom.MultiGetSubjectsRequest{Ids: []int64{1}}
-				out := &classroom.MultiGetSubjectsResponse{Subjects: []*classroom.Subject{}}
-				mocks.classroom.EXPECT().MultiGetSubjects(gomock.Any(), in).Return(out, nil)
-			},
-			req: &request.UpdateMySubjectRequest{
-				SchoolType: int32(classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL),
-				SubjectIDs: []int64{1},
-			},
-			expect: &testResponse{
-				code: http.StatusBadRequest,
 			},
 		},
 	}

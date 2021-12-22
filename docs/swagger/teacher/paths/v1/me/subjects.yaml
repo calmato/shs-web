@@ -11,12 +11,10 @@ patch:
         schema:
           $ref: './../../../openapi.yaml#/components/schemas/v1UpdateMySubjectsRequest'
   responses:
-    200:
+    204:
       description: A successful response.
       content:
-        application/json:
-          schema:
-            $ref: './../../../openapi.yaml#/components/schemas/v1AuthResponse'
+        application/json: {}
     default:
       description: An unexpected error response.
       content:
