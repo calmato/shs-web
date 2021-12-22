@@ -315,28 +315,7 @@ func TestUpdateTeacherSubject(t *testing.T) {
 			req: req,
 			expect: &testResponse{
 				code: codes.OK,
-				body: &classroom.UpdateTeacherSubjectResponse{
-					TeacherSubject: &classroom.TeacherSubject{
-						TeacherId:  "teacherid",
-						SubjectIds: []int64{1, 2},
-					},
-					Subjects: []*classroom.Subject{
-						{
-							Id:         1,
-							Name:       "国語",
-							SchoolType: classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL,
-							CreatedAt:  now.Unix(),
-							UpdatedAt:  now.Unix(),
-						},
-						{
-							Id:         2,
-							Name:       "数学",
-							SchoolType: classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL,
-							CreatedAt:  now.Unix(),
-							UpdatedAt:  now.Unix(),
-						},
-					},
-				},
+				body: &classroom.UpdateTeacherSubjectResponse{},
 			},
 		},
 		{

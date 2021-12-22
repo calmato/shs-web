@@ -68,7 +68,4 @@ message UpdateTeacherSubjectRequest {
   SchoolType     school_type = 3 [(validate.rules).enum = { defined_only: true }];
 }
 
-message UpdateTeacherSubjectResponse {
-  TeacherSubject   teacher_subject = 1;
-  repeated Subject subjects        = 2;
-}
+message UpdateTeacherSubjectResponse {}

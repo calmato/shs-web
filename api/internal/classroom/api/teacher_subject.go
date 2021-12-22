@@ -95,9 +95,6 @@ func (s *classroomService) UpdateTeacherSubject(
 		return nil, gRPCError(err)
 	}
 
-	res := &classroom.UpdateTeacherSubjectResponse{
-		TeacherSubject: teacherSubjects.TeacherProto(),
-		Subjects:       subjects.Proto(),
-	}
+	res := &classroom.UpdateTeacherSubjectResponse{}
 	return res, nil
 }

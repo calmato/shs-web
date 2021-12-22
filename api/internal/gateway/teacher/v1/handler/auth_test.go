@@ -127,21 +127,6 @@ func TestGetAuth(t *testing.T) {
 
 func TestUpdateMySubjects(t *testing.T) {
 	t.Parallel()
-	now := jst.Now()
-	teacherSubject := &classroom.TeacherSubject{
-		TeacherId:  idmock,
-		SubjectIds: []int64{1},
-	}
-	subjects := []*classroom.Subject{
-		{
-			Id:         1,
-			Name:       "国語",
-			Color:      "#f8bbd0",
-			SchoolType: classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL,
-			CreatedAt:  now.Unix(),
-			UpdatedAt:  now.Unix(),
-		},
-	}
 	tests := []struct {
 		name   string
 		setup  func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller)
@@ -156,10 +141,7 @@ func TestUpdateMySubjects(t *testing.T) {
 					SubjectIds: []int64{1},
 					SchoolType: classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL,
 				}
-				out := &classroom.UpdateTeacherSubjectResponse{
-					TeacherSubject: teacherSubject,
-					Subjects:       subjects,
-				}
+				out := &classroom.UpdateTeacherSubjectResponse{}
 				mocks.classroom.EXPECT().UpdateTeacherSubject(gomock.Any(), in).Return(out, nil)
 			},
 			req: &request.UpdateMySubjectRequest{
