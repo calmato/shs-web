@@ -29,18 +29,6 @@ func (h *apiV1Handler) ListSubjects(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, res)
 }
 
-func (h *apiV1Handler) multiGetSubjects(ctx context.Context, subjectIDs []int64) (gentity.Subjects, error) {
-	in := &classroom.MultiGetSubjectsRequest{
-		Ids: subjectIDs,
-	}
-	out, err := h.classroom.MultiGetSubjects(ctx, in)
-	if err != nil {
-		return nil, err
-	}
-	subjects := gentity.NewSubjects(out.Subjects)
-	return subjects, nil
-}
-
 func (h *apiV1Handler) getTeacherSubject(
 	ctx context.Context, teacherID string,
 ) (*gentity.TeacherSubject, gentity.Subjects, error) {
