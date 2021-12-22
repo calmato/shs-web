@@ -1,7 +1,10 @@
+import { SchoolType } from './common'
+
 export interface Subject {
   id: number
   name: string
   color: string
+  schoolType: SchoolType
   createdAt: string
   updatedAt: string
 }

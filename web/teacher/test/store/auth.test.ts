@@ -2,7 +2,21 @@ import { setup, setSafetyMode, refresh } from '~~/test/helpers/store-helper'
 import { AuthStore } from '~/store'
 import { ApiError } from '~/types/exception'
 import { ErrorResponse } from '~/types/api/exception'
-import { Role } from '~/types/store'
+import { Role, SchoolType, Subject } from '~/types/store'
+
+const subjects = new Map<SchoolType, Subject[]>()
+subjects.set(SchoolType.ELEMENTARY_SCHOOL, [])
+subjects.set(SchoolType.JUNIOR_HIGH_SCHOOL, [])
+subjects.set(SchoolType.HIGH_SCHOOL, [
+  {
+    id: 1,
+    name: '国語',
+    color: '#F8BBD0',
+    schoolType: SchoolType.HIGH_SCHOOL,
+    createdAt: '2021-12-02T18:30:00+09:00',
+    updatedAt: '2021-12-02T18:30:00+09:00',
+  },
+])
 
 describe('store/auth', () => {
   beforeEach(() => {
@@ -35,6 +49,7 @@ describe('store/auth', () => {
         firstNameKana: '',
         mail: '',
         role: Role.TEACHER,
+        subjects: new Map<SchoolType, Subject[]>(),
       })
     })
   })
@@ -56,6 +71,7 @@ describe('store/auth', () => {
             firstNameKana: 'こうだい',
             mail: 'teacher-test001@calmato.jp',
             role: Role.TEACHER,
+            subjects,
           })
         })
       })

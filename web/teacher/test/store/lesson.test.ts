@@ -1,5 +1,6 @@
 import { setup, refresh } from '~~/test/helpers/store-helper'
 import { LessonStore } from '~/store'
+import { SchoolType } from '~/types/store'
 
 describe('store/lesson', () => {
   beforeEach(() => {
@@ -17,6 +18,7 @@ describe('store/lesson', () => {
           id: 1,
           name: '国語',
           color: '#F8BBD0',
+          schoolType: SchoolType.ELEMENTARY_SCHOOL,
           createdAt: '',
           updatedAt: '',
         },
@@ -24,6 +26,7 @@ describe('store/lesson', () => {
           id: 2,
           name: '数学',
           color: '#BBDEFB',
+          schoolType: SchoolType.JUNIOR_HIGH_SCHOOL,
           createdAt: '',
           updatedAt: '',
         },
@@ -31,6 +34,7 @@ describe('store/lesson', () => {
           id: 3,
           name: '英語',
           color: '#FEE6C9',
+          schoolType: SchoolType.HIGH_SCHOOL,
           createdAt: '',
           updatedAt: '',
         },
@@ -43,6 +47,7 @@ describe('store/lesson', () => {
           id: 1,
           name: '国語',
           color: '#F8BBD0',
+          schoolType: SchoolType.ELEMENTARY_SCHOOL,
           createdAt: '',
           updatedAt: '',
         },
@@ -50,6 +55,7 @@ describe('store/lesson', () => {
           id: 2,
           name: '数学',
           color: '#BBDEFB',
+          schoolType: SchoolType.JUNIOR_HIGH_SCHOOL,
           createdAt: '',
           updatedAt: '',
         },
@@ -57,6 +63,7 @@ describe('store/lesson', () => {
           id: 3,
           name: '英語',
           color: '#FEE6C9',
+          schoolType: SchoolType.HIGH_SCHOOL,
           createdAt: '',
           updatedAt: '',
         },
