@@ -15,5 +15,5 @@ export interface AuthResponse {
   firstNameKana: string
   mail: string
   role: number
-  subjects: Map<number, Subject>
+  subjects: Map<number, Subject[]>
 }
