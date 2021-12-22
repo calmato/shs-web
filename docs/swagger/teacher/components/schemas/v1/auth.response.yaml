@@ -23,6 +23,91 @@ authResponse:
       type: integer
       format: int32
       description: 権限
+    subjects:
+      type: object
+      description: 担当教科一覧(Map)
+      properties:
+        1:
+          type: array
+          description: 担当教科一覧(小学校)
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                format: int64
+                description: 授業科目ID
+              name:
+                type: string
+                description: 授業科目名
+              color:
+                type: string
+                description: 表示色
+                format: '#rrggbb'
+              schoolType:
+                type: integer
+                format: int32
+                description: 校種
+              createdAt:
+                type: string
+                description: 登録日時
+              updatedAt:
+                type: string
+                description: 更新日時
+        2:
+          type: array
+          description: 担当教科一覧(中学校)
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                format: int64
+                description: 授業科目ID
+              name:
+                type: string
+                description: 授業科目名
+              color:
+                type: string
+                description: 表示色
+                format: '#rrggbb'
+              schoolType:
+                type: integer
+                format: int32
+                description: 校種
+              createdAt:
+                type: string
+                description: 登録日時
+              updatedAt:
+                type: string
+                description: 更新日時
+        3:
+          type: array
+          description: 担当教科一覧(高等学校)
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                format: int64
+                description: 授業科目ID
+              name:
+                type: string
+                description: 授業科目名
+              color:
+                type: string
+                description: 表示色
+                format: '#rrggbb'
+              schoolType:
+                type: integer
+                format: int32
+                description: 校種
+              createdAt:
+                type: string
+                description: 登録日時
+              updatedAt:
+                type: string
+                description: 更新日時
   example:
     id: 'kSByoE6FetnPs5Byk3a9Zx'
     lastName: '中村'
@@ -31,3 +116,43 @@ authResponse:
     firstNamaKana: 'こうだい'
     mail: 'teacher-test01@calmato.jp'
     role: 0
+    subjects:
+      1:
+      - id: 1
+        name: 国語
+        color: '#F8BBD0'
+        schoolType: 1
+        createdAt: '2021-12-12T12:12:30.100Z'
+        updatedAt: '2021-12-12T12:12:30.100Z'
+      - id: 2
+        name: 数学
+        color: '#BBDEFB'
+        schoolType: 1
+        createdAt: '2021-12-12T12:12:30.100Z'
+        updatedAt: '2021-12-12T12:12:30.100Z'
+      2:
+      - id: 1
+        name: 国語
+        color: '#F8BBD0'
+        schoolType: 1
+        createdAt: '2021-12-12T12:12:30.100Z'
+        updatedAt: '2021-12-12T12:12:30.100Z'
+      - id: 2
+        name: 数学
+        color: '#BBDEFB'
+        schoolType: 1
+        createdAt: '2021-12-12T12:12:30.100Z'
+        updatedAt: '2021-12-12T12:12:30.100Z'
+      3:
+      - id: 1
+        name: 国語
+        color: '#F8BBD0'
+        schoolType: 1
+        createdAt: '2021-12-12T12:12:30.100Z'
+        updatedAt: '2021-12-12T12:12:30.100Z'
+      - id: 2
+        name: 数学
+        color: '#BBDEFB'
+        schoolType: 1
+        createdAt: '2021-12-12T12:12:30.100Z'
+        updatedAt: '2021-12-12T12:12:30.100Z'

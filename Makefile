@@ -45,7 +45,7 @@ start-api:
 	docker-compose up teacher_gateway user_api classroom_api mysql
 
 start-swagger:
-	docker-compose up swagger_generator swagger_ui_teacher
+	docker-compose up swagger_generator swagger_teacher
 
 start-test:
 	docker-compose up mysql_test firebase_test

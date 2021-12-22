@@ -40,3 +40,18 @@ func (h *apiV1Handler) multiGetSubjects(ctx context.Context, subjectIDs []int64)
 	subjects := gentity.NewSubjects(out.Subjects)
 	return subjects, nil
 }
+
+func (h *apiV1Handler) getTeacherSubject(
+	ctx context.Context, teacherID string,
+) (*gentity.TeacherSubject, gentity.Subjects, error) {
+	in := &classroom.GetTeacherSubjectRequest{
+		TeacherId: teacherID,
+	}
+	out, err := h.classroom.GetTeacherSubject(ctx, in)
+	if err != nil {
+		return nil, nil, err
+	}
+	teacherSubject := gentity.NewTeacherSubject(out.TeacherSubject)
+	subjects := gentity.NewSubjects(out.Subjects)
+	return teacherSubject, subjects, nil
+}

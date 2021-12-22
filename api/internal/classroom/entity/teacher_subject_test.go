@@ -212,7 +212,10 @@ func TestTeacherSubject_TeachersProto(t *testing.T) {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			assert.Equal(t, tt.expect, tt.subjects.TeachersProto())
+			actual := tt.subjects.TeachersProto()
+			for i := range tt.expect {
+				assert.Contains(t, actual, tt.expect[i])
+			}
 		})
 	}
 }

@@ -51,6 +51,22 @@ func NewSubjects(subjects entity.Subjects) Subjects {
 	return ss
 }
 
+func (ss Subjects) GroupBySchoolType() map[SchoolType]Subjects {
+	res := map[SchoolType]Subjects{
+		SchoolTypeElementarySchool: make(Subjects, 0),
+		SchoolTypeJuniorHighSchool: make(Subjects, 0),
+		SchoolTypeHighSchool:       make(Subjects, 0),
+	}
+
+	for _, s := range ss {
+		if _, ok := res[s.SchoolType]; !ok {
+			continue
+		}
+		res[s.SchoolType] = append(res[s.SchoolType], s)
+	}
+	return res
+}
+
 func NewSchoolType(schoolType classroom.SchoolType) SchoolType {
 	switch schoolType {
 	case classroom.SchoolType_SCHOOL_TYPE_ELEMENTARY_SCHOOL:

@@ -16,7 +16,7 @@ import (
 
 func TestGetAuth(t *testing.T) {
 	t.Parallel()
-	now := jst.Now()
+	now := jst.Date(2021, 8, 2, 18, 30, 0, 0)
 	teacher := &user.Teacher{
 		Id:            idmock,
 		LastName:      "中村",
@@ -28,6 +28,20 @@ func TestGetAuth(t *testing.T) {
 		CreatedAt:     now.Unix(),
 		UpdatedAt:     now.Unix(),
 	}
+	teacherSubject := &classroom.TeacherSubject{
+		TeacherId:  idmock,
+		SubjectIds: []int64{1},
+	}
+	subjects := []*classroom.Subject{
+		{
+			Id:         1,
+			Name:       "国語",
+			Color:      "#f8bbd0",
+			SchoolType: classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL,
+			CreatedAt:  now.Unix(),
+			UpdatedAt:  now.Unix(),
+		},
+	}
 	tests := []struct {
 		name   string
 		setup  func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller)
@@ -36,9 +50,12 @@ func TestGetAuth(t *testing.T) {
 		{
 			name: "success",
 			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
-				in := &user.GetTeacherRequest{Id: idmock}
-				out := &user.GetTeacherResponse{Teacher: teacher}
-				mocks.user.EXPECT().GetTeacher(gomock.Any(), in).Return(out, nil)
+				teacherIn := &user.GetTeacherRequest{Id: idmock}
+				teacherOut := &user.GetTeacherResponse{Teacher: teacher}
+				subjectsIn := &classroom.GetTeacherSubjectRequest{TeacherId: idmock}
+				subjectsOut := &classroom.GetTeacherSubjectResponse{TeacherSubject: teacherSubject, Subjects: subjects}
+				mocks.user.EXPECT().GetTeacher(gomock.Any(), teacherIn).Return(teacherOut, nil)
+				mocks.classroom.EXPECT().GetTeacherSubject(gomock.Any(), subjectsIn).Return(subjectsOut, nil)
 			},
 			expect: &testResponse{
 				code: http.StatusOK,
@@ -52,14 +69,44 @@ func TestGetAuth(t *testing.T) {
 						Mail:          "teacher-test001@calmato.jp",
 						Role:          entity.RoleTeacher,
 					},
+					Subjects: map[entity.SchoolType]entity.Subjects{
+						entity.SchoolTypeElementarySchool: {},
+						entity.SchoolTypeJuniorHighSchool: {},
+						entity.SchoolTypeHighSchool: {
+							{
+								ID:         1,
+								Name:       "国語",
+								Color:      "#F8BBD0",
+								SchoolType: entity.SchoolTypeHighSchool,
+								CreatedAt:  now,
+								UpdatedAt:  now,
+							},
+						},
+					},
 				},
 			},
 		},
 		{
 			name: "failed to get teacher",
 			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
-				in := &user.GetTeacherRequest{Id: idmock}
-				mocks.user.EXPECT().GetTeacher(gomock.Any(), in).Return(nil, errmock)
+				teacherIn := &user.GetTeacherRequest{Id: idmock}
+				subjectsIn := &classroom.GetTeacherSubjectRequest{TeacherId: idmock}
+				subjectsOut := &classroom.GetTeacherSubjectResponse{TeacherSubject: teacherSubject, Subjects: subjects}
+				mocks.user.EXPECT().GetTeacher(gomock.Any(), teacherIn).Return(nil, errmock)
+				mocks.classroom.EXPECT().GetTeacherSubject(gomock.Any(), subjectsIn).Return(subjectsOut, nil)
+			},
+			expect: &testResponse{
+				code: http.StatusInternalServerError,
+			},
+		},
+		{
+			name: "failed to get teacher subjects",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
+				teacherIn := &user.GetTeacherRequest{Id: idmock}
+				teacherOut := &user.GetTeacherResponse{Teacher: teacher}
+				subjectsIn := &classroom.GetTeacherSubjectRequest{TeacherId: idmock}
+				mocks.user.EXPECT().GetTeacher(gomock.Any(), teacherIn).Return(teacherOut, nil)
+				mocks.classroom.EXPECT().GetTeacherSubject(gomock.Any(), subjectsIn).Return(nil, errmock)
 			},
 			expect: &testResponse{
 				code: http.StatusInternalServerError,
