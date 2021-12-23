@@ -12,4 +12,28 @@ updateMySubjectsRequest:
         type: integer
         format: int64
         description: 授業科目ID
-
+  example:
+    schoolType: 1
+    subjectIds:
+    - 1
+    - 2
+updateMyMailRequest:
+  type: object
+  properties:
+    mail:
+      type: string
+      description: メールアドレス
+  example:
+    mail: 'teacher-test01@calmato.jp'
+updateMyPasswordRequest:
+  type: object
+  properties:
+    password:
+      type: string
+      description: パスワード
+    passwordConfirmation:
+      type: string
+      description: パスワード
+  example:
+    password: '12345678'
+    passwordConfirmation: '12345678'

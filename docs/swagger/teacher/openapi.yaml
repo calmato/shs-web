@@ -19,6 +19,10 @@ paths:
     $ref: './paths/v1/me/index.yaml'
   /v1/me/subjects:
     $ref: './paths/v1/me/subjects.yaml'
+  /v1/me/mail:
+    $ref: './paths/v1/me/mail.yaml'
+  /v1/me/password:
+    $ref: './paths/v1/me/password.yaml'
   # Teachers
   /v1/teachers:
     $ref: './paths/v1/teachers/index.yaml'
@@ -39,6 +43,10 @@ components:
     # Request
     v1UpdateMySubjectsRequest:
       $ref: './components/schemas/v1/auth.request.yaml#/updateMySubjectsRequest'
+    v1UpdateMyMailRequest:
+      $ref: './components/schemas/v1/auth.request.yaml#/updateMyMailRequest'
+    v1UpdateMyPasswordRequest:
+      $ref: './components/schemas/v1/auth.request.yaml#/updateMyPasswordRequest'
     v1CreateTeacherRequest:
       $ref: './components/schemas/v1/teachers.request.yaml#/createTeacherRequest'
     # Response
