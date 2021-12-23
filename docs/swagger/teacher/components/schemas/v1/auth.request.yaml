@@ -12,6 +12,11 @@ updateMySubjectsRequest:
         type: integer
         format: int64
         description: 授業科目ID
+  example:
+    schoolType: 1
+    subjectIds:
+    - 1
+    - 2
 updateMyMailRequest:
   type: object
   properties:
