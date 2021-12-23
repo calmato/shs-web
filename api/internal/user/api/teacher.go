@@ -106,3 +106,31 @@ func (s *userService) CreateTeacher(
 	}
 	return res, nil
 }
+
+func (s *userService) UpdateTeacherMail(
+	ctx context.Context, req *user.UpdateTeacherMailRequest,
+) (*user.UpdateTeacherMailResponse, error) {
+	if err := s.validator.UpdateTeacherMail(req); err != nil {
+		return nil, gRPCError(err)
+	}
+
+	err := s.db.Teacher.UpdateMail(ctx, req.Id, req.Mail)
+	if err != nil {
+		return nil, gRPCError(err)
+	}
+	return &user.UpdateTeacherMailResponse{}, nil
+}
+
+func (s *userService) UpdateTeacherPassword(
+	ctx context.Context, req *user.UpdateTeacherPasswordRequest,
+) (*user.UpdateTeacherPasswordResponse, error) {
+	if err := s.validator.UpdateTeacherPassword(req); err != nil {
+		return nil, gRPCError(err)
+	}
+
+	err := s.db.Teacher.UpdatePassword(ctx, req.Id, req.Password)
+	if err != nil {
+		return nil, gRPCError(err)
+	}
+	return &user.UpdateTeacherPasswordResponse{}, nil
+}

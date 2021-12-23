@@ -249,6 +249,146 @@ func TestTeacher_Create(t *testing.T) {
 	}
 }
 
+func TestTeacher_UpdateMail(t *testing.T) {
+	m, err := newMock()
+	require.NoError(t, err)
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	_ = m.dbDelete(ctx, teacherTable)
+
+	now := jst.Now()
+	teacher := testTeacher(idmock, "teacher01@calmato.jp", now)
+
+	type args struct {
+		teacherID string
+		mail      string
+	}
+	type want struct {
+		isErr bool
+	}
+	tests := []struct {
+		name  string
+		setup func(ctx context.Context, t *testing.T, m *mocks)
+		args  args
+		want  want
+	}{
+		{
+			name: "success",
+			setup: func(ctx context.Context, t *testing.T, m *mocks) {
+				_, err := m.auth.CreateUser(ctx, idmock, "teacher01@calmato.jp", "12345678")
+				require.NoError(t, err)
+				err = m.db.DB.Create(&teacher).Error
+				require.NoError(t, err)
+			},
+			args: args{
+				teacherID: idmock,
+				mail:      "teacher02@calmato.jp",
+			},
+			want: want{
+				isErr: false,
+			},
+		},
+		{
+			name: "failed to update email",
+			setup: func(ctx context.Context, t *testing.T, m *mocks) {
+				_, err := m.auth.CreateUser(ctx, idmock, "teacher01@calmato.jp", "12345678")
+				require.NoError(t, err)
+				err = m.db.DB.Create(&teacher).Error
+				require.NoError(t, err)
+			},
+			args: args{
+				teacherID: "",
+				mail:      "",
+			},
+			want: want{
+				isErr: true,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			ctx, cancel := context.WithCancel(context.Background())
+			defer cancel()
+
+			_ = m.authDelete(ctx, idmock)
+			_ = m.dbDelete(ctx, teacherTable)
+			tt.setup(ctx, t, m)
+
+			db := NewTeacher(m.db, m.auth)
+			err := db.UpdateMail(ctx, tt.args.teacherID, tt.args.mail)
+			assert.Equal(t, tt.want.isErr, err != nil, err)
+		})
+	}
+}
+
+func TestTeacher_UpdatePassword(t *testing.T) {
+	m, err := newMock()
+	require.NoError(t, err)
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	_ = m.dbDelete(ctx, teacherTable)
+
+	type args struct {
+		teacherID string
+		password  string
+	}
+	type want struct {
+		isErr bool
+	}
+	tests := []struct {
+		name  string
+		setup func(ctx context.Context, t *testing.T, m *mocks)
+		args  args
+		want  want
+	}{
+		{
+			name: "success",
+			setup: func(ctx context.Context, t *testing.T, m *mocks) {
+				_, err := m.auth.CreateUser(ctx, idmock, "teacher01@calmato.jp", "12345678")
+				require.NoError(t, err)
+			},
+			args: args{
+				teacherID: idmock,
+				password:  "87654321",
+			},
+			want: want{
+				isErr: false,
+			},
+		},
+		{
+			name: "failed to update password",
+			setup: func(ctx context.Context, t *testing.T, m *mocks) {
+				_, err := m.auth.CreateUser(ctx, idmock, "teacher01@calmato.jp", "12345678")
+				require.NoError(t, err)
+			},
+			args: args{
+				teacherID: "",
+				password:  "",
+			},
+			want: want{
+				isErr: true,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			ctx, cancel := context.WithCancel(context.Background())
+			defer cancel()
+
+			_ = m.authDelete(ctx, idmock)
+			tt.setup(ctx, t, m)
+
+			db := NewTeacher(m.db, m.auth)
+			err := db.UpdatePassword(ctx, tt.args.teacherID, tt.args.password)
+			assert.Equal(t, tt.want.isErr, err != nil, err)
+		})
+	}
+}
+
 func TestTeacher_Count(t *testing.T) {
 	m, err := newMock()
 	require.NoError(t, err)
