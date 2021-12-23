@@ -3,7 +3,7 @@ get:
   tags:
   - Auth
   security:
-    - BearerAuth: []
+  - BearerAuth: []
   responses:
     200:
       description: A successful response.

@@ -28,15 +28,17 @@ func TestListSubjects(t *testing.T) {
 	tests := []struct {
 		name   string
 		setup  func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller)
+		query  string
 		expect *testResponse
 	}{
 		{
 			name: "success",
 			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
-				in := &classroom.ListSubjectsRequest{}
+				in := &classroom.ListSubjectsRequest{SchoolType: classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL}
 				out := &classroom.ListSubjectsResponse{Subjects: subjects}
 				mocks.classroom.EXPECT().ListSubjects(gomock.Any(), in).Return(out, nil)
 			},
+			query: "?type=3",
 			expect: &testResponse{
 				code: http.StatusOK,
 				body: &response.SubjectsResponse{
@@ -56,9 +58,10 @@ func TestListSubjects(t *testing.T) {
 		{
 			name: "failed to list subjects",
 			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
-				in := &classroom.ListSubjectsRequest{}
+				in := &classroom.ListSubjectsRequest{SchoolType: classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL}
 				mocks.classroom.EXPECT().ListSubjects(gomock.Any(), in).Return(nil, errmock)
 			},
+			query: "?type=3",
 			expect: &testResponse{
 				code: http.StatusInternalServerError,
 			},
@@ -69,7 +72,7 @@ func TestListSubjects(t *testing.T) {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			path := "/v1/subjects"
+			path := "/v1/subjects" + tt.query
 			req := newHTTPRequest(t, http.MethodGet, path, nil)
 			testHTTP(t, tt.setup, tt.expect, req)
 		})

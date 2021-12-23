@@ -3,14 +3,15 @@ get:
   tags:
   - Teacher
   security:
-    - BearerAuth: []
+  - BearerAuth: []
   parameters:
-    - in: path
-      name: id
-      required: true
-      schema:
-        type: string
-      description: 講師ID
+  - in: path
+    name: id
+    required: true
+    schema:
+      type: string
+    description: 講師ID
+    example: kSByoE6FetnPs5Byk3a9Zx
   responses:
     200:
       description: A successful response.
