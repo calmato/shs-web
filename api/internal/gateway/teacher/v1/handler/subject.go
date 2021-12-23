@@ -3,6 +3,7 @@ package handler
 import (
 	"context"
 	"net/http"
+	"strconv"
 
 	gentity "github.com/calmato/shs-web/api/internal/gateway/entity"
 	"github.com/calmato/shs-web/api/internal/gateway/teacher/v1/entity"
@@ -15,7 +16,16 @@ import (
 func (h *apiV1Handler) ListSubjects(ctx *gin.Context) {
 	c := util.SetMetadata(ctx)
 
-	in := &classroom.ListSubjectsRequest{}
+	typ, err := strconv.ParseInt(ctx.DefaultQuery("type", "0"), 10, 32)
+	if err != nil {
+		badRequest(ctx, err)
+		return
+	}
+	schoolType, _ := entity.SchoolType(typ).ClassroomSchoolType()
+
+	in := &classroom.ListSubjectsRequest{
+		SchoolType: schoolType,
+	}
 	out, err := h.classroom.ListSubjects(c, in)
 	if err != nil {
 		httpError(ctx, err)

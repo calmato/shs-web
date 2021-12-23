@@ -3,7 +3,15 @@ get:
   tags:
   - Subject
   security:
-    - BearerAuth: []
+  - BearerAuth: []
+  parameters:
+  - in: query
+    name: type
+    schema:
+      type: integer
+      format: int32
+    description: 校種 (未指定:全校種, 1:小学校, 2:中学校, 3:高等学校)
+    example: 1
   responses:
     200:
       description: A successful response.
