@@ -9,6 +9,7 @@ import (
 	"github.com/calmato/shs-web/api/internal/gateway/teacher/v1/response"
 	"github.com/calmato/shs-web/api/internal/gateway/util"
 	"github.com/calmato/shs-web/api/proto/classroom"
+	"github.com/calmato/shs-web/api/proto/user"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/sync/errgroup"
 )
@@ -63,6 +64,55 @@ func (h *apiV1Handler) UpdateMySubjects(ctx *gin.Context) {
 		SchoolType: schoolType,
 	}
 	_, err = h.classroom.UpdateTeacherSubject(c, in)
+	if err != nil {
+		httpError(ctx, err)
+		return
+	}
+
+	ctx.JSON(http.StatusNoContent, gin.H{})
+}
+
+func (h *apiV1Handler) UpdateMyMail(ctx *gin.Context) {
+	c := util.SetMetadata(ctx)
+
+	teacherID := getTeacherID(ctx)
+
+	req := &request.UpdateMyMailRequest{}
+	if err := ctx.BindJSON(req); err != nil {
+		badRequest(ctx, err)
+		return
+	}
+
+	in := &user.UpdateTeacherMailRequest{
+		Id:   teacherID,
+		Mail: req.Mail,
+	}
+	_, err := h.user.UpdateTeacherMail(c, in)
+	if err != nil {
+		httpError(ctx, err)
+		return
+	}
+
+	ctx.JSON(http.StatusNoContent, gin.H{})
+}
+
+func (h *apiV1Handler) UpdateMyPassword(ctx *gin.Context) {
+	c := util.SetMetadata(ctx)
+
+	teacherID := getTeacherID(ctx)
+
+	req := &request.UpdateMyPasswordRequest{}
+	if err := ctx.BindJSON(req); err != nil {
+		badRequest(ctx, err)
+		return
+	}
+
+	in := &user.UpdateTeacherPasswordRequest{
+		Id:                   teacherID,
+		Password:             req.Password,
+		PasswordConfirmation: req.PasswordConfirmation,
+	}
+	_, err := h.user.UpdateTeacherPassword(c, in)
 	if err != nil {
 		httpError(ctx, err)
 		return
