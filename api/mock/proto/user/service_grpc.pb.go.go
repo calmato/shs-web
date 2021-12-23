@@ -116,6 +116,46 @@ func (mr *MockUserServiceClientMockRecorder) ListTeachers(ctx, in interface{}, o
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListTeachers", reflect.TypeOf((*MockUserServiceClient)(nil).ListTeachers), varargs...)
 }
 
+// UpdateTeacherMail mocks base method.
+func (m *MockUserServiceClient) UpdateTeacherMail(ctx context.Context, in *user.UpdateTeacherMailRequest, opts ...grpc.CallOption) (*user.UpdateTeacherMailResponse, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "UpdateTeacherMail", varargs...)
+	ret0, _ := ret[0].(*user.UpdateTeacherMailResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UpdateTeacherMail indicates an expected call of UpdateTeacherMail.
+func (mr *MockUserServiceClientMockRecorder) UpdateTeacherMail(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateTeacherMail", reflect.TypeOf((*MockUserServiceClient)(nil).UpdateTeacherMail), varargs...)
+}
+
+// UpdateTeacherPassword mocks base method.
+func (m *MockUserServiceClient) UpdateTeacherPassword(ctx context.Context, in *user.UpdateTeacherPasswordRequest, opts ...grpc.CallOption) (*user.UpdateTeacherPasswordResponse, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "UpdateTeacherPassword", varargs...)
+	ret0, _ := ret[0].(*user.UpdateTeacherPasswordResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UpdateTeacherPassword indicates an expected call of UpdateTeacherPassword.
+func (mr *MockUserServiceClientMockRecorder) UpdateTeacherPassword(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateTeacherPassword", reflect.TypeOf((*MockUserServiceClient)(nil).UpdateTeacherPassword), varargs...)
+}
+
 // MockUserServiceServer is a mock of UserServiceServer interface.
 type MockUserServiceServer struct {
 	ctrl     *gomock.Controller
@@ -197,6 +237,36 @@ func (m *MockUserServiceServer) ListTeachers(arg0 context.Context, arg1 *user.Li
 func (mr *MockUserServiceServerMockRecorder) ListTeachers(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListTeachers", reflect.TypeOf((*MockUserServiceServer)(nil).ListTeachers), arg0, arg1)
+}
+
+// UpdateTeacherMail mocks base method.
+func (m *MockUserServiceServer) UpdateTeacherMail(arg0 context.Context, arg1 *user.UpdateTeacherMailRequest) (*user.UpdateTeacherMailResponse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateTeacherMail", arg0, arg1)
+	ret0, _ := ret[0].(*user.UpdateTeacherMailResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UpdateTeacherMail indicates an expected call of UpdateTeacherMail.
+func (mr *MockUserServiceServerMockRecorder) UpdateTeacherMail(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateTeacherMail", reflect.TypeOf((*MockUserServiceServer)(nil).UpdateTeacherMail), arg0, arg1)
+}
+
+// UpdateTeacherPassword mocks base method.
+func (m *MockUserServiceServer) UpdateTeacherPassword(arg0 context.Context, arg1 *user.UpdateTeacherPasswordRequest) (*user.UpdateTeacherPasswordResponse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateTeacherPassword", arg0, arg1)
+	ret0, _ := ret[0].(*user.UpdateTeacherPasswordResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UpdateTeacherPassword indicates an expected call of UpdateTeacherPassword.
+func (mr *MockUserServiceServerMockRecorder) UpdateTeacherPassword(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateTeacherPassword", reflect.TypeOf((*MockUserServiceServer)(nil).UpdateTeacherPassword), arg0, arg1)
 }
 
 // mustEmbedUnimplementedUserServiceServer mocks base method.

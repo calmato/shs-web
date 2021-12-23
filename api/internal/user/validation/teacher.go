@@ -37,3 +37,26 @@ func (v *requestValidation) CreateTeacher(req *user.CreateTeacherRequest) error 
 
 	return nil
 }
+
+func (v *requestValidation) UpdateTeacherMail(req *user.UpdateTeacherMailRequest) error {
+	if err := req.Validate(); err != nil {
+		validate := err.(user.UpdateTeacherMailRequestValidationError)
+		return validationError(validate.Error())
+	}
+
+	return nil
+}
+
+func (v *requestValidation) UpdateTeacherPassword(req *user.UpdateTeacherPasswordRequest) error {
+	if err := req.Validate(); err != nil {
+		validate := err.(user.UpdateTeacherPasswordRequestValidationError)
+		return validationError(validate.Error())
+	}
+
+	if req.Password != req.PasswordConfirmation {
+		msg := fmt.Sprintf(eqFieldMessage, "PasswordConfirmation", "Password")
+		return validationError(msg)
+	}
+
+	return nil
+}

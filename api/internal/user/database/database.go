@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 
+	"firebase.google.com/go/v4/errorutils"
 	"github.com/calmato/shs-web/api/internal/user/entity"
 	"github.com/calmato/shs-web/api/pkg/database"
 	"github.com/calmato/shs-web/api/pkg/firebase/authentication"
@@ -17,6 +18,7 @@ import (
 var (
 	ErrInvalidArgument = errors.New("database: invalid argument")
 	ErrNotFound        = errors.New("database: not found")
+	ErrAlreadyExists   = errors.New("database: already exists")
 	ErrNotImplemented  = errors.New("database: not implemented")
 	ErrInternal        = errors.New("database: internal")
 	ErrUnknown         = errors.New("database: unknown")
@@ -48,6 +50,8 @@ type Teacher interface {
 	List(ctx context.Context, p *ListTeachersParams, fields ...string) (entity.Teachers, error)
 	Get(ctx context.Context, id string, fields ...string) (*entity.Teacher, error)
 	Create(ctx context.Context, t *entity.Teacher) error
+	UpdateMail(ctx context.Context, teacherID string, mail string) error
+	UpdatePassword(ctx context.Context, teacherID string, password string) error
 	Count(ctx context.Context) (int64, error)
 }
 
@@ -82,17 +86,33 @@ func dbError(err error) error {
 		errors.Is(err, gorm.ErrInvalidValueOfLength),
 		errors.Is(err, gorm.ErrMissingWhereClause),
 		errors.Is(err, gorm.ErrModelValueRequired),
-		errors.Is(err, gorm.ErrPrimaryKeyRequired):
+		errors.Is(err, gorm.ErrPrimaryKeyRequired),
+		errorutils.IsInvalidArgument(err),
+		errorutils.IsOutOfRange(err),
+		errorutils.IsUnauthenticated(err),
+		errorutils.IsPermissionDenied(err),
+		errorutils.IsFailedPrecondition(err):
 		return fmt.Errorf("%w: %s", ErrInvalidArgument, err)
-	case errors.Is(err, gorm.ErrRecordNotFound):
+	case errors.Is(err, gorm.ErrRecordNotFound),
+		errorutils.IsNotFound(err):
 		return fmt.Errorf("%w: %s", ErrNotFound, err)
-	case errors.Is(err, gorm.ErrNotImplemented):
+	case errorutils.IsConflict(err),
+		errorutils.IsAlreadyExists(err):
+		return fmt.Errorf("%w: %s", ErrAlreadyExists, err)
+	case errors.Is(err, gorm.ErrNotImplemented),
+		errorutils.IsUnavailable(err):
 		return fmt.Errorf("%w: %s", ErrNotImplemented, err)
 	case errors.Is(err, gorm.ErrDryRunModeUnsupported),
 		errors.Is(err, gorm.ErrInvalidDB),
 		errors.Is(err, gorm.ErrRegistered),
 		errors.Is(err, gorm.ErrUnsupportedDriver),
-		errors.Is(err, gorm.ErrUnsupportedRelation):
+		errors.Is(err, gorm.ErrUnsupportedRelation),
+		errorutils.IsAborted(err),
+		errorutils.IsCancelled(err),
+		errorutils.IsDataLoss(err),
+		errorutils.IsResourceExhausted(err),
+		errorutils.IsInternal(err),
+		errorutils.IsDeadlineExceeded(err):
 		return fmt.Errorf("%w: %s", ErrInternal, err)
 	default:
 		return fmt.Errorf("%w: %s", ErrUnknown, err)

@@ -14,6 +14,8 @@ service UserService {
   rpc ListTeachers(ListTeachersRequest) returns (ListTeachersResponse);
   rpc GetTeacher(GetTeacherRequest) returns (GetTeacherResponse);
   rpc CreateTeacher(CreateTeacherRequest) returns (CreateTeacherResponse);
+  rpc UpdateTeacherMail(UpdateTeacherMailRequest) returns (UpdateTeacherMailResponse);
+  rpc UpdateTeacherPassword(UpdateTeacherPasswordRequest) returns (UpdateTeacherPasswordResponse);
   rpc GetStudent(GetStudentRequest) returns (GetStudentResponse);
 }
 
@@ -49,6 +51,21 @@ message CreateTeacherRequest {
 message CreateTeacherResponse {
   Teacher teacher = 1;
 }
+
+message UpdateTeacherMailRequest {
+  string id   = 1 [(validate.rules).string = { min_len: 1 }];
+  string mail = 2 [(validate.rules).string = { min_len: 1 max_len: 256 email: true }];
+}
+
+message UpdateTeacherMailResponse {}
+
+message UpdateTeacherPasswordRequest {
+  string id                    = 1 [(validate.rules).string = { min_len: 1 }];
+  string password              = 2 [(validate.rules).string = { min_len: 6 max_len: 32 pattern: "^[a-zA-Z0-9_!@#$_%^&*.?()-=+]*$" }];
+  string password_confirmation = 3 [(validate.rules).string = { min_len: 1 }];
+}
+
+message UpdateTeacherPasswordResponse {}
 
 message GetStudentRequest {
   string id = 1 [(validate.rules).string = { min_len: 1 }];

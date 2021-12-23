@@ -389,3 +389,139 @@ func TestCreateTeacher(t *testing.T) {
 		})
 	}
 }
+
+func TestUpdateTeacherMail(t *testing.T) {
+	t.Parallel()
+	validator := NewRequestValidation()
+
+	tests := []struct {
+		name  string
+		req   *user.UpdateTeacherMailRequest
+		isErr bool
+	}{
+		{
+			name: "success",
+			req: &user.UpdateTeacherMailRequest{
+				Id:   "cvcTyJFfgoDQrqC1KDHbRe",
+				Mail: "teacher-test01@calmato.jp",
+			},
+			isErr: false,
+		},
+		{
+			name: "Id is min_len",
+			req: &user.UpdateTeacherMailRequest{
+				Id:   "",
+				Mail: "teacher-test01@calmato.jp",
+			},
+			isErr: true,
+		},
+		{
+			name: "Mail is min_len",
+			req: &user.UpdateTeacherMailRequest{
+				Id:   "cvcTyJFfgoDQrqC1KDHbRe",
+				Mail: "",
+			},
+			isErr: true,
+		},
+		{
+			name: "Mail is max_len",
+			req: &user.UpdateTeacherMailRequest{
+				Id:   "cvcTyJFfgoDQrqC1KDHbRe",
+				Mail: fmt.Sprintf("%s@calmato.jp", strings.Repeat("x", 245)),
+			},
+			isErr: true,
+		},
+		{
+			name: "Mail is email",
+			req: &user.UpdateTeacherMailRequest{
+				Id:   "cvcTyJFfgoDQrqC1KDHbRe",
+				Mail: "teacher-test01",
+			},
+			isErr: true,
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			err := validator.UpdateTeacherMail(tt.req)
+			assert.Equal(t, tt.isErr, err != nil, err)
+		})
+	}
+}
+
+func TestUpdateTeacherPassword(t *testing.T) {
+	t.Parallel()
+	validator := NewRequestValidation()
+
+	tests := []struct {
+		name  string
+		req   *user.UpdateTeacherPasswordRequest
+		isErr bool
+	}{
+		{
+			name: "success",
+			req: &user.UpdateTeacherPasswordRequest{
+				Id:                   "cvcTyJFfgoDQrqC1KDHbRe",
+				Password:             "12345678",
+				PasswordConfirmation: "12345678",
+			},
+			isErr: false,
+		},
+		{
+			name: "Id is min_len",
+			req: &user.UpdateTeacherPasswordRequest{
+				Id:                   "",
+				Password:             "12345678",
+				PasswordConfirmation: "12345678",
+			},
+			isErr: true,
+		},
+		{
+			name: "Password is min_len",
+			req: &user.UpdateTeacherPasswordRequest{
+				Id:                   "cvcTyJFfgoDQrqC1KDHbRe",
+				Password:             strings.Repeat("x", 5),
+				PasswordConfirmation: "12345678",
+			},
+			isErr: true,
+		},
+		{
+			name: "Password is max_len",
+			req: &user.UpdateTeacherPasswordRequest{
+				Id:                   "cvcTyJFfgoDQrqC1KDHbRe",
+				Password:             strings.Repeat("x", 33),
+				PasswordConfirmation: "12345678",
+			},
+			isErr: true,
+		},
+		{
+			name: "Password is pattern",
+			req: &user.UpdateTeacherPasswordRequest{
+				Id:                   "cvcTyJFfgoDQrqC1KDHbRe",
+				Password:             "あいうえおあ",
+				PasswordConfirmation: "12345678",
+			},
+			isErr: true,
+		},
+		{
+			name: "Custom validation is password match",
+			req: &user.UpdateTeacherPasswordRequest{
+				Id:                   "cvcTyJFfgoDQrqC1KDHbRe",
+				Password:             "12345678",
+				PasswordConfirmation: "87654321",
+			},
+			isErr: true,
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			err := validator.UpdateTeacherPassword(tt.req)
+			assert.Equal(t, tt.isErr, err != nil, err)
+		})
+	}
+}

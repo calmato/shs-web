@@ -17,6 +17,8 @@ type RequestValidation interface {
 	ListTeachers(req *user.ListTeachersRequest) error
 	GetTeacher(req *user.GetTeacherRequest) error
 	CreateTeacher(req *user.CreateTeacherRequest) error
+	UpdateTeacherMail(req *user.UpdateTeacherMailRequest) error
+	UpdateTeacherPassword(req *user.UpdateTeacherPasswordRequest) error
 }
 
 type requestValidation struct{}

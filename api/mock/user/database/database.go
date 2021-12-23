@@ -127,3 +127,31 @@ func (mr *MockTeacherMockRecorder) List(ctx, p interface{}, fields ...interface{
 	varargs := append([]interface{}{ctx, p}, fields...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "List", reflect.TypeOf((*MockTeacher)(nil).List), varargs...)
 }
+
+// UpdateMail mocks base method.
+func (m *MockTeacher) UpdateMail(ctx context.Context, teacherID, mail string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateMail", ctx, teacherID, mail)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateMail indicates an expected call of UpdateMail.
+func (mr *MockTeacherMockRecorder) UpdateMail(ctx, teacherID, mail interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateMail", reflect.TypeOf((*MockTeacher)(nil).UpdateMail), ctx, teacherID, mail)
+}
+
+// UpdatePassword mocks base method.
+func (m *MockTeacher) UpdatePassword(ctx context.Context, teacherID, password string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdatePassword", ctx, teacherID, password)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdatePassword indicates an expected call of UpdatePassword.
+func (mr *MockTeacherMockRecorder) UpdatePassword(ctx, teacherID, password interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdatePassword", reflect.TypeOf((*MockTeacher)(nil).UpdatePassword), ctx, teacherID, password)
+}

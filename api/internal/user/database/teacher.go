@@ -88,6 +88,36 @@ func (t *teacher) Create(ctx context.Context, teacher *entity.Teacher) error {
 	return dbError(tx.Commit().Error)
 }
 
+func (t *teacher) UpdateMail(ctx context.Context, teacherID string, mail string) error {
+	_, err := t.auth.UpdateEmail(ctx, teacherID, mail)
+	if err != nil {
+		return dbError(err)
+	}
+
+	tx, err := t.db.Begin()
+	if err != nil {
+		return dbError(err)
+	}
+	defer t.db.Close(tx)
+
+	params := map[string]interface{}{
+		"mail":       mail,
+		"updated_at": t.now(),
+	}
+
+	err = tx.Table(teacherTable).Where("id = ?", teacherID).Updates(params).Error
+	if err != nil {
+		tx.Rollback()
+		return dbError(err)
+	}
+	return dbError(tx.Commit().Error)
+}
+
+func (t *teacher) UpdatePassword(ctx context.Context, teacherID string, password string) error {
+	_, err := t.auth.UpdatePassword(ctx, teacherID, password)
+	return dbError(err)
+}
+
 func (t *teacher) Count(ctx context.Context) (int64, error) {
 	var total int64
 	err := t.db.DB.Table(teacherTable).Where("deleted_at IS NULL").Count(&total).Error
