@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package classroom;
+
+option go_package = "github.com/calmato/shs-web/api/proto/classroom";
+
+message Schedule {
+  message Lesson {
+    string start_time = 1; // 授業開始時間
+    string end_time   = 2; // 授業終了時間
+  }
+  int32           weekday    = 1; // 曜日
+  bool            is_closed  = 2; // 休校フラグ
+  repeated Lesson lessons    = 3; // 授業一覧
+  int64           created_at = 4; // 登録日時
+  int64           updated_at = 5; // 更新日時
+}

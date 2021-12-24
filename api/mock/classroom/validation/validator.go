@@ -34,6 +34,20 @@ func (m *MockRequestValidation) EXPECT() *MockRequestValidationMockRecorder {
 	return m.recorder
 }
 
+// GetSchedule mocks base method.
+func (m *MockRequestValidation) GetSchedule(req *classroom.GetScheduleRequest) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetSchedule", req)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// GetSchedule indicates an expected call of GetSchedule.
+func (mr *MockRequestValidationMockRecorder) GetSchedule(req interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetSchedule", reflect.TypeOf((*MockRequestValidation)(nil).GetSchedule), req)
+}
+
 // GetSubject mocks base method.
 func (m *MockRequestValidation) GetSubject(req *classroom.GetSubjectRequest) error {
 	m.ctrl.T.Helper()
@@ -60,6 +74,20 @@ func (m *MockRequestValidation) GetTeacherSubject(req *classroom.GetTeacherSubje
 func (mr *MockRequestValidationMockRecorder) GetTeacherSubject(req interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTeacherSubject", reflect.TypeOf((*MockRequestValidation)(nil).GetTeacherSubject), req)
+}
+
+// ListSchedules mocks base method.
+func (m *MockRequestValidation) ListSchedules(req *classroom.ListSchedulesRequest) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ListSchedules", req)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// ListSchedules indicates an expected call of ListSchedules.
+func (mr *MockRequestValidationMockRecorder) ListSchedules(req interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListSchedules", reflect.TypeOf((*MockRequestValidation)(nil).ListSchedules), req)
 }
 
 // ListSubjects mocks base method.

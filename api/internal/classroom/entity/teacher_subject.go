@@ -8,8 +8,8 @@ import (
 )
 
 type TeacherSubject struct {
-	TeacherID string    `gorm:""`
-	SubjectID int64     `gorm:""`
+	TeacherID string    `gorm:"primaryKey;<-:create"`
+	SubjectID int64     `gorm:"primaryKey;<-:create"`
 	CreatedAt time.Time `gorm:"<-:create"`
 	UpdatedAt time.Time `gorm:""`
 }

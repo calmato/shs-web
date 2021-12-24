@@ -36,6 +36,26 @@ func (m *MockClassroomServiceClient) EXPECT() *MockClassroomServiceClientMockRec
 	return m.recorder
 }
 
+// GetSchedule mocks base method.
+func (m *MockClassroomServiceClient) GetSchedule(ctx context.Context, in *classroom.GetScheduleRequest, opts ...grpc.CallOption) (*classroom.GetScheduleResponse, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "GetSchedule", varargs...)
+	ret0, _ := ret[0].(*classroom.GetScheduleResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetSchedule indicates an expected call of GetSchedule.
+func (mr *MockClassroomServiceClientMockRecorder) GetSchedule(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetSchedule", reflect.TypeOf((*MockClassroomServiceClient)(nil).GetSchedule), varargs...)
+}
+
 // GetSubject mocks base method.
 func (m *MockClassroomServiceClient) GetSubject(ctx context.Context, in *classroom.GetSubjectRequest, opts ...grpc.CallOption) (*classroom.GetSubjectResponse, error) {
 	m.ctrl.T.Helper()
@@ -74,6 +94,26 @@ func (mr *MockClassroomServiceClientMockRecorder) GetTeacherSubject(ctx, in inte
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{ctx, in}, opts...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTeacherSubject", reflect.TypeOf((*MockClassroomServiceClient)(nil).GetTeacherSubject), varargs...)
+}
+
+// ListSchedules mocks base method.
+func (m *MockClassroomServiceClient) ListSchedules(ctx context.Context, in *classroom.ListSchedulesRequest, opts ...grpc.CallOption) (*classroom.ListSchedulesResponse, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "ListSchedules", varargs...)
+	ret0, _ := ret[0].(*classroom.ListSchedulesResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListSchedules indicates an expected call of ListSchedules.
+func (mr *MockClassroomServiceClientMockRecorder) ListSchedules(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListSchedules", reflect.TypeOf((*MockClassroomServiceClient)(nil).ListSchedules), varargs...)
 }
 
 // ListSubjects mocks base method.
@@ -179,6 +219,21 @@ func (m *MockClassroomServiceServer) EXPECT() *MockClassroomServiceServerMockRec
 	return m.recorder
 }
 
+// GetSchedule mocks base method.
+func (m *MockClassroomServiceServer) GetSchedule(arg0 context.Context, arg1 *classroom.GetScheduleRequest) (*classroom.GetScheduleResponse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetSchedule", arg0, arg1)
+	ret0, _ := ret[0].(*classroom.GetScheduleResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetSchedule indicates an expected call of GetSchedule.
+func (mr *MockClassroomServiceServerMockRecorder) GetSchedule(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetSchedule", reflect.TypeOf((*MockClassroomServiceServer)(nil).GetSchedule), arg0, arg1)
+}
+
 // GetSubject mocks base method.
 func (m *MockClassroomServiceServer) GetSubject(arg0 context.Context, arg1 *classroom.GetSubjectRequest) (*classroom.GetSubjectResponse, error) {
 	m.ctrl.T.Helper()
@@ -207,6 +262,21 @@ func (m *MockClassroomServiceServer) GetTeacherSubject(arg0 context.Context, arg
 func (mr *MockClassroomServiceServerMockRecorder) GetTeacherSubject(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTeacherSubject", reflect.TypeOf((*MockClassroomServiceServer)(nil).GetTeacherSubject), arg0, arg1)
+}
+
+// ListSchedules mocks base method.
+func (m *MockClassroomServiceServer) ListSchedules(arg0 context.Context, arg1 *classroom.ListSchedulesRequest) (*classroom.ListSchedulesResponse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ListSchedules", arg0, arg1)
+	ret0, _ := ret[0].(*classroom.ListSchedulesResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListSchedules indicates an expected call of ListSchedules.
+func (mr *MockClassroomServiceServerMockRecorder) ListSchedules(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListSchedules", reflect.TypeOf((*MockClassroomServiceServer)(nil).ListSchedules), arg0, arg1)
 }
 
 // ListSubjects mocks base method.
