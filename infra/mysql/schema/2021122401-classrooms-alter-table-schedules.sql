@@ -4,5 +4,5 @@ CREATE TABLE `classrooms`.`schedules` (
   `lessons`    JSON        NOT NULL,           -- 授業コマ
   `created_at` DATETIME    NOT NULL,           -- 登録日時
   `updated_at` DATETIME    NOT NULL,           -- 更新日時
-  PRIMARY KEY(`weekday`),
+  PRIMARY KEY(`weekday`)
 ) ENGINE = InnoDB;
