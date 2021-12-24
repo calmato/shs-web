@@ -28,12 +28,12 @@ export default defineComponent({
     const items: Submission[] = [
       {
         title: '1月',
-        endDate: '12/25',
+        endDate: '1/25',
         status: 1,
       },
       {
         title: '2月',
-        endDate: '12/25',
+        endDate: '2/25',
         status: 2,
       },
     ]
