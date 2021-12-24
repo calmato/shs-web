@@ -7,6 +7,7 @@ option go_package = "github.com/calmato/shs-web/api/proto/classroom";
 import "github.com/envoyproxy/protoc-gen-validate/validate/validate.proto";
 
 import "classroom/common.proto";
+import "classroom/schedule.proto";
 import "classroom/subject.proto";
 import "classroom/teacher_subject.proto";
 
@@ -17,6 +18,8 @@ service ClassroomService {
   rpc MultiGetTeacherSubjects(MultiGetTeacherSubjectsRequest) returns (MultiGetTeacherSubjectsResponse);
   rpc GetTeacherSubject(GetTeacherSubjectRequest) returns (GetTeacherSubjectResponse);
   rpc UpdateTeacherSubject(UpdateTeacherSubjectRequest) returns (UpdateTeacherSubjectResponse);
+  rpc ListSchedules(ListSchedulesRequest) returns (ListSchedulesResponse);
+  rpc GetSchedule(GetScheduleRequest) returns (GetScheduleResponse);
 }
 
 message ListSubjectsRequest {
@@ -69,3 +72,17 @@ message UpdateTeacherSubjectRequest {
 }
 
 message UpdateTeacherSubjectResponse {}
+
+message ListSchedulesRequest {}
+
+message ListSchedulesResponse {
+  repeated Schedule schedules = 1;
+}
+
+message GetScheduleRequest {
+  int32 weekday = 1 [(validate.rules).int32 = { gte: 0, lte: 6 }];
+}
+
+message GetScheduleResponse {
+  Schedule schedule = 1;
+}

@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/calmato/shs-web/api/internal/classroom/entity"
 	"github.com/calmato/shs-web/api/pkg/database"
@@ -29,12 +30,14 @@ type Params struct {
 type Database struct {
 	Subject        Subject
 	TeacherSubject TeacherSubject
+	Schedule       Schedule
 }
 
 func NewDatabase(params *Params) *Database {
 	return &Database{
 		Subject:        NewSubject(params.Database),
 		TeacherSubject: NewTeacherSubject(params.Database),
+		Schedule:       NewSchedule(params.Database),
 	}
 }
 
@@ -51,6 +54,11 @@ type Subject interface {
 type TeacherSubject interface {
 	ListByTeacherIDs(ctx context.Context, teacherIDs []string, fields ...string) (entity.TeacherSubjects, error)
 	Replace(ctx context.Context, schoolType entity.SchoolType, subjects entity.TeacherSubjects) error
+}
+
+type Schedule interface {
+	List(ctx context.Context, fields ...string) (entity.Schedules, error)
+	Get(ctx context.Context, weekday time.Weekday, fields ...string) (*entity.Schedule, error)
 }
 
 /**

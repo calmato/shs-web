@@ -7,6 +7,7 @@ package mock_database
 import (
 	context "context"
 	reflect "reflect"
+	time "time"
 
 	database "github.com/calmato/shs-web/api/internal/classroom/database"
 	entity "github.com/calmato/shs-web/api/internal/classroom/entity"
@@ -166,4 +167,67 @@ func (m *MockTeacherSubject) Replace(ctx context.Context, schoolType entity.Scho
 func (mr *MockTeacherSubjectMockRecorder) Replace(ctx, schoolType, subjects interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Replace", reflect.TypeOf((*MockTeacherSubject)(nil).Replace), ctx, schoolType, subjects)
+}
+
+// MockSchedule is a mock of Schedule interface.
+type MockSchedule struct {
+	ctrl     *gomock.Controller
+	recorder *MockScheduleMockRecorder
+}
+
+// MockScheduleMockRecorder is the mock recorder for MockSchedule.
+type MockScheduleMockRecorder struct {
+	mock *MockSchedule
+}
+
+// NewMockSchedule creates a new mock instance.
+func NewMockSchedule(ctrl *gomock.Controller) *MockSchedule {
+	mock := &MockSchedule{ctrl: ctrl}
+	mock.recorder = &MockScheduleMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockSchedule) EXPECT() *MockScheduleMockRecorder {
+	return m.recorder
+}
+
+// Get mocks base method.
+func (m *MockSchedule) Get(ctx context.Context, weekday time.Weekday, fields ...string) (*entity.Schedule, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, weekday}
+	for _, a := range fields {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "Get", varargs...)
+	ret0, _ := ret[0].(*entity.Schedule)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Get indicates an expected call of Get.
+func (mr *MockScheduleMockRecorder) Get(ctx, weekday interface{}, fields ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, weekday}, fields...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockSchedule)(nil).Get), varargs...)
+}
+
+// List mocks base method.
+func (m *MockSchedule) List(ctx context.Context, fields ...string) (entity.Schedules, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx}
+	for _, a := range fields {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "List", varargs...)
+	ret0, _ := ret[0].(entity.Schedules)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// List indicates an expected call of List.
+func (mr *MockScheduleMockRecorder) List(ctx interface{}, fields ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx}, fields...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "List", reflect.TypeOf((*MockSchedule)(nil).List), varargs...)
 }

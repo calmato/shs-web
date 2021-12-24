@@ -140,6 +140,33 @@ func TestParseFromYYYYMMDD(t *testing.T) {
 	}
 }
 
+func TestParseFromHHMMSS(t *testing.T) {
+	t.Parallel()
+	tests := []struct {
+		name      string
+		target    string
+		expect    time.Time
+		expectErr bool
+	}{
+		{
+			name:      "success",
+			target:    "183000",
+			expect:    time.Date(0, 1, 1, 18, 30, 0, 0, jst),
+			expectErr: false,
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			actual, err := ParseFromHHMMSS(tt.target)
+			assert.Equal(t, tt.expectErr, err != nil, err)
+			assert.Equal(t, tt.expect, actual)
+		})
+	}
+}
+
 func TestParseFromUnix(t *testing.T) {
 	t.Parallel()
 	tests := []struct {
