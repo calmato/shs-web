@@ -1,49 +1,55 @@
-get:
-  summary: 授業科目一覧取得
+patch:
+  summary: 授業科目更新
   tags:
   - Subject
   security:
   - BearerAuth: []
   parameters:
-  - in: query
-    name: type
+  - in: path
+    name: id
+    required: true
     schema:
       type: integer
-      format: int32
-    description: 校種 (未指定:全校種, 1:小学校, 2:中学校, 3:高等学校)
+      format: int64
+    description: 講師ID
     example: 1
+  requestBody:
+    reuiqred: true
+    content:
+      application/json:
+        schema:
+          $ref: './../../../openapi.yaml#/components/schemas/v1UpdateSubjectRequest'
   responses:
-    200:
+    204:
       description: A successful response.
       content:
-        application/json:
-          schema:
-            $ref: './../../../openapi.yaml#/components/schemas/v1SubjectsResponse'
+        application/json: {}
     default:
       description: An unexpected error response.
       content:
         application/json:
           schema:
             $ref: './../../../openapi.yaml#/components/schemas/errorResponse'
-post:
-  summary: 授業科目登録
+delete:
+  summary: 授業科目削除
   tags:
   - Subject
   security:
   - BearerAuth: []
-  requestBody:
-    reuiqred: true
-    content:
-      application/json:
-        schema:
-          $ref: './../../../openapi.yaml#/components/schemas/v1CreateSubjectRequest'
+  parameters:
+  - in: path
+    name: id
+    required: true
+    schema:
+      type: integer
+      format: int64
+    description: 講師ID
+    example: 1
   responses:
-    200:
+    204:
       description: A successful response.
       content:
-        application/json:
-          schema:
-            $ref: './../../../openapi.yaml#/components/schemas/v1SubjectResponse'
+        application/json: {}
     default:
       description: An unexpected error response.
       content:
