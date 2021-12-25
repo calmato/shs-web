@@ -8,6 +8,43 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestSubject(t *testing.T) {
+	t.Parallel()
+	type args struct {
+		name       string
+		color      string
+		schoolType SchoolType
+	}
+	tests := []struct {
+		name   string
+		args   args
+		expect *Subject
+	}{
+		{
+			name: "success",
+			args: args{
+				name:       "国語",
+				color:      "#F8BBD0",
+				schoolType: SchoolTypeHighSchool,
+			},
+			expect: &Subject{
+				Name:       "国語",
+				Color:      "#F8BBD0",
+				SchoolType: SchoolTypeHighSchool,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			actual := NewSubject(tt.args.name, tt.args.color, tt.args.schoolType)
+			assert.Equal(t, tt.expect, actual)
+		})
+	}
+}
+
 func TestSubject_Proto(t *testing.T) {
 	t.Parallel()
 	now := jst.Now()

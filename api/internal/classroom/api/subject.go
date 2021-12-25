@@ -8,6 +8,8 @@ import (
 	"github.com/calmato/shs-web/api/internal/classroom/entity"
 	"github.com/calmato/shs-web/api/proto/classroom"
 	"golang.org/x/sync/errgroup"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 func (s *classroomService) ListSubjects(
@@ -101,5 +103,63 @@ func (s *classroomService) GetSubject(
 	res := &classroom.GetSubjectResponse{
 		Subject: subject.Proto(),
 	}
+	return res, nil
+}
+
+func (s *classroomService) CreateSubject(
+	ctx context.Context, req *classroom.CreateSubjectRequest,
+) (*classroom.CreateSubjectResponse, error) {
+	if err := s.validator.CreateSubject(req); err != nil {
+		return nil, gRPCError(err)
+	}
+
+	schoolType, err := entity.NewSchoolType(req.SchoolType)
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+	subject := entity.NewSubject(req.Name, req.Color, schoolType)
+	err = s.db.Subject.Create(ctx, subject)
+	if err != nil {
+		return nil, gRPCError(err)
+	}
+
+	res := &classroom.CreateSubjectResponse{}
+	return res, nil
+}
+
+func (s *classroomService) UpdateSubject(
+	ctx context.Context, req *classroom.UpdateSubjectRequest,
+) (*classroom.UpdateSubjectResponse, error) {
+	if err := s.validator.UpdateSubject(req); err != nil {
+		return nil, gRPCError(err)
+	}
+
+	schoolType, err := entity.NewSchoolType(req.SchoolType)
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+	subject := entity.NewSubject(req.Name, req.Color, schoolType)
+	err = s.db.Subject.Update(ctx, req.Id, subject)
+	if err != nil {
+		return nil, gRPCError(err)
+	}
+
+	res := &classroom.UpdateSubjectResponse{}
+	return res, nil
+}
+
+func (s *classroomService) DeleteSubject(
+	ctx context.Context, req *classroom.DeleteSubjectRequest,
+) (*classroom.DeleteSubjectResponse, error) {
+	if err := s.validator.DeleteSubject(req); err != nil {
+		return nil, gRPCError(err)
+	}
+
+	err := s.db.Subject.Delete(ctx, req.Id)
+	if err != nil {
+		return nil, gRPCError(err)
+	}
+
+	res := &classroom.DeleteSubjectResponse{}
 	return res, nil
 }

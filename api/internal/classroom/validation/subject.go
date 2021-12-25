@@ -28,3 +28,30 @@ func (v *requestValidation) GetSubject(req *classroom.GetSubjectRequest) error {
 
 	return nil
 }
+
+func (v *requestValidation) CreateSubject(req *classroom.CreateSubjectRequest) error {
+	if err := req.Validate(); err != nil {
+		validate := err.(classroom.CreateSubjectRequestValidationError)
+		return validationError(validate.Error())
+	}
+
+	return nil
+}
+
+func (v *requestValidation) UpdateSubject(req *classroom.UpdateSubjectRequest) error {
+	if err := req.Validate(); err != nil {
+		validate := err.(classroom.UpdateSubjectRequestValidationError)
+		return validationError(validate.Error())
+	}
+
+	return nil
+}
+
+func (v *requestValidation) DeleteSubject(req *classroom.DeleteSubjectRequest) error {
+	if err := req.Validate(); err != nil {
+		validate := err.(classroom.DeleteSubjectRequestValidationError)
+		return validationError(validate.Error())
+	}
+
+	return nil
+}

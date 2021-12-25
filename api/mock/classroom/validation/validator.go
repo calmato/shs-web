@@ -34,6 +34,34 @@ func (m *MockRequestValidation) EXPECT() *MockRequestValidationMockRecorder {
 	return m.recorder
 }
 
+// CreateSubject mocks base method.
+func (m *MockRequestValidation) CreateSubject(req *classroom.CreateSubjectRequest) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateSubject", req)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// CreateSubject indicates an expected call of CreateSubject.
+func (mr *MockRequestValidationMockRecorder) CreateSubject(req interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateSubject", reflect.TypeOf((*MockRequestValidation)(nil).CreateSubject), req)
+}
+
+// DeleteSubject mocks base method.
+func (m *MockRequestValidation) DeleteSubject(req *classroom.DeleteSubjectRequest) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteSubject", req)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeleteSubject indicates an expected call of DeleteSubject.
+func (mr *MockRequestValidationMockRecorder) DeleteSubject(req interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteSubject", reflect.TypeOf((*MockRequestValidation)(nil).DeleteSubject), req)
+}
+
 // GetSchedule mocks base method.
 func (m *MockRequestValidation) GetSchedule(req *classroom.GetScheduleRequest) error {
 	m.ctrl.T.Helper()
@@ -144,6 +172,20 @@ func (m *MockRequestValidation) UpdateSchedules(req *classroom.UpdateSchedulesRe
 func (mr *MockRequestValidationMockRecorder) UpdateSchedules(req interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateSchedules", reflect.TypeOf((*MockRequestValidation)(nil).UpdateSchedules), req)
+}
+
+// UpdateSubject mocks base method.
+func (m *MockRequestValidation) UpdateSubject(req *classroom.UpdateSubjectRequest) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateSubject", req)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateSubject indicates an expected call of UpdateSubject.
+func (mr *MockRequestValidationMockRecorder) UpdateSubject(req interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateSubject", reflect.TypeOf((*MockRequestValidation)(nil).UpdateSubject), req)
 }
 
 // UpdateTeacherSubject mocks base method.

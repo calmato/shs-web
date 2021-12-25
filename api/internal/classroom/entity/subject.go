@@ -29,6 +29,14 @@ type Subject struct {
 
 type Subjects []*Subject
 
+func NewSubject(name, color string, schoolType SchoolType) *Subject {
+	return &Subject{
+		Name:       name,
+		Color:      color,
+		SchoolType: schoolType,
+	}
+}
+
 func (s *Subject) Proto() *classroom.Subject {
 	return &classroom.Subject{
 		Id:         s.ID,

@@ -72,6 +72,70 @@ func (s *subject) Get(ctx context.Context, id int64, fields ...string) (*entity.
 	return subject, nil
 }
 
+func (s *subject) Create(ctx context.Context, subject *entity.Subject) error {
+	now := s.now()
+	subject.CreatedAt = now
+	subject.UpdatedAt = now
+
+	tx, err := s.db.Begin()
+	if err != nil {
+		return dbError(err)
+	}
+	defer s.db.Close(tx)
+
+	err = tx.Table(subjectTable).Create(&subject).Error
+	if err != nil {
+		tx.Rollback()
+		return dbError(err)
+	}
+	return dbError(tx.Commit().Error)
+}
+
+func (s *subject) Update(ctx context.Context, subjectID int64, subject *entity.Subject) error {
+	tx, err := s.db.Begin()
+	if err != nil {
+		return dbError(err)
+	}
+	defer s.db.Close(tx)
+
+	var current *entity.Subject
+	err = tx.Table(subjectTable).
+		Select([]string{"id", "created_at"}).
+		Where("id = ?", subjectID).
+		First(&current).Error
+	if err != nil {
+		return dbError(err)
+	}
+
+	subject.ID = current.ID
+	subject.CreatedAt = current.CreatedAt
+	subject.UpdatedAt = s.now()
+
+	err = tx.Table(subjectTable).Save(&subject).Error
+	if err != nil {
+		tx.Rollback()
+		return dbError(err)
+	}
+	return dbError(tx.Commit().Error)
+}
+
+func (s *subject) Delete(ctx context.Context, subjectID int64) error {
+	tx, err := s.db.Begin()
+	if err != nil {
+		return dbError(err)
+	}
+	defer s.db.Close(tx)
+
+	err = tx.Table(subjectTable).
+		Where("id = ?", subjectID).
+		Delete(&entity.Subject{}).Error
+	if err != nil {
+		tx.Rollback()
+		return dbError(err)
+	}
+	return dbError(tx.Commit().Error)
+}
+
 func (s *subject) Count(ctx context.Context) (int64, error) {
 	var total int64
 	err := s.db.DB.Table(subjectTable).Count(&total).Error

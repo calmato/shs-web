@@ -240,6 +240,207 @@ func TestSubject_Get(t *testing.T) {
 	}
 }
 
+func TestSubject_Create(t *testing.T) {
+	m, err := newMock()
+	require.NoError(t, err)
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	_ = m.dbDelete(ctx, subjectTable)
+
+	now := jst.Now()
+	subject := testSubject(1, "国語", entity.SchoolTypeHighSchool, now)
+
+	type args struct {
+		subject *entity.Subject
+	}
+	type want struct {
+		isErr bool
+	}
+	tests := []struct {
+		name  string
+		setup func(ctx context.Context, t *testing.T, m *mocks)
+		args  args
+		want  want
+	}{
+		{
+			name:  "success",
+			setup: func(ctx context.Context, t *testing.T, m *mocks) {},
+			args: args{
+				subject: &entity.Subject{
+					Name:       "国語",
+					Color:      "#F8BBD0",
+					SchoolType: entity.SchoolTypeHighSchool,
+				},
+			},
+			want: want{
+				isErr: false,
+			},
+		},
+		{
+			name: "aleady exists",
+			setup: func(ctx context.Context, t *testing.T, m *mocks) {
+				err := m.db.DB.Create(&subject).Error
+				require.NoError(t, err)
+			},
+			args: args{
+				subject: &entity.Subject{
+					Name:       "国語",
+					Color:      "#F8BBD0",
+					SchoolType: entity.SchoolTypeHighSchool,
+				},
+			},
+			want: want{
+				isErr: true,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			ctx, cancel := context.WithCancel(context.Background())
+			defer cancel()
+
+			_ = m.dbDelete(ctx, subjectTable)
+			tt.setup(ctx, t, m)
+
+			db := NewSubject(m.db)
+			err := db.Create(ctx, tt.args.subject)
+			assert.Equal(t, tt.want.isErr, err != nil, err)
+		})
+	}
+}
+
+func TestSubject_Update(t *testing.T) {
+	m, err := newMock()
+	require.NoError(t, err)
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	_ = m.dbDelete(ctx, subjectTable)
+
+	now := jst.Now()
+	subject := testSubject(1, "国語", entity.SchoolTypeHighSchool, now)
+
+	type args struct {
+		subjectID int64
+		subject   *entity.Subject
+	}
+	type want struct {
+		isErr bool
+	}
+	tests := []struct {
+		name  string
+		setup func(ctx context.Context, t *testing.T, m *mocks)
+		args  args
+		want  want
+	}{
+		{
+			name: "success",
+			setup: func(ctx context.Context, t *testing.T, m *mocks) {
+				err := m.db.DB.Create(&subject).Error
+				require.NoError(t, err)
+			},
+			args: args{
+				subjectID: 1,
+				subject: &entity.Subject{
+					Name:       "国語",
+					Color:      "#F8BBD0",
+					SchoolType: entity.SchoolTypeHighSchool,
+				},
+			},
+			want: want{
+				isErr: false,
+			},
+		},
+		{
+			name:  "not found",
+			setup: func(ctx context.Context, t *testing.T, m *mocks) {},
+			args: args{
+				subjectID: 1,
+				subject: &entity.Subject{
+					Name:       "国語",
+					Color:      "#F8BBD0",
+					SchoolType: entity.SchoolTypeHighSchool,
+				},
+			},
+			want: want{
+				isErr: true,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			ctx, cancel := context.WithCancel(context.Background())
+			defer cancel()
+
+			_ = m.dbDelete(ctx, subjectTable)
+			tt.setup(ctx, t, m)
+
+			db := NewSubject(m.db)
+			err := db.Update(ctx, tt.args.subjectID, tt.args.subject)
+			assert.Equal(t, tt.want.isErr, err != nil, err)
+		})
+	}
+}
+
+func TestSubject_Delete(t *testing.T) {
+	m, err := newMock()
+	require.NoError(t, err)
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	_ = m.dbDelete(ctx, subjectTable)
+
+	now := jst.Now()
+	subject := testSubject(1, "国語", entity.SchoolTypeHighSchool, now)
+
+	type args struct {
+		subjectID int64
+	}
+	type want struct {
+		isErr bool
+	}
+	tests := []struct {
+		name  string
+		setup func(ctx context.Context, t *testing.T, m *mocks)
+		args  args
+		want  want
+	}{
+		{
+			name: "success",
+			setup: func(ctx context.Context, t *testing.T, m *mocks) {
+				err := m.db.DB.Create(&subject).Error
+				require.NoError(t, err)
+			},
+			args: args{
+				subjectID: 1,
+			},
+			want: want{
+				isErr: false,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			ctx, cancel := context.WithCancel(context.Background())
+			defer cancel()
+
+			_ = m.dbDelete(ctx, subjectTable)
+			tt.setup(ctx, t, m)
+
+			db := NewSubject(m.db)
+			err := db.Delete(ctx, tt.args.subjectID)
+			assert.Equal(t, tt.want.isErr, err != nil, err)
+		})
+	}
+}
+
 func TestSubject_Count(t *testing.T) {
 	m, err := newMock()
 	require.NoError(t, err)

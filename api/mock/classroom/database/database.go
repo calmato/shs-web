@@ -52,6 +52,34 @@ func (mr *MockSubjectMockRecorder) Count(ctx interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Count", reflect.TypeOf((*MockSubject)(nil).Count), ctx)
 }
 
+// Create mocks base method.
+func (m *MockSubject) Create(ctx context.Context, subject *entity.Subject) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Create", ctx, subject)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Create indicates an expected call of Create.
+func (mr *MockSubjectMockRecorder) Create(ctx, subject interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockSubject)(nil).Create), ctx, subject)
+}
+
+// Delete mocks base method.
+func (m *MockSubject) Delete(ctx context.Context, subjectID int64) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Delete", ctx, subjectID)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Delete indicates an expected call of Delete.
+func (mr *MockSubjectMockRecorder) Delete(ctx, subjectID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockSubject)(nil).Delete), ctx, subjectID)
+}
+
 // Get mocks base method.
 func (m *MockSubject) Get(ctx context.Context, id int64, fields ...string) (*entity.Subject, error) {
 	m.ctrl.T.Helper()
@@ -110,6 +138,20 @@ func (mr *MockSubjectMockRecorder) MultiGet(ctx, ids interface{}, fields ...inte
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{ctx, ids}, fields...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MultiGet", reflect.TypeOf((*MockSubject)(nil).MultiGet), varargs...)
+}
+
+// Update mocks base method.
+func (m *MockSubject) Update(ctx context.Context, subjectID int64, subject *entity.Subject) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Update", ctx, subjectID, subject)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Update indicates an expected call of Update.
+func (mr *MockSubjectMockRecorder) Update(ctx, subjectID, subject interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Update", reflect.TypeOf((*MockSubject)(nil).Update), ctx, subjectID, subject)
 }
 
 // MockTeacherSubject is a mock of TeacherSubject interface.
