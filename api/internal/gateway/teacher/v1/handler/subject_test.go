@@ -21,7 +21,7 @@ func TestListSubjects(t *testing.T) {
 		{
 			Id:         1,
 			Name:       "国語",
-			Color:      "#f8bbd0",
+			Color:      "#F8BBD0",
 			SchoolType: classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL,
 			CreatedAt:  now.Unix(),
 			UpdatedAt:  now.Unix(),
@@ -87,7 +87,7 @@ func TestCreateSubject(t *testing.T) {
 	subject := &classroom.Subject{
 		Id:         1,
 		Name:       "国語",
-		Color:      "#f8bbd0",
+		Color:      "#F8BBD0",
 		SchoolType: classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL,
 		CreatedAt:  now.Unix(),
 		UpdatedAt:  now.Unix(),
