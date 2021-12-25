@@ -53,7 +53,7 @@ func TestStudent_Get(t *testing.T) {
 			name:  "not found",
 			setup: func(ctx context.Context, t *testing.T, m *mocks) {},
 			args: args{
-				"jx2NC7t3yodUu53LMtYLf1",
+				id: "jx2NC7t3yodUu53LMtYLf1",
 			},
 			want: want{
 				student: nil,

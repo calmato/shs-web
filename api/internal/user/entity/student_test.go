@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestStudent(t *testing.T) {
+func TestStudent_Proto(t *testing.T) {
 	t.Parallel()
 	now := jst.Now()
 	tests := []struct {
@@ -52,7 +52,7 @@ func TestStudent(t *testing.T) {
 	}
 }
 
-func TestStudents(t *testing.T) {
+func TestStudents_Proto(t *testing.T) {
 	t.Parallel()
 	now := jst.Now()
 	tests := []struct {
