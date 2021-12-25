@@ -281,7 +281,6 @@ func (a *app) upsertSchedules(tx *gorm.DB) error {
 func newLessons(weekday time.Weekday) centity.Lessons {
 	if weekday == time.Sunday || weekday == time.Saturday {
 		return holidayLessons
-	} else {
-		return weekdayLessons
 	}
+	return weekdayLessons
 }
