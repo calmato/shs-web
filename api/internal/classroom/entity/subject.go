@@ -2,6 +2,7 @@ package entity
 
 import (
 	"errors"
+	"strings"
 	"time"
 
 	"github.com/calmato/shs-web/api/proto/classroom"
@@ -32,7 +33,7 @@ type Subjects []*Subject
 func NewSubject(name, color string, schoolType SchoolType) *Subject {
 	return &Subject{
 		Name:       name,
-		Color:      color,
+		Color:      strings.ToUpper(color),
 		SchoolType: schoolType,
 	}
 }
@@ -41,7 +42,7 @@ func (s *Subject) Proto() *classroom.Subject {
 	return &classroom.Subject{
 		Id:         s.ID,
 		Name:       s.Name,
-		Color:      s.Color,
+		Color:      strings.ToUpper(s.Color),
 		SchoolType: classroom.SchoolType(s.SchoolType),
 		CreatedAt:  s.CreatedAt.Unix(),
 		UpdatedAt:  s.UpdatedAt.Unix(),
