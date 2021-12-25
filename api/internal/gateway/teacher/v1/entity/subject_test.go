@@ -23,7 +23,7 @@ func TestSubject(t *testing.T) {
 				Subject: &classroom.Subject{
 					Id:         1,
 					Name:       "国語",
-					Color:      "#f8bbd0",
+					Color:      "#F8BBD0",
 					SchoolType: classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL,
 					CreatedAt:  now.Unix(),
 					UpdatedAt:  now.Unix(),
@@ -64,7 +64,7 @@ func TestSubjects(t *testing.T) {
 					Subject: &classroom.Subject{
 						Id:         1,
 						Name:       "国語",
-						Color:      "#f8bbd0",
+						Color:      "#F8BBD0",
 						SchoolType: classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL,
 						CreatedAt:  now.Unix(),
 						UpdatedAt:  now.Unix(),
@@ -89,6 +89,44 @@ func TestSubjects(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 			assert.Equal(t, tt.expect, NewSubjects(tt.subjects))
+		})
+	}
+}
+
+func TestSchoolType(t *testing.T) {
+	t.Parallel()
+	tests := []struct {
+		name       string
+		schoolType classroom.SchoolType
+		expect     SchoolType
+	}{
+		{
+			name:       "successl elementary school",
+			schoolType: classroom.SchoolType_SCHOOL_TYPE_ELEMENTARY_SCHOOL,
+			expect:     SchoolTypeElementarySchool,
+		},
+		{
+			name:       "successl junior high school",
+			schoolType: classroom.SchoolType_SCHOOL_TYPE_JUNIOR_HIGH_SCHOOL,
+			expect:     SchoolTypeJuniorHighSchool,
+		},
+		{
+			name:       "successl high school",
+			schoolType: classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL,
+			expect:     SchoolTypeHighSchool,
+		},
+		{
+			name:       "successl invalid school type",
+			schoolType: classroom.SchoolType_SCHOOL_TYPE_UNKNOWN,
+			expect:     SchoolTypeUnknown,
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tt.expect, NewSchoolType(tt.schoolType))
 		})
 	}
 }
@@ -135,6 +173,51 @@ func TestSubjects_GroupBySchoolType(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 			assert.Equal(t, tt.expect, tt.subjects.GroupBySchoolType())
+		})
+	}
+}
+
+func TestSchoolType_ClassroomSchoolType(t *testing.T) {
+	t.Parallel()
+	tests := []struct {
+		name       string
+		schoolType SchoolType
+		expect     classroom.SchoolType
+		isErr      bool
+	}{
+		{
+			name:       "successl elementary school",
+			schoolType: SchoolTypeElementarySchool,
+			expect:     classroom.SchoolType_SCHOOL_TYPE_ELEMENTARY_SCHOOL,
+			isErr:      false,
+		},
+		{
+			name:       "successl junior high school",
+			schoolType: SchoolTypeJuniorHighSchool,
+			expect:     classroom.SchoolType_SCHOOL_TYPE_JUNIOR_HIGH_SCHOOL,
+			isErr:      false,
+		},
+		{
+			name:       "successl high school",
+			schoolType: SchoolTypeHighSchool,
+			expect:     classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL,
+			isErr:      false,
+		},
+		{
+			name:       "failed to invalid school type",
+			schoolType: SchoolTypeUnknown,
+			expect:     classroom.SchoolType_SCHOOL_TYPE_UNKNOWN,
+			isErr:      true,
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			actual, err := tt.schoolType.ClassroomSchoolType()
+			assert.Equal(t, tt.isErr, err != nil, err)
+			assert.Equal(t, tt.expect, actual)
 		})
 	}
 }
