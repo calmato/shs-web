@@ -360,6 +360,25 @@ func TestCreateSubject(t *testing.T) {
 			},
 		},
 		{
+			name: "failed to invalid school type",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				req := &classroom.CreateSubjectRequest{
+					Name:       "国語",
+					Color:      "#F8BBD0",
+					SchoolType: classroom.SchoolType_SCHOOL_TYPE_UNKNOWN,
+				}
+				mocks.validator.EXPECT().CreateSubject(req).Return(nil)
+			},
+			req: &classroom.CreateSubjectRequest{
+				Name:       "国語",
+				Color:      "#F8BBD0",
+				SchoolType: classroom.SchoolType_SCHOOL_TYPE_UNKNOWN,
+			},
+			expect: &testResponse{
+				code: codes.InvalidArgument,
+			},
+		},
+		{
 			name: "failed to create subject",
 			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
 				mocks.validator.EXPECT().CreateSubject(req).Return(nil)
@@ -419,6 +438,27 @@ func TestUpdateSubject(t *testing.T) {
 				mocks.validator.EXPECT().UpdateSubject(req).Return(validation.ErrRequestValidation)
 			},
 			req: &classroom.UpdateSubjectRequest{},
+			expect: &testResponse{
+				code: codes.InvalidArgument,
+			},
+		},
+		{
+			name: "failed to invalid school type",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				req := &classroom.UpdateSubjectRequest{
+					Id:         1,
+					Name:       "国語",
+					Color:      "#F8BBD0",
+					SchoolType: classroom.SchoolType_SCHOOL_TYPE_UNKNOWN,
+				}
+				mocks.validator.EXPECT().UpdateSubject(req).Return(nil)
+			},
+			req: &classroom.UpdateSubjectRequest{
+				Id:         1,
+				Name:       "国語",
+				Color:      "#F8BBD0",
+				SchoolType: classroom.SchoolType_SCHOOL_TYPE_UNKNOWN,
+			},
 			expect: &testResponse{
 				code: codes.InvalidArgument,
 			},

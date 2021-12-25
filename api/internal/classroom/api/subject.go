@@ -8,6 +8,8 @@ import (
 	"github.com/calmato/shs-web/api/internal/classroom/entity"
 	"github.com/calmato/shs-web/api/proto/classroom"
 	"golang.org/x/sync/errgroup"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 func (s *classroomService) ListSubjects(
@@ -111,8 +113,12 @@ func (s *classroomService) CreateSubject(
 		return nil, gRPCError(err)
 	}
 
-	subject := entity.NewSubject(req.Name, req.Color, req.SchoolType)
-	err := s.db.Subject.Create(ctx, subject)
+	schoolType, err := entity.NewSchoolType(req.SchoolType)
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+	subject := entity.NewSubject(req.Name, req.Color, schoolType)
+	err = s.db.Subject.Create(ctx, subject)
 	if err != nil {
 		return nil, gRPCError(err)
 	}
@@ -128,8 +134,12 @@ func (s *classroomService) UpdateSubject(
 		return nil, gRPCError(err)
 	}
 
-	subject := entity.NewSubject(req.Name, req.Color, req.SchoolType)
-	err := s.db.Subject.Update(ctx, req.Id, subject)
+	schoolType, err := entity.NewSchoolType(req.SchoolType)
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+	subject := entity.NewSubject(req.Name, req.Color, schoolType)
+	err = s.db.Subject.Update(ctx, req.Id, subject)
 	if err != nil {
 		return nil, gRPCError(err)
 	}

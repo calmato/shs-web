@@ -13,7 +13,7 @@ func TestSubject(t *testing.T) {
 	type args struct {
 		name       string
 		color      string
-		schoolType classroom.SchoolType
+		schoolType SchoolType
 	}
 	tests := []struct {
 		name   string
@@ -25,7 +25,7 @@ func TestSubject(t *testing.T) {
 			args: args{
 				name:       "国語",
 				color:      "#F8BBD0",
-				schoolType: classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL,
+				schoolType: SchoolTypeHighSchool,
 			},
 			expect: &Subject{
 				Name:       "国語",

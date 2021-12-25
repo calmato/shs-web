@@ -29,11 +29,11 @@ type Subject struct {
 
 type Subjects []*Subject
 
-func NewSubject(name, color string, schoolType classroom.SchoolType) *Subject {
+func NewSubject(name, color string, schoolType SchoolType) *Subject {
 	return &Subject{
 		Name:       name,
 		Color:      color,
-		SchoolType: SchoolType(schoolType),
+		SchoolType: schoolType,
 	}
 }
 
