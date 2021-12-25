@@ -161,7 +161,12 @@ func run() error {
 			return err
 		}
 
+		// 授業スケジュールの登録
 		err = app.upsertSchedules(tx)
+		if err != nil {
+			tx.Rollback()
+			return err
+		}
 
 		return tx.Commit().Error
 	})
