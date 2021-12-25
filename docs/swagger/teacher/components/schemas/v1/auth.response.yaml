@@ -22,7 +22,7 @@ authResponse:
     role:
       type: integer
       format: int32
-      description: 権限
+      description: 権限 (0:不明, 1:講師, 2:管理者)
     subjects:
       type: object
       description: 担当教科一覧(Map)
@@ -115,7 +115,7 @@ authResponse:
     lastNameKana: 'なかむら'
     firstNamaKana: 'こうだい'
     mail: 'teacher-test01@calmato.jp'
-    role: 0
+    role: 1
     subjects:
       1:
       - id: 1

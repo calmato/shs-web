@@ -19,7 +19,7 @@ createTeacherRequest:
     role:
       type: integer
       format: int32
-      description: 権限
+      description: 権限 (0:不明, 1:講師, 2:管理者)
     password:
       type: string
       description: パスワード

@@ -1,0 +1,42 @@
+get:
+  summary: 授業スケジュール一覧取得
+  tags:
+  - Schedule
+  security:
+  - BearerAuth: []
+  responses:
+    204:
+      description: A successful response.
+      content:
+        application/json:
+          schema:
+            $ref: './../../../openapi.yaml#/components/schemas/v1SchedulesResponse'
+    default:
+      description: An unexpected error response.
+      content:
+        application/json:
+          schema:
+            $ref: './../../../openapi.yaml#/components/schemas/errorResponse'
+patch:
+  summary: 授業スケジュール更新
+  tags:
+  - Schedule
+  security:
+  - BearerAuth: []
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: './../../../openapi.yaml#/components/schemas/v1UpdateSchedulesRequest'
+  responses:
+    204:
+      description: A successful response.
+      content:
+        application/json: {}
+    default:
+      description: An unexpected error response.
+      content:
+        application/json:
+          schema:
+            $ref: './../../../openapi.yaml#/components/schemas/errorResponse'

@@ -1,0 +1,42 @@
+schedulesResponse:
+  type: object
+  properties:
+    schedules:
+      type: array
+      description: 曜日ごとのスケジュール一覧
+      items:
+        type: object
+        properties:
+          weekday:
+            type: integer
+            format: int32
+            description: 曜日 (0:日曜日, 1:月曜日, ..., 6:土曜日)
+          isClosed:
+            type: boolean
+            description: 休校フラグ
+          lessons:
+            type: array
+            description: 授業コマ一覧
+            items:
+              type: object
+              properties:
+                startTime:
+                  type: string
+                  format: 'HHMM'
+                  description: 授業開始時間
+                endTime:
+                  type: string
+                  format: 'HHMM'
+                  description: 授業終了時間
+  example:
+    schedules:
+    - weekday: 0
+      isClosed: true
+      lessons: []
+    - weekday: 1
+      isClosed: false
+      lessons:
+      - startTime: 1700
+        endTime: 1830
+      - startTime: 1830
+        endTime: 2000
