@@ -1,0 +1,20 @@
+updateSchedulesRequest:
+  type: object
+  properties:
+    schedules:
+      type: array
+      description: 曜日ごとのスケジュール一覧
+      items:
+        type: object
+        properties:
+          weekday:
+            type: integer
+            format: int32
+            description: 曜日 (0:日曜日, 1:月曜日, ..., 6:土曜日)
+          isClosed:
+            type: boolean
+            description: 休校フラグ
+  example:
+    schedules:
+    - weekday: 0
+      isClosed: true

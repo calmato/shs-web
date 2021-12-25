@@ -4,7 +4,7 @@ updateMySubjectsRequest:
     schoolType:
       type: integer
       format: int32
-      description: 校種
+      description: 校種 (1:小学校, 2:中学校, 3:高等学校)
     subjectIds:
       type: array
       description: 担当授業科目一覧

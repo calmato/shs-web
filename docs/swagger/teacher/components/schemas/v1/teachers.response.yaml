@@ -22,7 +22,7 @@ teacherResponse:
     role:
       type: integer
       format: int32
-      description: 権限
+      description: 権限 (0:不明, 1:講師, 2:管理者)
     createdAt:
       type: string
       description: 登録日時
@@ -36,7 +36,7 @@ teacherResponse:
     lastNameKana: 'なかむら'
     firstNamaKana: 'こうだい'
     mail: 'teacher-test01@calmato.jp'
-    role: 0
+    role: 1
     createdAt: '2021-12-12T12:12:30.100Z'
     updatedAt: '2021-12-12T12:12:30.100Z'
 teachersResponse:
@@ -69,7 +69,7 @@ teachersResponse:
           role:
             type: integer
             format: int32
-            description: 権限
+            description: 権限 (0:不明, 1:講師, 2:管理者)
           createdAt:
             type: string
             description: 登録日時
@@ -88,7 +88,7 @@ teachersResponse:
       lastNameKana: 'なかむら'
       firstNamaKana: 'こうだい'
       mail: 'teacher-test01@calmato.jp'
-      role: 0
+      role: 1
       createdAt: '2021-12-12T12:12:30.100Z'
       updatedAt: '2021-12-12T12:12:30.100Z'
     - id: 'kSByoE6FetnPs5Byk3a9Zx'
@@ -97,7 +97,7 @@ teachersResponse:
       lastNameKana: 'やまだ'
       firstNamaKana: 'ただし'
       mail: 'teacher-test02@calmato.jp'
-      role: 1
+      role: 2
       createdAt: '2021-12-12T12:12:30.100Z'
       updatedAt: '2021-12-12T12:12:30.100Z'
     total: 2

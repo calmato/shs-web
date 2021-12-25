@@ -13,6 +13,8 @@ tags:
   description: 講師関連
 - name: Subject
   description: 授業科目関連
+- name: Schedule
+  description: 授業コマ関連
 paths:
   # Auth
   /v1/me:
@@ -31,6 +33,9 @@ paths:
   # Subjects
   /v1/subjects:
     $ref: './paths/v1/subjects/index.yaml'
+  # Schedules
+  /v1/schedules:
+    $ref: './paths/v1/schedules/index.yaml'
 components:
   securitySchemes:
     BearerAuth:
@@ -49,6 +54,8 @@ components:
       $ref: './components/schemas/v1/auth.request.yaml#/updateMyPasswordRequest'
     v1CreateTeacherRequest:
       $ref: './components/schemas/v1/teachers.request.yaml#/createTeacherRequest'
+    v1UpdateSchedulesRequest:
+      $ref: './components/schemas/v1/schedules.request.yaml#/updateSchedulesRequest'
     # Response
     v1AuthResponse:
       $ref: './components/schemas/v1/auth.response.yaml#/authResponse'
@@ -58,3 +65,5 @@ components:
       $ref: './components/schemas/v1/teachers.response.yaml#/teachersResponse'
     v1SubjectsResponse:
       $ref: './components/schemas/v1/subjects.response.yaml#/subjectsResponse'
+    v1SchedulesResponse:
+      $ref: './components/schemas/v1/schedules.response.yaml#/schedulesResponse'

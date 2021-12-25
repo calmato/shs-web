@@ -21,7 +21,7 @@ subjectsResponse:
           schoolType:
             type: integer
             format: int32
-            description: 校種
+            description: 校種 (1:小学校, 2:中学校, 3:高等学校)
           createdAt:
             type: string
             description: 登録日時

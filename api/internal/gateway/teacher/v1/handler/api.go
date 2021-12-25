@@ -72,10 +72,12 @@ func (h *apiV1Handler) AuthRoutes(rg *gin.RouterGroup) {
 	rg.GET("/v1/teachers", h.ListTeachers)
 	rg.GET("/v1/teachers/:teacherId", h.GetTeacher)
 	rg.GET("/v1/subjects", h.ListSubjects)
+	rg.GET("/v1/schedules", h.ListSchedules)
 }
 
 func (h *apiV1Handler) AdminRoutes(rg *gin.RouterGroup) {
 	rg.POST("/v1/teachers", h.CreateTeacher)
+	rg.PATCH("/v1/schedules", h.UpdateSchedules)
 }
 
 func (h *apiV1Handler) NoAuthRoutes(rg *gin.RouterGroup) {}
