@@ -130,6 +130,9 @@ jobs:
     - name: Build classroom server
       run: make build SERVICE=classroom/server
 
+    - name: Build lesson server
+      run: make build SERVICE=lesson/server
+
     ############################################
     # Notifications, etc.
     ############################################

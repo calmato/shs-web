@@ -36,6 +36,7 @@ services:
       - GCP_SERVICE_KEY_JSON=${GCP_SERVICE_KEY_JSON}
       - GCP_STORAGE_BUCKET_NAME=${GCP_STORAGE_BUCKET_NAME}
       - CLASSROOM_SERVICE_URL=classroom_api:8080
+      - LESSON_SERVICE_URL=lesson_api:8080
       - USER_SERVICE_URL=user_api:8080
     ports:
       - 18000:8080
@@ -91,6 +92,30 @@ services:
       - 19010:8080
       - 19011:9090
     command: make dev SERVICE=classroom/server
+
+  lesson_api:
+    container_name: lesson_api
+    build:
+      context: .
+      dockerfile: ./infra/docker/api/lesson/server/Dockerfile.development
+    working_dir: /go/src/github.com/calmato/shs-web/api
+    volumes:
+      - ./api:/go/src/github.com/calmato/shs-web/api:cached
+      - ./tmp/data/go/pkg/mod:/go/pkg/mod:delegated
+      - ./tmp/logs/api/lesson:/var/log/api:delegated
+    environment:
+      - PORT=8080
+      - METRICS_PORT=9090
+      - SHUTDOWN_DELAY_SEC=0
+      - LOG_PATH=/var/log/api
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_USERNAME=root
+      - DB_PASSWORD=${MYSQL_ROOT_PASSWORD}
+    ports:
+      - 19020:8080
+      - 19021:9090
+    command: make dev SERVICE=lesson/server
 
   mysql:
     container_name: mysql
