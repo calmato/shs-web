@@ -36,6 +36,46 @@ func (m *MockClassroomServiceClient) EXPECT() *MockClassroomServiceClientMockRec
 	return m.recorder
 }
 
+// CreateSubject mocks base method.
+func (m *MockClassroomServiceClient) CreateSubject(ctx context.Context, in *classroom.CreateSubjectRequest, opts ...grpc.CallOption) (*classroom.CreateSubjectResponse, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "CreateSubject", varargs...)
+	ret0, _ := ret[0].(*classroom.CreateSubjectResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CreateSubject indicates an expected call of CreateSubject.
+func (mr *MockClassroomServiceClientMockRecorder) CreateSubject(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateSubject", reflect.TypeOf((*MockClassroomServiceClient)(nil).CreateSubject), varargs...)
+}
+
+// DeleteSubject mocks base method.
+func (m *MockClassroomServiceClient) DeleteSubject(ctx context.Context, in *classroom.DeleteSubjectRequest, opts ...grpc.CallOption) (*classroom.DeleteSubjectResponse, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "DeleteSubject", varargs...)
+	ret0, _ := ret[0].(*classroom.DeleteSubjectResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// DeleteSubject indicates an expected call of DeleteSubject.
+func (mr *MockClassroomServiceClientMockRecorder) DeleteSubject(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteSubject", reflect.TypeOf((*MockClassroomServiceClient)(nil).DeleteSubject), varargs...)
+}
+
 // GetSchedule mocks base method.
 func (m *MockClassroomServiceClient) GetSchedule(ctx context.Context, in *classroom.GetScheduleRequest, opts ...grpc.CallOption) (*classroom.GetScheduleResponse, error) {
 	m.ctrl.T.Helper()
@@ -196,6 +236,26 @@ func (mr *MockClassroomServiceClientMockRecorder) UpdateSchedules(ctx, in interf
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateSchedules", reflect.TypeOf((*MockClassroomServiceClient)(nil).UpdateSchedules), varargs...)
 }
 
+// UpdateSubject mocks base method.
+func (m *MockClassroomServiceClient) UpdateSubject(ctx context.Context, in *classroom.UpdateSubjectRequest, opts ...grpc.CallOption) (*classroom.UpdateSubjectResponse, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "UpdateSubject", varargs...)
+	ret0, _ := ret[0].(*classroom.UpdateSubjectResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UpdateSubject indicates an expected call of UpdateSubject.
+func (mr *MockClassroomServiceClientMockRecorder) UpdateSubject(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateSubject", reflect.TypeOf((*MockClassroomServiceClient)(nil).UpdateSubject), varargs...)
+}
+
 // UpdateTeacherSubject mocks base method.
 func (m *MockClassroomServiceClient) UpdateTeacherSubject(ctx context.Context, in *classroom.UpdateTeacherSubjectRequest, opts ...grpc.CallOption) (*classroom.UpdateTeacherSubjectResponse, error) {
 	m.ctrl.T.Helper()
@@ -237,6 +297,36 @@ func NewMockClassroomServiceServer(ctrl *gomock.Controller) *MockClassroomServic
 // EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockClassroomServiceServer) EXPECT() *MockClassroomServiceServerMockRecorder {
 	return m.recorder
+}
+
+// CreateSubject mocks base method.
+func (m *MockClassroomServiceServer) CreateSubject(arg0 context.Context, arg1 *classroom.CreateSubjectRequest) (*classroom.CreateSubjectResponse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateSubject", arg0, arg1)
+	ret0, _ := ret[0].(*classroom.CreateSubjectResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CreateSubject indicates an expected call of CreateSubject.
+func (mr *MockClassroomServiceServerMockRecorder) CreateSubject(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateSubject", reflect.TypeOf((*MockClassroomServiceServer)(nil).CreateSubject), arg0, arg1)
+}
+
+// DeleteSubject mocks base method.
+func (m *MockClassroomServiceServer) DeleteSubject(arg0 context.Context, arg1 *classroom.DeleteSubjectRequest) (*classroom.DeleteSubjectResponse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteSubject", arg0, arg1)
+	ret0, _ := ret[0].(*classroom.DeleteSubjectResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// DeleteSubject indicates an expected call of DeleteSubject.
+func (mr *MockClassroomServiceServerMockRecorder) DeleteSubject(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteSubject", reflect.TypeOf((*MockClassroomServiceServer)(nil).DeleteSubject), arg0, arg1)
 }
 
 // GetSchedule mocks base method.
@@ -357,6 +447,21 @@ func (m *MockClassroomServiceServer) UpdateSchedules(arg0 context.Context, arg1 
 func (mr *MockClassroomServiceServerMockRecorder) UpdateSchedules(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateSchedules", reflect.TypeOf((*MockClassroomServiceServer)(nil).UpdateSchedules), arg0, arg1)
+}
+
+// UpdateSubject mocks base method.
+func (m *MockClassroomServiceServer) UpdateSubject(arg0 context.Context, arg1 *classroom.UpdateSubjectRequest) (*classroom.UpdateSubjectResponse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateSubject", arg0, arg1)
+	ret0, _ := ret[0].(*classroom.UpdateSubjectResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UpdateSubject indicates an expected call of UpdateSubject.
+func (mr *MockClassroomServiceServerMockRecorder) UpdateSubject(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateSubject", reflect.TypeOf((*MockClassroomServiceServer)(nil).UpdateSubject), arg0, arg1)
 }
 
 // UpdateTeacherSubject mocks base method.

@@ -125,3 +125,185 @@ func TestGetSubject(t *testing.T) {
 		})
 	}
 }
+
+func TestCreateSubject(t *testing.T) {
+	t.Parallel()
+	validator := NewRequestValidation()
+
+	tests := []struct {
+		name  string
+		req   *classroom.CreateSubjectRequest
+		isErr bool
+	}{
+		{
+			name: "success",
+			req: &classroom.CreateSubjectRequest{
+				Name:       "国語",
+				Color:      "#F8BBD0",
+				SchoolType: classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL,
+			},
+			isErr: false,
+		},
+		{
+			name: "Name is min_len",
+			req: &classroom.CreateSubjectRequest{
+				Name:       "",
+				Color:      "#F8BBD0",
+				SchoolType: classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL,
+			},
+			isErr: true,
+		},
+		{
+			name: "Color is len",
+			req: &classroom.CreateSubjectRequest{
+				Name:       "国語",
+				Color:      "#00000",
+				SchoolType: classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL,
+			},
+			isErr: true,
+		},
+		{
+			name: "Color is pattern",
+			req: &classroom.CreateSubjectRequest{
+				Name:       "国語",
+				Color:      "#00000G",
+				SchoolType: classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL,
+			},
+			isErr: true,
+		},
+		{
+			name: "SchoolType is defined_only",
+			req: &classroom.CreateSubjectRequest{
+				Name:       "国語",
+				Color:      "#F8BBD0",
+				SchoolType: classroom.SchoolType(-1),
+			},
+			isErr: true,
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			err := validator.CreateSubject(tt.req)
+			assert.Equal(t, tt.isErr, err != nil, err)
+		})
+	}
+}
+
+func TestUpdateSubject(t *testing.T) {
+	t.Parallel()
+	validator := NewRequestValidation()
+
+	tests := []struct {
+		name  string
+		req   *classroom.UpdateSubjectRequest
+		isErr bool
+	}{
+		{
+			name: "success",
+			req: &classroom.UpdateSubjectRequest{
+				Id:         1,
+				Name:       "国語",
+				Color:      "#F8BBD0",
+				SchoolType: classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL,
+			},
+			isErr: false,
+		},
+		{
+			name: "Id is gt",
+			req: &classroom.UpdateSubjectRequest{
+				Id:         0,
+				Name:       "国語",
+				Color:      "#F8BBD0",
+				SchoolType: classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL,
+			},
+			isErr: true,
+		},
+		{
+			name: "Name is min_len",
+			req: &classroom.UpdateSubjectRequest{
+				Id:         1,
+				Name:       "",
+				Color:      "#F8BBD0",
+				SchoolType: classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL,
+			},
+			isErr: true,
+		},
+		{
+			name: "Color is len",
+			req: &classroom.UpdateSubjectRequest{
+				Id:         1,
+				Name:       "国語",
+				Color:      "#00000",
+				SchoolType: classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL,
+			},
+			isErr: true,
+		},
+		{
+			name: "Color is pattern",
+			req: &classroom.UpdateSubjectRequest{
+				Id:         1,
+				Name:       "国語",
+				Color:      "#00000G",
+				SchoolType: classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL,
+			},
+			isErr: true,
+		},
+		{
+			name: "SchoolType is defined_only",
+			req: &classroom.UpdateSubjectRequest{
+				Id:         1,
+				Name:       "国語",
+				Color:      "#F8BBD0",
+				SchoolType: classroom.SchoolType(-1),
+			},
+			isErr: true,
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			err := validator.UpdateSubject(tt.req)
+			assert.Equal(t, tt.isErr, err != nil, err)
+		})
+	}
+}
+
+func TestDeleteSubject(t *testing.T) {
+	t.Parallel()
+	validator := NewRequestValidation()
+
+	tests := []struct {
+		name  string
+		req   *classroom.DeleteSubjectRequest
+		isErr bool
+	}{
+		{
+			name: "success",
+			req: &classroom.DeleteSubjectRequest{
+				Id: 1,
+			},
+			isErr: false,
+		},
+		{
+			name: "Id is gt",
+			req: &classroom.DeleteSubjectRequest{
+				Id: 0,
+			},
+			isErr: true,
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			err := validator.DeleteSubject(tt.req)
+			assert.Equal(t, tt.isErr, err != nil, err)
+		})
+	}
+}

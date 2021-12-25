@@ -48,6 +48,9 @@ type Subject interface {
 	List(ctx context.Context, p *ListSubjectsParams, fields ...string) (entity.Subjects, error)
 	MultiGet(ctx context.Context, ids []int64, fields ...string) (entity.Subjects, error)
 	Get(ctx context.Context, id int64, fields ...string) (*entity.Subject, error)
+	Create(ctx context.Context, subject *entity.Subject) error
+	Update(ctx context.Context, subjectID int64, subject *entity.Subject) error
+	Delete(ctx context.Context, subjectID int64) error
 	Count(ctx context.Context) (int64, error)
 }
 

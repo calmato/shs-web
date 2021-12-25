@@ -15,6 +15,9 @@ service ClassroomService {
   rpc ListSubjects(ListSubjectsRequest) returns (ListSubjectsResponse);
   rpc MultiGetSubjects(MultiGetSubjectsRequest) returns (MultiGetSubjectsResponse);
   rpc GetSubject(GetSubjectRequest) returns (GetSubjectResponse);
+  rpc CreateSubject(CreateSubjectRequest) returns (CreateSubjectResponse);
+  rpc UpdateSubject(UpdateSubjectRequest) returns (UpdateSubjectResponse);
+  rpc DeleteSubject(DeleteSubjectRequest) returns (DeleteSubjectResponse);
   rpc MultiGetTeacherSubjects(MultiGetTeacherSubjectsRequest) returns (MultiGetTeacherSubjectsResponse);
   rpc GetTeacherSubject(GetTeacherSubjectRequest) returns (GetTeacherSubjectResponse);
   rpc UpdateTeacherSubject(UpdateTeacherSubjectRequest) returns (UpdateTeacherSubjectResponse);
@@ -47,6 +50,31 @@ message GetSubjectRequest {
 message GetSubjectResponse {
   Subject subject = 1;
 }
+
+message CreateSubjectRequest {
+  string     name        = 1 [(validate.rules).string = { min_len: 1 }];
+  string     color       = 2 [(validate.rules).string = { len: 7, pattern: "^#[0-9a-fA-F]*$" }];
+  SchoolType school_type = 3 [(validate.rules).enum = { defined_only: true }];
+}
+
+message CreateSubjectResponse {
+  Subject subject = 1;
+}
+
+message UpdateSubjectRequest {
+  int64      id          = 1 [(validate.rules).int64 = { gt: 0 }];
+  string     name        = 2 [(validate.rules).string = { min_len: 1 }];
+  string     color       = 3 [(validate.rules).string = { len: 7, pattern: "^#[0-9a-fA-F]*$" }];
+  SchoolType school_type = 4 [(validate.rules).enum = { defined_only: true }];
+}
+
+message UpdateSubjectResponse {}
+
+message DeleteSubjectRequest {
+  int64 id = 1 [(validate.rules).int64 = { gt: 0 }];
+}
+
+message DeleteSubjectResponse {}
 
 message MultiGetTeacherSubjectsRequest {
   repeated string teacher_ids = 1 [(validate.rules).repeated = { min_items: 1, unique: true, items: { string: { min_len: 1 }}}];

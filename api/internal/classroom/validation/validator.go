@@ -15,6 +15,9 @@ type RequestValidation interface {
 	ListSubjects(req *classroom.ListSubjectsRequest) error
 	MultiGetSubjects(req *classroom.MultiGetSubjectsRequest) error
 	GetSubject(req *classroom.GetSubjectRequest) error
+	CreateSubject(req *classroom.CreateSubjectRequest) error
+	UpdateSubject(req *classroom.UpdateSubjectRequest) error
+	DeleteSubject(req *classroom.DeleteSubjectRequest) error
 	MultiGetTeacherSubjects(req *classroom.MultiGetTeacherSubjectsRequest) error
 	GetTeacherSubject(req *classroom.GetTeacherSubjectRequest) error
 	UpdateTeacherSubject(req *classroom.UpdateTeacherSubjectRequest) error
