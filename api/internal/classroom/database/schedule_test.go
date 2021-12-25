@@ -157,6 +157,83 @@ func TestSchedule_Get(t *testing.T) {
 	}
 }
 
+func TestSchedule_MultipleUpdate(t *testing.T) {
+	m, err := newMock()
+	require.NoError(t, err)
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	_ = m.dbDelete(ctx, scheduleTable)
+
+	now := jst.Now()
+
+	lessons := entity.Lessons{
+		{StartTime: "1700", EndTime: "1830"},
+		{StartTime: "1830", EndTime: "2000"},
+		{StartTime: "2000", EndTime: "2100"},
+	}
+	schedules := make(entity.Schedules, 1)
+	schedules[0] = testSchedule(time.Monday, false, lessons, now)
+
+	type args struct {
+		schedules entity.Schedules
+	}
+	type want struct {
+		isErr bool
+	}
+	tests := []struct {
+		name  string
+		setup func(ctx context.Context, t *testing.T, m *mocks)
+		args  args
+		want  want
+	}{
+		{
+			name: "success",
+			setup: func(ctx context.Context, t *testing.T, m *mocks) {
+				err := m.db.DB.Create(&schedules).Error
+				require.NoError(t, err)
+			},
+			args: args{
+				schedules: entity.Schedules{
+					{
+						Weekday:  time.Monday,
+						IsClosed: true,
+						Lessons:  nil,
+					},
+				},
+			},
+			want: want{
+				isErr: false,
+			},
+		},
+		{
+			name:  "not found",
+			setup: func(ctx context.Context, t *testing.T, m *mocks) {},
+			args: args{
+				schedules: schedules,
+			},
+			want: want{
+				isErr: true,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			ctx, cancel := context.WithCancel(context.Background())
+			defer cancel()
+
+			_ = m.dbDelete(ctx, scheduleTable)
+			tt.setup(ctx, t, m)
+
+			db := NewSchedule(m.db)
+			err := db.MultipleUpdate(ctx, tt.args.schedules)
+			assert.Equal(t, tt.want.isErr, err != nil, err)
+		})
+	}
+}
+
 func testSchedule(weekday time.Weekday, closed bool, lessons entity.Lessons, now time.Time) *entity.Schedule {
 	schedule := &entity.Schedule{
 		Weekday:   weekday,

@@ -65,7 +65,7 @@ func TestListSchedules(t *testing.T) {
 						},
 						{
 							Weekday:  int32(time.Monday),
-							IsClosed: true,
+							IsClosed: false,
 							Lessons: []*classroom.Schedule_Lesson{
 								{StartTime: "1700", EndTime: "1830"},
 								{StartTime: "1830", EndTime: "2000"},
@@ -145,7 +145,7 @@ func TestGetSchedule(t *testing.T) {
 				body: &classroom.GetScheduleResponse{
 					Schedule: &classroom.Schedule{
 						Weekday:  int32(time.Monday),
-						IsClosed: true,
+						IsClosed: false,
 						Lessons: []*classroom.Schedule_Lesson{
 							{StartTime: "1700", EndTime: "1830"},
 							{StartTime: "1830", EndTime: "2000"},
@@ -184,6 +184,92 @@ func TestGetSchedule(t *testing.T) {
 		tt := tt
 		t.Run(tt.name, testGRPC(tt.setup, tt.expect, func(ctx context.Context, service *classroomService) (proto.Message, error) {
 			return service.GetSchedule(ctx, tt.req)
+		}))
+	}
+}
+
+func TestUpdateSchedules(t *testing.T) {
+	t.Parallel()
+
+	req := &classroom.UpdateSchedulesRequest{
+		Schedules: []*classroom.ScheduleToUpdate{
+			{
+				Weekday:  int32(time.Sunday),
+				IsClosed: true,
+				Lessons:  []*classroom.ScheduleToUpdate_Lesson{},
+			},
+			{
+				Weekday:  int32(time.Monday),
+				IsClosed: false,
+				Lessons: []*classroom.ScheduleToUpdate_Lesson{
+					{StartTime: "1700", EndTime: "1830"},
+					{StartTime: "1830", EndTime: "2000"},
+				},
+			},
+		},
+	}
+	schedules := entity.Schedules{
+		{
+			Weekday:  time.Sunday,
+			IsClosed: true,
+			Lessons:  entity.Lessons{},
+		},
+		{
+			Weekday:  time.Monday,
+			IsClosed: false,
+			Lessons: entity.Lessons{
+				{StartTime: "1700", EndTime: "1830"},
+				{StartTime: "1830", EndTime: "2000"},
+			},
+		},
+	}
+
+	tests := []struct {
+		name   string
+		setup  func(ctx context.Context, t *testing.T, mocks *mocks)
+		req    *classroom.UpdateSchedulesRequest
+		expect *testResponse
+	}{
+		{
+			name: "success",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				mocks.validator.EXPECT().UpdateSchedules(req).Return(nil)
+				mocks.db.Schedule.EXPECT().MultipleUpdate(ctx, schedules).Return(nil)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.OK,
+				body: &classroom.UpdateSchedulesResponse{},
+			},
+		},
+		{
+			name: "invalid argument",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				req := &classroom.UpdateSchedulesRequest{}
+				mocks.validator.EXPECT().UpdateSchedules(req).Return(validation.ErrRequestValidation)
+			},
+			req: &classroom.UpdateSchedulesRequest{},
+			expect: &testResponse{
+				code: codes.InvalidArgument,
+			},
+		},
+		{
+			name: "failed to multiple schedule",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				mocks.validator.EXPECT().UpdateSchedules(req).Return(nil)
+				mocks.db.Schedule.EXPECT().MultipleUpdate(ctx, schedules).Return(errmock)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.Internal,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, testGRPC(tt.setup, tt.expect, func(ctx context.Context, service *classroomService) (proto.Message, error) {
+			return service.UpdateSchedules(ctx, tt.req)
 		}))
 	}
 }

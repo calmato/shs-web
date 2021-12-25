@@ -19,3 +19,12 @@ func (v *requestValidation) GetSchedule(req *classroom.GetScheduleRequest) error
 
 	return nil
 }
+
+func (v *requestValidation) UpdateSchedules(req *classroom.UpdateSchedulesRequest) error {
+	if err := req.Validate(); err != nil {
+		validate := err.(classroom.UpdateSchedulesRequestValidationError)
+		return validationError(validate.Error())
+	}
+
+	return nil
+}

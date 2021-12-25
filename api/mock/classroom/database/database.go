@@ -231,3 +231,17 @@ func (mr *MockScheduleMockRecorder) List(ctx interface{}, fields ...interface{})
 	varargs := append([]interface{}{ctx}, fields...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "List", reflect.TypeOf((*MockSchedule)(nil).List), varargs...)
 }
+
+// MultipleUpdate mocks base method.
+func (m *MockSchedule) MultipleUpdate(ctx context.Context, schedules entity.Schedules) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "MultipleUpdate", ctx, schedules)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// MultipleUpdate indicates an expected call of MultipleUpdate.
+func (mr *MockScheduleMockRecorder) MultipleUpdate(ctx, schedules interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MultipleUpdate", reflect.TypeOf((*MockSchedule)(nil).MultipleUpdate), ctx, schedules)
+}

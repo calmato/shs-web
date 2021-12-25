@@ -20,6 +20,7 @@ service ClassroomService {
   rpc UpdateTeacherSubject(UpdateTeacherSubjectRequest) returns (UpdateTeacherSubjectResponse);
   rpc ListSchedules(ListSchedulesRequest) returns (ListSchedulesResponse);
   rpc GetSchedule(GetScheduleRequest) returns (GetScheduleResponse);
+  rpc UpdateSchedules(UpdateSchedulesRequest) returns (UpdateSchedulesResponse);
 }
 
 message ListSubjectsRequest {
@@ -86,3 +87,19 @@ message GetScheduleRequest {
 message GetScheduleResponse {
   Schedule schedule = 1;
 }
+
+message ScheduleToUpdate {
+  message Lesson {
+    string start_time = 1 [(validate.rules).string = { len: 4, pattern: "^[0-9]*$" }];
+    string end_time   = 2 [(validate.rules).string = { len: 4, pattern: "^[0-9]*$" }];
+  }
+  int32           weekday    = 1 [(validate.rules).int32 = { gte: 0, lte: 6 }];
+  bool            is_closed  = 2;
+  repeated Lesson lessons    = 3;
+}
+
+message UpdateSchedulesRequest {
+  repeated ScheduleToUpdate schedules = 1 [(validate.rules).repeated = { min_items: 1 }];
+}
+
+message UpdateSchedulesResponse {}
