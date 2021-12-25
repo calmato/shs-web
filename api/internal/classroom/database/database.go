@@ -59,6 +59,7 @@ type TeacherSubject interface {
 type Schedule interface {
 	List(ctx context.Context, fields ...string) (entity.Schedules, error)
 	Get(ctx context.Context, weekday time.Weekday, fields ...string) (*entity.Schedule, error)
+	MultipleUpdate(ctx context.Context, schedules entity.Schedules) error
 }
 
 /**

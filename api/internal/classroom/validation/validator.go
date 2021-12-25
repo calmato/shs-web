@@ -20,6 +20,7 @@ type RequestValidation interface {
 	UpdateTeacherSubject(req *classroom.UpdateTeacherSubjectRequest) error
 	ListSchedules(req *classroom.ListSchedulesRequest) error
 	GetSchedule(req *classroom.GetScheduleRequest) error
+	UpdateSchedules(req *classroom.UpdateSchedulesRequest) error
 }
 
 type requestValidation struct{}

@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"github.com/calmato/shs-web/api/internal/classroom/entity"
 	"github.com/calmato/shs-web/api/proto/classroom"
 )
 
@@ -47,5 +48,22 @@ func (s *classroomService) GetSchedule(
 	res := &classroom.GetScheduleResponse{
 		Schedule: schedule.Proto(),
 	}
+	return res, nil
+}
+
+func (s *classroomService) UpdateSchedules(
+	ctx context.Context, req *classroom.UpdateSchedulesRequest,
+) (*classroom.UpdateSchedulesResponse, error) {
+	if err := s.validator.UpdateSchedules(req); err != nil {
+		return nil, gRPCError(err)
+	}
+
+	schedules := entity.NewSchedulesToUpdate(req.Schedules)
+	err := s.db.Schedule.MultipleUpdate(ctx, schedules)
+	if err != nil {
+		return nil, gRPCError(err)
+	}
+
+	res := &classroom.UpdateSchedulesResponse{}
 	return res, nil
 }

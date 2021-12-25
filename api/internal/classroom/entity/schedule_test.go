@@ -10,6 +10,57 @@ import (
 	"gorm.io/datatypes"
 )
 
+func TestScheduleToUpdate(t *testing.T) {
+	t.Parallel()
+	tests := []struct {
+		name      string
+		schedules []*classroom.ScheduleToUpdate
+		expect    Schedules
+	}{
+		{
+			name: "success",
+			schedules: []*classroom.ScheduleToUpdate{
+				{
+					Weekday:  int32(time.Sunday),
+					IsClosed: true,
+					Lessons:  []*classroom.ScheduleToUpdate_Lesson{},
+				},
+				{
+					Weekday:  int32(time.Monday),
+					IsClosed: false,
+					Lessons: []*classroom.ScheduleToUpdate_Lesson{
+						{StartTime: "1700", EndTime: "1830"},
+						{StartTime: "1830", EndTime: "1900"},
+					},
+				},
+			},
+			expect: Schedules{
+				{
+					Weekday:  time.Sunday,
+					IsClosed: true,
+					Lessons:  Lessons{},
+				},
+				{
+					Weekday:  time.Monday,
+					IsClosed: false,
+					Lessons: Lessons{
+						{StartTime: "1700", EndTime: "1830"},
+						{StartTime: "1830", EndTime: "1900"},
+					},
+				},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tt.expect, NewSchedulesToUpdate(tt.schedules))
+		})
+	}
+}
+
 func TestSchedule_Fill(t *testing.T) {
 	t.Parallel()
 	tests := []struct {
@@ -178,6 +229,97 @@ func TestSchedule_Proto(t *testing.T) {
 	}
 }
 
+func TestSchedules_Weekdays(t *testing.T) {
+	t.Parallel()
+	tests := []struct {
+		name      string
+		schedules Schedules
+		expect    []time.Weekday
+	}{
+		{
+			name: "success",
+			schedules: Schedules{
+				{
+					Weekday:  time.Sunday,
+					IsClosed: true,
+					Lessons:  Lessons{},
+				},
+				{
+					Weekday:  time.Monday,
+					IsClosed: false,
+					Lessons: Lessons{
+						{StartTime: "1700", EndTime: "1830"},
+						{StartTime: "1830", EndTime: "1900"},
+					},
+				},
+			},
+			expect: []time.Weekday{
+				time.Sunday,
+				time.Monday,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tt.expect, tt.schedules.Weekdays())
+		})
+	}
+}
+
+func TestSchedules_Map(t *testing.T) {
+	t.Parallel()
+	tests := []struct {
+		name      string
+		schedules Schedules
+		expect    map[time.Weekday]*Schedule
+	}{
+		{
+			name: "success",
+			schedules: Schedules{
+				{
+					Weekday:  time.Sunday,
+					IsClosed: true,
+					Lessons:  Lessons{},
+				},
+				{
+					Weekday:  time.Monday,
+					IsClosed: false,
+					Lessons: Lessons{
+						{StartTime: "1700", EndTime: "1830"},
+						{StartTime: "1830", EndTime: "1900"},
+					},
+				},
+			},
+			expect: map[time.Weekday]*Schedule{
+				time.Sunday: {
+					Weekday:  time.Sunday,
+					IsClosed: true,
+					Lessons:  Lessons{},
+				},
+				time.Monday: {
+					Weekday:  time.Monday,
+					IsClosed: false,
+					Lessons: Lessons{
+						{StartTime: "1700", EndTime: "1830"},
+						{StartTime: "1830", EndTime: "1900"},
+					},
+				},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tt.expect, tt.schedules.Map())
+		})
+	}
+}
+
 func TestSchedules_Fill(t *testing.T) {
 	t.Parallel()
 	tests := []struct {
@@ -245,6 +387,63 @@ func TestSchedules_Fill(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 			err := tt.schedules.Fill()
+			assert.Equal(t, tt.isErr, err != nil, err)
+			assert.Equal(t, tt.expect, tt.schedules)
+		})
+	}
+}
+
+func TestSchedules_FillJSON(t *testing.T) {
+	t.Parallel()
+	tests := []struct {
+		name      string
+		schedules Schedules
+		expect    Schedules
+		isErr     bool
+	}{
+		{
+			name: "success to lessons is nil",
+			schedules: Schedules{
+				{
+					Weekday:  time.Sunday,
+					IsClosed: true,
+					Lessons:  nil,
+				},
+				{
+					Weekday:  time.Monday,
+					IsClosed: false,
+					Lessons: Lessons{
+						{StartTime: "1700", EndTime: "1830"},
+						{StartTime: "1830", EndTime: "1900"},
+					},
+				},
+			},
+			expect: Schedules{
+				{
+					Weekday:     time.Sunday,
+					IsClosed:    true,
+					Lessons:     nil,
+					LessonsJSON: datatypes.JSON([]byte(`null`)),
+				},
+				{
+					Weekday:  time.Monday,
+					IsClosed: false,
+					Lessons: Lessons{
+						{StartTime: "1700", EndTime: "1830"},
+						{StartTime: "1830", EndTime: "1900"},
+					},
+					LessonsJSON: datatypes.JSON([]byte(`[{"startTime":"1700","endTime":"1830"},{"startTime":"1830","endTime":"1900"}]`)),
+				},
+			},
+			isErr: false,
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			err := tt.schedules.FillJSON()
 			assert.Equal(t, tt.isErr, err != nil, err)
 			assert.Equal(t, tt.expect, tt.schedules)
 		})

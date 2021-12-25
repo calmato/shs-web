@@ -2,6 +2,7 @@ package database
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/calmato/shs-web/api/internal/classroom/entity"
@@ -64,4 +65,44 @@ func (s *schedule) Get(ctx context.Context, weekday time.Weekday, fields ...stri
 		return nil, dbError(err)
 	}
 	return schedule, nil
+}
+
+func (s *schedule) MultipleUpdate(ctx context.Context, schedules entity.Schedules) error {
+	now := s.now()
+	err := schedules.FillJSON()
+	if err != nil {
+		return fmt.Errorf("database: failed to fill json: %w", ErrInvalidArgument)
+	}
+
+	tx, err := s.db.Begin()
+	if err != nil {
+		return dbError(err)
+	}
+	defer s.db.Close(tx)
+
+	var currentSchedules entity.Schedules
+	err = tx.Table(scheduleTable).Select([]string{"weekday", "created_at"}).
+		Where("weekday IN (?)", schedules.Weekdays()).
+		Find(&currentSchedules).Error
+	if err != nil {
+		return dbError(err)
+	}
+	scheduleMap := currentSchedules.Map()
+
+	for _, schedule := range schedules {
+		current, ok := scheduleMap[schedule.Weekday]
+		if !ok {
+			return fmt.Errorf("database: schedule not found: %w", ErrNotFound)
+		}
+		schedule.CreatedAt = current.CreatedAt
+		schedule.UpdatedAt = now
+
+		err = tx.Table(scheduleTable).Save(&schedule).Error
+		if err != nil {
+			tx.Rollback()
+			return dbError(err)
+		}
+	}
+
+	return dbError(tx.Commit().Error)
 }
