@@ -24,7 +24,7 @@ func TestSubject(t *testing.T) {
 			name: "success",
 			args: args{
 				name:       "国語",
-				color:      "#F8BBD0",
+				color:      "#f8bbd0",
 				schoolType: SchoolTypeHighSchool,
 			},
 			expect: &Subject{
@@ -58,7 +58,7 @@ func TestSubject_Proto(t *testing.T) {
 			subject: &Subject{
 				ID:         1,
 				Name:       "国語",
-				Color:      "#F8BBD0",
+				Color:      "#f8bbd0",
 				SchoolType: 1,
 				CreatedAt:  now,
 				UpdatedAt:  now,
@@ -97,7 +97,7 @@ func TestSubjects_Proto(t *testing.T) {
 				{
 					ID:         1,
 					Name:       "国語",
-					Color:      "#F8BBD0",
+					Color:      "#f8bbd0",
 					SchoolType: 1,
 					CreatedAt:  now,
 					UpdatedAt:  now,
