@@ -3,15 +3,17 @@
     <v-col v-for="item in items" :key="item.id" cols="10" sm="6" md="4">
       <v-card outlined elevation="5">
         <v-card-title class="justify-center">{{ item.title }}シフト希望登録</v-card-title>
+        <v-card-text class="text-decoration-underline red--text text--lighten-1">
+          提出期限: {{ item.endDate }}まで
+        </v-card-text>
         <v-container class="pl-6">
-          <v-chip text-color="white" :color="getStatusColor(item.status)">
-            {{ getStatus(item.status) }}
-          </v-chip>
           <v-container class="d-flex">
-            <v-card-text class="text-decoration-underline red--text text--lighten-1">
-              {{ item.endDate }}まで
-            </v-card-text>
-            <v-btn color="primary">{{ getEditStatus(item.status) }}</v-btn>
+            <v-chip text-color="white" :color="getStatusColor(item.status)">
+              {{ getStatus(item.status) }}
+            </v-chip>
+            <v-row class="pt-3" justify="end">
+              <v-btn color="primary">{{ getEditStatus(item.status) }}</v-btn>
+            </v-row>
           </v-container>
         </v-container>
       </v-card>
