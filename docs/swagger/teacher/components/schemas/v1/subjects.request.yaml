@@ -1,0 +1,36 @@
+createSubjectRequest:
+  type: object
+  properties:
+    name:
+      type: string
+      description: 授業科目名
+    color:
+      type: string
+      description: 表示色
+      format: '#rrggbb'
+    schoolType:
+      type: integer
+      format: int32
+      description: 校種 (1:小学校, 2:中学校, 3:高等学校)
+  example:
+    name: 国語
+    color: '#F8BBD0'
+    schoolType: 1
+updateSubjectRequest:
+  type: object
+  properties:
+    name:
+      type: string
+      description: 授業科目名
+    color:
+      type: string
+      description: 表示色
+      format: '#rrggbb'
+    schoolType:
+      type: integer
+      format: int32
+      description: 校種 (1:小学校, 2:中学校, 3:高等学校)
+  example:
+    name: 国語
+    color: '#F8BBD0'
+    schoolType: 1

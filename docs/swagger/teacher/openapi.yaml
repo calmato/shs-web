@@ -33,6 +33,8 @@ paths:
   # Subjects
   /v1/subjects:
     $ref: './paths/v1/subjects/index.yaml'
+  /v1/subjects/{id}:
+    $ref: './paths/v1/subjects/_id.yaml'
   # Schedules
   /v1/schedules:
     $ref: './paths/v1/schedules/index.yaml'
@@ -54,6 +56,10 @@ components:
       $ref: './components/schemas/v1/auth.request.yaml#/updateMyPasswordRequest'
     v1CreateTeacherRequest:
       $ref: './components/schemas/v1/teachers.request.yaml#/createTeacherRequest'
+    v1CreateSubjectRequest:
+      $ref: './components/schemas/v1/subjects.request.yaml#/createSubjectRequest'
+    v1UpdateSubjectRequest:
+      $ref: './components/schemas/v1/subjects.request.yaml#/updateSubjectRequest'
     v1UpdateSchedulesRequest:
       $ref: './components/schemas/v1/schedules.request.yaml#/updateSchedulesRequest'
     # Response
@@ -63,6 +69,8 @@ components:
       $ref: './components/schemas/v1/teachers.response.yaml#/teacherResponse'
     v1TeachersResponse:
       $ref: './components/schemas/v1/teachers.response.yaml#/teachersResponse'
+    v1SubjectResponse:
+      $ref: './components/schemas/v1/subjects.response.yaml#/subjectResponse'
     v1SubjectsResponse:
       $ref: './components/schemas/v1/subjects.response.yaml#/subjectsResponse'
     v1SchedulesResponse:

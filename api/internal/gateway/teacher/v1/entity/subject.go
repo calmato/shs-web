@@ -2,7 +2,6 @@ package entity
 
 import (
 	"errors"
-	"strings"
 	"time"
 
 	"github.com/calmato/shs-web/api/internal/gateway/entity"
@@ -36,7 +35,7 @@ func NewSubject(subject *entity.Subject) *Subject {
 	return &Subject{
 		ID:         subject.Id,
 		Name:       subject.Name,
-		Color:      strings.ToUpper(subject.Color),
+		Color:      subject.Color,
 		SchoolType: NewSchoolType(subject.SchoolType),
 		CreatedAt:  jst.ParseFromUnix(subject.CreatedAt),
 		UpdatedAt:  jst.ParseFromUnix(subject.UpdatedAt),
@@ -49,6 +48,19 @@ func NewSubjects(subjects entity.Subjects) Subjects {
 		ss[i] = NewSubject(subjects[i])
 	}
 	return ss
+}
+
+func NewSchoolType(schoolType classroom.SchoolType) SchoolType {
+	switch schoolType {
+	case classroom.SchoolType_SCHOOL_TYPE_ELEMENTARY_SCHOOL:
+		return SchoolTypeElementarySchool
+	case classroom.SchoolType_SCHOOL_TYPE_JUNIOR_HIGH_SCHOOL:
+		return SchoolTypeJuniorHighSchool
+	case classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL:
+		return SchoolTypeHighSchool
+	default:
+		return SchoolTypeUnknown
+	}
 }
 
 func (ss Subjects) GroupBySchoolType() map[SchoolType]Subjects {
@@ -65,19 +77,6 @@ func (ss Subjects) GroupBySchoolType() map[SchoolType]Subjects {
 		res[s.SchoolType] = append(res[s.SchoolType], s)
 	}
 	return res
-}
-
-func NewSchoolType(schoolType classroom.SchoolType) SchoolType {
-	switch schoolType {
-	case classroom.SchoolType_SCHOOL_TYPE_ELEMENTARY_SCHOOL:
-		return SchoolTypeElementarySchool
-	case classroom.SchoolType_SCHOOL_TYPE_JUNIOR_HIGH_SCHOOL:
-		return SchoolTypeJuniorHighSchool
-	case classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL:
-		return SchoolTypeHighSchool
-	default:
-		return SchoolTypeUnknown
-	}
 }
 
 func (t SchoolType) ClassroomSchoolType() (classroom.SchoolType, error) {
