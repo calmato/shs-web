@@ -16,6 +16,7 @@ type Config struct {
 	GCPServiceKeyJSON    string `envconfig:"GCP_SERVICE_KEY_JSON" required:"true"`
 	GCPStorageBucketName string `envconfig:"GCP_STORAGE_BUCKET_NAME" default:""`
 	ClassroomServiceURL  string `envconfig:"CLASSROOM_SERVICE_URL" default:""`
+	LessonServiceURL     string `envconfig:"LESSON_SERVICE_URL" default:""`
 	UserServiceURL       string `envconfig:"USER_SERVICE_URL" default:""`
 }
 

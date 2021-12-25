@@ -1,0 +1,7 @@
+syntax = "proto3";
+
+package lesson;
+
+option go_package = "github.com/calmato/shs-web/api/proto/lesson";
+
+service LessonService {}

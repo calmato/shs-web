@@ -8,6 +8,7 @@ import (
 	"github.com/calmato/shs-web/api/pkg/firebase/authentication"
 	"github.com/calmato/shs-web/api/pkg/jst"
 	"github.com/calmato/shs-web/api/proto/classroom"
+	"github.com/calmato/shs-web/api/proto/lesson"
 	"github.com/calmato/shs-web/api/proto/user"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
@@ -36,12 +37,14 @@ type apiV1Handler struct {
 	waitGroup   *sync.WaitGroup
 	auth        authentication.Client
 	classroom   classroom.ClassroomServiceClient
+	lesson      lesson.LessonServiceClient
 	user        user.UserServiceClient
 }
 
 type Params struct {
 	Auth             authentication.Client
 	ClassroomService classroom.ClassroomServiceClient
+	LessonService    lesson.LessonServiceClient
 	UserService      user.UserServiceClient
 	Logger           *zap.Logger
 	WaitGroup        *sync.WaitGroup
@@ -54,6 +57,7 @@ func NewAPIV1Handler(params *Params) APIV1Handler {
 		waitGroup:   params.WaitGroup,
 		auth:        params.Auth,
 		classroom:   params.ClassroomService,
+		lesson:      params.LessonService,
 		user:        params.UserService,
 		sharedGroup: &singleflight.Group{},
 	}

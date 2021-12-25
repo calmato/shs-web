@@ -7,16 +7,15 @@ import (
 	"syscall"
 	"time"
 
-	config "github.com/calmato/shs-web/api/config/gateway/teacher"
-	"github.com/calmato/shs-web/api/pkg/cors"
-	"github.com/calmato/shs-web/api/pkg/firebase"
-	"github.com/calmato/shs-web/api/pkg/firebase/authentication"
+	config "github.com/calmato/shs-web/api/config/lesson/server"
+	"github.com/calmato/shs-web/api/pkg/database"
+	"github.com/calmato/shs-web/api/pkg/grpc"
 	"github.com/calmato/shs-web/api/pkg/http"
 	"github.com/calmato/shs-web/api/pkg/log"
-	"github.com/gin-gonic/gin"
+	"github.com/calmato/shs-web/api/proto/lesson"
 	"go.uber.org/zap"
 	"golang.org/x/sync/errgroup"
-	"google.golang.org/api/option"
+	ggrpc "google.golang.org/grpc"
 )
 
 //nolint:funlen
@@ -39,47 +38,40 @@ func Exec() error {
 		return err
 	}
 
-	// Firebaseの設定
-	fbOpts := option.WithCredentialsJSON([]byte(conf.GCPServiceKeyJSON))
-	fb, err := firebase.InitializeApp(ctx, nil, fbOpts)
-	if err != nil {
-		return err
+	// MySQLの設定
+	dbParams := &database.Params{
+		Socket:   conf.DBSocket,
+		Host:     conf.DBHost,
+		Port:     conf.DBPort,
+		Database: conf.DBDatabase,
+		Username: conf.DBUsername,
+		Password: conf.DBPassword,
 	}
-
-	// Firebase Authenticationの設定
-	fa, err := authentication.NewClient(ctx, fb.App)
+	db, err := database.NewClient(dbParams)
 	if err != nil {
 		return err
 	}
 
 	// 依存関係の解決
 	regParams := &params{
-		insecure:            conf.GRPCInsecure,
-		logger:              logger,
-		auth:                fa,
-		classroomServiceURL: conf.ClassroomServiceURL,
-		lessonServiceURL:    conf.LessonServiceURL,
-		userServiceURL:      conf.UserServiceURL,
+		logger: logger,
+		db:     db,
 	}
-	reg, err := newRegistry(regParams)
+	reg := newRegistry(regParams)
+
+	// gRPC Serverの設定
+	gRPCParams := &grpc.OptionParams{
+		Logger: logger,
+	}
+	gRPCOpts := grpc.NewGRPCOptions(gRPCParams)
+
+	s := ggrpc.NewServer(gRPCOpts...)
+	lesson.RegisterLessonServiceServer(s, reg.lessonServer)
+
+	gs, err := grpc.NewGRPCServer(s, conf.Port)
 	if err != nil {
 		return err
 	}
-
-	// HTTP Serverの設定
-	httpOpts := []gin.HandlerFunc{gin.Recovery()}
-
-	cm := cors.NewGinMiddleware()
-	httpOpts = append(httpOpts, cm)
-
-	lm, err := log.NewGinMiddleware(logParams)
-	if err != nil {
-		return err
-	}
-	httpOpts = append(httpOpts, lm)
-
-	rt := newRouter(reg, httpOpts...)
-	hs := http.NewHTTPServer(rt, conf.Port)
 
 	// Metrics Serverの設定
 	ms := http.NewMetricsServer(conf.MetricsPort)
@@ -94,9 +86,9 @@ func Exec() error {
 		return
 	})
 	eg.Go(func() (err error) {
-		err = hs.Serve()
+		err = gs.Serve()
 		if err != nil {
-			logger.Error("Failed to run http server", zap.Error(err))
+			logger.Error("Failed to run gRPC server", zap.Error(err))
 		}
 		return
 	})
@@ -116,11 +108,9 @@ func Exec() error {
 	}
 
 	logger.Info("Shutdown...")
-	if err = hs.Stop(ectx); err != nil {
-		return err
-	}
 	if err = ms.Stop(ectx); err != nil {
 		return err
 	}
+	gs.Stop()
 	return eg.Wait()
 }
