@@ -103,6 +103,7 @@ type app struct {
 	classroom *database.Client
 }
 
+//nolint:funlen
 func run() error {
 	app := &app{}
 	host := flag.String("db-host", "mysql", "target mysql host")
