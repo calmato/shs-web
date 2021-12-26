@@ -24,6 +24,14 @@ const (
 )
 
 var (
+	truncateUserTables = []string{
+		"teachers",
+	}
+	truncateClassroomTables = []string{
+		"rooms",
+		"teacher_subjects",
+		"subjects",
+	}
 	weekdayLessons = centity.Lessons{
 		{StartTime: "1700", EndTime: "1830"},
 		{StartTime: "1830", EndTime: "2000"},
@@ -130,8 +138,8 @@ func run() error {
 	 */
 	eg.Go(func() error {
 		if *isDelete {
-			tables := []string{"teachers"}
-			if err := app.delete(app.user.DB, tables...); err != nil {
+			err := app.delete(app.user.DB, truncateUserTables...)
+			if err != nil {
 				return err
 			}
 		}
@@ -166,8 +174,8 @@ func run() error {
 	 */
 	eg.Go(func() error {
 		if *isDelete {
-			tables := []string{"teacher_subjects", "subjects"}
-			if err := app.delete(app.classroom.DB, tables...); err != nil {
+			err := app.delete(app.classroom.DB, truncateClassroomTables...)
+			if err != nil {
 				return err
 			}
 		}
@@ -279,7 +287,7 @@ func (a *app) upsertRooms(tx *gorm.DB, size int) error {
 	rooms := make(centity.Rooms, size)
 	for i := 0; i < size; i++ {
 		room := &centity.Room{
-			ID:        int32(i),
+			ID:        int32(i + 1),
 			CreatedAt: now,
 			UpdatedAt: now,
 		}

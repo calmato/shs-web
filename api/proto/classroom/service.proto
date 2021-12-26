@@ -24,6 +24,8 @@ service ClassroomService {
   rpc ListSchedules(ListSchedulesRequest) returns (ListSchedulesResponse);
   rpc GetSchedule(GetScheduleRequest) returns (GetScheduleResponse);
   rpc UpdateSchedules(UpdateSchedulesRequest) returns (UpdateSchedulesResponse);
+  rpc GetRoomsTotal(GetRoomsTotalRequest) returns (GetRoomsTotalResponse);
+  rpc UpdateRoomsTotal(UpdateRoomsTotalRequest) returns (UpdateRoomsTotalResponse);
 }
 
 message ListSubjectsRequest {
@@ -131,3 +133,15 @@ message UpdateSchedulesRequest {
 }
 
 message UpdateSchedulesResponse {}
+
+message GetRoomsTotalRequest {}
+
+message GetRoomsTotalResponse {
+  int64 total = 1;
+}
+
+message UpdateRoomsTotalRequest {
+  int64 total = 1 [(validate.rules).int64 = { gt: 0 }];
+}
+
+message UpdateRoomsTotalResponse{}

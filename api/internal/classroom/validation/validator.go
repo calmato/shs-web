@@ -24,6 +24,8 @@ type RequestValidation interface {
 	ListSchedules(req *classroom.ListSchedulesRequest) error
 	GetSchedule(req *classroom.GetScheduleRequest) error
 	UpdateSchedules(req *classroom.UpdateSchedulesRequest) error
+	GetRoomsTotal(req *classroom.GetRoomsTotalRequest) error
+	UpdateRoomsTotal(req *classroom.UpdateRoomsTotalRequest) error
 }
 
 type requestValidation struct{}

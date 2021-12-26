@@ -34,6 +34,7 @@ type dbMocks struct {
 	Subject        *mock_database.MockSubject
 	TeacherSubject *mock_database.MockTeacherSubject
 	Schedule       *mock_database.MockSchedule
+	Room           *mock_database.MockRoom
 }
 
 type testResponse struct {
@@ -60,6 +61,7 @@ func newDBMocks(ctrl *gomock.Controller) *dbMocks {
 		Subject:        mock_database.NewMockSubject(ctrl),
 		TeacherSubject: mock_database.NewMockTeacherSubject(ctrl),
 		Schedule:       mock_database.NewMockSchedule(ctrl),
+		Room:           mock_database.NewMockRoom(ctrl),
 	}
 }
 
@@ -73,6 +75,7 @@ func newClassroomService(mocks *mocks, opts *testOptions) *classroomService {
 			Subject:        mocks.db.Subject,
 			TeacherSubject: mocks.db.TeacherSubject,
 			Schedule:       mocks.db.Schedule,
+			Room:           mocks.db.Room,
 		},
 		validator: mocks.validator,
 	}
