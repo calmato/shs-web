@@ -58,6 +58,14 @@ func TestListSubjects(t *testing.T) {
 			},
 		},
 		{
+			name:  "failed to invlalid school type",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {},
+			query: "?type=aaa",
+			expect: &testResponse{
+				code: http.StatusBadRequest,
+			},
+		},
+		{
 			name: "failed to list subjects",
 			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
 				in := &classroom.ListSubjectsRequest{SchoolType: classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL}

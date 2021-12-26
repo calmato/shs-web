@@ -65,6 +65,22 @@ func TestListTeachers(t *testing.T) {
 			},
 		},
 		{
+			name:  "failed to invalid limit",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {},
+			query: "?limit=aaa",
+			expect: &testResponse{
+				code: http.StatusBadRequest,
+			},
+		},
+		{
+			name:  "failed to invalid offset",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {},
+			query: "?offset=aaa",
+			expect: &testResponse{
+				code: http.StatusBadRequest,
+			},
+		},
+		{
 			name: "failed to list teachers",
 			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
 				in := &user.ListTeachersRequest{Limit: 30, Offset: 0}
@@ -268,6 +284,124 @@ func TestCreateTeacher(t *testing.T) {
 			const path = "/v1/teachers"
 			req := newHTTPRequest(t, http.MethodPost, path, tt.req)
 			testHTTP(t, tt.setup, tt.expect, req, withNow(now))
+		})
+	}
+}
+
+func TestUpdateTeacherMail(t *testing.T) {
+	t.Parallel()
+	tests := []struct {
+		name      string
+		setup     func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller)
+		teacherID string
+		req       *request.UpdateTeacherMailRequest
+		expect    *testResponse
+	}{
+		{
+			name: "success",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
+				in := &user.UpdateTeacherMailRequest{
+					Id:   idmock,
+					Mail: "teacher-test001@calmato.jp",
+				}
+				out := &user.UpdateTeacherMailResponse{}
+				mocks.user.EXPECT().UpdateTeacherMail(gomock.Any(), in).Return(out, nil)
+			},
+			teacherID: idmock,
+			req: &request.UpdateTeacherMailRequest{
+				Mail: "teacher-test001@calmato.jp",
+			},
+			expect: &testResponse{
+				code: http.StatusNoContent,
+			},
+		},
+		{
+			name: "failed to update teacher mail",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
+				in := &user.UpdateTeacherMailRequest{
+					Id:   idmock,
+					Mail: "teacher-test001@calmato.jp",
+				}
+				mocks.user.EXPECT().UpdateTeacherMail(gomock.Any(), in).Return(nil, errmock)
+			},
+			teacherID: idmock,
+			req: &request.UpdateTeacherMailRequest{
+				Mail: "teacher-test001@calmato.jp",
+			},
+			expect: &testResponse{
+				code: http.StatusInternalServerError,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			path := fmt.Sprintf("/v1/teachers/%s/mail", tt.teacherID)
+			req := newHTTPRequest(t, http.MethodPatch, path, tt.req)
+			testHTTP(t, tt.setup, tt.expect, req)
+		})
+	}
+}
+
+func TestUpdateTeacherPassword(t *testing.T) {
+	t.Parallel()
+	tests := []struct {
+		name      string
+		setup     func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller)
+		teacherID string
+		req       *request.UpdateTeacherPasswordRequest
+		expect    *testResponse
+	}{
+		{
+			name: "success",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
+				in := &user.UpdateTeacherPasswordRequest{
+					Id:                   idmock,
+					Password:             "12345678",
+					PasswordConfirmation: "12345678",
+				}
+				out := &user.UpdateTeacherPasswordResponse{}
+				mocks.user.EXPECT().UpdateTeacherPassword(gomock.Any(), in).Return(out, nil)
+			},
+			teacherID: idmock,
+			req: &request.UpdateTeacherPasswordRequest{
+				Password:             "12345678",
+				PasswordConfirmation: "12345678",
+			},
+			expect: &testResponse{
+				code: http.StatusNoContent,
+			},
+		},
+		{
+			name: "failed to update teacher password",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
+				in := &user.UpdateTeacherPasswordRequest{
+					Id:                   idmock,
+					Password:             "12345678",
+					PasswordConfirmation: "12345678",
+				}
+				mocks.user.EXPECT().UpdateTeacherPassword(gomock.Any(), in).Return(nil, errmock)
+			},
+			teacherID: idmock,
+			req: &request.UpdateTeacherPasswordRequest{
+				Password:             "12345678",
+				PasswordConfirmation: "12345678",
+			},
+			expect: &testResponse{
+				code: http.StatusInternalServerError,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			path := fmt.Sprintf("/v1/teachers/%s/password", tt.teacherID)
+			req := newHTTPRequest(t, http.MethodPatch, path, tt.req)
+			testHTTP(t, tt.setup, tt.expect, req)
 		})
 	}
 }
