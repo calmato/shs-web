@@ -14,6 +14,47 @@ import (
 	"github.com/calmato/shs-web/api/proto/user"
 	"golang.org/x/sync/errgroup"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
+)
+
+const (
+	adminID     = "cngxK2YbQkiUfRUcp8zSet"
+	teacherSize = 10
+)
+
+var (
+	weekdayLessons = centity.Lessons{
+		{StartTime: "1700", EndTime: "1830"},
+		{StartTime: "1830", EndTime: "2000"},
+		{StartTime: "2000", EndTime: "2130"},
+	}
+	holidayLessons = centity.Lessons{
+		{StartTime: "1530", EndTime: "1700"},
+		{StartTime: "1700", EndTime: "1830"},
+		{StartTime: "1830", EndTime: "2000"},
+		{StartTime: "2000", EndTime: "2130"},
+	}
+	subjectsMap = map[centity.SchoolType]centity.Subjects{
+		centity.SchoolTypeElementarySchool: {
+			{Name: "国語", Color: "#F8BBD0"},
+			{Name: "算数", Color: "#BBDEFB"},
+		},
+		centity.SchoolTypeJuniorHighSchool: {
+			{Name: "国語", Color: "#F8BBD0"},
+			{Name: "数学", Color: "#BBDEFB"},
+			{Name: "社会", Color: "#FFE0B2"},
+			{Name: "理科", Color: "#E8F5E9"},
+			{Name: "英語", Color: "#FEE6C9"},
+		},
+		centity.SchoolTypeHighSchool: {
+			{Name: "国語", Color: "#F8BBD0"},
+			{Name: "数学Ⅰ", Color: "#BBDEFB"},
+			{Name: "数学Ⅱ", Color: "#BBDEFB"},
+			{Name: "数学A", Color: "#BBDEFB"},
+			{Name: "数学B", Color: "#BBDEFB"},
+			{Name: "英語", Color: "#FEE6C9"},
+		},
+	}
 )
 
 func main() {
@@ -37,12 +78,13 @@ func run() error {
 	username := flag.String("db-username", "root", "target mysql username")
 	password := flag.String("db-password", "12345678", "target mysql password")
 	isDelete := flag.Bool("is-delete", true, "if true, delete the existing record")
-	uid := flag.String("uid", "cngxK2YbQkiUfRUcp8zSet", "admin's id to be created")
 	flag.Parse()
 
-	if *uid == "" {
-		return fmt.Errorf("uid must be required")
-	}
+	/**
+	 * -------------------------
+	 * setup
+	 * -------------------------
+	 */
 	userDB, err := app.setup(*host, *port, "users", *username, *password)
 	if err != nil {
 		return err
@@ -77,14 +119,14 @@ func run() error {
 		defer app.user.Close(tx)
 
 		// 管理者の登録
-		err = app.insertAdmin(tx, *uid)
+		err = app.upsertAdmin(tx, adminID)
 		if err != nil {
 			tx.Rollback()
 			return err
 		}
 
 		// 講師の登録
-		err = app.insertTeachers(tx, 10)
+		err = app.upsertTeachers(tx, teacherSize)
 		if err != nil {
 			tx.Rollback()
 			return err
@@ -100,7 +142,7 @@ func run() error {
 	 */
 	eg.Go(func() error {
 		if *isDelete {
-			tables := []string{"subjects"}
+			tables := []string{"teacher_subjects", "subjects"}
 			if err := app.delete(app.classroom.DB, tables...); err != nil {
 				return err
 			}
@@ -113,7 +155,14 @@ func run() error {
 		defer app.classroom.Close(tx)
 
 		// 授業科目の登録
-		err = app.insertSubjects(tx)
+		err = app.upsertSubjects(tx)
+		if err != nil {
+			tx.Rollback()
+			return err
+		}
+
+		// 授業スケジュールの登録
+		err = app.upsertSchedules(tx)
 		if err != nil {
 			tx.Rollback()
 			return err
@@ -138,6 +187,16 @@ func (a *app) setup(host, port, db, username, password string) (*database.Client
 }
 
 func (a *app) delete(tx *gorm.DB, tables ...string) error {
+	const (
+		before = "SET foreign_key_checks = 0"
+		after  = "SET foreign_key_checks = 1"
+	)
+	defer tx.Exec(after)
+
+	if err := tx.Exec(before).Error; err != nil {
+		return err
+	}
+
 	for _, table := range tables {
 		sql := fmt.Sprintf("TRUNCATE TABLE %s", table)
 		if err := tx.Exec(sql).Error; err != nil {
@@ -147,7 +206,7 @@ func (a *app) delete(tx *gorm.DB, tables ...string) error {
 	return nil
 }
 
-func (a *app) insertAdmin(tx *gorm.DB, uid string) error {
+func (a *app) upsertAdmin(tx *gorm.DB, uid string) error {
 	now := jst.Now()
 	teacher := &uentity.Teacher{
 		ID:            uid,
@@ -160,10 +219,10 @@ func (a *app) insertAdmin(tx *gorm.DB, uid string) error {
 		CreatedAt:     now,
 		UpdatedAt:     now,
 	}
-	return tx.Create(&teacher).Error
+	return tx.Clauses(clause.OnConflict{UpdateAll: true}).Create(&teacher).Error
 }
 
-func (a *app) insertTeachers(tx *gorm.DB, size int) error {
+func (a *app) upsertTeachers(tx *gorm.DB, size int) error {
 	now := jst.Now()
 	teachers := make(uentity.Teachers, size)
 	for i := 0; i < size; i++ {
@@ -181,32 +240,10 @@ func (a *app) insertTeachers(tx *gorm.DB, size int) error {
 		}
 		teachers[i] = teacher
 	}
-	return tx.Create(&teachers).Error
+	return tx.Clauses(clause.OnConflict{UpdateAll: true}).Create(&teachers).Error
 }
 
-func (a *app) insertSubjects(tx *gorm.DB) error {
-	subjectsMap := map[centity.SchoolType]centity.Subjects{
-		centity.SchoolTypeElementarySchool: {
-			{Name: "国語", Color: "#F8BBD0"},
-			{Name: "算数", Color: "#BBDEFB"},
-		},
-		centity.SchoolTypeJuniorHighSchool: {
-			{Name: "国語", Color: "#F8BBD0"},
-			{Name: "数学", Color: "#BBDEFB"},
-			{Name: "社会", Color: "#FFE0B2"},
-			{Name: "理科", Color: "#E8F5E9"},
-			{Name: "英語", Color: "#FEE6C9"},
-		},
-		centity.SchoolTypeHighSchool: {
-			{Name: "国語", Color: "#F8BBD0"},
-			{Name: "数学Ⅰ", Color: "#BBDEFB"},
-			{Name: "数学Ⅱ", Color: "#BBDEFB"},
-			{Name: "数学A", Color: "#BBDEFB"},
-			{Name: "数学B", Color: "#BBDEFB"},
-			{Name: "英語", Color: "#FEE6C9"},
-		},
-	}
-
+func (a *app) upsertSubjects(tx *gorm.DB) error {
 	now := jst.Now()
 	subjects := make(centity.Subjects, 0)
 	for schoolType, ss := range subjectsMap {
@@ -217,5 +254,33 @@ func (a *app) insertSubjects(tx *gorm.DB) error {
 		}
 		subjects = append(subjects, ss...)
 	}
-	return tx.Create(&subjects).Error
+	return tx.Clauses(clause.OnConflict{UpdateAll: true}).Create(&subjects).Error
+}
+
+func (a *app) upsertSchedules(tx *gorm.DB) error {
+	const weekdays = 7
+	now := jst.Now()
+	schedules := make(centity.Schedules, weekdays)
+	for i := 0; i < weekdays; i++ {
+		weekday := time.Weekday(i)
+		schedule := &centity.Schedule{
+			Weekday:   weekday,
+			IsClosed:  false,
+			Lessons:   newLessons(weekday),
+			CreatedAt: now,
+			UpdatedAt: now,
+		}
+		if err := schedule.FillJSON(); err != nil {
+			return err
+		}
+		schedules[i] = schedule
+	}
+	return tx.Clauses(clause.OnConflict{UpdateAll: true}).Create(&schedules).Error
+}
+
+func newLessons(weekday time.Weekday) centity.Lessons {
+	if weekday == time.Sunday || weekday == time.Saturday {
+		return holidayLessons
+	}
+	return weekdayLessons
 }
