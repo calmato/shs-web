@@ -31,6 +31,7 @@ type Database struct {
 	Subject        Subject
 	TeacherSubject TeacherSubject
 	Schedule       Schedule
+	Room           Room
 }
 
 func NewDatabase(params *Params) *Database {
@@ -38,6 +39,7 @@ func NewDatabase(params *Params) *Database {
 		Subject:        NewSubject(params.Database),
 		TeacherSubject: NewTeacherSubject(params.Database),
 		Schedule:       NewSchedule(params.Database),
+		Room:           NewRoom(params.Database),
 	}
 }
 
@@ -63,6 +65,11 @@ type Schedule interface {
 	List(ctx context.Context, fields ...string) (entity.Schedules, error)
 	Get(ctx context.Context, weekday time.Weekday, fields ...string) (*entity.Schedule, error)
 	MultipleUpdate(ctx context.Context, schedules entity.Schedules) error
+}
+
+type Room interface {
+	Replace(ctx context.Context, rooms entity.Rooms) error
+	Count(ctx context.Context) (int64, error)
 }
 
 /**

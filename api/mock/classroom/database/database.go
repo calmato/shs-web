@@ -287,3 +287,55 @@ func (mr *MockScheduleMockRecorder) MultipleUpdate(ctx, schedules interface{}) *
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MultipleUpdate", reflect.TypeOf((*MockSchedule)(nil).MultipleUpdate), ctx, schedules)
 }
+
+// MockRoom is a mock of Room interface.
+type MockRoom struct {
+	ctrl     *gomock.Controller
+	recorder *MockRoomMockRecorder
+}
+
+// MockRoomMockRecorder is the mock recorder for MockRoom.
+type MockRoomMockRecorder struct {
+	mock *MockRoom
+}
+
+// NewMockRoom creates a new mock instance.
+func NewMockRoom(ctrl *gomock.Controller) *MockRoom {
+	mock := &MockRoom{ctrl: ctrl}
+	mock.recorder = &MockRoomMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockRoom) EXPECT() *MockRoomMockRecorder {
+	return m.recorder
+}
+
+// Count mocks base method.
+func (m *MockRoom) Count(ctx context.Context) (int64, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Count", ctx)
+	ret0, _ := ret[0].(int64)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Count indicates an expected call of Count.
+func (mr *MockRoomMockRecorder) Count(ctx interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Count", reflect.TypeOf((*MockRoom)(nil).Count), ctx)
+}
+
+// Replace mocks base method.
+func (m *MockRoom) Replace(ctx context.Context, rooms entity.Rooms) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Replace", ctx, rooms)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Replace indicates an expected call of Replace.
+func (mr *MockRoomMockRecorder) Replace(ctx, rooms interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Replace", reflect.TypeOf((*MockRoom)(nil).Replace), ctx, rooms)
+}

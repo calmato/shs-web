@@ -76,6 +76,26 @@ func (mr *MockClassroomServiceClientMockRecorder) DeleteSubject(ctx, in interfac
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteSubject", reflect.TypeOf((*MockClassroomServiceClient)(nil).DeleteSubject), varargs...)
 }
 
+// GetRoomsTotal mocks base method.
+func (m *MockClassroomServiceClient) GetRoomsTotal(ctx context.Context, in *classroom.GetRoomsTotalRequest, opts ...grpc.CallOption) (*classroom.GetRoomsTotalResponse, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "GetRoomsTotal", varargs...)
+	ret0, _ := ret[0].(*classroom.GetRoomsTotalResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetRoomsTotal indicates an expected call of GetRoomsTotal.
+func (mr *MockClassroomServiceClientMockRecorder) GetRoomsTotal(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetRoomsTotal", reflect.TypeOf((*MockClassroomServiceClient)(nil).GetRoomsTotal), varargs...)
+}
+
 // GetSchedule mocks base method.
 func (m *MockClassroomServiceClient) GetSchedule(ctx context.Context, in *classroom.GetScheduleRequest, opts ...grpc.CallOption) (*classroom.GetScheduleResponse, error) {
 	m.ctrl.T.Helper()
@@ -216,6 +236,26 @@ func (mr *MockClassroomServiceClientMockRecorder) MultiGetTeacherSubjects(ctx, i
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MultiGetTeacherSubjects", reflect.TypeOf((*MockClassroomServiceClient)(nil).MultiGetTeacherSubjects), varargs...)
 }
 
+// UpdateRoomsTotal mocks base method.
+func (m *MockClassroomServiceClient) UpdateRoomsTotal(ctx context.Context, in *classroom.UpdateRoomsTotalRequest, opts ...grpc.CallOption) (*classroom.UpdateRoomsTotalResponse, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "UpdateRoomsTotal", varargs...)
+	ret0, _ := ret[0].(*classroom.UpdateRoomsTotalResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UpdateRoomsTotal indicates an expected call of UpdateRoomsTotal.
+func (mr *MockClassroomServiceClientMockRecorder) UpdateRoomsTotal(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateRoomsTotal", reflect.TypeOf((*MockClassroomServiceClient)(nil).UpdateRoomsTotal), varargs...)
+}
+
 // UpdateSchedules mocks base method.
 func (m *MockClassroomServiceClient) UpdateSchedules(ctx context.Context, in *classroom.UpdateSchedulesRequest, opts ...grpc.CallOption) (*classroom.UpdateSchedulesResponse, error) {
 	m.ctrl.T.Helper()
@@ -329,6 +369,21 @@ func (mr *MockClassroomServiceServerMockRecorder) DeleteSubject(arg0, arg1 inter
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteSubject", reflect.TypeOf((*MockClassroomServiceServer)(nil).DeleteSubject), arg0, arg1)
 }
 
+// GetRoomsTotal mocks base method.
+func (m *MockClassroomServiceServer) GetRoomsTotal(arg0 context.Context, arg1 *classroom.GetRoomsTotalRequest) (*classroom.GetRoomsTotalResponse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetRoomsTotal", arg0, arg1)
+	ret0, _ := ret[0].(*classroom.GetRoomsTotalResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetRoomsTotal indicates an expected call of GetRoomsTotal.
+func (mr *MockClassroomServiceServerMockRecorder) GetRoomsTotal(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetRoomsTotal", reflect.TypeOf((*MockClassroomServiceServer)(nil).GetRoomsTotal), arg0, arg1)
+}
+
 // GetSchedule mocks base method.
 func (m *MockClassroomServiceServer) GetSchedule(arg0 context.Context, arg1 *classroom.GetScheduleRequest) (*classroom.GetScheduleResponse, error) {
 	m.ctrl.T.Helper()
@@ -432,6 +487,21 @@ func (m *MockClassroomServiceServer) MultiGetTeacherSubjects(arg0 context.Contex
 func (mr *MockClassroomServiceServerMockRecorder) MultiGetTeacherSubjects(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MultiGetTeacherSubjects", reflect.TypeOf((*MockClassroomServiceServer)(nil).MultiGetTeacherSubjects), arg0, arg1)
+}
+
+// UpdateRoomsTotal mocks base method.
+func (m *MockClassroomServiceServer) UpdateRoomsTotal(arg0 context.Context, arg1 *classroom.UpdateRoomsTotalRequest) (*classroom.UpdateRoomsTotalResponse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateRoomsTotal", arg0, arg1)
+	ret0, _ := ret[0].(*classroom.UpdateRoomsTotalResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UpdateRoomsTotal indicates an expected call of UpdateRoomsTotal.
+func (mr *MockClassroomServiceServerMockRecorder) UpdateRoomsTotal(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateRoomsTotal", reflect.TypeOf((*MockClassroomServiceServer)(nil).UpdateRoomsTotal), arg0, arg1)
 }
 
 // UpdateSchedules mocks base method.

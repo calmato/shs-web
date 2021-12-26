@@ -62,6 +62,20 @@ func (mr *MockRequestValidationMockRecorder) DeleteSubject(req interface{}) *gom
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteSubject", reflect.TypeOf((*MockRequestValidation)(nil).DeleteSubject), req)
 }
 
+// GetRoomsTotal mocks base method.
+func (m *MockRequestValidation) GetRoomsTotal(req *classroom.GetRoomsTotalRequest) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetRoomsTotal", req)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// GetRoomsTotal indicates an expected call of GetRoomsTotal.
+func (mr *MockRequestValidationMockRecorder) GetRoomsTotal(req interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetRoomsTotal", reflect.TypeOf((*MockRequestValidation)(nil).GetRoomsTotal), req)
+}
+
 // GetSchedule mocks base method.
 func (m *MockRequestValidation) GetSchedule(req *classroom.GetScheduleRequest) error {
 	m.ctrl.T.Helper()
@@ -158,6 +172,20 @@ func (m *MockRequestValidation) MultiGetTeacherSubjects(req *classroom.MultiGetT
 func (mr *MockRequestValidationMockRecorder) MultiGetTeacherSubjects(req interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MultiGetTeacherSubjects", reflect.TypeOf((*MockRequestValidation)(nil).MultiGetTeacherSubjects), req)
+}
+
+// UpdateRoomsTotal mocks base method.
+func (m *MockRequestValidation) UpdateRoomsTotal(req *classroom.UpdateRoomsTotalRequest) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateRoomsTotal", req)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateRoomsTotal indicates an expected call of UpdateRoomsTotal.
+func (mr *MockRequestValidationMockRecorder) UpdateRoomsTotal(req interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateRoomsTotal", reflect.TypeOf((*MockRequestValidation)(nil).UpdateRoomsTotal), req)
 }
 
 // UpdateSchedules mocks base method.
