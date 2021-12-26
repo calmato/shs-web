@@ -36,6 +36,26 @@ func (m *MockStudent) EXPECT() *MockStudentMockRecorder {
 	return m.recorder
 }
 
+// Get mocks base method.
+func (m *MockStudent) Get(ctx context.Context, id string, fields ...string) (*entity.Student, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, id}
+	for _, a := range fields {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "Get", varargs...)
+	ret0, _ := ret[0].(*entity.Student)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Get indicates an expected call of Get.
+func (mr *MockStudentMockRecorder) Get(ctx, id interface{}, fields ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, id}, fields...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockStudent)(nil).Get), varargs...)
+}
+
 // MockTeacher is a mock of Teacher interface.
 type MockTeacher struct {
 	ctrl     *gomock.Controller
