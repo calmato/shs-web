@@ -38,7 +38,7 @@ delete:
   - BearerAuth: []
   parameters:
   - in: path
-    name: id
+    name: subjectId
     required: true
     schema:
       type: integer
