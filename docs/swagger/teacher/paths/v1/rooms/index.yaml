@@ -1,7 +1,7 @@
 get:
-  summary: 授業スケジュール一覧取得
+  summary: 教室数取得
   tags:
-  - Schedule
+  - Room
   security:
   - BearerAuth: []
   responses:
@@ -10,7 +10,7 @@ get:
       content:
         application/json:
           schema:
-            $ref: './../../../openapi.yaml#/components/schemas/v1SchedulesResponse'
+            $ref: './../../../openapi.yaml#/components/schemas/v1RoomsTotalResponse'
     default:
       description: An unexpected error response.
       content:
@@ -18,9 +18,9 @@ get:
           schema:
             $ref: './../../../openapi.yaml#/components/schemas/errorResponse'
 patch:
-  summary: 授業スケジュール更新
+  summary: 教室数更新
   tags:
-  - Schedule
+  - Room
   security:
   - BearerAuth: []
   requestBody:
@@ -28,7 +28,7 @@ patch:
     content:
       application/json:
         schema:
-          $ref: './../../../openapi.yaml#/components/schemas/v1UpdateSchedulesRequest'
+          $ref: './../../../openapi.yaml#/components/schemas/v1UpdateRoomsTotalRequest'
   responses:
     204:
       description: A successful response.

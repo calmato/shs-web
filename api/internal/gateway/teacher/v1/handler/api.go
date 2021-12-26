@@ -77,6 +77,7 @@ func (h *apiV1Handler) AuthRoutes(rg *gin.RouterGroup) {
 	rg.GET("/v1/teachers/:teacherId", h.GetTeacher)
 	rg.GET("/v1/subjects", h.ListSubjects)
 	rg.GET("/v1/schedules", h.ListSchedules)
+	rg.GET("/v1/rooms", h.GetRoomsTotal)
 }
 
 func (h *apiV1Handler) AdminRoutes(rg *gin.RouterGroup) {
@@ -87,6 +88,7 @@ func (h *apiV1Handler) AdminRoutes(rg *gin.RouterGroup) {
 	rg.PATCH("/v1/subjects/:subjectId", h.UpdateSubject)
 	rg.DELETE("/v1/subjects/:subjectId", h.DeleteSubject)
 	rg.PATCH("/v1/schedules", h.UpdateSchedules)
+	rg.PATCH("/v1/rooms", h.UpdateRoomsTotal)
 }
 
 func (h *apiV1Handler) NoAuthRoutes(rg *gin.RouterGroup) {}

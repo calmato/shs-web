@@ -1,0 +1,9 @@
+updateRoomsTotalRequest:
+  type: object
+  properties:
+    total:
+      type: integer
+      format: int64
+      description: 教室数
+  example:
+    total: 3
