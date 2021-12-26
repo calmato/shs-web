@@ -12,9 +12,9 @@ import (
 
 const roomTable = "rooms"
 
-var roomFields = []string{
-	"id", "created_at", "updated_at",
-}
+// var roomFields = []string{
+// 	"id", "created_at", "updated_at",
+// }
 
 type room struct {
 	db  *database.Client
