@@ -20,6 +20,7 @@ import (
 const (
 	adminID     = "cngxK2YbQkiUfRUcp8zSet"
 	teacherSize = 10
+	roomSize    = 4
 )
 
 var (
@@ -177,6 +178,13 @@ func run() error {
 		}
 		defer app.classroom.Close(tx)
 
+		// ブースの登録
+		err = app.upsertRooms(tx, roomSize)
+		if err != nil {
+			tx.Rollback()
+			return err
+		}
+
 		// 授業科目の登録
 		err = app.upsertSubjects(tx)
 		if err != nil {
@@ -264,6 +272,20 @@ func (a *app) upsertTeachers(tx *gorm.DB, size int) error {
 		teachers[i] = teacher
 	}
 	return tx.Clauses(clause.OnConflict{UpdateAll: true}).Create(&teachers).Error
+}
+
+func (a *app) upsertRooms(tx *gorm.DB, size int) error {
+	now := jst.Now()
+	rooms := make(centity.Rooms, size)
+	for i := 0; i < size; i++ {
+		room := &centity.Room{
+			ID:        int32(i),
+			CreatedAt: now,
+			UpdatedAt: now,
+		}
+		rooms[i] = room
+	}
+	return tx.Clauses(clause.OnConflict{UpdateAll: true}).Create(&rooms).Error
 }
 
 func (a *app) upsertSubjects(tx *gorm.DB) error {
