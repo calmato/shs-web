@@ -4,7 +4,7 @@
       <v-card outlined elevation="5">
         <v-card-title class="justify-center">{{ item.title }}シフト希望登録</v-card-title>
         <v-card-text class="text-center text-decoration-underline red--text text--lighten-1">
-          提出期限: {{ item.endDate }}まで
+          提出期限: {{ getEnddate(item.endDate) }}まで
         </v-card-text>
         <v-container class="pl-6">
           <v-container class="d-flex">
@@ -30,15 +30,22 @@ export default defineComponent({
     const items: Submission[] = [
       {
         title: '1月',
-        endDate: '1/25',
+        endDate: '20210125',
         status: 1,
       },
       {
         title: '2月',
-        endDate: '2/25',
+        endDate: '20230225',
         status: 2,
       },
     ]
+
+    const getEnddate = (endDate: string): string => {
+      const year: string = endDate.slice(0, 4)
+      const month: string = endDate.slice(5, 6)
+      const date: string = endDate.slice(7, 8)
+      return year + '/' + month + '/' + date
+    }
 
     const getStatus = (status: number): string => {
       switch (status) {
@@ -75,6 +82,7 @@ export default defineComponent({
 
     return {
       items,
+      getEnddate,
       getStatus,
       getStatusColor,
       getEditStatus,
