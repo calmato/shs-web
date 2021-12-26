@@ -8,11 +8,11 @@
         </v-card-text>
         <v-container class="pl-6">
           <v-container class="d-flex">
-            <v-chip text-color="white" :color="getStatusColor(item.status)">
-              {{ getStatus(item.status) }}
+            <v-chip text-color="white" :color="getStatusColor(item.submissionStatus)">
+              {{ item.submissionStatus }}
             </v-chip>
             <v-row class="pt-3" justify="end">
-              <v-btn color="primary">{{ getEditStatus(item.status) }}</v-btn>
+              <v-btn color="primary">{{ item.editStatus }}</v-btn>
             </v-row>
           </v-container>
         </v-container>
@@ -23,7 +23,7 @@
 
 <script lang="ts">
 import { defineComponent } from '@nuxtjs/composition-api'
-import { Submission } from '~/types/props/submission'
+import { Submission, SubmissionStatusType } from '~/types/props/submission'
 
 export default defineComponent({
   setup(_) {
@@ -31,12 +31,14 @@ export default defineComponent({
       {
         title: '1月',
         endDate: '20210125',
-        status: 1,
+        submissionStatus: '未提出',
+        editStatus: '入力する',
       },
       {
         title: '2月',
         endDate: '20230225',
-        status: 2,
+        submissionStatus: '提出済み',
+        editStatus: '編集する',
       },
     ]
 
@@ -47,45 +49,19 @@ export default defineComponent({
       return year + '/' + month + '/' + date
     }
 
-    const getStatus = (status: number): string => {
+    const getStatusColor = (status: SubmissionStatusType): string => {
       switch (status) {
-        case 1:
-          return '未提出'
-        case 2:
-          return '提出済み'
-        default:
-          return 'Unknown'
-      }
-    }
-
-    const getEditStatus = (status: number): string => {
-      switch (status) {
-        case 1:
-          return '入力する'
-        case 2:
-          return '編集する'
-        default:
-          return 'Unknown'
-      }
-    }
-
-    const getStatusColor = (status: number): string => {
-      switch (status) {
-        case 1:
+        case '未提出':
           return 'red'
-        case 2:
+        case '提出済み':
           return 'light-green'
-        default:
-          return ''
       }
     }
 
     return {
       items,
       getEnddate,
-      getStatus,
       getStatusColor,
-      getEditStatus,
     }
   },
 })
