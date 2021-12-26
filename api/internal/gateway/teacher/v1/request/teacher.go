@@ -10,3 +10,12 @@ type CreateTeacherRequest struct {
 	PasswordConfirmation string `json:"passwordConfirmation,omitempty"` // パスワード(確認用)
 	Role                 int32  `json:"role,omitempty"`                 // 権限
 }
+
+type UpdateTeacherMailRequest struct {
+	Mail string `json:"mail,omitempty"` // メールアドレス
+}
+
+type UpdateTeacherPasswordRequest struct {
+	Password             string `json:"password,omitempty"`             // パスワード
+	PasswordConfirmation string `json:"passwordConfirmation,omitempty"` // パスワード(確認用)
+}

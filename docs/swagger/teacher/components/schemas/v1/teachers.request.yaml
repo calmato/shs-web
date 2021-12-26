@@ -35,3 +35,23 @@ createTeacherRequest:
     role: 0
     password: '12345678'
     passwordConfirmation: '12345678'
+updateTeacherMailRequest:
+  type: object
+  properties:
+    mail:
+      type: string
+      description: メールアドレス
+  example:
+    mail: 'teacher-test01@calmato.jp'
+updateTeacherPasswordRequest:
+  type: object
+  properties:
+    password:
+      type: string
+      description: パスワード
+    passwordConfirmation:
+      type: string
+      description: パスワード
+  example:
+    password: '12345678'
+    passwordConfirmation: '12345678'

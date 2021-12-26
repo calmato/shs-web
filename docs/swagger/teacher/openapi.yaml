@@ -28,13 +28,17 @@ paths:
   # Teachers
   /v1/teachers:
     $ref: './paths/v1/teachers/index.yaml'
-  /v1/teachers/{id}:
-    $ref: './paths/v1/teachers/_id.yaml'
+  /v1/teachers/{teacherId}:
+    $ref: './paths/v1/teachers/_teacherId/index.yaml'
+  /v1/teachers/{teacherId}/mail:
+    $ref: './paths/v1/teachers/_teacherId/mail.yaml'
+  /v1/teachers/{teacherId}/password:
+    $ref: './paths/v1/teachers/_teacherId/password.yaml'
   # Subjects
   /v1/subjects:
     $ref: './paths/v1/subjects/index.yaml'
-  /v1/subjects/{id}:
-    $ref: './paths/v1/subjects/_id.yaml'
+  /v1/subjects/{subjectId}:
+    $ref: './paths/v1/subjects/_subjectId.yaml'
   # Schedules
   /v1/schedules:
     $ref: './paths/v1/schedules/index.yaml'
@@ -56,6 +60,10 @@ components:
       $ref: './components/schemas/v1/auth.request.yaml#/updateMyPasswordRequest'
     v1CreateTeacherRequest:
       $ref: './components/schemas/v1/teachers.request.yaml#/createTeacherRequest'
+    v1UpdateTeacherMailRequest:
+      $ref: './components/schemas/v1/teachers.request.yaml#/updateTeacherMailRequest'
+    v1UpdateTeacherPasswordRequest:
+      $ref: './components/schemas/v1/teachers.request.yaml#/updateTeacherPasswordRequest'
     v1CreateSubjectRequest:
       $ref: './components/schemas/v1/subjects.request.yaml#/createSubjectRequest'
     v1UpdateSubjectRequest:

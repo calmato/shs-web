@@ -103,6 +103,53 @@ func (h *apiV1Handler) CreateTeacher(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, res)
 }
 
+func (h *apiV1Handler) UpdateTeacherMail(ctx *gin.Context) {
+	c := util.SetMetadata(ctx)
+
+	teacherID := ctx.Param("teacherId")
+	req := &request.UpdateTeacherMailRequest{}
+	if err := ctx.BindJSON(req); err != nil {
+		badRequest(ctx, err)
+		return
+	}
+
+	in := &user.UpdateTeacherMailRequest{
+		Id:   teacherID,
+		Mail: req.Mail,
+	}
+	_, err := h.user.UpdateTeacherMail(c, in)
+	if err != nil {
+		httpError(ctx, err)
+		return
+	}
+
+	ctx.JSON(http.StatusNoContent, gin.H{})
+}
+
+func (h *apiV1Handler) UpdateTeacherPassword(ctx *gin.Context) {
+	c := util.SetMetadata(ctx)
+
+	teacherID := ctx.Param("teacherId")
+	req := &request.UpdateTeacherPasswordRequest{}
+	if err := ctx.BindJSON(req); err != nil {
+		badRequest(ctx, err)
+		return
+	}
+
+	in := &user.UpdateTeacherPasswordRequest{
+		Id:                   teacherID,
+		Password:             req.Password,
+		PasswordConfirmation: req.PasswordConfirmation,
+	}
+	_, err := h.user.UpdateTeacherPassword(c, in)
+	if err != nil {
+		httpError(ctx, err)
+		return
+	}
+
+	ctx.JSON(http.StatusNoContent, gin.H{})
+}
+
 func (h *apiV1Handler) getTeacher(ctx context.Context, teacherID string) (*gentity.Teacher, error) {
 	in := &user.GetTeacherRequest{
 		Id: teacherID,
