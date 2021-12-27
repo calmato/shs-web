@@ -27,7 +27,7 @@ func newMock() (*mocks, error) {
 		Socket:        "tcp",
 		Host:          os.Getenv("DB_HOST"),
 		Port:          os.Getenv("DB_PORT"),
-		Database:      "classrooms",
+		Database:      "lessons",
 		Username:      os.Getenv("DB_USERNAME"),
 		Password:      os.Getenv("DB_PASSWORD"),
 		DisableLogger: true,

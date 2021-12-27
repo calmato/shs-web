@@ -5,6 +5,9 @@
 package mock_validation
 
 import (
+	reflect "reflect"
+
+	lesson "github.com/calmato/shs-web/api/proto/lesson"
 	gomock "github.com/golang/mock/gomock"
 )
 
@@ -29,4 +32,18 @@ func NewMockRequestValidation(ctrl *gomock.Controller) *MockRequestValidation {
 // EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockRequestValidation) EXPECT() *MockRequestValidationMockRecorder {
 	return m.recorder
+}
+
+// CreateShifts mocks base method.
+func (m *MockRequestValidation) CreateShifts(req *lesson.CreateShiftsRequest) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateShifts", req)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// CreateShifts indicates an expected call of CreateShifts.
+func (mr *MockRequestValidationMockRecorder) CreateShifts(req interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateShifts", reflect.TypeOf((*MockRequestValidation)(nil).CreateShifts), req)
 }

@@ -3,3 +3,48 @@
 
 // Package mock_database is a generated GoMock package.
 package mock_database
+
+import (
+	context "context"
+	reflect "reflect"
+
+	entity "github.com/calmato/shs-web/api/internal/lesson/entity"
+	gomock "github.com/golang/mock/gomock"
+)
+
+// MockShift is a mock of Shift interface.
+type MockShift struct {
+	ctrl     *gomock.Controller
+	recorder *MockShiftMockRecorder
+}
+
+// MockShiftMockRecorder is the mock recorder for MockShift.
+type MockShiftMockRecorder struct {
+	mock *MockShift
+}
+
+// NewMockShift creates a new mock instance.
+func NewMockShift(ctrl *gomock.Controller) *MockShift {
+	mock := &MockShift{ctrl: ctrl}
+	mock.recorder = &MockShiftMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockShift) EXPECT() *MockShiftMockRecorder {
+	return m.recorder
+}
+
+// MultipleCreate mocks base method.
+func (m *MockShift) MultipleCreate(ctx context.Context, summary *entity.ShiftSummary, shifts entity.Shifts) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "MultipleCreate", ctx, summary, shifts)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// MultipleCreate indicates an expected call of MultipleCreate.
+func (mr *MockShiftMockRecorder) MultipleCreate(ctx, summary, shifts interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MultipleCreate", reflect.TypeOf((*MockShift)(nil).MultipleCreate), ctx, summary, shifts)
+}

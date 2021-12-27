@@ -54,10 +54,15 @@ func Exec() error {
 
 	// 依存関係の解決
 	regParams := &params{
-		logger: logger,
-		db:     db,
+		insecure:            conf.GRPCInsecure,
+		logger:              logger,
+		db:                  db,
+		classroomServiceURL: conf.ClassroomServiceURL,
 	}
-	reg := newRegistry(regParams)
+	reg, err := newRegistry(regParams)
+	if err != nil {
+		return err
+	}
 
 	// gRPC Serverの設定
 	gRPCParams := &grpc.OptionParams{

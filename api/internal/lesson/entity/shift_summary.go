@@ -1,8 +1,10 @@
 package entity
 
 import (
+	"strconv"
 	"time"
 
+	"github.com/calmato/shs-web/api/pkg/jst"
 	"github.com/calmato/shs-web/api/proto/lesson"
 )
 
@@ -26,6 +28,30 @@ type ShiftSummary struct {
 }
 
 type ShiftSummaries []*ShiftSummary
+
+func NewShiftSummary(yearMonth int32, openAt, endAt int64) *ShiftSummary {
+	return &ShiftSummary{
+		YearMonth: yearMonth,
+		OpenAt:    jst.ParseFromUnix(openAt),
+		EndAt:     jst.ParseFromUnix(endAt),
+	}
+}
+
+func (s *ShiftSummary) Year() (int, error) {
+	date, err := jst.Parse("200601", strconv.Itoa(int(s.YearMonth)))
+	if err != nil {
+		return 0, err
+	}
+	return date.Year(), nil
+}
+
+func (s *ShiftSummary) Month() (int, error) {
+	date, err := jst.Parse("200601", strconv.Itoa(int(s.YearMonth)))
+	if err != nil {
+		return 0, err
+	}
+	return int(date.Month()), nil
+}
 
 func (s *ShiftSummary) Fill(now time.Time) {
 	switch {

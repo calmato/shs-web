@@ -10,7 +10,9 @@ import (
 
 	"github.com/calmato/shs-web/api/internal/lesson/database"
 	"github.com/calmato/shs-web/api/internal/lesson/validation"
+	mock_database "github.com/calmato/shs-web/api/mock/lesson/database"
 	mock_validation "github.com/calmato/shs-web/api/mock/lesson/validation"
+	mock_classroom "github.com/calmato/shs-web/api/mock/proto/classroom"
 	"github.com/calmato/shs-web/api/pkg/jst"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
@@ -27,9 +29,12 @@ var errmock = errors.New("some error")
 type mocks struct {
 	db        *dbMocks
 	validator *mock_validation.MockRequestValidation
+	classroom *mock_classroom.MockClassroomServiceClient
 }
 
-type dbMocks struct{}
+type dbMocks struct {
+	Shift *mock_database.MockShift
+}
 
 type testResponse struct {
 	code codes.Code
@@ -47,11 +52,14 @@ func newMocks(ctrl *gomock.Controller) *mocks {
 	return &mocks{
 		db:        newDBMocks(ctrl),
 		validator: mock_validation.NewMockRequestValidation(ctrl),
+		classroom: mock_classroom.NewMockClassroomServiceClient(ctrl),
 	}
 }
 
 func newDBMocks(ctrl *gomock.Controller) *dbMocks {
-	return &dbMocks{}
+	return &dbMocks{
+		Shift: mock_database.NewMockShift(ctrl),
+	}
 }
 
 func newLessonService(mocks *mocks, opts *testOptions) *lessonService {
@@ -60,8 +68,11 @@ func newLessonService(mocks *mocks, opts *testOptions) *lessonService {
 		logger:      zap.NewNop(),
 		sharedGroup: &singleflight.Group{},
 		waitGroup:   &sync.WaitGroup{},
-		db:          &database.Database{},
-		validator:   mocks.validator,
+		db: &database.Database{
+			Shift: mocks.db.Shift,
+		},
+		validator: mocks.validator,
+		classroom: mocks.classroom,
 	}
 }
 
