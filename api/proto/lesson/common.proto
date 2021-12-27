@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package lesson;
+
+option go_package = "github.com/calmato/shs-web/api/proto/lesson";
+
+enum ShiftStatus {
+  SHIFT_STATUS_UNKNOWN   = 0; // シフト募集状況不明
+  SHIFT_STATUS_WAITING   = 1; // 募集前
+  SHIFT_STATUS_ACCEPTING = 2; // 募集中
+  SHIFT_STATUS_FINISHED  = 3; // 募集終了
+}

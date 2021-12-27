@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package lesson;
+
+option go_package = "github.com/calmato/shs-web/api/proto/lesson";
+
+import "lesson/common.proto";
+
+message ShiftSummary {
+  int64       id         = 1; // シフト募集サマリID
+  int32       year_month = 2; // 年月
+  ShiftStatus status     = 3; // 募集ステータス
+  int64       open_at    = 4; // 募集開始日時
+  int64       end_at     = 5; // 募集締切日時
+  int64       created_at = 6; // 登録日時
+  int64       updated_at = 7; // 更新日時
+}

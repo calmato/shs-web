@@ -50,6 +50,10 @@ func FormatHHMMSS(t time.Time) string {
 	return Format(t, "150405")
 }
 
+func FormatHHMM(t time.Time) string {
+	return Format(t, "1504")
+}
+
 func Parse(format, target string) (time.Time, error) {
 	return time.ParseInLocation(format, target, jst)
 }
