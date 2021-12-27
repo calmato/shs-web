@@ -15,6 +15,8 @@ tags:
   description: 授業科目関連
 - name: Schedule
   description: 授業コマ関連
+- name: Shift
+  description: シフト作成関連
 paths:
   # Auth
   /v1/me:
@@ -34,6 +36,7 @@ paths:
     $ref: './paths/v1/teachers/_teacherId/mail.yaml'
   /v1/teachers/{teacherId}/password:
     $ref: './paths/v1/teachers/_teacherId/password.yaml'
+  # Students
   # Subjects
   /v1/subjects:
     $ref: './paths/v1/subjects/index.yaml'
@@ -42,6 +45,9 @@ paths:
   # Schedules
   /v1/schedules:
     $ref: './paths/v1/schedules/index.yaml'
+  # Shifts
+  /v1/shifts:
+    $ref: './paths/v1/shifts/index.yaml'
 components:
   securitySchemes:
     BearerAuth:
@@ -72,6 +78,8 @@ components:
       $ref: './components/schemas/v1/schedules.request.yaml#/updateSchedulesRequest'
     v1UpdateRoomsTotalRequest:
       $ref: './components/schemas/v1/rooms.request.yaml#/updateRoomsTotalRequest'
+    v1CreateShiftsRequest:
+      $ref: './components/schemas/v1/shifts.request.yaml#/createShiftsRequest'
     # Response
     v1AuthResponse:
       $ref: './components/schemas/v1/auth.response.yaml#/authResponse'
@@ -87,3 +95,5 @@ components:
       $ref: './components/schemas/v1/schedules.response.yaml#/schedulesResponse'
     v1RoomsTotalResponse:
       $ref: './components/schemas/v1/rooms.response.yaml#/roomsTotalResponse'
+    v1ShiftsResponse:
+      $ref: './components/schemas/v1/shifts.response.yaml#/shiftsResponse'

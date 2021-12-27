@@ -1,0 +1,28 @@
+createShiftsRequest:
+  type: object
+  properties:
+    yearMonth:
+      type: string
+      description: シフト募集年月
+      format: 'YYYYMM'
+    openDate:
+      type: string
+      description: シフト募集開始日
+      format: 'YYYYMMDD'
+    endDate:
+      type: string
+      description: シフト募集締切日
+      format: 'YYYYMMDD'
+    closedDates:
+      type: array
+      description: 休講日
+      items:
+        type: string
+        format: 'YYYYMMDD'
+  example:
+    yearMonth: '202202'
+    openDate: '20210101'
+    endDate: '20210114'
+    closedDates:
+    - '20220202'
+    - '20220214'

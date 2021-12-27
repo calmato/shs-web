@@ -89,6 +89,7 @@ func (h *apiV1Handler) AdminRoutes(rg *gin.RouterGroup) {
 	rg.DELETE("/v1/subjects/:subjectId", h.DeleteSubject)
 	rg.PATCH("/v1/schedules", h.UpdateSchedules)
 	rg.PATCH("/v1/rooms", h.UpdateRoomsTotal)
+	rg.POST("/v1/shifts", h.CreateShifts)
 }
 
 func (h *apiV1Handler) NoAuthRoutes(rg *gin.RouterGroup) {}
