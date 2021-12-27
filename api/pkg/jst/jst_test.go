@@ -60,6 +60,7 @@ func TestToString(t *testing.T) {
 		expectYYYYMMDD string
 		expectYYYYMM   string
 		expectHHMMSS   string
+		expectHHMM     string
 	}{
 		{
 			name:           "success",
@@ -69,6 +70,7 @@ func TestToString(t *testing.T) {
 			expectYYYYMMDD: "20210802",
 			expectYYYYMM:   "202108",
 			expectHHMMSS:   "183000",
+			expectHHMM:     "1830",
 		},
 	}
 
@@ -80,6 +82,7 @@ func TestToString(t *testing.T) {
 			assert.Equal(t, tt.expectYYYYMMDD, FormatYYYYMMDD(tt.now))
 			assert.Equal(t, tt.expectYYYYMM, FormatYYYYMM(tt.now))
 			assert.Equal(t, tt.expectHHMMSS, FormatHHMMSS(tt.now))
+			assert.Equal(t, tt.expectHHMM, FormatHHMM(tt.now))
 		})
 	}
 }
