@@ -8,6 +8,7 @@
       :success="valid"
       :autofocus="autofocus"
       :outlined="outlined"
+      :chips="chips"
     />
   </validation-provider>
 </template>
@@ -33,6 +34,11 @@ export default defineComponent({
       default: '',
     },
     outlined: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    chips: {
       type: Boolean,
       required: false,
       default: false,
