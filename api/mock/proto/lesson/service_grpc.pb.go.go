@@ -5,9 +5,12 @@
 package mock_lesson
 
 import (
+	context "context"
 	reflect "reflect"
 
+	lesson "github.com/calmato/shs-web/api/proto/lesson"
 	gomock "github.com/golang/mock/gomock"
+	grpc "google.golang.org/grpc"
 )
 
 // MockLessonServiceClient is a mock of LessonServiceClient interface.
@@ -33,6 +36,26 @@ func (m *MockLessonServiceClient) EXPECT() *MockLessonServiceClientMockRecorder 
 	return m.recorder
 }
 
+// CreateShifts mocks base method.
+func (m *MockLessonServiceClient) CreateShifts(ctx context.Context, in *lesson.CreateShiftsRequest, opts ...grpc.CallOption) (*lesson.CreateShiftsResponse, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "CreateShifts", varargs...)
+	ret0, _ := ret[0].(*lesson.CreateShiftsResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CreateShifts indicates an expected call of CreateShifts.
+func (mr *MockLessonServiceClientMockRecorder) CreateShifts(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateShifts", reflect.TypeOf((*MockLessonServiceClient)(nil).CreateShifts), varargs...)
+}
+
 // MockLessonServiceServer is a mock of LessonServiceServer interface.
 type MockLessonServiceServer struct {
 	ctrl     *gomock.Controller
@@ -54,6 +77,21 @@ func NewMockLessonServiceServer(ctrl *gomock.Controller) *MockLessonServiceServe
 // EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockLessonServiceServer) EXPECT() *MockLessonServiceServerMockRecorder {
 	return m.recorder
+}
+
+// CreateShifts mocks base method.
+func (m *MockLessonServiceServer) CreateShifts(arg0 context.Context, arg1 *lesson.CreateShiftsRequest) (*lesson.CreateShiftsResponse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateShifts", arg0, arg1)
+	ret0, _ := ret[0].(*lesson.CreateShiftsResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CreateShifts indicates an expected call of CreateShifts.
+func (mr *MockLessonServiceServerMockRecorder) CreateShifts(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateShifts", reflect.TypeOf((*MockLessonServiceServer)(nil).CreateShifts), arg0, arg1)
 }
 
 // mustEmbedUnimplementedLessonServiceServer mocks base method.

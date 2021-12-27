@@ -112,6 +112,7 @@ services:
       - DB_PORT=3306
       - DB_USERNAME=root
       - DB_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - CLASSROOM_SERVICE_URL=classroom_api:8080
     ports:
       - 19020:8080
       - 19021:9090

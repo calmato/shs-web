@@ -4,4 +4,23 @@ package lesson;
 
 option go_package = "github.com/calmato/shs-web/api/proto/lesson";
 
-service LessonService {}
+import "github.com/envoyproxy/protoc-gen-validate/validate/validate.proto";
+
+import "lesson/shift.proto";
+import "lesson/shift_summary.proto";
+
+service LessonService {
+  rpc CreateShifts(CreateShiftsRequest) returns (CreateShiftsResponse);
+}
+
+message CreateShiftsRequest {
+  int32           year_month   = 1 [(validate.rules).int32 = { gte: 100000, lt: 1000000 }];
+  int64           open_at      = 2 [(validate.rules).int64 = { gt: 0 }];
+  int64           end_at       = 3 [(validate.rules).int64 = { gt: 0 }];
+  repeated string closed_dates = 4 [(validate.rules).repeated = { unique: true, items: { string: { len: 8, pattern: "^[0-9]*$" }}}];
+}
+
+message CreateShiftsResponse {
+  ShiftSummary   summary = 1;
+  repeated Shift shifts  = 2;
+}

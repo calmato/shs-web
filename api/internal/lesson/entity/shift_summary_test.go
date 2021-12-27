@@ -9,6 +9,115 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestShiftSummary(t *testing.T) {
+	t.Parallel()
+	tests := []struct {
+		name      string
+		yearMonth int32
+		openAt    int64
+		endAt     int64
+		expect    *ShiftSummary
+	}{
+		{
+			name:      "success",
+			yearMonth: 202202,
+			openAt:    jst.Date(2022, 1, 1, 0, 0, 0, 0).Unix(),
+			endAt:     jst.Date(2022, 1, 15, 0, 0, 0, 0).Unix(),
+			expect: &ShiftSummary{
+				YearMonth: 202202,
+				Status:    ShiftStatusUnknown,
+				OpenAt:    jst.Date(2022, 1, 1, 0, 0, 0, 0),
+				EndAt:     jst.Date(2022, 1, 15, 0, 0, 0, 0),
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			actual := NewShiftSummary(tt.yearMonth, tt.openAt, tt.endAt)
+			assert.Equal(t, tt.expect, actual)
+		})
+	}
+}
+
+func TestShiftSummary_Year(t *testing.T) {
+	t.Parallel()
+	tests := []struct {
+		name    string
+		summary *ShiftSummary
+		expect  int
+		isErr   bool
+	}{
+		{
+			name: "success",
+			summary: &ShiftSummary{
+				YearMonth: 202202,
+				Status:    ShiftStatusUnknown,
+				OpenAt:    jst.Date(2022, 1, 1, 0, 0, 0, 0),
+				EndAt:     jst.Date(2022, 1, 15, 0, 0, 0, 0),
+			},
+			expect: 2022,
+			isErr:  false,
+		},
+		{
+			name:    "failed to parse",
+			summary: &ShiftSummary{YearMonth: -1},
+			expect:  0,
+			isErr:   true,
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			actual, err := tt.summary.Year()
+			assert.Equal(t, tt.isErr, err != nil, err)
+			assert.Equal(t, tt.expect, actual)
+		})
+	}
+}
+
+func TestShiftSummary_Month(t *testing.T) {
+	t.Parallel()
+	tests := []struct {
+		name    string
+		summary *ShiftSummary
+		expect  int
+		isErr   bool
+	}{
+		{
+			name: "success",
+			summary: &ShiftSummary{
+				YearMonth: 202202,
+				Status:    ShiftStatusUnknown,
+				OpenAt:    jst.Date(2022, 1, 1, 0, 0, 0, 0),
+				EndAt:     jst.Date(2022, 1, 15, 0, 0, 0, 0),
+			},
+			expect: 2,
+			isErr:  false,
+		},
+		{
+			name:    "failed to parse",
+			summary: &ShiftSummary{YearMonth: -1},
+			expect:  0,
+			isErr:   true,
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			actual, err := tt.summary.Month()
+			assert.Equal(t, tt.isErr, err != nil, err)
+			assert.Equal(t, tt.expect, actual)
+		})
+	}
+}
+
 func TestShiftSummary_Fill(t *testing.T) {
 	t.Parallel()
 	now := jst.Date(2021, 12, 02, 18, 30, 0, 0)

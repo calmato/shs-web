@@ -3,9 +3,11 @@
 package database
 
 import (
+	"context"
 	"errors"
 	"fmt"
 
+	"github.com/calmato/shs-web/api/internal/lesson/entity"
 	"github.com/calmato/shs-web/api/pkg/database"
 	"github.com/go-sql-driver/mysql"
 	"gorm.io/gorm"
@@ -23,15 +25,22 @@ type Params struct {
 	Database *database.Client
 }
 
-type Database struct{}
+type Database struct {
+	Shift Shift
+}
 
 func NewDatabase(params *Params) *Database {
-	return &Database{}
+	return &Database{
+		Shift: NewShift(params.Database),
+	}
 }
 
 /**
  * interface
  */
+type Shift interface {
+	MultipleCreate(ctx context.Context, summary *entity.ShiftSummary, shifts entity.Shifts) error
+}
 
 /**
  * params

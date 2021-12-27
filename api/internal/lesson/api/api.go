@@ -8,6 +8,7 @@ import (
 	"github.com/calmato/shs-web/api/internal/lesson/database"
 	"github.com/calmato/shs-web/api/internal/lesson/validation"
 	"github.com/calmato/shs-web/api/pkg/jst"
+	"github.com/calmato/shs-web/api/proto/classroom"
 	"github.com/calmato/shs-web/api/proto/lesson"
 	"go.uber.org/zap"
 	"golang.org/x/sync/singleflight"
@@ -16,9 +17,10 @@ import (
 )
 
 type Params struct {
-	Logger    *zap.Logger
-	WaitGroup *sync.WaitGroup
-	Database  *database.Database
+	Logger           *zap.Logger
+	WaitGroup        *sync.WaitGroup
+	Database         *database.Database
+	ClassroomService classroom.ClassroomServiceClient
 }
 
 type lessonService struct {
@@ -29,6 +31,7 @@ type lessonService struct {
 	waitGroup   *sync.WaitGroup
 	db          *database.Database
 	validator   validation.RequestValidation
+	classroom   classroom.ClassroomServiceClient
 }
 
 func NewLessonService(params *Params) lesson.LessonServiceServer {
@@ -39,6 +42,7 @@ func NewLessonService(params *Params) lesson.LessonServiceServer {
 		sharedGroup: &singleflight.Group{},
 		db:          params.Database,
 		validator:   validation.NewRequestValidation(),
+		classroom:   params.ClassroomService,
 	}
 }
 
