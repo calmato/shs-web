@@ -28,11 +28,12 @@ type ShiftSummary struct {
 type ShiftSummaries []*ShiftSummary
 
 func (s *ShiftSummary) Fill(now time.Time) {
-	if now.Before(s.OpenAt) { // 開始前: now < OpenAt
+	switch {
+	case now.Before(s.OpenAt): // 開始前: now < OpenAt
 		s.Status = ShiftStatusWaiting
-	} else if now.After(s.EndAt) { // 締切後: CloseAt < now
+	case now.After(s.EndAt): // 締切後: CloseAt < now
 		s.Status = ShiftStatusFinished
-	} else {
+	default: // 募集中: OpenAt <= now && now <= CloseAt
 		s.Status = ShiftStatusAccepting
 	}
 }
