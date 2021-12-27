@@ -50,6 +50,7 @@ export default defineComponent({
     value: {
       required: false,
       default: undefined,
+      type: [String, Number],
     },
   },
 
