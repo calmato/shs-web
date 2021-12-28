@@ -69,6 +69,7 @@ func newUserService(mocks *mocks, opts *testOptions) *userService {
 		waitGroup:   &sync.WaitGroup{},
 		db: &database.Database{
 			Teacher: mocks.db.Teacher,
+			Student: mocks.db.Student,
 		},
 		validator: mocks.validator,
 	}
