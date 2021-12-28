@@ -22,26 +22,18 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from '@nuxtjs/composition-api'
+import { defineComponent, PropType } from '@nuxtjs/composition-api'
 import { Submission, SubmissionStatusType } from '~/types/props/submission'
 
 export default defineComponent({
-  setup(_) {
-    const items: Submission[] = [
-      {
-        title: '1月',
-        endDate: '20210125',
-        submissionStatus: '未提出',
-        editStatus: '入力する',
-      },
-      {
-        title: '2月',
-        endDate: '20230225',
-        submissionStatus: '提出済み',
-        editStatus: '編集する',
-      },
-    ]
+  props: {
+    items: {
+      type: Array as PropType<Submission[]>,
+      default: () => [],
+    },
+  },
 
+  setup(_) {
     const getEnddate = (endDate: string): string => {
       const year: string = endDate.slice(0, 4)
       const month: string = endDate.slice(5, 6)
@@ -59,7 +51,6 @@ export default defineComponent({
     }
 
     return {
-      items,
       getEnddate,
       getStatusColor,
     }
