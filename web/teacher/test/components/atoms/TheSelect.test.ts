@@ -78,6 +78,17 @@ describe('components/atoms/TheSelect', () => {
         })
       })
 
+      describe('appendOuterIcon', () => {
+        it('初期値', () => {
+          expect(wrapper.props().appendOuterIcon).toBeUndefined()
+        })
+
+        it('値が代入されること', async () => {
+          await wrapper.setProps({ appendOuterIcon: 'mdi-map' })
+          expect(wrapper.props().appendOuterIcon).toBe('mdi-map')
+        })
+      })
+
       describe('items', () => {
         it('初期値', () => {
           expect(wrapper.props().items).toEqual([])
