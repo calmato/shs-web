@@ -46,7 +46,7 @@ export default defineComponent({
       {
         name: 'シフト希望',
         icon: 'mdi-note-edit-outline',
-        path: '#シフト希望', // TODO: update
+        path: '/submissions',
       },
       {
         name: 'シフト作成',
