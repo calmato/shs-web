@@ -94,29 +94,46 @@ func TestCreateShifts(t *testing.T) {
 						CreatedAt: now,
 						UpdatedAt: now,
 					},
-					Shifts: map[string]entity.Shifts{
+					Shifts: map[string]*entity.ShiftDetail{
 						"20220201": {
-							{
-								ID:        1,
-								Date:      "20220201",
-								StartTime: "1700",
-								EndTime:   "1830",
-							},
-							{
-								ID:        2,
-								Date:      "20220201",
-								StartTime: "1830",
-								EndTime:   "2000",
+							IsClosed: false,
+							Lessons: []*entity.ShiftDetailLesson{
+								{ID: 1, StartTime: "1700", EndTime: "1830"},
+								{ID: 2, StartTime: "1830", EndTime: "2000"},
 							},
 						},
+						"20220202": {IsClosed: true, Lessons: []*entity.ShiftDetailLesson{}},
 						"20220203": {
-							{
-								ID:        3,
-								Date:      "20220203",
-								StartTime: "1700",
-								EndTime:   "1830",
+							IsClosed: false,
+							Lessons: []*entity.ShiftDetailLesson{
+								{ID: 3, StartTime: "1700", EndTime: "1830"},
 							},
 						},
+						"20220204": {IsClosed: true, Lessons: []*entity.ShiftDetailLesson{}},
+						"20220205": {IsClosed: true, Lessons: []*entity.ShiftDetailLesson{}},
+						"20220206": {IsClosed: true, Lessons: []*entity.ShiftDetailLesson{}},
+						"20220207": {IsClosed: true, Lessons: []*entity.ShiftDetailLesson{}},
+						"20220208": {IsClosed: true, Lessons: []*entity.ShiftDetailLesson{}},
+						"20220209": {IsClosed: true, Lessons: []*entity.ShiftDetailLesson{}},
+						"20220210": {IsClosed: true, Lessons: []*entity.ShiftDetailLesson{}},
+						"20220211": {IsClosed: true, Lessons: []*entity.ShiftDetailLesson{}},
+						"20220212": {IsClosed: true, Lessons: []*entity.ShiftDetailLesson{}},
+						"20220213": {IsClosed: true, Lessons: []*entity.ShiftDetailLesson{}},
+						"20220214": {IsClosed: true, Lessons: []*entity.ShiftDetailLesson{}},
+						"20220215": {IsClosed: true, Lessons: []*entity.ShiftDetailLesson{}},
+						"20220216": {IsClosed: true, Lessons: []*entity.ShiftDetailLesson{}},
+						"20220217": {IsClosed: true, Lessons: []*entity.ShiftDetailLesson{}},
+						"20220218": {IsClosed: true, Lessons: []*entity.ShiftDetailLesson{}},
+						"20220219": {IsClosed: true, Lessons: []*entity.ShiftDetailLesson{}},
+						"20220220": {IsClosed: true, Lessons: []*entity.ShiftDetailLesson{}},
+						"20220221": {IsClosed: true, Lessons: []*entity.ShiftDetailLesson{}},
+						"20220222": {IsClosed: true, Lessons: []*entity.ShiftDetailLesson{}},
+						"20220223": {IsClosed: true, Lessons: []*entity.ShiftDetailLesson{}},
+						"20220224": {IsClosed: true, Lessons: []*entity.ShiftDetailLesson{}},
+						"20220225": {IsClosed: true, Lessons: []*entity.ShiftDetailLesson{}},
+						"20220226": {IsClosed: true, Lessons: []*entity.ShiftDetailLesson{}},
+						"20220227": {IsClosed: true, Lessons: []*entity.ShiftDetailLesson{}},
+						"20220228": {IsClosed: true, Lessons: []*entity.ShiftDetailLesson{}},
 					},
 				},
 			},
@@ -170,6 +187,41 @@ func TestCreateShifts(t *testing.T) {
 					ClosedDates: []string{"20210202", "20210214"},
 				}
 				mocks.lesson.EXPECT().CreateShifts(gomock.Any(), in).Return(nil, errmock)
+			},
+			req: &request.CreateShiftsRequest{
+				YearMonth:   "202202",
+				OpenDate:    "20220101",
+				EndDate:     "20220114",
+				ClosedDates: []string{"20210202", "20210214"},
+			},
+			expect: &testResponse{
+				code: http.StatusInternalServerError,
+			},
+		},
+		{
+			name: "failed to new shift details",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
+				in := &lesson.CreateShiftsRequest{
+					YearMonth:   202202,
+					OpenAt:      jst.Date(2022, 1, 1, 0, 0, 0, 0).Unix(),
+					EndAt:       jst.Date(2022, 1, 15, 0, 0, 0, 0).Unix(),
+					ClosedDates: []string{"20210202", "20210214"},
+				}
+				out := &lesson.CreateShiftsResponse{
+					Summary: summary,
+					Shifts: []*lesson.Shift{
+						{
+							Id:             1,
+							ShiftSummaryId: 1,
+							Date:           "20220200",
+							StartTime:      "1700",
+							EndTime:        "1830",
+							CreatedAt:      now.Unix(),
+							UpdatedAt:      now.Unix(),
+						},
+					},
+				}
+				mocks.lesson.EXPECT().CreateShifts(gomock.Any(), in).Return(out, nil)
 			},
 			req: &request.CreateShiftsRequest{
 				YearMonth:   "202202",

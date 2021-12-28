@@ -39,26 +39,31 @@ shiftsResponse:
       properties:
         'YYYYMMDD':
           type: array
-          description: 授業コマ一覧
+          description: 日毎の授業コマ一覧
           items:
             type: object
             properties:
-              id:
-                type: integer
-                format: int64
-                description: 授業コマID
-              date:
-                type: string
-                description: 日にち
-                format: 'YYYYMMDD'
-              startTime:
-                type: string
-                format: 'HHMM'
-                description: 授業開始時間
-              endTime:
-                type: string
-                format: 'HHMM'
-                description: 授業終了時間
+              isClosed:
+                type: boolean
+                description: 休校フラグ
+              lessons:
+                type: array
+                description: 授業コマ一覧
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      format: int64
+                      description: 授業コマID
+                    startTime:
+                      type: string
+                      format: 'HHMM'
+                      description: 授業開始時間
+                    endTime:
+                      type: string
+                      format: 'HHMM'
+                      description: 授業終了時間
   example:
     summary:
       year: 2022
@@ -70,20 +75,23 @@ shiftsResponse:
       updatedAt: '2021-12-12T12:12:30.100Z'
     shifts:
       '20220201':
-      - id: 1
-        date: '20220201'
-        startTime: '1700'
-        endTime: '1830'
-      - id: 2
-        date: '20220201'
-        startTime: '1830'
-        endTime: '2000'
+        isClosed: false
+        lessons:
+        - id: 1
+          startTime: '1700'
+          endTime: '1830'
+        - id: 2
+          startTime: '1830'
+          endTime: '2000'
       '20220202':
-      - id: 3
-        date: '20220202'
-        startTime: '1700'
-        endTime: '1830'
-      - id: 4
-        date: '20220202'
-        startTime: '1830'
-        endTime: '2000'
+        isClosed: true
+        lessons: []
+      '20220203':
+        isClosed: false
+        lessons:
+        - id: 3
+          startTime: '1700'
+          endTime: '1830'
+        - id: 4
+          startTime: '1830'
+          endTime: '2000'

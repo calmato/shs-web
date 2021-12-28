@@ -49,12 +49,20 @@ func (h *apiV1Handler) CreateShifts(ctx *gin.Context) {
 		httpError(ctx, err)
 		return
 	}
-	summary := gentity.NewShiftSummary(out.Summary)
-	shifts := gentity.NewShifts(out.Shifts)
+	gsummary := gentity.NewShiftSummary(out.Summary)
+	gshifts := gentity.NewShifts(out.Shifts)
 
+	summary := entity.NewShiftSummary(gsummary)
+	shifts := entity.NewShifts(gshifts)
+
+	shiftsMap, err := shifts.GroupByDate()
+	if err != nil {
+		httpError(ctx, err)
+		return
+	}
 	res := &response.ShiftsResponse{
-		Summary: entity.NewShiftSummary(summary),
-		Shifts:  entity.NewShifts(shifts).GroupByDate(),
+		Summary: summary,
+		Shifts:  entity.NewShiftDetailsForMonth(summary, shiftsMap),
 	}
 	ctx.JSON(http.StatusOK, res)
 }
