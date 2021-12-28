@@ -2,11 +2,68 @@ package api
 
 import (
 	"context"
+	"fmt"
 
+	"github.com/calmato/shs-web/api/internal/lesson/database"
 	"github.com/calmato/shs-web/api/internal/lesson/entity"
 	"github.com/calmato/shs-web/api/proto/classroom"
 	"github.com/calmato/shs-web/api/proto/lesson"
+	"golang.org/x/sync/errgroup"
 )
+
+func (s *lessonService) ListShiftSummaries(
+	ctx context.Context, req *lesson.ListShiftSummariesRequest,
+) (*lesson.ListShiftSummariesResponse, error) {
+	const prefixKey = "listShifts"
+	if err := s.validator.ListShiftSummaries(req); err != nil {
+		return nil, gRPCError(err)
+	}
+
+	sharedKey := fmt.Sprintf("%s:%d:%d:%d", prefixKey, req.Status, req.Limit, req.Offset)
+	res, err, _ := s.sharedGroup.Do(sharedKey, func() (interface{}, error) {
+		status, _ := entity.NewShiftStatus(req.Status)
+		summaries, total, err := s.listShifts(ctx, status, req.Limit, req.Offset)
+		if err != nil {
+			return nil, err
+		}
+		res := &lesson.ListShiftSummariesResponse{
+			Summaries: summaries.Proto(),
+			Total:     total,
+		}
+		return res, nil
+	})
+	if err != nil {
+		return nil, gRPCError(err)
+	}
+
+	return res.(*lesson.ListShiftSummariesResponse), nil
+}
+
+func (s *lessonService) listShifts(
+	ctx context.Context, status entity.ShiftStatus, limit, offset int64,
+) (entity.ShiftSummaries, int64, error) {
+	eg, ectx := errgroup.WithContext(ctx)
+	var summaries entity.ShiftSummaries
+	eg.Go(func() (err error) {
+		params := &database.ListShiftSummariesParams{
+			Status: status,
+			Limit:  int(limit),
+			Offset: int(offset),
+		}
+		summaries, err = s.db.ShiftSummary.List(ectx, params)
+		return
+	})
+	var total int64
+	eg.Go(func() (err error) {
+		total, err = s.db.ShiftSummary.Count(ectx)
+		return
+	})
+	if err := eg.Wait(); err != nil {
+		return nil, 0, err
+	}
+
+	return summaries, total, nil
+}
 
 func (s *lessonService) CreateShifts(
 	ctx context.Context, req *lesson.CreateShiftsRequest,

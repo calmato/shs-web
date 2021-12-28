@@ -8,6 +8,63 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestListShiftSummaries(t *testing.T) {
+	t.Parallel()
+	validator := NewRequestValidation()
+
+	tests := []struct {
+		name  string
+		req   *lesson.ListShiftSummariesRequest
+		isErr bool
+	}{
+		{
+			name: "success",
+			req: &lesson.ListShiftSummariesRequest{
+				Limit:  30,
+				Offset: 0,
+				Status: lesson.ShiftStatus_SHIFT_STATUS_ACCEPTING,
+			},
+			isErr: false,
+		},
+		{
+			name: "Limit is gte",
+			req: &lesson.ListShiftSummariesRequest{
+				Limit:  -1,
+				Offset: 0,
+				Status: lesson.ShiftStatus_SHIFT_STATUS_ACCEPTING,
+			},
+			isErr: true,
+		},
+		{
+			name: "Offset is gte",
+			req: &lesson.ListShiftSummariesRequest{
+				Limit:  30,
+				Offset: -1,
+				Status: lesson.ShiftStatus_SHIFT_STATUS_ACCEPTING,
+			},
+			isErr: true,
+		},
+		{
+			name: "Status is defined_only",
+			req: &lesson.ListShiftSummariesRequest{
+				Limit:  30,
+				Offset: 0,
+				Status: lesson.ShiftStatus(-1),
+			},
+			isErr: true,
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			err := validator.ListShiftSummaries(tt.req)
+			assert.Equal(t, tt.isErr, err != nil, err)
+		})
+	}
+}
+
 func TestCreateShifts(t *testing.T) {
 	t.Parallel()
 	validator := NewRequestValidation()

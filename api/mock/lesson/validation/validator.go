@@ -47,3 +47,17 @@ func (mr *MockRequestValidationMockRecorder) CreateShifts(req interface{}) *gomo
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateShifts", reflect.TypeOf((*MockRequestValidation)(nil).CreateShifts), req)
 }
+
+// ListShiftSummaries mocks base method.
+func (m *MockRequestValidation) ListShiftSummaries(req *lesson.ListShiftSummariesRequest) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ListShiftSummaries", req)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// ListShiftSummaries indicates an expected call of ListShiftSummaries.
+func (mr *MockRequestValidationMockRecorder) ListShiftSummaries(req interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListShiftSummaries", reflect.TypeOf((*MockRequestValidation)(nil).ListShiftSummaries), req)
+}

@@ -6,11 +6,24 @@ option go_package = "github.com/calmato/shs-web/api/proto/lesson";
 
 import "github.com/envoyproxy/protoc-gen-validate/validate/validate.proto";
 
+import "lesson/common.proto";
 import "lesson/shift.proto";
 import "lesson/shift_summary.proto";
 
 service LessonService {
+  rpc ListShiftSummaries(ListShiftSummariesRequest) returns (ListShiftSummariesResponse);
   rpc CreateShifts(CreateShiftsRequest) returns (CreateShiftsResponse);
+}
+
+message ListShiftSummariesRequest {
+  int64       limit  = 1 [(validate.rules).int64 = { gte: 0 }];
+  int64       offset = 2 [(validate.rules).int64 = { gte: 0 }];
+  ShiftStatus status = 3 [(validate.rules).enum = { defined_only: true }];
+}
+
+message ListShiftSummariesResponse {
+  repeated ShiftSummary summaries = 1;
+  int64                 total     = 2;
 }
 
 message CreateShiftsRequest {

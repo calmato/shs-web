@@ -1,10 +1,157 @@
 package database
 
 import (
+	"context"
+	"testing"
 	"time"
 
 	"github.com/calmato/shs-web/api/internal/lesson/entity"
+	"github.com/calmato/shs-web/api/pkg/jst"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
+
+func TestShiftSummary_List(t *testing.T) {
+	m, err := newMock()
+	require.NoError(t, err)
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	_ = m.dbDelete(ctx, shiftSummaryTable)
+
+	now := jst.Now()
+
+	summaries := make(entity.ShiftSummaries, 4)
+	summaries[0] = testShiftSummary(1, 202201, now.AddDate(0, -1, 0), now.AddDate(0, -1, 1), now)
+	summaries[1] = testShiftSummary(2, 202202, now.AddDate(0, 0, -1), now.AddDate(0, 0, 1), now)
+	summaries[2] = testShiftSummary(3, 202203, now.AddDate(0, 1, 0), now.AddDate(0, 1, 1), now)
+	summaries[3] = testShiftSummary(4, 202204, now.AddDate(0, 2, 0), now.AddDate(0, 2, 1), now)
+	summaries.Fill(now)
+	err = m.db.DB.Create(&summaries).Error
+	require.NoError(t, err)
+
+	type args struct {
+		params *ListShiftSummariesParams
+	}
+	type want struct {
+		summaries entity.ShiftSummaries
+		isErr     bool
+	}
+	tests := []struct {
+		name  string
+		setup func(ctx context.Context, t *testing.T, m *mocks)
+		args  args
+		want  want
+	}{
+		{
+			name:  "success",
+			setup: func(ctx context.Context, t *testing.T, m *mocks) {},
+			args: args{
+				params: &ListShiftSummariesParams{},
+			},
+			want: want{
+				summaries: summaries,
+				isErr:     false,
+			},
+		},
+		{
+			name:  "success with params",
+			setup: func(ctx context.Context, t *testing.T, m *mocks) {},
+			args: args{
+				params: &ListShiftSummariesParams{
+					Limit:  10,
+					Offset: 1,
+					Status: entity.ShiftStatusWaiting,
+				},
+			},
+			want: want{
+				summaries: summaries[3:],
+				isErr:     false,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			ctx, cancel := context.WithCancel(context.Background())
+			defer cancel()
+
+			tt.setup(ctx, t, m)
+
+			db := NewShiftSummary(m.db)
+			actual, err := db.List(ctx, tt.args.params)
+			assert.Equal(t, tt.want.isErr, err != nil, err)
+			assert.Len(t, actual, len(tt.want.summaries))
+
+			actualMap := actual.Map()
+			for _, s := range tt.want.summaries {
+				summary := actualMap[s.ID]
+				require.NotNil(t, summary)
+				assert.Equal(t, s.Status, summary.Status)
+			}
+		})
+	}
+}
+
+func TestShiftSummary_Count(t *testing.T) {
+	m, err := newMock()
+	require.NoError(t, err)
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	_ = m.dbDelete(ctx, shiftSummaryTable)
+
+	now := jst.Now()
+
+	summaries := make(entity.ShiftSummaries, 4)
+	summaries[0] = testShiftSummary(1, 202201, now.AddDate(0, -1, 0), now.AddDate(0, -1, 1), now)
+	summaries[1] = testShiftSummary(2, 202202, now.AddDate(0, 0, -1), now.AddDate(0, 0, 1), now)
+	summaries[2] = testShiftSummary(3, 202203, now.AddDate(0, 1, 0), now.AddDate(0, 1, 1), now)
+	summaries[3] = testShiftSummary(4, 202204, now.AddDate(0, 2, 0), now.AddDate(0, 2, 1), now)
+	summaries.Fill(now)
+	err = m.db.DB.Create(&summaries).Error
+	require.NoError(t, err)
+
+	type args struct{}
+	type want struct {
+		total int64
+		isErr bool
+	}
+	tests := []struct {
+		name  string
+		setup func(ctx context.Context, t *testing.T, m *mocks)
+		args  args
+		want  want
+	}{
+		{
+			name:  "success",
+			setup: func(ctx context.Context, t *testing.T, m *mocks) {},
+			args:  args{},
+			want: want{
+				total: 4,
+				isErr: false,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			ctx, cancel := context.WithCancel(context.Background())
+			defer cancel()
+
+			tt.setup(ctx, t, m)
+
+			db := NewShiftSummary(m.db)
+			actual, err := db.Count(ctx)
+			assert.Equal(t, tt.want.isErr, err != nil, err)
+			assert.Equal(t, tt.want.total, actual)
+		})
+	}
+}
 
 func testShiftSummary(id int64, yearMonth int32, openAt, endAt, now time.Time) *entity.ShiftSummary {
 	return &entity.ShiftSummary{

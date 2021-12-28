@@ -26,18 +26,25 @@ type Params struct {
 }
 
 type Database struct {
-	Shift Shift
+	ShiftSummary ShiftSummary
+	Shift        Shift
 }
 
 func NewDatabase(params *Params) *Database {
 	return &Database{
-		Shift: NewShift(params.Database),
+		ShiftSummary: NewShiftSummary(params.Database),
+		Shift:        NewShift(params.Database),
 	}
 }
 
 /**
  * interface
  */
+type ShiftSummary interface {
+	List(ctx context.Context, p *ListShiftSummariesParams, fields ...string) (entity.ShiftSummaries, error)
+	Count(ctx context.Context) (int64, error)
+}
+
 type Shift interface {
 	MultipleCreate(ctx context.Context, summary *entity.ShiftSummary, shifts entity.Shifts) error
 }
@@ -45,6 +52,11 @@ type Shift interface {
 /**
  * params
  */
+type ListShiftSummariesParams struct {
+	Limit  int
+	Offset int
+	Status entity.ShiftStatus
+}
 
 /**
  * private methods
