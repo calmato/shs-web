@@ -1,7 +1,7 @@
 -- -----------------------------------------------
 -- Database: classrooms
 -- -----------------------------------------------
-CREATE SCHEMA `classrooms` DEFAULT CHARACTER SET utf8mb4;
+CREATE SCHEMA IF NOT EXISTS `classrooms` DEFAULT CHARACTER SET utf8mb4;
 
 -- -----------------------------------------------
 -- Table: subjects

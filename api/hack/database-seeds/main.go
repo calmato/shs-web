@@ -1,3 +1,4 @@
+// usage: go run ./main.go -db-host=127.0.0.1 -db-port=3316 -db-password=1234567
 package main
 
 import (
