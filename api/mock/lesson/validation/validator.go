@@ -61,3 +61,17 @@ func (mr *MockRequestValidationMockRecorder) ListShiftSummaries(req interface{})
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListShiftSummaries", reflect.TypeOf((*MockRequestValidation)(nil).ListShiftSummaries), req)
 }
+
+// ListShifts mocks base method.
+func (m *MockRequestValidation) ListShifts(req *lesson.ListShiftsRequest) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ListShifts", req)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// ListShifts indicates an expected call of ListShifts.
+func (mr *MockRequestValidationMockRecorder) ListShifts(req interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListShifts", reflect.TypeOf((*MockRequestValidation)(nil).ListShifts), req)
+}

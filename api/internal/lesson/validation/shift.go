@@ -11,6 +11,15 @@ func (v *requestValidation) ListShiftSummaries(req *lesson.ListShiftSummariesReq
 	return nil
 }
 
+func (v *requestValidation) ListShifts(req *lesson.ListShiftsRequest) error {
+	if err := req.Validate(); err != nil {
+		validate := err.(lesson.ListShiftsRequestValidationError)
+		return validationError(validate.Error())
+	}
+
+	return nil
+}
+
 func (v *requestValidation) CreateShifts(req *lesson.CreateShiftsRequest) error {
 	if err := req.Validate(); err != nil {
 		validate := err.(lesson.CreateShiftsRequestValidationError)

@@ -11,10 +11,10 @@ import (
 
 const shiftTable = "shifts"
 
-// var shiftFields = []string{
-// 	"id", "shift_summary_id", "date",
-// 	"start_time", "end_time", "created_at", "updated_at",
-// }
+var shiftFields = []string{
+	"id", "shift_summary_id", "date",
+	"start_time", "end_time", "created_at", "updated_at",
+}
 
 type shift struct {
 	db  *database.Client
@@ -26,6 +26,19 @@ func NewShift(db *database.Client) Shift {
 		db:  db,
 		now: jst.Now,
 	}
+}
+
+func (s *shift) ListBySummaryID(ctx context.Context, summaryID int64, fields ...string) (entity.Shifts, error) {
+	var shifts entity.Shifts
+	if len(fields) == 0 {
+		fields = shiftFields
+	}
+
+	stmt := s.db.DB.Table(shiftTable).Select(fields).
+		Where("shift_summary_id = ?", summaryID)
+
+	err := stmt.Find(&shifts).Error
+	return shifts, dbError(err)
 }
 
 func (s *shift) MultipleCreate(ctx context.Context, summary *entity.ShiftSummary, shifts entity.Shifts) error {
