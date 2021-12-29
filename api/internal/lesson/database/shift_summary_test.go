@@ -95,6 +95,79 @@ func TestShiftSummary_List(t *testing.T) {
 	}
 }
 
+func TestShiftSummary_Get(t *testing.T) {
+	m, err := newMock()
+	require.NoError(t, err)
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	_ = m.dbDelete(ctx, shiftSummaryTable)
+
+	now := jst.Now()
+
+	summary := testShiftSummary(1, 202201, now.AddDate(0, -1, 0), now.AddDate(0, -1, 1), now)
+	summary.Fill(now)
+	err = m.db.DB.Create(&summary).Error
+	require.NoError(t, err)
+
+	type args struct {
+		summaryID int64
+	}
+	type want struct {
+		summary *entity.ShiftSummary
+		isErr   bool
+	}
+	tests := []struct {
+		name  string
+		setup func(ctx context.Context, t *testing.T, m *mocks)
+		args  args
+		want  want
+	}{
+		{
+			name:  "success",
+			setup: func(ctx context.Context, t *testing.T, m *mocks) {},
+			args: args{
+				summaryID: 1,
+			},
+			want: want{
+				summary: summary,
+				isErr:   false,
+			},
+		},
+		{
+			name:  "not found",
+			setup: func(ctx context.Context, t *testing.T, m *mocks) {},
+			args: args{
+				summaryID: 2,
+			},
+			want: want{
+				summary: nil,
+				isErr:   true,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			ctx, cancel := context.WithCancel(context.Background())
+			defer cancel()
+
+			tt.setup(ctx, t, m)
+
+			db := NewShiftSummary(m.db)
+			actual, err := db.Get(ctx, tt.args.summaryID)
+			if tt.want.isErr {
+				assert.Error(t, err)
+			} else {
+				assert.NoError(t, err)
+				assert.Equal(t, tt.want.summary.Status, actual.Status)
+			}
+		})
+	}
+}
+
 func TestShiftSummary_Count(t *testing.T) {
 	m, err := newMock()
 	require.NoError(t, err)

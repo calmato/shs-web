@@ -117,6 +117,81 @@ func TestListShiftSummaries(t *testing.T) {
 	}
 }
 
+func TestGetShiftSummary(t *testing.T) {
+	t.Parallel()
+	now := jst.Now()
+
+	req := &lesson.GetShiftSummaryRequest{
+		Id: 1,
+	}
+	summary := &entity.ShiftSummary{
+		ID:        1,
+		Status:    entity.ShiftStatusAccepting,
+		OpenAt:    jst.Date(2022, 1, 1, 0, 0, 0, 0),
+		EndAt:     jst.Date(2022, 1, 15, 0, 0, 0, 0),
+		CreatedAt: now,
+		UpdatedAt: now,
+	}
+
+	tests := []struct {
+		name   string
+		setup  func(ctx context.Context, t *testing.T, mocks *mocks)
+		req    *lesson.GetShiftSummaryRequest
+		expect *testResponse
+	}{
+		{
+			name: "success",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				mocks.validator.EXPECT().GetShiftSummary(req).Return(nil)
+				mocks.db.ShiftSummary.EXPECT().Get(ctx, int64(1)).Return(summary, nil)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.OK,
+				body: &lesson.GetShiftSummaryResponse{
+					Summary: &lesson.ShiftSummary{
+						Id:        1,
+						Status:    lesson.ShiftStatus_SHIFT_STATUS_ACCEPTING,
+						OpenAt:    jst.Date(2022, 1, 1, 0, 0, 0, 0).Unix(),
+						EndAt:     jst.Date(2022, 1, 15, 0, 0, 0, 0).Unix(),
+						CreatedAt: now.Unix(),
+						UpdatedAt: now.Unix(),
+					},
+				},
+			},
+		},
+		{
+			name: "invalid argument",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				req := &lesson.GetShiftSummaryRequest{}
+				mocks.validator.EXPECT().GetShiftSummary(req).Return(validation.ErrRequestValidation)
+			},
+			req: &lesson.GetShiftSummaryRequest{},
+			expect: &testResponse{
+				code: codes.InvalidArgument,
+			},
+		},
+		{
+			name: "failed to get shift summary",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				mocks.validator.EXPECT().GetShiftSummary(req).Return(nil)
+				mocks.db.ShiftSummary.EXPECT().Get(ctx, int64(1)).Return(nil, errmock)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.Internal,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, testGRPC(tt.setup, tt.expect, func(ctx context.Context, service *lessonService) (proto.Message, error) {
+			return service.GetShiftSummary(ctx, tt.req)
+		}))
+	}
+}
+
 func TestListShifts(t *testing.T) {
 	t.Parallel()
 	now := jst.Now()

@@ -12,6 +12,7 @@ import "lesson/shift_summary.proto";
 
 service LessonService {
   rpc ListShiftSummaries(ListShiftSummariesRequest) returns (ListShiftSummariesResponse);
+  rpc GetShiftSummary(GetShiftSummaryRequest) returns (GetShiftSummaryResponse);
   rpc ListShifts(ListShiftsRequest) returns (ListShiftsResponse);
   rpc CreateShifts(CreateShiftsRequest) returns (CreateShiftsResponse);
 }
@@ -25,6 +26,14 @@ message ListShiftSummariesRequest {
 message ListShiftSummariesResponse {
   repeated ShiftSummary summaries = 1;
   int64                 total     = 2;
+}
+
+message GetShiftSummaryRequest {
+  int64 id = 1 [(validate.rules).int64 = { gt: 0 }];
+}
+
+message GetShiftSummaryResponse {
+  ShiftSummary summary = 1;
 }
 
 message ListShiftsRequest {

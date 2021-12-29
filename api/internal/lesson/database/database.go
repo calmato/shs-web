@@ -42,6 +42,7 @@ func NewDatabase(params *Params) *Database {
  */
 type ShiftSummary interface {
 	List(ctx context.Context, p *ListShiftSummariesParams, fields ...string) (entity.ShiftSummaries, error)
+	Get(ctx context.Context, id int64, fields ...string) (*entity.ShiftSummary, error)
 	Count(ctx context.Context) (int64, error)
 }
 

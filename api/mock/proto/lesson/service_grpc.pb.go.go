@@ -56,6 +56,26 @@ func (mr *MockLessonServiceClientMockRecorder) CreateShifts(ctx, in interface{},
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateShifts", reflect.TypeOf((*MockLessonServiceClient)(nil).CreateShifts), varargs...)
 }
 
+// GetShiftSummary mocks base method.
+func (m *MockLessonServiceClient) GetShiftSummary(ctx context.Context, in *lesson.GetShiftSummaryRequest, opts ...grpc.CallOption) (*lesson.GetShiftSummaryResponse, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "GetShiftSummary", varargs...)
+	ret0, _ := ret[0].(*lesson.GetShiftSummaryResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetShiftSummary indicates an expected call of GetShiftSummary.
+func (mr *MockLessonServiceClientMockRecorder) GetShiftSummary(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetShiftSummary", reflect.TypeOf((*MockLessonServiceClient)(nil).GetShiftSummary), varargs...)
+}
+
 // ListShiftSummaries mocks base method.
 func (m *MockLessonServiceClient) ListShiftSummaries(ctx context.Context, in *lesson.ListShiftSummariesRequest, opts ...grpc.CallOption) (*lesson.ListShiftSummariesResponse, error) {
 	m.ctrl.T.Helper()
@@ -132,6 +152,21 @@ func (m *MockLessonServiceServer) CreateShifts(arg0 context.Context, arg1 *lesso
 func (mr *MockLessonServiceServerMockRecorder) CreateShifts(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateShifts", reflect.TypeOf((*MockLessonServiceServer)(nil).CreateShifts), arg0, arg1)
+}
+
+// GetShiftSummary mocks base method.
+func (m *MockLessonServiceServer) GetShiftSummary(arg0 context.Context, arg1 *lesson.GetShiftSummaryRequest) (*lesson.GetShiftSummaryResponse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetShiftSummary", arg0, arg1)
+	ret0, _ := ret[0].(*lesson.GetShiftSummaryResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetShiftSummary indicates an expected call of GetShiftSummary.
+func (mr *MockLessonServiceServerMockRecorder) GetShiftSummary(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetShiftSummary", reflect.TypeOf((*MockLessonServiceServer)(nil).GetShiftSummary), arg0, arg1)
 }
 
 // ListShiftSummaries mocks base method.
