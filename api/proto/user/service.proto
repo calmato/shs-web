@@ -70,7 +70,6 @@ message UpdateTeacherPasswordResponse {}
 
 message GetStudentRequest {
   string id = 1 [(validate.rules).string = { min_len: 1 }];
-
 }
 
 message GetStudentResponse {
@@ -83,22 +82,11 @@ message CreateStudentRequest {
   string last_name_kana        = 3 [(validate.rules).string = { min_len: 1 max_len: 32, pattern: "^[ぁ-ゔー]*$" }];
   string first_name_kana       = 4 [(validate.rules).string = { min_len: 1 max_len: 32, pattern: "^[ぁ-ゔー]*$" }];
   string mail                  = 5 [(validate.rules).string = { min_len: 1 max_len: 256 email: true }];
-  int64  birth_year            = 6 [(validate.rules).int64 = { gte: 1900 }];
+  int64  birth_year            = 6 [(validate.rules).int64 = { gte: 1900 lte: 9999 }];
   string password              = 7 [(validate.rules).string = { min_len: 6 max_len: 32 pattern: "^[a-zA-Z0-9_!@#$_%^&*.?()-=+]*$" }];
   string password_confirmation = 8 [(validate.rules).string = { min_len: 1 }];
 }
 
 message CreateStudentResponse {
-  string last_name             = 1;
-  string first_name            = 2;
-  string last_name_kana        = 3;
-  string first_name_kana       = 4;
-  string mail                  = 5;
-  int64  birth_year            = 6;
-  string password              = 7;
-  string password_confirmation = 8;
-  int64  created_at            = 9;
-  int64  updated_at            = 10;
-  string schooltype            = 11;
-  int32  grade                 = 12; //学年
+  Student student = 1;
 }
