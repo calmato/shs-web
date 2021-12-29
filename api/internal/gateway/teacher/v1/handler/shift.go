@@ -14,6 +14,49 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+func (h *apiV1Handler) ListShiftSummaries(ctx *gin.Context) {
+	c := util.SetMetadata(ctx)
+	const (
+		defaultLimit  = "30"
+		defaultOffset = "0"
+		defaultStatus = "0"
+	)
+
+	limit, err := strconv.ParseInt(ctx.DefaultQuery("limit", defaultLimit), 10, 64)
+	if err != nil {
+		badRequest(ctx, err)
+		return
+	}
+	offset, err := strconv.ParseInt(ctx.DefaultQuery("offset", defaultOffset), 10, 64)
+	if err != nil {
+		badRequest(ctx, err)
+		return
+	}
+	status, err := strconv.ParseInt(ctx.DefaultQuery("status", defaultStatus), 10, 32)
+	if err != nil {
+		badRequest(ctx, err)
+		return
+	}
+	shiftStatus, _ := entity.ShiftStatus(status).LessonShiftStatus()
+
+	in := &lesson.ListShiftSummariesRequest{
+		Limit:  limit,
+		Offset: offset,
+		Status: shiftStatus,
+	}
+	out, err := h.lesson.ListShiftSummaries(c, in)
+	if err != nil {
+		httpError(ctx, err)
+		return
+	}
+	summaries := gentity.NewShiftSummaries(out.Summaries)
+
+	res := &response.ShiftSummariesResponse{
+		Summaries: entity.NewShiftSummaries(summaries),
+	}
+	ctx.JSON(http.StatusOK, res)
+}
+
 func (h *apiV1Handler) CreateShifts(ctx *gin.Context) {
 	c := util.SetMetadata(ctx)
 

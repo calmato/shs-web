@@ -2,6 +2,7 @@ package handler
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"testing"
 
@@ -12,6 +13,109 @@ import (
 	"github.com/calmato/shs-web/api/proto/lesson"
 	"github.com/golang/mock/gomock"
 )
+
+func TestListShiftSummaries(t *testing.T) {
+	t.Parallel()
+	now := jst.Date(2022, 1, 12, 0, 0, 0, 0)
+	summaries := []*lesson.ShiftSummary{
+		{
+			Id:        1,
+			YearMonth: 202202,
+			Status:    lesson.ShiftStatus_SHIFT_STATUS_ACCEPTING,
+			OpenAt:    jst.Date(2022, 1, 1, 0, 0, 0, 0).Unix(),
+			EndAt:     jst.Date(2022, 1, 15, 0, 0, 0, 0).Unix(),
+			CreatedAt: now.Unix(),
+			UpdatedAt: now.Unix(),
+		},
+	}
+
+	tests := []struct {
+		name   string
+		setup  func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller)
+		query  string
+		expect *testResponse
+	}{
+		{
+			name: "success",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
+				in := &lesson.ListShiftSummariesRequest{
+					Limit:  30,
+					Offset: 0,
+					Status: lesson.ShiftStatus_SHIFT_STATUS_ACCEPTING,
+				}
+				out := &lesson.ListShiftSummariesResponse{Summaries: summaries}
+				mocks.lesson.EXPECT().ListShiftSummaries(gomock.Any(), in).Return(out, nil)
+			},
+			query: "?status=2",
+			expect: &testResponse{
+				code: http.StatusOK,
+				body: &response.ShiftSummariesResponse{
+					Summaries: entity.ShiftSummaries{
+						{
+							ID:        1,
+							Year:      2022,
+							Month:     2,
+							Status:    entity.ShiftStatusAccepting,
+							OpenAt:    jst.Date(2022, 1, 1, 0, 0, 0, 0),
+							EndAt:     jst.Date(2022, 1, 15, 0, 0, 0, 0),
+							CreatedAt: now,
+							UpdatedAt: now,
+						},
+					},
+				},
+			},
+		},
+		{
+			name:  "failed to invalid limit",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {},
+			query: "?limit=aaa",
+			expect: &testResponse{
+				code: http.StatusBadRequest,
+			},
+		},
+		{
+			name:  "failed to invalid offset",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {},
+			query: "?offset=aaa",
+			expect: &testResponse{
+				code: http.StatusBadRequest,
+			},
+		},
+		{
+			name:  "failed to invalid status",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {},
+			query: "?status=aaa",
+			expect: &testResponse{
+				code: http.StatusBadRequest,
+			},
+		},
+		{
+			name: "failed to list shift summaries",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
+				in := &lesson.ListShiftSummariesRequest{
+					Limit:  30,
+					Offset: 0,
+					Status: lesson.ShiftStatus_SHIFT_STATUS_ACCEPTING,
+				}
+				mocks.lesson.EXPECT().ListShiftSummaries(gomock.Any(), in).Return(nil, errmock)
+			},
+			query: "?status=2",
+			expect: &testResponse{
+				code: http.StatusInternalServerError,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			path := fmt.Sprintf("/v1/shifts%s", tt.query)
+			req := newHTTPRequest(t, http.MethodGet, path, nil)
+			testHTTP(t, tt.setup, tt.expect, req)
+		})
+	}
+}
 
 func TestCreateShifts(t *testing.T) {
 	t.Parallel()

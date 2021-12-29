@@ -136,3 +136,48 @@ func TestShiftStatus(t *testing.T) {
 		})
 	}
 }
+
+func TestShiftStatus_LessonShiftStatus(t *testing.T) {
+	t.Parallel()
+	tests := []struct {
+		name   string
+		status ShiftStatus
+		expect lesson.ShiftStatus
+		isErr  bool
+	}{
+		{
+			name:   "success waiting status",
+			status: ShiftStatusWaiting,
+			expect: lesson.ShiftStatus_SHIFT_STATUS_WAITING,
+			isErr:  false,
+		},
+		{
+			name:   "success accepting status",
+			status: ShiftStatusAccepting,
+			expect: lesson.ShiftStatus_SHIFT_STATUS_ACCEPTING,
+			isErr:  false,
+		},
+		{
+			name:   "success finished status",
+			status: ShiftStatusFinished,
+			expect: lesson.ShiftStatus_SHIFT_STATUS_FINISHED,
+			isErr:  false,
+		},
+		{
+			name:   "failed to invalid shift status",
+			status: ShiftStatusUnknown,
+			expect: lesson.ShiftStatus_SHIFT_STATUS_UNKNOWN,
+			isErr:  true,
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			actual, err := tt.status.LessonShiftStatus()
+			assert.Equal(t, tt.isErr, err != nil, err)
+			assert.Equal(t, tt.expect, actual)
+		})
+	}
+}
