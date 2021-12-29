@@ -95,5 +95,7 @@ components:
       $ref: './components/schemas/v1/schedules.response.yaml#/schedulesResponse'
     v1RoomsTotalResponse:
       $ref: './components/schemas/v1/rooms.response.yaml#/roomsTotalResponse'
+    v1ShiftSummariesResponse:
+      $ref: './components/schemas/v1/shifts.response.yaml#/shiftSummariesResponse'
     v1ShiftsResponse:
       $ref: './components/schemas/v1/shifts.response.yaml#/shiftsResponse'

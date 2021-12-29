@@ -78,6 +78,7 @@ func (h *apiV1Handler) AuthRoutes(rg *gin.RouterGroup) {
 	rg.GET("/v1/subjects", h.ListSubjects)
 	rg.GET("/v1/schedules", h.ListSchedules)
 	rg.GET("/v1/rooms", h.GetRoomsTotal)
+	rg.GET("/v1/shifts", h.ListShiftSummaries)
 }
 
 func (h *apiV1Handler) AdminRoutes(rg *gin.RouterGroup) {
