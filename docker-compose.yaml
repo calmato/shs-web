@@ -164,6 +164,19 @@ services:
       - 8080:8080
       - 9099:9099
 
+  executor:
+    container_name: executor
+    build:
+      context: .
+      dockerfile: ./infra/docker/api/hack/Dockerfile
+    working_dir: /go/src/github.com/calmato/shs-web/api
+    volumes:
+      - ./api:/go/src/github.com/calmato/shs-web/api:cached
+      - ./infra:/go/src/github.com/calmato/shs-web/infra:cached
+    environment:
+      - DB_USERNAME=root
+      - DB_PASSWORD=${MYSQL_ROOT_PASSWORD}
+
   proto:
     container_name: proto
     platform: linux/x86_64
