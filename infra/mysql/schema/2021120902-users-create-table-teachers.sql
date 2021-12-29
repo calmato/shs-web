@@ -1,4 +1,4 @@
-CREATE SCHEMA `users` DEFAULT CHARACTER SET utf8mb4;
+CREATE SCHEMA IF NOT EXISTS `users` DEFAULT CHARACTER SET utf8mb4;
 
 CREATE TABLE `users`.`teachers` (
   `id`              VARCHAR(21)  NOT NULL,             -- ユーザーID
