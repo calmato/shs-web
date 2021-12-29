@@ -76,6 +76,26 @@ func (mr *MockLessonServiceClientMockRecorder) ListShiftSummaries(ctx, in interf
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListShiftSummaries", reflect.TypeOf((*MockLessonServiceClient)(nil).ListShiftSummaries), varargs...)
 }
 
+// ListShifts mocks base method.
+func (m *MockLessonServiceClient) ListShifts(ctx context.Context, in *lesson.ListShiftsRequest, opts ...grpc.CallOption) (*lesson.ListShiftsResponse, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "ListShifts", varargs...)
+	ret0, _ := ret[0].(*lesson.ListShiftsResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListShifts indicates an expected call of ListShifts.
+func (mr *MockLessonServiceClientMockRecorder) ListShifts(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListShifts", reflect.TypeOf((*MockLessonServiceClient)(nil).ListShifts), varargs...)
+}
+
 // MockLessonServiceServer is a mock of LessonServiceServer interface.
 type MockLessonServiceServer struct {
 	ctrl     *gomock.Controller
@@ -127,6 +147,21 @@ func (m *MockLessonServiceServer) ListShiftSummaries(arg0 context.Context, arg1 
 func (mr *MockLessonServiceServerMockRecorder) ListShiftSummaries(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListShiftSummaries", reflect.TypeOf((*MockLessonServiceServer)(nil).ListShiftSummaries), arg0, arg1)
+}
+
+// ListShifts mocks base method.
+func (m *MockLessonServiceServer) ListShifts(arg0 context.Context, arg1 *lesson.ListShiftsRequest) (*lesson.ListShiftsResponse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ListShifts", arg0, arg1)
+	ret0, _ := ret[0].(*lesson.ListShiftsResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListShifts indicates an expected call of ListShifts.
+func (mr *MockLessonServiceServerMockRecorder) ListShifts(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListShifts", reflect.TypeOf((*MockLessonServiceServer)(nil).ListShifts), arg0, arg1)
 }
 
 // mustEmbedUnimplementedLessonServiceServer mocks base method.

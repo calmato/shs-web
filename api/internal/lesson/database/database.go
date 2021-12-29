@@ -46,6 +46,7 @@ type ShiftSummary interface {
 }
 
 type Shift interface {
+	ListBySummaryID(ctx context.Context, summaryID int64, fields ...string) (entity.Shifts, error)
 	MultipleCreate(ctx context.Context, summary *entity.ShiftSummary, shifts entity.Shifts) error
 }
 

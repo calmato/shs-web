@@ -65,6 +65,41 @@ func TestListShiftSummaries(t *testing.T) {
 	}
 }
 
+func TestListShifts(t *testing.T) {
+	t.Parallel()
+	validator := NewRequestValidation()
+
+	tests := []struct {
+		name  string
+		req   *lesson.ListShiftsRequest
+		isErr bool
+	}{
+		{
+			name: "success",
+			req: &lesson.ListShiftsRequest{
+				ShiftSummaryId: 1,
+			},
+			isErr: false,
+		},
+		{
+			name: "ShiftSummaryId is gt",
+			req: &lesson.ListShiftsRequest{
+				ShiftSummaryId: 0,
+			},
+			isErr: true,
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			err := validator.ListShifts(tt.req)
+			assert.Equal(t, tt.isErr, err != nil, err)
+		})
+	}
+}
+
 func TestCreateShifts(t *testing.T) {
 	t.Parallel()
 	validator := NewRequestValidation()

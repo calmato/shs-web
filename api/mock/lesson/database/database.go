@@ -94,6 +94,26 @@ func (m *MockShift) EXPECT() *MockShiftMockRecorder {
 	return m.recorder
 }
 
+// ListBySummaryID mocks base method.
+func (m *MockShift) ListBySummaryID(ctx context.Context, summaryID int64, fields ...string) (entity.Shifts, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, summaryID}
+	for _, a := range fields {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "ListBySummaryID", varargs...)
+	ret0, _ := ret[0].(entity.Shifts)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListBySummaryID indicates an expected call of ListBySummaryID.
+func (mr *MockShiftMockRecorder) ListBySummaryID(ctx, summaryID interface{}, fields ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, summaryID}, fields...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListBySummaryID", reflect.TypeOf((*MockShift)(nil).ListBySummaryID), varargs...)
+}
+
 // MultipleCreate mocks base method.
 func (m *MockShift) MultipleCreate(ctx context.Context, summary *entity.ShiftSummary, shifts entity.Shifts) error {
 	m.ctrl.T.Helper()

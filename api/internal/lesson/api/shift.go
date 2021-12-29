@@ -14,7 +14,7 @@ import (
 func (s *lessonService) ListShiftSummaries(
 	ctx context.Context, req *lesson.ListShiftSummariesRequest,
 ) (*lesson.ListShiftSummariesResponse, error) {
-	const prefixKey = "listShifts"
+	const prefixKey = "listShiftSummaries"
 	if err := s.validator.ListShiftSummaries(req); err != nil {
 		return nil, gRPCError(err)
 	}
@@ -22,7 +22,7 @@ func (s *lessonService) ListShiftSummaries(
 	sharedKey := fmt.Sprintf("%s:%d:%d:%d", prefixKey, req.Status, req.Limit, req.Offset)
 	res, err, _ := s.sharedGroup.Do(sharedKey, func() (interface{}, error) {
 		status, _ := entity.NewShiftStatus(req.Status)
-		summaries, total, err := s.listShifts(ctx, status, req.Limit, req.Offset)
+		summaries, total, err := s.listShiftSummaries(ctx, status, req.Limit, req.Offset)
 		if err != nil {
 			return nil, err
 		}
@@ -39,7 +39,7 @@ func (s *lessonService) ListShiftSummaries(
 	return res.(*lesson.ListShiftSummariesResponse), nil
 }
 
-func (s *lessonService) listShifts(
+func (s *lessonService) listShiftSummaries(
 	ctx context.Context, status entity.ShiftStatus, limit, offset int64,
 ) (entity.ShiftSummaries, int64, error) {
 	eg, ectx := errgroup.WithContext(ctx)
@@ -63,6 +63,32 @@ func (s *lessonService) listShifts(
 	}
 
 	return summaries, total, nil
+}
+
+func (s *lessonService) ListShifts(
+	ctx context.Context, req *lesson.ListShiftsRequest,
+) (*lesson.ListShiftsResponse, error) {
+	const prefixKey = "listShifts"
+	if err := s.validator.ListShifts(req); err != nil {
+		return nil, gRPCError(err)
+	}
+
+	sharedKey := fmt.Sprintf("%s:%d", prefixKey, req.ShiftSummaryId)
+	res, err, _ := s.sharedGroup.Do(sharedKey, func() (interface{}, error) {
+		shifts, err := s.db.Shift.ListBySummaryID(ctx, req.ShiftSummaryId)
+		if err != nil {
+			return nil, err
+		}
+		res := &lesson.ListShiftsResponse{
+			Shifts: shifts.Proto(),
+		}
+		return res, nil
+	})
+	if err != nil {
+		return nil, gRPCError(err)
+	}
+
+	return res.(*lesson.ListShiftsResponse), nil
 }
 
 func (s *lessonService) CreateShifts(
