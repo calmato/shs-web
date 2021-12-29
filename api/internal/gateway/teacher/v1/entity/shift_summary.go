@@ -76,6 +76,6 @@ func (s ShiftStatus) LessonShiftStatus() (lesson.ShiftStatus, error) {
 	case ShiftStatusFinished:
 		return lesson.ShiftStatus_SHIFT_STATUS_FINISHED, nil
 	default:
-		return lesson.ShiftStatus_SHIFT_STATUS_UNKNOWN, errInvalidSchoolType
+		return lesson.ShiftStatus_SHIFT_STATUS_UNKNOWN, errInvalidShiftStatus
 	}
 }
