@@ -12,7 +12,6 @@ import (
 
 	"database/sql"
 
-	"github.com/calmato/shs-web/api/pkg/database"
 	"github.com/calmato/shs-web/api/pkg/jst"
 	"github.com/calmato/shs-web/api/pkg/set"
 	_ "github.com/go-sql-driver/mysql"
@@ -88,29 +87,24 @@ func run() error {
 
 		// マイクロサービス用のDBを再作成
 		if err := app.dropDBIfExists(tx, databases...); err != nil {
-			tx.Rollback()
-			return err
+			return app.rollback(tx, err)
 		}
 		if err := app.createDBIfNotExists(tx, databases...); err != nil {
-			tx.Rollback()
-			return err
+			return app.rollback(tx, err)
 		}
 
 		// DDL管理用のDBを作成
 		if err := app.createDBIfNotExists(tx, migrateDB); err != nil {
-			tx.Rollback()
-			return err
+			return app.rollback(tx, err)
 		}
 
 		// DDL管理用のTableを作成
 		if err := app.createSchemaTable(tx); err != nil {
-			tx.Rollback()
-			return err
+			return app.rollback(tx, err)
 		}
 
 		if err := tx.Commit(); err != nil {
-			tx.Rollback()
-			return err
+			return app.rollback(tx, err)
 		}
 	}
 
@@ -140,8 +134,7 @@ func run() error {
 
 		isApplied, err := app.getSchema(tx, schemas[i])
 		if err != nil {
-			tx.Rollback()
-			return err
+			return app.rollback(tx, err)
 		}
 		if isApplied {
 			fmt.Printf("%s is already applied -> skip\n", schemas[i].filename)
@@ -150,15 +143,13 @@ func run() error {
 
 		fmt.Printf("%s is applying...", schemas[i].filename)
 		if err := app.applySchema(tx, schemas[i]); err != nil {
-			tx.Rollback()
-			return err
+			return app.rollback(tx, err)
 		}
 		fmt.Printf(" -> succeeded!!\n")
 	}
 
 	if err := tx.Commit(); err != nil {
-		tx.Rollback()
-		return err
+		return app.rollback(tx, err)
 	}
 	return nil
 }
@@ -184,24 +175,18 @@ func (a *app) begin() (*sql.Tx, error) {
 	return tx, nil
 }
 
+//nolint:unparam
 func (a *app) close(tx *sql.Tx) func() {
 	return func() {
 		if r := recover(); r != nil {
-			tx.Rollback()
+			_ = tx.Rollback()
+			return
 		}
 	}
 }
 
-func (a *app) setupMigrateDB(host, port, db, username, password string) (*database.Client, error) {
-	params := &database.Params{
-		Socket:   "tcp",
-		Host:     host,
-		Port:     port,
-		Database: db,
-		Username: username,
-		Password: password,
-	}
-	return database.NewClient(params)
+func (a *app) rollback(tx *sql.Tx, err error) error {
+	return fmt.Errorf("%w: %s", err, tx.Rollback().Error())
 }
 
 func (a *app) checkMigrateDB() bool {
@@ -233,6 +218,7 @@ func (a *app) dropDBIfExists(tx *sql.Tx, dbs ...string) error {
 }
 
 func (a *app) createSchemaTable(tx *sql.Tx) error {
+	//nolint:lll
 	const format = "CREATE TABLE `%s`.`%s` (`version` VARCHAR(10) NOT NULL, `database` VARCHAR(256) NOT NULL, `filename` VARCHAR(256) NOT NULL, `created_at` INT NOT NULL, `updated_at` INT NOT NULL, PRIMARY KEY(`version`)) ENGINE = InnoDB"
 	stmt := fmt.Sprintf(format, migrateDB, schemaTable)
 	_, err := tx.Exec(stmt)
@@ -268,6 +254,7 @@ func (a *app) applySchema(tx *sql.Tx, schema *schema) error {
 	}
 
 	now := jst.Now().Unix()
+	//nolint:lll
 	const format = "INSERT INTO `%s`.`%s` (`version`, `database`, `filename`, `created_at`, `updated_at`) VALUES ('%s', '%s', '%s', '%d', '%d')"
 	stmt := fmt.Sprintf(format, migrateDB, schemaTable, schema.version, schema.database, schema.filename, now, now)
 	if _, err := tx.Exec(stmt); err != nil {
