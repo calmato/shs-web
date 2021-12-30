@@ -62,6 +62,23 @@ func (s *shiftSummary) List(
 	return summaries, nil
 }
 
+func (s *shiftSummary) Get(ctx context.Context, id int64, fields ...string) (*entity.ShiftSummary, error) {
+	var summary *entity.ShiftSummary
+	if len(fields) == 0 {
+		fields = shiftSummaryFields
+	}
+
+	stmt := s.db.DB.Table(shiftSummaryTable).Select(fields).
+		Where("id = ?", id)
+
+	err := stmt.First(&summary).Error
+	if err != nil {
+		return nil, dbError(err)
+	}
+	summary.Fill(s.now())
+	return summary, nil
+}
+
 func (s *shiftSummary) Count(ctx context.Context) (int64, error) {
 	var total int64
 	err := s.db.DB.Table(shiftSummaryTable).Count(&total).Error

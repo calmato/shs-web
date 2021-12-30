@@ -65,6 +65,24 @@ func (s *lessonService) listShiftSummaries(
 	return summaries, total, nil
 }
 
+func (s *lessonService) GetShiftSummary(
+	ctx context.Context, req *lesson.GetShiftSummaryRequest,
+) (*lesson.GetShiftSummaryResponse, error) {
+	if err := s.validator.GetShiftSummary(req); err != nil {
+		return nil, gRPCError(err)
+	}
+
+	summary, err := s.db.ShiftSummary.Get(ctx, req.Id)
+	if err != nil {
+		return nil, gRPCError(err)
+	}
+
+	res := &lesson.GetShiftSummaryResponse{
+		Summary: summary.Proto(),
+	}
+	return res, nil
+}
+
 func (s *lessonService) ListShifts(
 	ctx context.Context, req *lesson.ListShiftsRequest,
 ) (*lesson.ListShiftsResponse, error) {
