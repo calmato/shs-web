@@ -12,7 +12,7 @@
               {{ item.submissionStatus }}
             </v-chip>
             <v-row class="pt-3" justify="end">
-              <v-btn color="primary">{{ item.editStatus }}</v-btn>
+              <v-btn color="primary" @click="onClickEdit(`teachers`)">{{ item.editStatus }}</v-btn>
             </v-row>
           </v-container>
         </v-container>
@@ -22,7 +22,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from '@nuxtjs/composition-api'
+import { defineComponent, PropType, SetupContext } from '@nuxtjs/composition-api'
 import { Submission, SubmissionStatusType } from '~/types/props/submission'
 
 export default defineComponent({
@@ -33,7 +33,7 @@ export default defineComponent({
     },
   },
 
-  setup(_) {
+  setup(_, { emit }: SetupContext) {
     const getEnddate = (endDate: string): string => {
       const year: string = endDate.slice(0, 4)
       const month: string = endDate.slice(5, 6)
@@ -50,9 +50,14 @@ export default defineComponent({
       }
     }
 
+    const onClickEdit = (actor: string): void => {
+      emit('click:edit', actor)
+    }
+
     return {
       getEnddate,
       getStatusColor,
+      onClickEdit,
     }
   },
 })
