@@ -19,6 +19,14 @@ export enum SchoolType {
   HIGH_SCHOOL = 3, // 高等学校
 }
 
+// ShiftStatus シフト募集状況
+export enum ShiftStatus {
+  UNKNOWN = 0, // 不明
+  WAITING = 1, // 募集前
+  ACCEPTING = 2, // 募集中
+  FINISHED = 3, // 締切後
+}
+
 export interface CommonState {
   snackbarColor: string
   snackbarMessage: string

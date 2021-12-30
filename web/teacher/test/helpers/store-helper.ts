@@ -1,10 +1,11 @@
 import Vue from 'vue'
 import Vuex, { Store } from 'vuex'
 import { createLocalVue } from '@vue/test-utils'
-import { CommonStore, UserStore, initialiseStores, LessonStore, AuthStore } from '~/store'
+import { CommonStore, UserStore, initialiseStores, LessonStore, AuthStore, ShiftStore } from '~/store'
 import AuthModule from '~/store/auth'
-import LessonModule from '~/store/lesson'
 import CommonModule from '~/store/common'
+import LessonModule from '~/store/lesson'
+import ShiftModule from '~/store/shift'
 import UserModule from '~/store/user'
 import response from '~~/test/helpers/api-mock'
 
@@ -16,6 +17,7 @@ const store = new Store({
     auth: AuthModule,
     common: CommonModule,
     lesson: LessonModule,
+    shift: ShiftModule,
     user: UserModule,
   },
 })
@@ -28,6 +30,7 @@ function refresh(): void {
   AuthStore.factory()
   CommonStore.factory()
   LessonStore.factory()
+  ShiftStore.factory()
   UserStore.factory()
 }
 
