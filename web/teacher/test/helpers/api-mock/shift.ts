@@ -1,4 +1,4 @@
-import { ShiftSummariesResponse } from '~/types/api/v1';
+import { ShiftSummariesResponse } from '~/types/api/v1'
 
 export const listShiftSummaries: { [key: string]: ShiftSummariesResponse } = {
   '/v1/shifts': {

@@ -2,7 +2,7 @@
   <v-card>
     <v-card-title>{{ getTitle() }}</v-card-title>
     <v-card-text>
-      <div v-show="isEnabledCreateLesson()">・授業登録状況　: 不明</div>
+      <div v-show="isEnabledCreateLesson()">・授業登録状況: 不明</div>
       <div>・シフト募集期間: {{ getDate(summary.openAt) }} ~ {{ getDate(summary.endAt) }}</div>
     </v-card-text>
     <v-card-actions>
