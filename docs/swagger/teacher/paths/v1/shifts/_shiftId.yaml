@@ -1,0 +1,28 @@
+get:
+  summary: シフト募集詳細一覧
+  tags:
+  - Shift
+  security:
+  - BearerAuth: []
+  parameters:
+  - in: path
+    name: shiftId
+    required: true
+    schema:
+      type: integer
+      format: int64
+    description: シフト募集ID
+    example: 1
+  responses:
+    200:
+      description: A successful response.
+      content:
+        application/json:
+          schema:
+            $ref: './../../../openapi.yaml#/components/schemas/v1ShiftsResponse'
+    default:
+      description: An unexpected error response.
+      content:
+        application/json:
+          schema:
+            $ref: './../../../openapi.yaml#/components/schemas/errorResponse'

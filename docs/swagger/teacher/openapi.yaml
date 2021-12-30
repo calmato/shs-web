@@ -48,6 +48,8 @@ paths:
   # Shifts
   /v1/shifts:
     $ref: './paths/v1/shifts/index.yaml'
+  /v1/shifts/{shiftId}:
+    $ref: './paths/v1/shifts/_shiftId.yaml'
 components:
   securitySchemes:
     BearerAuth:
