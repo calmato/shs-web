@@ -1,19 +1,18 @@
 <template>
-  <div>
-    <h2>シフト登録画面</h2>
-    <ul>
-      <li>summary: {{ summary }}</li>
-      <li>shifts: {{ shifts }}</li>
-    </ul>
-  </div>
+  <the-submission-edit />
 </template>
 
 <script lang="ts">
 import { computed, defineComponent, SetupContext, useAsync } from '@nuxtjs/composition-api'
+import TheSubmissionEdit from '~/components/templates/TheSubmissionEdit.vue'
 import { CommonStore, SubmissionStore } from '~/store'
 import { TeacherShiftDetail, TeacherShiftSummary } from '~/types/store'
 
 export default defineComponent({
+  components: {
+    TheSubmissionEdit,
+  },
+
   setup(_, { root }: SetupContext) {
     const route = root.$route
     const store = root.$store
