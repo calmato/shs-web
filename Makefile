@@ -65,6 +65,7 @@ migrate:
 	docker-compose start mysql mysql_test
 	docker-compose exec mysql bash -c "until mysqladmin ping -u root -p12345678 2> /dev/null; do echo 'waiting for ping response..'; sleep 3; done; echo 'mysql is ready!'"
 	docker-compose exec mysql_test bash -c "until mysqladmin ping -u root -p12345678 2> /dev/null; do echo 'waiting for ping response..'; sleep 3; done; echo 'mysql_test is ready!'"
+	$(MAKE) proto
 	docker-compose run --rm executor sh -c "cd ./hack/database-migrate; go run ./main.go -db-host=mysql -db-port=3306"
 	docker-compose run --rm executor sh -c "cd ./hack/database-migrate; go run ./main.go -db-host=mysql_test -db-port=3306"
 	docker-compose run --rm executor sh -c "cd ./hack/database-seeds; go run ./main.go -db-host=mysql -db-port=3306"
