@@ -113,7 +113,7 @@ describe('store/shift', () => {
             yearMonth: '2022-02',
             openDate: '2021-01-01',
             endDate: '2021-01-15',
-            closedDates: [],
+            closedDates: ['2021-02-02'],
           },
           options: ShiftsNewOptions,
         }
