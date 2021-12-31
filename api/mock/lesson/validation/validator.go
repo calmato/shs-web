@@ -89,3 +89,17 @@ func (mr *MockRequestValidationMockRecorder) ListShifts(req interface{}) *gomock
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListShifts", reflect.TypeOf((*MockRequestValidation)(nil).ListShifts), req)
 }
+
+// UpdateShiftSummarySchedule mocks base method.
+func (m *MockRequestValidation) UpdateShiftSummarySchedule(req *lesson.UpdateShiftSummaryScheduleRequest) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateShiftSummarySchedule", req)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateShiftSummarySchedule indicates an expected call of UpdateShiftSummarySchedule.
+func (mr *MockRequestValidationMockRecorder) UpdateShiftSummarySchedule(req interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateShiftSummarySchedule", reflect.TypeOf((*MockRequestValidation)(nil).UpdateShiftSummarySchedule), req)
+}

@@ -6,6 +6,7 @@ import (
 
 	"github.com/calmato/shs-web/api/internal/lesson/database"
 	"github.com/calmato/shs-web/api/internal/lesson/entity"
+	"github.com/calmato/shs-web/api/pkg/jst"
 	"github.com/calmato/shs-web/api/proto/classroom"
 	"github.com/calmato/shs-web/api/proto/lesson"
 	"golang.org/x/sync/errgroup"
@@ -94,6 +95,22 @@ func (s *lessonService) GetShiftSummary(
 		Summary: summary.Proto(),
 	}
 	return res, nil
+}
+
+func (s *lessonService) UpdateShiftSummarySchedule(
+	ctx context.Context, req *lesson.UpdateShiftSummaryScheduleRequest,
+) (*lesson.UpdateShiftSummaryShceduleResponse, error) {
+	if err := s.validator.UpdateShiftSummarySchedule(req); err != nil {
+		return nil, gRPCError(err)
+	}
+
+	openAt := jst.ParseFromUnix(req.OpenAt)
+	endAt := jst.ParseFromUnix(req.EndAt)
+	err := s.db.ShiftSummary.UpdateSchedule(ctx, req.Id, openAt, endAt)
+	if err != nil {
+		return nil, gRPCError(err)
+	}
+	return &lesson.UpdateShiftSummaryShceduleResponse{}, nil
 }
 
 func (s *lessonService) ListShifts(
