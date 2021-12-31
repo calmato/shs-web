@@ -171,6 +171,41 @@ func TestUpdateShiftSummarySchedule(t *testing.T) {
 	}
 }
 
+func TestDeleteShift(t *testing.T) {
+	t.Parallel()
+	validator := NewRequestValidation()
+
+	tests := []struct {
+		name  string
+		req   *lesson.DeleteShiftSummaryRequest
+		isErr bool
+	}{
+		{
+			name: "success",
+			req: &lesson.DeleteShiftSummaryRequest{
+				Id: 1,
+			},
+			isErr: false,
+		},
+		{
+			name: "Id is gt",
+			req: &lesson.DeleteShiftSummaryRequest{
+				Id: 0,
+			},
+			isErr: true,
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			err := validator.DeleteShiftSummary(tt.req)
+			assert.Equal(t, tt.isErr, err != nil, err)
+		})
+	}
+}
+
 func TestListShifts(t *testing.T) {
 	t.Parallel()
 	validator := NewRequestValidation()

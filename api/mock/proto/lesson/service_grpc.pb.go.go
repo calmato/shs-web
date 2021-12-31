@@ -56,6 +56,26 @@ func (mr *MockLessonServiceClientMockRecorder) CreateShifts(ctx, in interface{},
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateShifts", reflect.TypeOf((*MockLessonServiceClient)(nil).CreateShifts), varargs...)
 }
 
+// DeleteShiftSummary mocks base method.
+func (m *MockLessonServiceClient) DeleteShiftSummary(ctx context.Context, in *lesson.DeleteShiftSummaryRequest, opts ...grpc.CallOption) (*lesson.DeleteShiftSummaryResponse, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "DeleteShiftSummary", varargs...)
+	ret0, _ := ret[0].(*lesson.DeleteShiftSummaryResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// DeleteShiftSummary indicates an expected call of DeleteShiftSummary.
+func (mr *MockLessonServiceClientMockRecorder) DeleteShiftSummary(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteShiftSummary", reflect.TypeOf((*MockLessonServiceClient)(nil).DeleteShiftSummary), varargs...)
+}
+
 // GetShiftSummary mocks base method.
 func (m *MockLessonServiceClient) GetShiftSummary(ctx context.Context, in *lesson.GetShiftSummaryRequest, opts ...grpc.CallOption) (*lesson.GetShiftSummaryResponse, error) {
 	m.ctrl.T.Helper()
@@ -172,6 +192,21 @@ func (m *MockLessonServiceServer) CreateShifts(arg0 context.Context, arg1 *lesso
 func (mr *MockLessonServiceServerMockRecorder) CreateShifts(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateShifts", reflect.TypeOf((*MockLessonServiceServer)(nil).CreateShifts), arg0, arg1)
+}
+
+// DeleteShiftSummary mocks base method.
+func (m *MockLessonServiceServer) DeleteShiftSummary(arg0 context.Context, arg1 *lesson.DeleteShiftSummaryRequest) (*lesson.DeleteShiftSummaryResponse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteShiftSummary", arg0, arg1)
+	ret0, _ := ret[0].(*lesson.DeleteShiftSummaryResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// DeleteShiftSummary indicates an expected call of DeleteShiftSummary.
+func (mr *MockLessonServiceServerMockRecorder) DeleteShiftSummary(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteShiftSummary", reflect.TypeOf((*MockLessonServiceServer)(nil).DeleteShiftSummary), arg0, arg1)
 }
 
 // GetShiftSummary mocks base method.

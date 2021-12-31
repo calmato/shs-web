@@ -113,6 +113,21 @@ func (s *lessonService) UpdateShiftSummarySchedule(
 	return &lesson.UpdateShiftSummaryShceduleResponse{}, nil
 }
 
+func (s *lessonService) DeleteShiftSummary(
+	ctx context.Context, req *lesson.DeleteShiftSummaryRequest,
+) (*lesson.DeleteShiftSummaryResponse, error) {
+	if err := s.validator.DeleteShiftSummary(req); err != nil {
+		return nil, gRPCError(err)
+	}
+
+	err := s.db.ShiftSummary.Delete(ctx, req.Id)
+	if err != nil {
+		return nil, gRPCError(err)
+	}
+
+	return &lesson.DeleteShiftSummaryResponse{}, nil
+}
+
 func (s *lessonService) ListShifts(
 	ctx context.Context, req *lesson.ListShiftsRequest,
 ) (*lesson.ListShiftsResponse, error) {

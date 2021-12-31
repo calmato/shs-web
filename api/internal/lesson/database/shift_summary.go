@@ -108,6 +108,23 @@ func (s *shiftSummary) UpdateSchedule(ctx context.Context, id int64, openAt, end
 	return dbError(tx.Commit().Error)
 }
 
+func (s *shiftSummary) Delete(ctx context.Context, id int64) error {
+	tx, err := s.db.Begin()
+	if err != nil {
+		return dbError(err)
+	}
+	defer s.db.Close(tx)
+
+	err = tx.Table(shiftSummaryTable).
+		Where("id = ?", id).
+		Delete(&entity.ShiftSummary{}).Error
+	if err != nil {
+		tx.Rollback()
+		return dbError(err)
+	}
+	return dbError(tx.Commit().Error)
+}
+
 func (s *shiftSummary) Count(ctx context.Context) (int64, error) {
 	var total int64
 	err := s.db.DB.Table(shiftSummaryTable).Count(&total).Error
