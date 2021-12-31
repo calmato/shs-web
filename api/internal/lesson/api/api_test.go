@@ -33,7 +33,8 @@ type mocks struct {
 }
 
 type dbMocks struct {
-	Shift *mock_database.MockShift
+	ShiftSummary *mock_database.MockShiftSummary
+	Shift        *mock_database.MockShift
 }
 
 type testResponse struct {
@@ -58,7 +59,8 @@ func newMocks(ctrl *gomock.Controller) *mocks {
 
 func newDBMocks(ctrl *gomock.Controller) *dbMocks {
 	return &dbMocks{
-		Shift: mock_database.NewMockShift(ctrl),
+		ShiftSummary: mock_database.NewMockShiftSummary(ctrl),
+		Shift:        mock_database.NewMockShift(ctrl),
 	}
 }
 
@@ -69,7 +71,8 @@ func newLessonService(mocks *mocks, opts *testOptions) *lessonService {
 		sharedGroup: &singleflight.Group{},
 		waitGroup:   &sync.WaitGroup{},
 		db: &database.Database{
-			Shift: mocks.db.Shift,
+			ShiftSummary: mocks.db.ShiftSummary,
+			Shift:        mocks.db.Shift,
 		},
 		validator: mocks.validator,
 		classroom: mocks.classroom,

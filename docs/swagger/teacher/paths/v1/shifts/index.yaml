@@ -1,3 +1,30 @@
+get:
+  summary: シフト募集概要一覧
+  tags:
+  - Shift
+  security:
+  - BearerAuth: []
+  parameters:
+  - in: query
+    name: status
+    schema:
+      type: integer
+      format: int32
+    description: 募集ステータス (未指定:全ステータス, 1:募集前, 2:募集中, 3:募集締切後)
+    example: 1
+  responses:
+    200:
+      description: A successful response.
+      content:
+        application/json:
+          schema:
+            $ref: './../../../openapi.yaml#/components/schemas/v1ShiftSummariesResponse'
+    default:
+      description: An unexpected error response.
+      content:
+        application/json:
+          schema:
+            $ref: './../../../openapi.yaml#/components/schemas/errorResponse'
 post:
   summary: シフト募集作成
   tags:

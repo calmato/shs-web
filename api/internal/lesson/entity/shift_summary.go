@@ -1,12 +1,15 @@
 package entity
 
 import (
+	"errors"
 	"strconv"
 	"time"
 
 	"github.com/calmato/shs-web/api/pkg/jst"
 	"github.com/calmato/shs-web/api/proto/lesson"
 )
+
+var errInvalidShiftStatus = errors.New("entity: invalid shift status")
 
 type ShiftStatus int32
 
@@ -76,6 +79,14 @@ func (s *ShiftSummary) Proto() *lesson.ShiftSummary {
 	}
 }
 
+func (ss ShiftSummaries) Map() map[int64]*ShiftSummary {
+	res := make(map[int64]*ShiftSummary, len(ss))
+	for _, s := range ss {
+		res[s.ID] = s
+	}
+	return res
+}
+
 func (ss ShiftSummaries) Fill(now time.Time) {
 	for i := range ss {
 		ss[i].Fill(now)
@@ -88,4 +99,17 @@ func (ss ShiftSummaries) Proto() []*lesson.ShiftSummary {
 		summaries[i] = ss[i].Proto()
 	}
 	return summaries
+}
+
+func NewShiftStatus(status lesson.ShiftStatus) (ShiftStatus, error) {
+	switch status {
+	case lesson.ShiftStatus_SHIFT_STATUS_WAITING:
+		return ShiftStatusWaiting, nil
+	case lesson.ShiftStatus_SHIFT_STATUS_ACCEPTING:
+		return ShiftStatusAccepting, nil
+	case lesson.ShiftStatus_SHIFT_STATUS_FINISHED:
+		return ShiftStatusFinished, nil
+	default:
+		return ShiftStatusUnknown, errInvalidShiftStatus
+	}
 }

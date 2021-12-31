@@ -14,4 +14,6 @@ message Student {
   int64  birth_year      = 7; // 誕生年
   int64  created_at      = 8; // 登録日時
   int64  updated_at      = 9; // 更新日時
+  string schooltype      = 10; // 校種
+  int32  grade           = 11; // 学年
 }

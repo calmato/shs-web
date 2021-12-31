@@ -8,9 +8,88 @@ import (
 	context "context"
 	reflect "reflect"
 
+	database "github.com/calmato/shs-web/api/internal/lesson/database"
 	entity "github.com/calmato/shs-web/api/internal/lesson/entity"
 	gomock "github.com/golang/mock/gomock"
 )
+
+// MockShiftSummary is a mock of ShiftSummary interface.
+type MockShiftSummary struct {
+	ctrl     *gomock.Controller
+	recorder *MockShiftSummaryMockRecorder
+}
+
+// MockShiftSummaryMockRecorder is the mock recorder for MockShiftSummary.
+type MockShiftSummaryMockRecorder struct {
+	mock *MockShiftSummary
+}
+
+// NewMockShiftSummary creates a new mock instance.
+func NewMockShiftSummary(ctrl *gomock.Controller) *MockShiftSummary {
+	mock := &MockShiftSummary{ctrl: ctrl}
+	mock.recorder = &MockShiftSummaryMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockShiftSummary) EXPECT() *MockShiftSummaryMockRecorder {
+	return m.recorder
+}
+
+// Count mocks base method.
+func (m *MockShiftSummary) Count(ctx context.Context) (int64, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Count", ctx)
+	ret0, _ := ret[0].(int64)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Count indicates an expected call of Count.
+func (mr *MockShiftSummaryMockRecorder) Count(ctx interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Count", reflect.TypeOf((*MockShiftSummary)(nil).Count), ctx)
+}
+
+// Get mocks base method.
+func (m *MockShiftSummary) Get(ctx context.Context, id int64, fields ...string) (*entity.ShiftSummary, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, id}
+	for _, a := range fields {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "Get", varargs...)
+	ret0, _ := ret[0].(*entity.ShiftSummary)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Get indicates an expected call of Get.
+func (mr *MockShiftSummaryMockRecorder) Get(ctx, id interface{}, fields ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, id}, fields...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockShiftSummary)(nil).Get), varargs...)
+}
+
+// List mocks base method.
+func (m *MockShiftSummary) List(ctx context.Context, p *database.ListShiftSummariesParams, fields ...string) (entity.ShiftSummaries, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, p}
+	for _, a := range fields {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "List", varargs...)
+	ret0, _ := ret[0].(entity.ShiftSummaries)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// List indicates an expected call of List.
+func (mr *MockShiftSummaryMockRecorder) List(ctx, p interface{}, fields ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, p}, fields...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "List", reflect.TypeOf((*MockShiftSummary)(nil).List), varargs...)
+}
 
 // MockShift is a mock of Shift interface.
 type MockShift struct {
@@ -33,6 +112,26 @@ func NewMockShift(ctrl *gomock.Controller) *MockShift {
 // EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockShift) EXPECT() *MockShiftMockRecorder {
 	return m.recorder
+}
+
+// ListBySummaryID mocks base method.
+func (m *MockShift) ListBySummaryID(ctx context.Context, summaryID int64, fields ...string) (entity.Shifts, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, summaryID}
+	for _, a := range fields {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "ListBySummaryID", varargs...)
+	ret0, _ := ret[0].(entity.Shifts)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListBySummaryID indicates an expected call of ListBySummaryID.
+func (mr *MockShiftMockRecorder) ListBySummaryID(ctx, summaryID interface{}, fields ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, summaryID}, fields...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListBySummaryID", reflect.TypeOf((*MockShift)(nil).ListBySummaryID), varargs...)
 }
 
 // MultipleCreate mocks base method.

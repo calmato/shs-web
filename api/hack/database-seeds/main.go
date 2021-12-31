@@ -1,9 +1,11 @@
+// usage: go run ./main.go -db-host=127.0.0.1 -db-port=3316 -db-password=1234567
 package main
 
 import (
 	"context"
 	"flag"
 	"fmt"
+	"math/rand"
 	"time"
 
 	centity "github.com/calmato/shs-web/api/internal/classroom/entity"
@@ -20,12 +22,14 @@ import (
 const (
 	adminID     = "cngxK2YbQkiUfRUcp8zSet"
 	teacherSize = 10
+	studentSize = 10
 	roomSize    = 4
 )
 
 var (
 	truncateUserTables = []string{
 		"teachers",
+		"students",
 	}
 	truncateClassroomTables = []string{
 		"rooms",
@@ -165,6 +169,13 @@ func run() error {
 			return err
 		}
 
+		// 生徒の登録
+		err = app.upsertStudents(tx, studentSize)
+		if err != nil {
+			tx.Rollback()
+			return err
+		}
+
 		return tx.Commit().Error
 	})
 
@@ -281,6 +292,61 @@ func (a *app) upsertTeachers(tx *gorm.DB, size int) error {
 		teachers[i] = teacher
 	}
 	return tx.Clauses(clause.OnConflict{UpdateAll: true}).Create(&teachers).Error
+}
+
+func (a *app) upsertStudents(tx *gorm.DB, size int) error {
+	now := jst.Now()
+	years := newRandomBirthYear(now)
+	students := make(uentity.Students, size)
+	for i := 0; i < size; i++ {
+		uid := uuid.Base58Encode(uuid.New())
+		student := &uentity.Student{
+			ID:            uid,
+			LastName:      "開発用",
+			FirstName:     fmt.Sprintf("生徒%03d", i),
+			LastNameKana:  "かいはつよう",
+			FirstNameKana: fmt.Sprintf("せいと%03d", i),
+			Mail:          fmt.Sprintf("student%03d@calmato.jp", i),
+			BirthYear:     getRandomBirthYear(years),
+			CreatedAt:     now,
+			UpdatedAt:     now,
+		}
+		students[i] = student
+	}
+	return tx.Clauses(clause.OnConflict{UpdateAll: true}).Create(&students).Error
+}
+
+// 年度計算
+// - 01月01日 ~ 04月01日: 去年の年を返す
+// - 04月02日 ~ 12月31日: 現在の年を返す
+func getFiscalYear(now time.Time) int64 {
+	month, day := now.Month(), now.Day()
+	if 0 < month && month < 3 {
+		return int64(now.Year() - 1)
+	} else if month == 4 && day == 1 {
+		return int64(now.Year() - 1)
+	}
+	return int64(now.Year())
+}
+
+func newRandomBirthYear(now time.Time) []int64 {
+	const (
+		maxSize         = 12 // 小学校1~6年, 中学校1~3年, 高校1~3年
+		firstYear int64 = 7  // 小学校1年 = 今年から7年前生まれ
+		finalYear int64 = 18 // 高校3年 = 今年から18年前生まれ
+	)
+	current := getFiscalYear(now)
+	years := make([]int64, 0, maxSize)
+	for i := firstYear; i <= finalYear; i++ {
+		year := current - i
+		years = append(years, year)
+	}
+	return years
+}
+
+func getRandomBirthYear(years []int64) int64 {
+	num := rand.Intn(len(years))
+	return years[num]
 }
 
 func (a *app) upsertRooms(tx *gorm.DB, size int) error {

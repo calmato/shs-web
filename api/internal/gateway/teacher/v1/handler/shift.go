@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"context"
 	"net/http"
 	"strconv"
 
@@ -12,7 +13,96 @@ import (
 	"github.com/calmato/shs-web/api/pkg/jst"
 	"github.com/calmato/shs-web/api/proto/lesson"
 	"github.com/gin-gonic/gin"
+	"golang.org/x/sync/errgroup"
 )
+
+func (h *apiV1Handler) ListShiftSummaries(ctx *gin.Context) {
+	c := util.SetMetadata(ctx)
+	const (
+		defaultLimit  = "30"
+		defaultOffset = "0"
+		defaultStatus = "0"
+	)
+
+	limit, err := strconv.ParseInt(ctx.DefaultQuery("limit", defaultLimit), 10, 64)
+	if err != nil {
+		badRequest(ctx, err)
+		return
+	}
+	offset, err := strconv.ParseInt(ctx.DefaultQuery("offset", defaultOffset), 10, 64)
+	if err != nil {
+		badRequest(ctx, err)
+		return
+	}
+	status, err := strconv.ParseInt(ctx.DefaultQuery("status", defaultStatus), 10, 32)
+	if err != nil {
+		badRequest(ctx, err)
+		return
+	}
+	shiftStatus, _ := entity.ShiftStatus(status).LessonShiftStatus()
+
+	in := &lesson.ListShiftSummariesRequest{
+		Limit:  limit,
+		Offset: offset,
+		Status: shiftStatus,
+	}
+	out, err := h.lesson.ListShiftSummaries(c, in)
+	if err != nil {
+		httpError(ctx, err)
+		return
+	}
+	summaries := gentity.NewShiftSummaries(out.Summaries)
+
+	res := &response.ShiftSummariesResponse{
+		Summaries: entity.NewShiftSummaries(summaries),
+	}
+	ctx.JSON(http.StatusOK, res)
+}
+
+func (h *apiV1Handler) ListShifts(ctx *gin.Context) {
+	c := util.SetMetadata(ctx)
+
+	shiftSummaryID, err := strconv.ParseInt(ctx.Param("shiftId"), 10, 64)
+	if err != nil {
+		badRequest(ctx, err)
+		return
+	}
+
+	eg, ectx := errgroup.WithContext(c)
+	var summary *entity.ShiftSummary
+	eg.Go(func() error {
+		gsummary, err := h.getShiftSummary(ectx, shiftSummaryID)
+		if err != nil {
+			return err
+		}
+		summary = entity.NewShiftSummary(gsummary)
+		return nil
+	})
+	var shifts entity.Shifts
+	eg.Go(func() error {
+		gshifts, err := h.listShiftsBySummaryID(ectx, shiftSummaryID)
+		if err != nil {
+			return err
+		}
+		shifts = entity.NewShifts(gshifts)
+		return nil
+	})
+	if err := eg.Wait(); err != nil {
+		httpError(ctx, err)
+		return
+	}
+
+	shiftsMap, err := shifts.GroupByDate()
+	if err != nil {
+		httpError(ctx, err)
+		return
+	}
+	res := &response.ShiftsResponse{
+		Summary: summary,
+		Shifts:  entity.NewShiftDetailsForMonth(summary, shiftsMap),
+	}
+	ctx.JSON(http.StatusOK, res)
+}
 
 func (h *apiV1Handler) CreateShifts(ctx *gin.Context) {
 	c := util.SetMetadata(ctx)
@@ -49,12 +139,44 @@ func (h *apiV1Handler) CreateShifts(ctx *gin.Context) {
 		httpError(ctx, err)
 		return
 	}
-	summary := gentity.NewShiftSummary(out.Summary)
-	shifts := gentity.NewShifts(out.Shifts)
+	gsummary := gentity.NewShiftSummary(out.Summary)
+	gshifts := gentity.NewShifts(out.Shifts)
 
+	summary := entity.NewShiftSummary(gsummary)
+	shifts := entity.NewShifts(gshifts)
+
+	shiftsMap, err := shifts.GroupByDate()
+	if err != nil {
+		httpError(ctx, err)
+		return
+	}
 	res := &response.ShiftsResponse{
-		Summary: entity.NewShiftSummary(summary),
-		Shifts:  entity.NewShifts(shifts).GroupByDate(),
+		Summary: summary,
+		Shifts:  entity.NewShiftDetailsForMonth(summary, shiftsMap),
 	}
 	ctx.JSON(http.StatusOK, res)
+}
+
+func (h *apiV1Handler) getShiftSummary(ctx context.Context, summaryID int64) (*gentity.ShiftSummary, error) {
+	in := &lesson.GetShiftSummaryRequest{
+		Id: summaryID,
+	}
+	out, err := h.lesson.GetShiftSummary(ctx, in)
+	if err != nil {
+		return nil, err
+	}
+	summary := gentity.NewShiftSummary(out.Summary)
+	return summary, nil
+}
+
+func (h *apiV1Handler) listShiftsBySummaryID(ctx context.Context, summaryID int64) (gentity.Shifts, error) {
+	in := &lesson.ListShiftsRequest{
+		ShiftSummaryId: summaryID,
+	}
+	out, err := h.lesson.ListShifts(ctx, in)
+	if err != nil {
+		return nil, err
+	}
+	shifts := gentity.NewShifts(out.Shifts)
+	return shifts, nil
 }

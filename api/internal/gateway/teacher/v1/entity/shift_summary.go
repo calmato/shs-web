@@ -1,12 +1,15 @@
 package entity
 
 import (
+	"errors"
 	"time"
 
 	"github.com/calmato/shs-web/api/internal/gateway/entity"
 	"github.com/calmato/shs-web/api/pkg/jst"
 	"github.com/calmato/shs-web/api/proto/lesson"
 )
+
+var errInvalidShiftStatus = errors.New("entity: invalid shift status")
 
 type ShiftSummary struct {
 	ID        int64       `json:"id"`        // シフト募集ID
@@ -61,5 +64,18 @@ func NewShiftStatus(status lesson.ShiftStatus) ShiftStatus {
 		return ShiftStatusFinished
 	default:
 		return ShiftStatusUnknown
+	}
+}
+
+func (s ShiftStatus) LessonShiftStatus() (lesson.ShiftStatus, error) {
+	switch s {
+	case ShiftStatusWaiting:
+		return lesson.ShiftStatus_SHIFT_STATUS_WAITING, nil
+	case ShiftStatusAccepting:
+		return lesson.ShiftStatus_SHIFT_STATUS_ACCEPTING, nil
+	case ShiftStatusFinished:
+		return lesson.ShiftStatus_SHIFT_STATUS_FINISHED, nil
+	default:
+		return lesson.ShiftStatus_SHIFT_STATUS_UNKNOWN, errInvalidShiftStatus
 	}
 }

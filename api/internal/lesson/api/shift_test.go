@@ -5,6 +5,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/calmato/shs-web/api/internal/lesson/database"
 	"github.com/calmato/shs-web/api/internal/lesson/entity"
 	"github.com/calmato/shs-web/api/internal/lesson/validation"
 	"github.com/calmato/shs-web/api/pkg/jst"
@@ -14,6 +15,281 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/protobuf/proto"
 )
+
+func TestListShiftSummaries(t *testing.T) {
+	t.Parallel()
+	now := jst.Now()
+
+	req := &lesson.ListShiftSummariesRequest{
+		Status: lesson.ShiftStatus_SHIFT_STATUS_ACCEPTING,
+		Limit:  30,
+		Offset: 0,
+	}
+	params := &database.ListShiftSummariesParams{
+		Status: entity.ShiftStatusAccepting,
+		Limit:  30,
+		Offset: 0,
+	}
+	summaries := entity.ShiftSummaries{
+		{
+			ID:        1,
+			Status:    entity.ShiftStatusAccepting,
+			OpenAt:    jst.Date(2022, 1, 1, 0, 0, 0, 0),
+			EndAt:     jst.Date(2022, 1, 15, 0, 0, 0, 0),
+			CreatedAt: now,
+			UpdatedAt: now,
+		},
+	}
+
+	tests := []struct {
+		name   string
+		setup  func(ctx context.Context, t *testing.T, mocks *mocks)
+		req    *lesson.ListShiftSummariesRequest
+		expect *testResponse
+	}{
+		{
+			name: "success",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				mocks.validator.EXPECT().ListShiftSummaries(req).Return(nil)
+				mocks.db.ShiftSummary.EXPECT().List(gomock.Any(), params).Return(summaries, nil)
+				mocks.db.ShiftSummary.EXPECT().Count(gomock.Any()).Return(int64(1), nil)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.OK,
+				body: &lesson.ListShiftSummariesResponse{
+					Summaries: []*lesson.ShiftSummary{
+						{
+							Id:        1,
+							Status:    lesson.ShiftStatus_SHIFT_STATUS_ACCEPTING,
+							OpenAt:    jst.Date(2022, 1, 1, 0, 0, 0, 0).Unix(),
+							EndAt:     jst.Date(2022, 1, 15, 0, 0, 0, 0).Unix(),
+							CreatedAt: now.Unix(),
+							UpdatedAt: now.Unix(),
+						},
+					},
+					Total: 1,
+				},
+			},
+		},
+		{
+			name: "invalid argument",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				req := &lesson.ListShiftSummariesRequest{}
+				mocks.validator.EXPECT().ListShiftSummaries(req).Return(validation.ErrRequestValidation)
+			},
+			req: &lesson.ListShiftSummariesRequest{},
+			expect: &testResponse{
+				code: codes.InvalidArgument,
+			},
+		},
+		{
+			name: "failed to list shift summaries",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				mocks.validator.EXPECT().ListShiftSummaries(req).Return(nil)
+				mocks.db.ShiftSummary.EXPECT().List(gomock.Any(), params).Return(nil, errmock)
+				mocks.db.ShiftSummary.EXPECT().Count(gomock.Any()).Return(int64(1), nil)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.Internal,
+			},
+		},
+		{
+			name: "failed to count",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				mocks.validator.EXPECT().ListShiftSummaries(req).Return(nil)
+				mocks.db.ShiftSummary.EXPECT().List(gomock.Any(), params).Return(summaries, nil)
+				mocks.db.ShiftSummary.EXPECT().Count(gomock.Any()).Return(int64(0), errmock)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.Internal,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, testGRPC(tt.setup, tt.expect, func(ctx context.Context, service *lessonService) (proto.Message, error) {
+			return service.ListShiftSummaries(ctx, tt.req)
+		}))
+	}
+}
+
+func TestGetShiftSummary(t *testing.T) {
+	t.Parallel()
+	now := jst.Now()
+
+	req := &lesson.GetShiftSummaryRequest{
+		Id: 1,
+	}
+	summary := &entity.ShiftSummary{
+		ID:        1,
+		Status:    entity.ShiftStatusAccepting,
+		OpenAt:    jst.Date(2022, 1, 1, 0, 0, 0, 0),
+		EndAt:     jst.Date(2022, 1, 15, 0, 0, 0, 0),
+		CreatedAt: now,
+		UpdatedAt: now,
+	}
+
+	tests := []struct {
+		name   string
+		setup  func(ctx context.Context, t *testing.T, mocks *mocks)
+		req    *lesson.GetShiftSummaryRequest
+		expect *testResponse
+	}{
+		{
+			name: "success",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				mocks.validator.EXPECT().GetShiftSummary(req).Return(nil)
+				mocks.db.ShiftSummary.EXPECT().Get(ctx, int64(1)).Return(summary, nil)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.OK,
+				body: &lesson.GetShiftSummaryResponse{
+					Summary: &lesson.ShiftSummary{
+						Id:        1,
+						Status:    lesson.ShiftStatus_SHIFT_STATUS_ACCEPTING,
+						OpenAt:    jst.Date(2022, 1, 1, 0, 0, 0, 0).Unix(),
+						EndAt:     jst.Date(2022, 1, 15, 0, 0, 0, 0).Unix(),
+						CreatedAt: now.Unix(),
+						UpdatedAt: now.Unix(),
+					},
+				},
+			},
+		},
+		{
+			name: "invalid argument",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				req := &lesson.GetShiftSummaryRequest{}
+				mocks.validator.EXPECT().GetShiftSummary(req).Return(validation.ErrRequestValidation)
+			},
+			req: &lesson.GetShiftSummaryRequest{},
+			expect: &testResponse{
+				code: codes.InvalidArgument,
+			},
+		},
+		{
+			name: "failed to get shift summary",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				mocks.validator.EXPECT().GetShiftSummary(req).Return(nil)
+				mocks.db.ShiftSummary.EXPECT().Get(ctx, int64(1)).Return(nil, errmock)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.Internal,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, testGRPC(tt.setup, tt.expect, func(ctx context.Context, service *lessonService) (proto.Message, error) {
+			return service.GetShiftSummary(ctx, tt.req)
+		}))
+	}
+}
+
+func TestListShifts(t *testing.T) {
+	t.Parallel()
+	now := jst.Now()
+
+	req := &lesson.ListShiftsRequest{
+		ShiftSummaryId: 1,
+	}
+	shifts := entity.Shifts{
+		{
+			ID:             1,
+			ShiftSummaryID: 1,
+			Date:           jst.Date(2022, 2, 1, 0, 0, 0, 0),
+			StartTime:      "1700",
+			EndTime:        "1830",
+			CreatedAt:      now,
+			UpdatedAt:      now,
+		},
+		{
+			ID:             2,
+			ShiftSummaryID: 1,
+			Date:           jst.Date(2022, 2, 1, 0, 0, 0, 0),
+			StartTime:      "1830",
+			EndTime:        "2000",
+			CreatedAt:      now,
+			UpdatedAt:      now,
+		},
+	}
+
+	tests := []struct {
+		name   string
+		setup  func(ctx context.Context, t *testing.T, mocks *mocks)
+		req    *lesson.ListShiftsRequest
+		expect *testResponse
+	}{
+		{
+			name: "success",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				mocks.validator.EXPECT().ListShifts(req).Return(nil)
+				mocks.db.Shift.EXPECT().ListBySummaryID(ctx, int64(1)).Return(shifts, nil)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.OK,
+				body: &lesson.ListShiftsResponse{
+					Shifts: []*lesson.Shift{
+						{
+							Id:             1,
+							ShiftSummaryId: 1,
+							Date:           "20220201",
+							StartTime:      "1700",
+							EndTime:        "1830",
+							CreatedAt:      now.Unix(),
+							UpdatedAt:      now.Unix(),
+						},
+						{
+							Id:             2,
+							ShiftSummaryId: 1,
+							Date:           "20220201",
+							StartTime:      "1830",
+							EndTime:        "2000",
+							CreatedAt:      now.Unix(),
+							UpdatedAt:      now.Unix(),
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "invalid argument",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				req := &lesson.ListShiftsRequest{}
+				mocks.validator.EXPECT().ListShifts(req).Return(validation.ErrRequestValidation)
+			},
+			req: &lesson.ListShiftsRequest{},
+			expect: &testResponse{
+				code: codes.InvalidArgument,
+			},
+		},
+		{
+			name: "failed to list shifts",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				mocks.validator.EXPECT().ListShifts(req).Return(nil)
+				mocks.db.Shift.EXPECT().ListBySummaryID(ctx, int64(1)).Return(nil, errmock)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.Internal,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, testGRPC(tt.setup, tt.expect, func(ctx context.Context, service *lessonService) (proto.Message, error) {
+			return service.ListShifts(ctx, tt.req)
+		}))
+	}
+}
 
 func TestCreateShifts(t *testing.T) {
 	t.Parallel()
