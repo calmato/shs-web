@@ -18,9 +18,15 @@ service LessonService {
 }
 
 message ListShiftSummariesRequest {
-  int64       limit  = 1 [(validate.rules).int64 = { gte: 0 }];
-  int64       offset = 2 [(validate.rules).int64 = { gte: 0 }];
-  ShiftStatus status = 3 [(validate.rules).enum = { defined_only: true }];
+  enum OrderBy {
+    ORDER_BY_YEAR_MONTH_NONE = 0;
+    ORDER_BY_YEAR_MONTH_ASC  = 1;
+    ORDER_BY_YEAR_MONTH_DESC = 2;
+  }
+  int64       limit    = 1 [(validate.rules).int64 = { gte: 0 }];
+  int64       offset   = 2 [(validate.rules).int64 = { gte: 0 }];
+  ShiftStatus status   = 3 [(validate.rules).enum = { defined_only: true }];
+  OrderBy     order_by = 4 [(validate.rules).enum = { defined_only: true }];
 }
 
 message ListShiftSummariesResponse {

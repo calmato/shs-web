@@ -42,9 +42,10 @@ func (h *apiV1Handler) ListShiftSummaries(ctx *gin.Context) {
 	shiftStatus, _ := entity.ShiftStatus(status).LessonShiftStatus()
 
 	in := &lesson.ListShiftSummariesRequest{
-		Limit:  limit,
-		Offset: offset,
-		Status: shiftStatus,
+		Limit:   limit,
+		Offset:  offset,
+		Status:  shiftStatus,
+		OrderBy: lesson.ListShiftSummariesRequest_ORDER_BY_YEAR_MONTH_DESC,
 	}
 	out, err := h.lesson.ListShiftSummaries(c, in)
 	if err != nil {
