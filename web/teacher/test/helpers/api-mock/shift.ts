@@ -41,6 +41,10 @@ export const listShiftSummaries: { [key: string]: ShiftSummariesResponse } = {
   },
 }
 
+export const updateShiftSummarySchedule: { [key: string]: {} } = {
+  '/v1/shifts/1/schedule': {},
+}
+
 export const createShifts: { [key: string]: ShiftDetailsResponse } = {
   '/v1/shifts': {
     summary: {
@@ -69,6 +73,10 @@ export const createShifts: { [key: string]: ShiftDetailsResponse } = {
       },
     ],
   },
+}
+
+export const deleteShifts: { [key: string]: {} } = {
+  '/v1/shifts/1': {},
 }
 
 export const listShiftDetails: { [key: string]: ShiftDetailsResponse } = {

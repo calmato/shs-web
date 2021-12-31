@@ -129,11 +129,29 @@ describe('components/templates/PcShiftTop', () => {
       })
     })
 
+    describe('data', () => {
+      it('deleteDialog', () => {
+        expect(wrapper.vm.deleteDialog).toBeFalsy()
+      })
+    })
+
     describe('methods', () => {
       describe('toggleNewDialog', () => {
         it('emitが実行されること', async () => {
           await wrapper.vm.toggleNewDialog()
           expect(wrapper.emitted('toggle:new-dialog')).toBeTruthy()
+        })
+      })
+
+      describe('toggleEditDialog', () => {
+        it('emitが実行されること', async () => {
+          await wrapper.vm.toggleEditDialog()
+          expect(wrapper.emitted('toggle:edit-dialog')).toBeTruthy()
+        })
+
+        it('deleteDialogがfalseであること', async () => {
+          await wrapper.vm.toggleEditDialog()
+          expect(wrapper.vm.deleteDialog).toBeFalsy()
         })
       })
 
@@ -159,6 +177,32 @@ describe('components/templates/PcShiftTop', () => {
           await wrapper.vm.onClickEditShift(summary)
           expect(wrapper.emitted('click:edit-shift')).toBeTruthy()
           expect(wrapper.emitted('click:edit-shift')[0][0]).toBe(summary)
+        })
+      })
+
+      describe('onClickDeleteShift', () => {
+        it('deleteDialogがtrueであること', async () => {
+          await wrapper.vm.onClickDeleteShift()
+          expect(wrapper.vm.deleteDialog).toBeTruthy()
+        })
+      })
+
+      describe('onClickDeleteAccept', () => {
+        it('emitが実行されること', async () => {
+          await wrapper.vm.onClickDeleteAccept()
+          expect(wrapper.emitted('submit:delete')).toBeTruthy()
+        })
+
+        it('deleteDialogがfalseであること', async () => {
+          await wrapper.vm.onClickDeleteAccept()
+          expect(wrapper.vm.deleteDialog).toBeFalsy()
+        })
+      })
+
+      describe('onClickDeleteCancel', () => {
+        it('deleteDialogがfalseであること', async () => {
+          await wrapper.vm.onClickDeleteCancel()
+          expect(wrapper.vm.deleteDialog).toBeFalsy()
         })
       })
 
@@ -198,6 +242,13 @@ describe('components/templates/PcShiftTop', () => {
         it('emitが実行されること', async () => {
           await wrapper.vm.onSubmitNew()
           expect(wrapper.emitted('submit:new')).toBeTruthy()
+        })
+      })
+
+      describe('onSubmitEdit', () => {
+        it('emitが実行されること', async () => {
+          await wrapper.vm.onSubmitEdit()
+          expect(wrapper.emitted('submit:edit')).toBeTruthy()
         })
       })
     })

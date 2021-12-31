@@ -1,17 +1,20 @@
 import { Module, VuexModule, Mutation, Action } from 'vuex-module-decorators'
 import { AxiosError } from 'axios'
 import { $axios } from '~/plugins/axios'
+import dayjs from '~/plugins/dayjs'
 import {
+  CreateShiftsRequest,
+  ShiftDetailsResponse,
   ShiftSummariesResponse,
   ShiftSummary as ShiftSummaryResponse,
   ShiftDetail as ShiftDetailResponse,
   ShiftDetailLesson as LessonResponse,
+  UpdateShiftSummaryScheduleRequest,
 } from '~/types/api/v1'
 import { ShiftDetail, ShiftStatus, ShiftState, ShiftSummary, ShiftDetailLesson } from '~/types/store'
 import { ErrorResponse } from '~/types/api/exception'
 import { ApiError } from '~/types/exception'
-import { ShiftsNewForm } from '~/types/form'
-import { CreateShiftsRequest, ShiftDetailsResponse } from '~/types/api/v1/shift'
+import { ShiftsNewForm, ShiftSummaryEditScheduleForm } from '~/types/form'
 
 const initialState: ShiftState = {
   summary: {
@@ -61,6 +64,54 @@ export default class ShiftModule extends VuexModule {
     this.details = details
   }
 
+  @Mutation
+  private addSummaries({ summary }: { summary: ShiftSummary }): void {
+    this.summaries.unshift(summary)
+  }
+
+  @Mutation
+  private replaceSummaries({ summary }: { summary: ShiftSummary }): void {
+    const index: number = this.summaries.findIndex((val: ShiftSummary) => {
+      return val.id === summary.id
+    })
+    if (index === -1) {
+      return
+    }
+    this.summaries.splice(index, 1, summary)
+  }
+
+  @Mutation
+  private replaceSummariesSchedule({
+    summaryId,
+    openAt,
+    endAt,
+  }: {
+    summaryId: number
+    openAt: string
+    endAt: string
+  }): void {
+    const summary: ShiftSummary | undefined = this.summaries.find((val: ShiftSummary) => {
+      return val.id === summaryId
+    })
+    if (!summary) {
+      return
+    }
+    summary.openAt = openAt
+    summary.endAt = endAt
+    this.replaceSummaries({ summary })
+  }
+
+  @Mutation
+  private removeSummaries({ summaryId }: { summaryId: number }): void {
+    const index: number = this.summaries.findIndex((val: ShiftSummary) => {
+      return val.id === summaryId
+    })
+    if (index === -1) {
+      return
+    }
+    this.summaries.splice(index, 1)
+  }
+
   @Action({})
   public factory(): void {
     this.setSummaries({ summaries: initialState.summaries })
@@ -97,6 +148,29 @@ export default class ShiftModule extends VuexModule {
   }
 
   @Action({ rawError: true })
+  public async updateShiftSummarySchedule({ form }: { form: ShiftSummaryEditScheduleForm }): Promise<void> {
+    const summaryId: number = form.params.summaryId
+    const req: UpdateShiftSummaryScheduleRequest = {
+      openDate: replaceDate(form.params.openDate, '-', ''),
+      endDate: replaceDate(form.params.endDate, '-', ''),
+    }
+
+    await $axios
+      .$patch(`/v1/shifts/${summaryId}/shedule`, req)
+      .then(() => {
+        const format: string = 'YYYY-MM-DDThh:mm:ss'
+        const openAt: string = dayjs(form.params.openDate).tz().format(format)
+        const endAt: string = dayjs(form.params.endDate).tz().format(format)
+
+        this.replaceSummariesSchedule({ summaryId, openAt, endAt })
+      })
+      .catch((err: AxiosError) => {
+        const res: ErrorResponse = { ...err.response?.data }
+        throw new ApiError(res.status, res.message, res)
+      })
+  }
+
+  @Action({ rawError: true })
   public async createShifts({ form }: { form: ShiftsNewForm }): Promise<void> {
     const closedDates = form.params.closedDates.map((closedDate: string): string => {
       return replaceDate(closedDate, '-', '')
@@ -121,7 +195,21 @@ export default class ShiftModule extends VuexModule {
           return { ...shift, lessons }
         })
 
+        this.addSummaries({ summary })
         this.setDetails({ summary, details })
+      })
+      .catch((err: AxiosError) => {
+        const res: ErrorResponse = { ...err.response?.data }
+        throw new ApiError(res.status, res.message, res)
+      })
+  }
+
+  @Action({ rawError: true })
+  public async deleteShifts({ summaryId }: { summaryId: number }): Promise<void> {
+    await $axios
+      .$delete(`/v1/shifts/${summaryId}`)
+      .then(() => {
+        this.removeSummaries({ summaryId })
       })
       .catch((err: AxiosError) => {
         const res: ErrorResponse = { ...err.response?.data }

@@ -24,8 +24,12 @@ export default {
     ...ShiftStore.createShifts,
     ...UserStore.createTeacher,
   },
-  patch: {},
+  patch: {
+    ...ShiftStore.updateShiftSummarySchedule,
+  },
   put: {},
-  delete: {},
+  delete: {
+    ...ShiftStore.deleteShifts,
+  },
   error: err,
 }

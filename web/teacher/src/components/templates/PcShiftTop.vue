@@ -11,6 +11,18 @@
           @click:remove="onClickRemoveClosedDate"
         />
       </v-dialog>
+      <v-dialog :value.sync="editDialog" width="600px" scrollable @click:outside="toggleEditDialog">
+        <the-shift-edit-card
+          :form="editForm"
+          :loading="loading"
+          :delete-dialog="deleteDialog"
+          @click:submit="onSubmitEdit"
+          @click:delete="onClickDeleteShift"
+          @click:delete-accept="onClickDeleteAccept"
+          @click:delete-cancel="onClickDeleteCancel"
+          @click:close="toggleEditDialog"
+        />
+      </v-dialog>
       <v-col cols="12" align="center">
         <v-btn color="primary" @click="onClickNewShift">
           <v-icon>mdi-plus</v-icon>
@@ -46,14 +58,23 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, SetupContext } from '@nuxtjs/composition-api'
+import { defineComponent, PropType, ref, SetupContext } from '@nuxtjs/composition-api'
+import TheShiftEditCard from '~/components/organisms/TheShiftEditCard.vue'
 import TheShiftNewCard from '~/components/organisms/TheShiftNewCard.vue'
 import TheShiftTopCard from '~/components/organisms/TheShiftTopCard.vue'
-import { ShiftsNewForm, ShiftsNewOptions, ShiftsNewParams } from '~/types/form'
+import {
+  ShiftsNewForm,
+  ShiftsNewOptions,
+  ShiftsNewParams,
+  ShiftSummaryEditScheduleForm,
+  ShiftSummaryEditScheduleOptions,
+  ShiftSummaryEditScheduleParams,
+} from '~/types/form'
 import { ShiftSummary } from '~/types/store'
 
 export default defineComponent({
   components: {
+    TheShiftEditCard,
     TheShiftNewCard,
     TheShiftTopCard,
   },
@@ -68,6 +89,17 @@ export default defineComponent({
       default: () => ({
         params: ShiftsNewParams,
         options: ShiftsNewOptions,
+      }),
+    },
+    editDialog: {
+      type: Boolean,
+      default: false,
+    },
+    editForm: {
+      type: Object as PropType<ShiftSummaryEditScheduleForm>,
+      default: () => ({
+        params: ShiftSummaryEditScheduleParams,
+        options: ShiftSummaryEditScheduleOptions,
       }),
     },
     loading: {
@@ -89,8 +121,15 @@ export default defineComponent({
   },
 
   setup(_, { emit }: SetupContext) {
+    const deleteDialog = ref<boolean>(false)
+
     const toggleNewDialog = (): void => {
       emit('toggle:new-dialog')
+    }
+
+    const toggleEditDialog = (): void => {
+      deleteDialog.value = false
+      emit('toggle:edit-dialog')
     }
 
     const onClickNewShift = (): void => {
@@ -99,6 +138,19 @@ export default defineComponent({
 
     const onClickEditShift = (shift: ShiftSummary): void => {
       emit('click:edit-shift', shift)
+    }
+
+    const onClickDeleteShift = (): void => {
+      deleteDialog.value = true
+    }
+
+    const onClickDeleteAccept = (): void => {
+      emit('submit:delete')
+      deleteDialog.value = false
+    }
+
+    const onClickDeleteCancel = (): void => {
+      deleteDialog.value = false
     }
 
     const onClickNewLesson = (shift: ShiftSummary): void => {
@@ -117,14 +169,25 @@ export default defineComponent({
       emit('submit:new')
     }
 
+    const onSubmitEdit = (): void => {
+      deleteDialog.value = false
+      emit('submit:edit')
+    }
+
     return {
+      deleteDialog,
       toggleNewDialog,
+      toggleEditDialog,
       onClickNewShift,
       onClickEditShift,
+      onClickDeleteShift,
+      onClickDeleteAccept,
+      onClickDeleteCancel,
       onClickNewLesson,
       onClickAddClosedDate,
       onClickRemoveClosedDate,
       onSubmitNew,
+      onSubmitEdit,
     }
   },
 })
