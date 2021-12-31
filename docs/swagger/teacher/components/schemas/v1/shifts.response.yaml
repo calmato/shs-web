@@ -89,36 +89,35 @@ shiftsResponse:
           type: string
           description: 更新日時
     shifts:
-      type: object
-      description: 日毎の募集シフト一覧(Map)
-      properties:
-        'YYYYMMDD':
-          type: array
-          description: 日毎の授業コマ一覧
-          items:
-            type: object
-            properties:
-              isClosed:
-                type: boolean
-                description: 休校フラグ
-              lessons:
-                type: array
-                description: 授業コマ一覧
-                items:
-                  type: object
-                  properties:
-                    id:
-                      type: integer
-                      format: int64
-                      description: 授業コマID
-                    startTime:
-                      type: string
-                      format: 'HHMM'
-                      description: 授業開始時間
-                    endTime:
-                      type: string
-                      format: 'HHMM'
-                      description: 授業終了時間
+      type: array
+      description: 日毎の募集シフト一覧
+      items:
+        type: object
+        properties:
+          date:
+            type: string
+            description: 授業日
+          isClosed:
+            type: boolean
+            description: 休校フラグ
+          lessons:
+            type: array
+            description: 授業コマ一覧
+            items:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  format: int64
+                  description: 授業コマID
+                startTime:
+                  type: string
+                  format: 'HHMM'
+                  description: 授業開始時間
+                endTime:
+                  type: string
+                  format: 'HHMM'
+                  description: 授業終了時間
   example:
     summary:
       year: 2022
@@ -129,24 +128,24 @@ shiftsResponse:
       createdAt: '2021-12-12T12:12:30.100Z'
       updatedAt: '2021-12-12T12:12:30.100Z'
     shifts:
-      '20220201':
-        isClosed: false
-        lessons:
-        - id: 1
-          startTime: '1700'
-          endTime: '1830'
-        - id: 2
-          startTime: '1830'
-          endTime: '2000'
-      '20220202':
-        isClosed: true
-        lessons: []
-      '20220203':
-        isClosed: false
-        lessons:
-        - id: 3
-          startTime: '1700'
-          endTime: '1830'
-        - id: 4
-          startTime: '1830'
-          endTime: '2000'
+    - date: 20220201
+      isClosed: false
+      lessons:
+      - id: 1
+        startTime: '1700'
+        endTime: '1830'
+      - id: 2
+        startTime: '1830'
+        endTime: '2000'
+    - date: 20220202
+      isClosed: true
+      lessons: []
+    - date: 20220203
+      isClosed: false
+      lessons:
+      - id: 3
+        startTime: '1700'
+        endTime: '1830'
+      - id: 4
+        startTime: '1830'
+        endTime: '2000'

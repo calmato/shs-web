@@ -79,13 +79,9 @@ func (h *apiV1Handler) ListShifts(ctx *gin.Context) {
 		summary = entity.NewShiftSummary(gsummary)
 		return nil
 	})
-	var shifts entity.Shifts
+	var gshifts gentity.Shifts
 	eg.Go(func() error {
-		gshifts, err := h.listShiftsBySummaryID(ectx, shiftSummaryID)
-		if err != nil {
-			return err
-		}
-		shifts = entity.NewShifts(gshifts)
+		gshifts, err = h.listShiftsBySummaryID(ectx, shiftSummaryID)
 		return nil
 	})
 	if err := eg.Wait(); err != nil {
@@ -93,7 +89,7 @@ func (h *apiV1Handler) ListShifts(ctx *gin.Context) {
 		return
 	}
 
-	shiftsMap, err := shifts.GroupByDate()
+	shiftsMap, err := gshifts.GroupByDate()
 	if err != nil {
 		httpError(ctx, err)
 		return
@@ -144,9 +140,7 @@ func (h *apiV1Handler) CreateShifts(ctx *gin.Context) {
 	gshifts := gentity.NewShifts(out.Shifts)
 
 	summary := entity.NewShiftSummary(gsummary)
-	shifts := entity.NewShifts(gshifts)
-
-	shiftsMap, err := shifts.GroupByDate()
+	shiftsMap, err := gshifts.GroupByDate()
 	if err != nil {
 		httpError(ctx, err)
 		return

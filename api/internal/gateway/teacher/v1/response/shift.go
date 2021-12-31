@@ -7,6 +7,6 @@ type ShiftSummariesResponse struct {
 }
 
 type ShiftsResponse struct {
-	Summary *entity.ShiftSummary           `json:"summary"` // シフト募集概要
-	Shifts  map[string]*entity.ShiftDetail `json:"shifts"`  // 募集シフト一覧
+	Summary *entity.ShiftSummary `json:"summary"` // シフト募集概要
+	Shifts  entity.ShiftDetails  `json:"shifts"`  // 募集シフト一覧
 }

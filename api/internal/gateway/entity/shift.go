@@ -1,6 +1,11 @@
 package entity
 
-import "github.com/calmato/shs-web/api/proto/lesson"
+import (
+	"time"
+
+	"github.com/calmato/shs-web/api/pkg/jst"
+	"github.com/calmato/shs-web/api/proto/lesson"
+)
 
 type Shift struct {
 	*lesson.Shift
@@ -20,4 +25,21 @@ func NewShifts(shifts []*lesson.Shift) Shifts {
 		ss[i] = NewShift(shifts[i])
 	}
 	return ss
+}
+
+func (ss Shifts) GroupByDate() (map[time.Time]Shifts, error) {
+	const maxDays = 31
+	const maxLessons = 5
+	res := make(map[time.Time]Shifts, maxDays)
+	for _, s := range ss {
+		date, err := jst.ParseFromYYYYMMDD(s.Date)
+		if err != nil {
+			return nil, err
+		}
+		if _, ok := res[date]; !ok {
+			res[date] = make(Shifts, 0, maxLessons)
+		}
+		res[date] = append(res[date], s)
+	}
+	return res, nil
 }
