@@ -12,3 +12,8 @@ export interface ITextField {
   label: string
   rules: object
 }
+
+export interface IDatePicker {
+  label: string
+  rules: object
+}

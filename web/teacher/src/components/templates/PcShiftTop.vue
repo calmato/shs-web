@@ -1,6 +1,16 @@
 <template>
   <v-container>
     <v-row class="py-4">
+      <v-dialog :value.sync="newDialog" width="600px" scrollable @click:outside="toggleNewDialog">
+        <the-shift-new-card
+          :form="newForm"
+          :loading="loading"
+          @click:submit="onSubmitNew"
+          @click:close="toggleNewDialog"
+          @click:add="onClickAddClosedDate"
+          @click:remove="onClickRemoveClosedDate"
+        />
+      </v-dialog>
       <v-col cols="12" align="center">
         <v-btn color="primary" @click="onClickNewShift">
           <v-icon>mdi-plus</v-icon>
@@ -37,15 +47,33 @@
 
 <script lang="ts">
 import { defineComponent, PropType, SetupContext } from '@nuxtjs/composition-api'
+import TheShiftNewCard from '~/components/organisms/TheShiftNewCard.vue'
 import TheShiftTopCard from '~/components/organisms/TheShiftTopCard.vue'
+import { ShiftsNewForm, ShiftsNewOptions, ShiftsNewParams } from '~/types/form'
 import { ShiftSummary } from '~/types/store'
 
 export default defineComponent({
   components: {
+    TheShiftNewCard,
     TheShiftTopCard,
   },
 
   props: {
+    newDialog: {
+      type: Boolean,
+      default: false,
+    },
+    newForm: {
+      type: Object as PropType<ShiftsNewForm>,
+      default: () => ({
+        params: ShiftsNewParams,
+        options: ShiftsNewOptions,
+      }),
+    },
+    loading: {
+      type: Boolean,
+      default: false,
+    },
     acceptingSummaries: {
       type: Array as PropType<ShiftSummary[]>,
       default: () => [],
@@ -61,6 +89,10 @@ export default defineComponent({
   },
 
   setup(_, { emit }: SetupContext) {
+    const toggleNewDialog = (): void => {
+      emit('toggle:new-dialog')
+    }
+
     const onClickNewShift = (): void => {
       emit('click:new-shift')
     }
@@ -73,10 +105,26 @@ export default defineComponent({
       emit('click:new-lesson', shift)
     }
 
+    const onClickAddClosedDate = (): void => {
+      emit('click:add-closed-date')
+    }
+
+    const onClickRemoveClosedDate = (index: number): void => {
+      emit('click:remove-closed-date', index)
+    }
+
+    const onSubmitNew = (): void => {
+      emit('submit:new')
+    }
+
     return {
+      toggleNewDialog,
       onClickNewShift,
       onClickEditShift,
       onClickNewLesson,
+      onClickAddClosedDate,
+      onClickRemoveClosedDate,
+      onSubmitNew,
     }
   },
 })

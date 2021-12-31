@@ -1,5 +1,17 @@
 /**
  * ---------------------------
+ * Request
+ * ---------------------------
+ */
+export interface CreateShiftsRequest {
+  yearMonth: string
+  openDate: string
+  endDate: string
+  closedDates: string[]
+}
+
+/**
+ * ---------------------------
  * Response
  * ---------------------------
  */
@@ -31,5 +43,5 @@ export interface ShiftSummariesResponse {
 
 export interface ShiftDetailsResponse {
   summary: ShiftSummary
-  shifts: Map<string, ShiftDetail[]>
+  shifts: { [key: string]: ShiftDetail }
 }

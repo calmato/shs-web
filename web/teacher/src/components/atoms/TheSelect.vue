@@ -55,6 +55,7 @@ export default defineComponent({
       default: () => [],
     },
     value: {
+      type: [String, Number],
       required: false,
       default: undefined,
       type: [String, Number],

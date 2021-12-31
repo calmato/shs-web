@@ -3,12 +3,19 @@
     <!-- PCレイアウト -->
     <pc-shift-top
       class="hidden-sm-and-down"
+      :new-dialog="newDialog"
+      :new-form="newForm"
+      :loading="loading"
       :accepting-summaries="getAcceptingSummaries()"
       :finished-summaries="getFinishedSummaries()"
       :waiting-summaries="getWaitingSummaries()"
       @click:new-lesson="handleClickNewLesson"
       @click:new-shift="handleClickNewShift"
       @click:edit-shift="handleClickEditShift"
+      @click:add-closed-date="handleClickAddClosedDate"
+      @click:remove-closed-date="handleClickRemoveClosedDate"
+      @toggle:new-dialog="toggleNewDialog"
+      @submit:new="handleSubmitCreateShifts"
     />
     <!-- スマホレイアウト -->
     <mb-shift-top class="hidden-md-and-up" @click="handleClickTop" />
@@ -16,11 +23,12 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, SetupContext, useAsync } from '@nuxtjs/composition-api'
+import { computed, defineComponent, reactive, ref, SetupContext, useAsync } from '@nuxtjs/composition-api'
 import MbShiftTop from '~/components/templates/MbShiftTop.vue'
 import PcShiftTop from '~/components/templates/PcShiftTop.vue'
 import { CommonStore, ShiftStore } from '~/store'
-import { ShiftStatus, ShiftSummary } from '~/types/store'
+import { ShiftsNewForm, ShiftsNewOptions, ShiftsNewParams } from '~/types/form'
+import { PromiseState, ShiftStatus, ShiftSummary } from '~/types/store'
 
 export default defineComponent({
   components: {
@@ -32,7 +40,17 @@ export default defineComponent({
     const router = root.$router
     const store = root.$store
 
+    const newDialog = ref<boolean>(false)
+
+    const newForm = reactive<ShiftsNewForm>({
+      params: { ...ShiftsNewParams },
+      options: { ...ShiftsNewOptions },
+    })
+
     const summaries = computed<ShiftSummary[]>(() => store.getters['shift/getSummaries'])
+    const loading = computed<boolean>(() => {
+      return store.getters['common/getPromiseState'] === PromiseState.LOADING
+    })
 
     useAsync(async () => {
       await listShiftSummaries()
@@ -72,8 +90,13 @@ export default defineComponent({
       })
     }
 
+    const toggleNewDialog = (): void => {
+      newDialog.value = !newDialog.value
+    }
+
     const handleClickNewShift = (): void => {
       console.log('click', 'new', 'shift')
+      toggleNewDialog()
     }
 
     const handleClickEditShift = (shift: ShiftSummary): void => {
@@ -84,18 +107,48 @@ export default defineComponent({
       console.log('click', 'new', 'lesson', shift)
     }
 
+    const handleClickAddClosedDate = (): void => {
+      newForm.params.closedDates.push('')
+    }
+
+    const handleClickRemoveClosedDate = (index: number): void => {
+      newForm.params.closedDates.splice(index, 1)
+    }
+
     const handleClickTop = (): void => {
       router.push('/')
     }
 
+    const handleSubmitCreateShifts = async (): Promise<void> => {
+      CommonStore.startConnection()
+      await ShiftStore.createShifts({ form: newForm })
+        .then(() => {
+          toggleNewDialog()
+          CommonStore.showSnackbar({ color: 'success', message: 'シフト募集を新規登録しました。' })
+        })
+        .catch((err: Error) => {
+          CommonStore.showErrorInSnackbar(err)
+        })
+        .finally(() => {
+          CommonStore.endConnection()
+        })
+    }
+
     return {
+      newDialog,
+      newForm,
+      loading,
       getAcceptingSummaries,
       getFinishedSummaries,
       getWaitingSummaries,
+      toggleNewDialog,
       handleClickNewShift,
       handleClickEditShift,
       handleClickNewLesson,
+      handleClickAddClosedDate,
+      handleClickRemoveClosedDate,
       handleClickTop,
+      handleSubmitCreateShifts,
     }
   },
 })

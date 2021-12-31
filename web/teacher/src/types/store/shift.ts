@@ -25,9 +25,5 @@ export interface ShiftDetail {
 export interface ShiftState {
   summary: ShiftSummary
   summaries: ShiftSummary[]
-  details: Map<string, ShiftDetail[]>
-}
-
-export interface ShiftSummariesMap {
-  [key: number]: ShiftSummary[]
+  details: Map<string, ShiftDetail>
 }
