@@ -33,7 +33,7 @@ describe('store/shift', () => {
     })
 
     it('getDetails', () => {
-      expect(ShiftStore.getDetails).toEqual(new Map<string, ShiftDetail>())
+      expect(ShiftStore.getDetails).toEqual([])
     })
   })
 
@@ -136,27 +136,21 @@ describe('store/shift', () => {
             createdAt: '2021-12-30T19:25:57+09:00',
             updatedAt: '2021-12-30T19:25:57+09:00',
           })
-          expect(ShiftStore.getDetails).toEqual(
-            new Map([
-              [
-                '20210201',
-                {
-                  isClosed: false,
-                  lessons: [
-                    { id: 1, startTime: '1700', endTime: '1830' },
-                    { id: 2, startTime: '1830', endTime: '2000' },
-                  ],
-                },
+          expect(ShiftStore.getDetails).toEqual([
+            {
+              date: '20210201',
+              isClosed: false,
+              lessons: [
+                { id: 1, startTime: '1700', endTime: '1830' },
+                { id: 2, startTime: '1830', endTime: '2000' },
               ],
-              [
-                '20210202',
-                {
-                  isClosed: true,
-                  lessons: [],
-                },
-              ],
-            ])
-          )
+            },
+            {
+              date: '20210202',
+                isClosed: true,
+                lessons: [],
+            },
+          ])
         })
       })
 
