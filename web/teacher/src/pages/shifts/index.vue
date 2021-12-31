@@ -119,7 +119,7 @@ export default defineComponent({
       router.push('/')
     }
 
-    const handleSubmitCreateShifts = async (): void => {
+    const handleSubmitCreateShifts = async (): Promise<void> => {
       CommonStore.startConnection()
       await ShiftStore.createShifts({ form: newForm })
         .then(() => {
