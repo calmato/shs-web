@@ -33,7 +33,6 @@ func TestShift(t *testing.T) {
 			},
 			expect: &Shift{
 				ID:        1,
-				Date:      "20211226",
 				StartTime: "1700",
 				EndTime:   "1830",
 			},
@@ -75,7 +74,6 @@ func TestShifts(t *testing.T) {
 			expect: Shifts{
 				{
 					ID:        1,
-					Date:      "20211226",
 					StartTime: "1700",
 					EndTime:   "1830",
 				},
@@ -92,74 +90,52 @@ func TestShifts(t *testing.T) {
 	}
 }
 
-func TestShifts_GroupByDate(t *testing.T) {
+func TestShiftDetail(t *testing.T) {
 	t.Parallel()
+	now := jst.Date(2021, 12, 1, 12, 30, 0, 0)
 	tests := []struct {
-		name   string
-		shifts Shifts
-		expect map[time.Time]Shifts
-		isErr  bool
+		name     string
+		shifts   entity.Shifts
+		date     time.Time
+		isClosed bool
+		expect   *ShiftDetail
 	}{
 		{
 			name: "success",
-			shifts: Shifts{
+			shifts: entity.Shifts{
 				{
-					ID:        1,
-					Date:      "20211226",
-					StartTime: "1700",
-					EndTime:   "1830",
-				},
-				{
-					ID:        2,
-					Date:      "20211226",
-					StartTime: "1830",
-					EndTime:   "2000",
-				},
-				{
-					ID:        3,
-					Date:      "20211227",
-					StartTime: "1700",
-					EndTime:   "1830",
-				},
-			},
-			expect: map[time.Time]Shifts{
-				jst.Date(2021, 12, 26, 0, 0, 0, 0): {
-					{
-						ID:        1,
-						Date:      "20211226",
-						StartTime: "1700",
-						EndTime:   "1830",
-					},
-					{
-						ID:        2,
-						Date:      "20211226",
-						StartTime: "1830",
-						EndTime:   "2000",
+					Shift: &lesson.Shift{
+						Id:             1,
+						ShiftSummaryId: 1,
+						Date:           "20211226",
+						StartTime:      "1700",
+						EndTime:        "1830",
+						CreatedAt:      now.Unix(),
+						UpdatedAt:      now.Unix(),
 					},
 				},
-				jst.Date(2021, 12, 27, 0, 0, 0, 0): {
-					{
-						ID:        3,
-						Date:      "20211227",
-						StartTime: "1700",
-						EndTime:   "1830",
+				{
+					Shift: &lesson.Shift{
+						Id:             2,
+						ShiftSummaryId: 1,
+						Date:           "20211226",
+						StartTime:      "1830",
+						EndTime:        "2000",
+						CreatedAt:      now.Unix(),
+						UpdatedAt:      now.Unix(),
 					},
 				},
 			},
-			isErr: false,
-		},
-		{
-			name: "failed to parse date",
-			shifts: Shifts{
-				{
-					ID:        1,
-					Date:      "20211200",
-					StartTime: "1700",
-					EndTime:   "1830",
+			date:     jst.Date(2021, 12, 26, 0, 0, 0, 0),
+			isClosed: false,
+			expect: &ShiftDetail{
+				Date:     "20211226",
+				IsClosed: false,
+				Lessons: Shifts{
+					{ID: 1, StartTime: "1700", EndTime: "1830"},
+					{ID: 2, StartTime: "1830", EndTime: "2000"},
 				},
 			},
-			expect: nil,
-			isErr:  true,
 		},
 	}
 
@@ -167,9 +143,7 @@ func TestShifts_GroupByDate(t *testing.T) {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			actual, err := tt.shifts.GroupByDate()
-			assert.Equal(t, tt.isErr, err != nil, err)
-			assert.Equal(t, tt.expect, actual)
+			assert.Equal(t, tt.expect, NewShiftDetail(tt.shifts, tt.date, tt.isClosed))
 		})
 	}
 }
@@ -180,8 +154,8 @@ func TestShifts_NewShiftDetailsForMonth(t *testing.T) {
 	tests := []struct {
 		name    string
 		summary *ShiftSummary
-		shifts  map[time.Time]Shifts
-		expect  map[string]*ShiftDetail
+		shifts  map[time.Time]entity.Shifts
+		expect  ShiftDetails
 	}{
 		{
 			name: "success",
@@ -195,70 +169,87 @@ func TestShifts_NewShiftDetailsForMonth(t *testing.T) {
 				CreatedAt: now,
 				UpdatedAt: now,
 			},
-			shifts: map[time.Time]Shifts{
+			shifts: map[time.Time]entity.Shifts{
 				jst.Date(2022, 2, 1, 0, 0, 0, 0): {
 					{
-						ID:        1,
-						Date:      "20220201",
-						StartTime: "1700",
-						EndTime:   "1830",
+						Shift: &lesson.Shift{
+							Id:             1,
+							ShiftSummaryId: 1,
+							Date:           "20220201",
+							StartTime:      "1700",
+							EndTime:        "1830",
+							CreatedAt:      now.Unix(),
+							UpdatedAt:      now.Unix(),
+						},
 					},
 					{
-						ID:        2,
-						Date:      "20220201",
-						StartTime: "1830",
-						EndTime:   "2000",
+						Shift: &lesson.Shift{
+							Id:             2,
+							ShiftSummaryId: 1,
+							Date:           "20220201",
+							StartTime:      "1830",
+							EndTime:        "2000",
+							CreatedAt:      now.Unix(),
+							UpdatedAt:      now.Unix(),
+						},
 					},
 				},
 				jst.Date(2022, 2, 3, 0, 0, 0, 0): {
 					{
-						ID:        3,
-						Date:      "20220203",
-						StartTime: "1700",
-						EndTime:   "1830",
+						Shift: &lesson.Shift{
+							Id:             3,
+							ShiftSummaryId: 1,
+							Date:           "20220203",
+							StartTime:      "1700",
+							EndTime:        "1830",
+							CreatedAt:      now.Unix(),
+							UpdatedAt:      now.Unix(),
+						},
 					},
 				},
 			},
-			expect: map[string]*ShiftDetail{
-				"20220201": {
+			expect: ShiftDetails{
+				{
+					Date:     "20220201",
 					IsClosed: false,
-					Lessons: []*ShiftDetailLesson{
+					Lessons: Shifts{
 						{ID: 1, StartTime: "1700", EndTime: "1830"},
 						{ID: 2, StartTime: "1830", EndTime: "2000"},
 					},
 				},
-				"20220202": {IsClosed: true, Lessons: []*ShiftDetailLesson{}},
-				"20220203": {
+				{Date: "20220202", IsClosed: true, Lessons: Shifts{}},
+				{
+					Date:     "20220203",
 					IsClosed: false,
-					Lessons: []*ShiftDetailLesson{
+					Lessons: Shifts{
 						{ID: 3, StartTime: "1700", EndTime: "1830"},
 					},
 				},
-				"20220204": {IsClosed: true, Lessons: []*ShiftDetailLesson{}},
-				"20220205": {IsClosed: true, Lessons: []*ShiftDetailLesson{}},
-				"20220206": {IsClosed: true, Lessons: []*ShiftDetailLesson{}},
-				"20220207": {IsClosed: true, Lessons: []*ShiftDetailLesson{}},
-				"20220208": {IsClosed: true, Lessons: []*ShiftDetailLesson{}},
-				"20220209": {IsClosed: true, Lessons: []*ShiftDetailLesson{}},
-				"20220210": {IsClosed: true, Lessons: []*ShiftDetailLesson{}},
-				"20220211": {IsClosed: true, Lessons: []*ShiftDetailLesson{}},
-				"20220212": {IsClosed: true, Lessons: []*ShiftDetailLesson{}},
-				"20220213": {IsClosed: true, Lessons: []*ShiftDetailLesson{}},
-				"20220214": {IsClosed: true, Lessons: []*ShiftDetailLesson{}},
-				"20220215": {IsClosed: true, Lessons: []*ShiftDetailLesson{}},
-				"20220216": {IsClosed: true, Lessons: []*ShiftDetailLesson{}},
-				"20220217": {IsClosed: true, Lessons: []*ShiftDetailLesson{}},
-				"20220218": {IsClosed: true, Lessons: []*ShiftDetailLesson{}},
-				"20220219": {IsClosed: true, Lessons: []*ShiftDetailLesson{}},
-				"20220220": {IsClosed: true, Lessons: []*ShiftDetailLesson{}},
-				"20220221": {IsClosed: true, Lessons: []*ShiftDetailLesson{}},
-				"20220222": {IsClosed: true, Lessons: []*ShiftDetailLesson{}},
-				"20220223": {IsClosed: true, Lessons: []*ShiftDetailLesson{}},
-				"20220224": {IsClosed: true, Lessons: []*ShiftDetailLesson{}},
-				"20220225": {IsClosed: true, Lessons: []*ShiftDetailLesson{}},
-				"20220226": {IsClosed: true, Lessons: []*ShiftDetailLesson{}},
-				"20220227": {IsClosed: true, Lessons: []*ShiftDetailLesson{}},
-				"20220228": {IsClosed: true, Lessons: []*ShiftDetailLesson{}},
+				{Date: "20220204", IsClosed: true, Lessons: Shifts{}},
+				{Date: "20220205", IsClosed: true, Lessons: Shifts{}},
+				{Date: "20220206", IsClosed: true, Lessons: Shifts{}},
+				{Date: "20220207", IsClosed: true, Lessons: Shifts{}},
+				{Date: "20220208", IsClosed: true, Lessons: Shifts{}},
+				{Date: "20220209", IsClosed: true, Lessons: Shifts{}},
+				{Date: "20220210", IsClosed: true, Lessons: Shifts{}},
+				{Date: "20220211", IsClosed: true, Lessons: Shifts{}},
+				{Date: "20220212", IsClosed: true, Lessons: Shifts{}},
+				{Date: "20220213", IsClosed: true, Lessons: Shifts{}},
+				{Date: "20220214", IsClosed: true, Lessons: Shifts{}},
+				{Date: "20220215", IsClosed: true, Lessons: Shifts{}},
+				{Date: "20220216", IsClosed: true, Lessons: Shifts{}},
+				{Date: "20220217", IsClosed: true, Lessons: Shifts{}},
+				{Date: "20220218", IsClosed: true, Lessons: Shifts{}},
+				{Date: "20220219", IsClosed: true, Lessons: Shifts{}},
+				{Date: "20220220", IsClosed: true, Lessons: Shifts{}},
+				{Date: "20220221", IsClosed: true, Lessons: Shifts{}},
+				{Date: "20220222", IsClosed: true, Lessons: Shifts{}},
+				{Date: "20220223", IsClosed: true, Lessons: Shifts{}},
+				{Date: "20220224", IsClosed: true, Lessons: Shifts{}},
+				{Date: "20220225", IsClosed: true, Lessons: Shifts{}},
+				{Date: "20220226", IsClosed: true, Lessons: Shifts{}},
+				{Date: "20220227", IsClosed: true, Lessons: Shifts{}},
+				{Date: "20220228", IsClosed: true, Lessons: Shifts{}},
 			},
 		},
 	}
