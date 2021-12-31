@@ -148,6 +148,11 @@ func TestGRPCError(t *testing.T) {
 			expect: codes.NotFound,
 		},
 		{
+			name:   "already exists",
+			err:    fmt.Errorf("%w: %s", database.ErrAlreadyExists, "test"),
+			expect: codes.AlreadyExists,
+		},
+		{
 			name:   "unimplemented",
 			err:    fmt.Errorf("%w: %s", database.ErrNotImplemented, "test"),
 			expect: codes.Unimplemented,
