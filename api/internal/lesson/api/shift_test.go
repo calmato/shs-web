@@ -192,6 +192,66 @@ func TestGetShiftSummary(t *testing.T) {
 	}
 }
 
+func TestUpdateShiftSummarySchedule(t *testing.T) {
+	t.Parallel()
+	now := jst.Date(2022, 1, 1, 0, 0, 0, 0)
+
+	req := &lesson.UpdateShiftSummaryScheduleRequest{
+		Id:     1,
+		OpenAt: now.Unix(),
+		EndAt:  now.Unix(),
+	}
+
+	tests := []struct {
+		name   string
+		setup  func(ctx context.Context, t *testing.T, mocks *mocks)
+		req    *lesson.UpdateShiftSummaryScheduleRequest
+		expect *testResponse
+	}{
+		{
+			name: "success",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				mocks.validator.EXPECT().UpdateShiftSummarySchedule(req).Return(nil)
+				mocks.db.ShiftSummary.EXPECT().UpdateSchedule(ctx, int64(1), now, now).Return(nil)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.OK,
+				body: &lesson.UpdateShiftSummaryShceduleResponse{},
+			},
+		},
+		{
+			name: "invalid argument",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				req := &lesson.UpdateShiftSummaryScheduleRequest{}
+				mocks.validator.EXPECT().UpdateShiftSummarySchedule(req).Return(validation.ErrRequestValidation)
+			},
+			req: &lesson.UpdateShiftSummaryScheduleRequest{},
+			expect: &testResponse{
+				code: codes.InvalidArgument,
+			},
+		},
+		{
+			name: "invalid argument",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				mocks.validator.EXPECT().UpdateShiftSummarySchedule(req).Return(nil)
+				mocks.db.ShiftSummary.EXPECT().UpdateSchedule(ctx, int64(1), now, now).Return(errmock)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.Internal,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, testGRPC(tt.setup, tt.expect, func(ctx context.Context, service *lessonService) (proto.Message, error) {
+			return service.UpdateShiftSummarySchedule(ctx, tt.req)
+		}))
+	}
+}
+
 func TestListShifts(t *testing.T) {
 	t.Parallel()
 	now := jst.Now()

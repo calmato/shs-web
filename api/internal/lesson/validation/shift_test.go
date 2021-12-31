@@ -100,6 +100,63 @@ func TestGetShift(t *testing.T) {
 	}
 }
 
+func TestUpdateShiftSummarySchedule(t *testing.T) {
+	t.Parallel()
+	validator := NewRequestValidation()
+
+	tests := []struct {
+		name  string
+		req   *lesson.UpdateShiftSummaryScheduleRequest
+		isErr bool
+	}{
+		{
+			name: "success",
+			req: &lesson.UpdateShiftSummaryScheduleRequest{
+				Id:     1,
+				OpenAt: 1640940900,
+				EndAt:  1640940900,
+			},
+			isErr: false,
+		},
+		{
+			name: "Id is gt",
+			req: &lesson.UpdateShiftSummaryScheduleRequest{
+				Id:     0,
+				OpenAt: 1640940900,
+				EndAt:  1640940900,
+			},
+			isErr: true,
+		},
+		{
+			name: "OpenAt is gt",
+			req: &lesson.UpdateShiftSummaryScheduleRequest{
+				Id:     1,
+				OpenAt: 0,
+				EndAt:  1640940900,
+			},
+			isErr: true,
+		},
+		{
+			name: "EndAt is gt",
+			req: &lesson.UpdateShiftSummaryScheduleRequest{
+				Id:     1,
+				OpenAt: 1640940900,
+				EndAt:  0,
+			},
+			isErr: true,
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			err := validator.UpdateShiftSummarySchedule(tt.req)
+			assert.Equal(t, tt.isErr, err != nil, err)
+		})
+	}
+}
+
 func TestListShifts(t *testing.T) {
 	t.Parallel()
 	validator := NewRequestValidation()

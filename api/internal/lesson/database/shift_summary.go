@@ -79,6 +79,28 @@ func (s *shiftSummary) Get(ctx context.Context, id int64, fields ...string) (*en
 	return summary, nil
 }
 
+func (s *shiftSummary) UpdateSchedule(ctx context.Context, id int64, openAt, endAt time.Time) error {
+	tx, err := s.db.Begin()
+	if err != nil {
+		return dbError(err)
+	}
+	defer s.db.Close(tx)
+
+	params := map[string]interface{}{
+		"id":         id,
+		"open_at":    openAt,
+		"end_at":     endAt,
+		"updated_at": s.now(),
+	}
+
+	err = tx.Table(shiftSummaryTable).Where("id = ?", id).Updates(params).Error
+	if err != nil {
+		tx.Rollback()
+		return dbError(err)
+	}
+	return dbError(tx.Commit().Error)
+}
+
 func (s *shiftSummary) Count(ctx context.Context) (int64, error) {
 	var total int64
 	err := s.db.DB.Table(shiftSummaryTable).Count(&total).Error

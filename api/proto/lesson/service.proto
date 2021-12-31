@@ -13,6 +13,7 @@ import "lesson/shift_summary.proto";
 service LessonService {
   rpc ListShiftSummaries(ListShiftSummariesRequest) returns (ListShiftSummariesResponse);
   rpc GetShiftSummary(GetShiftSummaryRequest) returns (GetShiftSummaryResponse);
+  rpc UpdateShiftSummarySchedule(UpdateShiftSummaryScheduleRequest) returns (UpdateShiftSummaryShceduleResponse);
   rpc ListShifts(ListShiftsRequest) returns (ListShiftsResponse);
   rpc CreateShifts(CreateShiftsRequest) returns (CreateShiftsResponse);
 }
@@ -35,6 +36,14 @@ message GetShiftSummaryRequest {
 message GetShiftSummaryResponse {
   ShiftSummary summary = 1;
 }
+
+message UpdateShiftSummaryScheduleRequest {
+  int64 id      = 1 [(validate.rules).int64 = { gt: 0 }];
+  int64 open_at = 2 [(validate.rules).int64 = { gt: 0 }];
+  int64 end_at  = 3 [(validate.rules).int64 = { gt: 0 }];
+}
+
+message UpdateShiftSummaryShceduleResponse {}
 
 message ListShiftsRequest {
   int64 shift_summary_id = 1 [(validate.rules).int64 = { gt: 0 }];
