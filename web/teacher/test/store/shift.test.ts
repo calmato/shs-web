@@ -2,7 +2,7 @@ import { setup, refresh, setSafetyMode } from '~~/test/helpers/store-helper'
 import { ShiftStore } from '~/store'
 import { ApiError } from '~/types/exception'
 import { ErrorResponse } from '~/types/api/exception'
-import { ShiftDetail, ShiftStatus } from '~/types/store'
+import { ShiftStatus } from '~/types/store'
 import { ShiftsNewForm, ShiftsNewOptions } from '~/types/form'
 
 describe('store/shift', () => {
@@ -147,8 +147,8 @@ describe('store/shift', () => {
             },
             {
               date: '20210202',
-                isClosed: true,
-                lessons: [],
+              isClosed: true,
+              lessons: [],
             },
           ])
         })
