@@ -48,6 +48,20 @@ func (mr *MockRequestValidationMockRecorder) CreateShifts(req interface{}) *gomo
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateShifts", reflect.TypeOf((*MockRequestValidation)(nil).CreateShifts), req)
 }
 
+// DeleteShiftSummary mocks base method.
+func (m *MockRequestValidation) DeleteShiftSummary(req *lesson.DeleteShiftSummaryRequest) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteShiftSummary", req)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeleteShiftSummary indicates an expected call of DeleteShiftSummary.
+func (mr *MockRequestValidationMockRecorder) DeleteShiftSummary(req interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteShiftSummary", reflect.TypeOf((*MockRequestValidation)(nil).DeleteShiftSummary), req)
+}
+
 // GetShiftSummary mocks base method.
 func (m *MockRequestValidation) GetShiftSummary(req *lesson.GetShiftSummaryRequest) error {
 	m.ctrl.T.Helper()

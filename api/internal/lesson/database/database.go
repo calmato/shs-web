@@ -46,6 +46,7 @@ type ShiftSummary interface {
 	List(ctx context.Context, p *ListShiftSummariesParams, fields ...string) (entity.ShiftSummaries, error)
 	Get(ctx context.Context, id int64, fields ...string) (*entity.ShiftSummary, error)
 	UpdateSchedule(ctx context.Context, id int64, openAt, endAt time.Time) error
+	Delete(ctx context.Context, id int64) error
 	Count(ctx context.Context) (int64, error)
 }
 

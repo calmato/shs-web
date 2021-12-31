@@ -289,6 +289,63 @@ func TestUpdateShiftSummarySchedule(t *testing.T) {
 	}
 }
 
+func TestDeleteShiftSummary(t *testing.T) {
+	t.Parallel()
+
+	req := &lesson.DeleteShiftSummaryRequest{
+		Id: 1,
+	}
+
+	tests := []struct {
+		name   string
+		setup  func(ctx context.Context, t *testing.T, mocks *mocks)
+		req    *lesson.DeleteShiftSummaryRequest
+		expect *testResponse
+	}{
+		{
+			name: "success",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				mocks.validator.EXPECT().DeleteShiftSummary(req).Return(nil)
+				mocks.db.ShiftSummary.EXPECT().Delete(ctx, int64(1)).Return(nil)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.OK,
+				body: &lesson.DeleteShiftSummaryResponse{},
+			},
+		},
+		{
+			name: "invalid argument",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				req := &lesson.DeleteShiftSummaryRequest{}
+				mocks.validator.EXPECT().DeleteShiftSummary(req).Return(validation.ErrRequestValidation)
+			},
+			req: &lesson.DeleteShiftSummaryRequest{},
+			expect: &testResponse{
+				code: codes.InvalidArgument,
+			},
+		},
+		{
+			name: "failed to delete shift summary",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				mocks.validator.EXPECT().DeleteShiftSummary(req).Return(nil)
+				mocks.db.ShiftSummary.EXPECT().Delete(ctx, int64(1)).Return(nil, errmock)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.Internal,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, testGRPC(tt.setup, tt.expect, func(ctx context.Context, service *lessonService) (proto.Message, error) {
+			return service.DeleteShiftSummary(ctx, tt.req)
+		}))
+	}
+}
+
 func TestListShifts(t *testing.T) {
 	t.Parallel()
 	now := jst.Now()

@@ -52,6 +52,20 @@ func (mr *MockShiftSummaryMockRecorder) Count(ctx interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Count", reflect.TypeOf((*MockShiftSummary)(nil).Count), ctx)
 }
 
+// Delete mocks base method.
+func (m *MockShiftSummary) Delete(ctx context.Context, id int64) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Delete", ctx, id)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Delete indicates an expected call of Delete.
+func (mr *MockShiftSummaryMockRecorder) Delete(ctx, id interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockShiftSummary)(nil).Delete), ctx, id)
+}
+
 // Get mocks base method.
 func (m *MockShiftSummary) Get(ctx context.Context, id int64, fields ...string) (*entity.ShiftSummary, error) {
 	m.ctrl.T.Helper()
