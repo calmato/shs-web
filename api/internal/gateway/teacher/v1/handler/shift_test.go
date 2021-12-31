@@ -119,6 +119,157 @@ func TestListShiftSummaries(t *testing.T) {
 	}
 }
 
+func TestUpdateShiftSummarySchedule(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name    string
+		setup   func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller)
+		shiftID string
+		req     *request.UpdateShiftSummaryScheduleRequest
+		expect  *testResponse
+	}{
+		{
+			name: "success",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
+				in := &lesson.UpdateShiftSummaryScheduleRequest{
+					Id:     1,
+					OpenAt: jst.Date(2022, 1, 1, 0, 0, 0, 0).Unix(),
+					EndAt:  jst.Date(2022, 1, 15, 0, 0, 0, 0).Unix() - 1,
+				}
+				out := &lesson.UpdateShiftSummaryShceduleResponse{}
+				mocks.lesson.EXPECT().UpdateShiftSummarySchedule(gomock.Any(), in).Return(out, nil)
+			},
+			shiftID: "1",
+			req: &request.UpdateShiftSummaryScheduleRequest{
+				OpenDate: "20220101",
+				EndDate:  "20220114",
+			},
+			expect: &testResponse{
+				code: http.StatusNoContent,
+			},
+		},
+		{
+			name:    "failed to parse shift id",
+			setup:   func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {},
+			shiftID: "aaa",
+			req: &request.UpdateShiftSummaryScheduleRequest{
+				OpenDate: "20220101",
+				EndDate:  "20220114",
+			},
+			expect: &testResponse{
+				code: http.StatusBadRequest,
+			},
+		},
+		{
+			name:    "failed to parse open at",
+			setup:   func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {},
+			shiftID: "1",
+			req: &request.UpdateShiftSummaryScheduleRequest{
+				OpenDate: "20220100",
+				EndDate:  "20220114",
+			},
+			expect: &testResponse{
+				code: http.StatusBadRequest,
+			},
+		},
+		{
+			name:    "failed to parse end at",
+			setup:   func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {},
+			shiftID: "1",
+			req: &request.UpdateShiftSummaryScheduleRequest{
+				OpenDate: "20220101",
+				EndDate:  "20220100",
+			},
+			expect: &testResponse{
+				code: http.StatusBadRequest,
+			},
+		},
+		{
+			name: "failed to update shift summary schedule",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
+				in := &lesson.UpdateShiftSummaryScheduleRequest{
+					Id:     1,
+					OpenAt: jst.Date(2022, 1, 1, 0, 0, 0, 0).Unix(),
+					EndAt:  jst.Date(2022, 1, 15, 0, 0, 0, 0).Unix() - 1,
+				}
+				mocks.lesson.EXPECT().UpdateShiftSummarySchedule(gomock.Any(), in).Return(nil, errmock)
+			},
+			shiftID: "1",
+			req: &request.UpdateShiftSummaryScheduleRequest{
+				OpenDate: "20220101",
+				EndDate:  "20220114",
+			},
+			expect: &testResponse{
+				code: http.StatusInternalServerError,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			path := fmt.Sprintf("/v1/shifts/%s/schedule", tt.shiftID)
+			req := newHTTPRequest(t, http.MethodPatch, path, tt.req)
+			testHTTP(t, tt.setup, tt.expect, req)
+		})
+	}
+}
+
+func TestDeleteShiftSummary(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name    string
+		setup   func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller)
+		shiftID string
+		expect  *testResponse
+	}{
+		{
+			name: "success",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
+				in := &lesson.DeleteShiftSummaryRequest{Id: 1}
+				out := &lesson.DeleteShiftSummaryResponse{}
+				mocks.lesson.EXPECT().DeleteShiftSummary(gomock.Any(), in).Return(out, nil)
+			},
+			shiftID: "1",
+			expect: &testResponse{
+				code: http.StatusNoContent,
+			},
+		},
+		{
+			name:    "failed to parse shift id",
+			setup:   func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {},
+			shiftID: "aaa",
+			expect: &testResponse{
+				code: http.StatusBadRequest,
+			},
+		},
+		{
+			name: "failed to delete shift summary",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
+				in := &lesson.DeleteShiftSummaryRequest{Id: 1}
+				mocks.lesson.EXPECT().DeleteShiftSummary(gomock.Any(), in).Return(nil, errmock)
+			},
+			shiftID: "1",
+			expect: &testResponse{
+				code: http.StatusInternalServerError,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			path := fmt.Sprintf("/v1/shifts/%s", tt.shiftID)
+			req := newHTTPRequest(t, http.MethodDelete, path, nil)
+			testHTTP(t, tt.setup, tt.expect, req)
+		})
+	}
+}
+
 func TestListShifts(t *testing.T) {
 	t.Parallel()
 	now := jst.Date(2021, 12, 1, 12, 30, 0, 0)
@@ -366,7 +517,7 @@ func TestCreateShifts(t *testing.T) {
 				in := &lesson.CreateShiftsRequest{
 					YearMonth:   202202,
 					OpenAt:      jst.Date(2022, 1, 1, 0, 0, 0, 0).Unix(),
-					EndAt:       jst.Date(2022, 1, 15, 0, 0, 0, 0).Unix(),
+					EndAt:       jst.Date(2022, 1, 15, 0, 0, 0, 0).Unix() - 1,
 					ClosedDates: []string{"20210202", "20210214"},
 				}
 				out := &lesson.CreateShiftsResponse{
@@ -485,7 +636,7 @@ func TestCreateShifts(t *testing.T) {
 				in := &lesson.CreateShiftsRequest{
 					YearMonth:   202202,
 					OpenAt:      jst.Date(2022, 1, 1, 0, 0, 0, 0).Unix(),
-					EndAt:       jst.Date(2022, 1, 15, 0, 0, 0, 0).Unix(),
+					EndAt:       jst.Date(2022, 1, 15, 0, 0, 0, 0).Unix() - 1,
 					ClosedDates: []string{"20210202", "20210214"},
 				}
 				mocks.lesson.EXPECT().CreateShifts(gomock.Any(), in).Return(nil, errmock)
@@ -506,7 +657,7 @@ func TestCreateShifts(t *testing.T) {
 				in := &lesson.CreateShiftsRequest{
 					YearMonth:   202202,
 					OpenAt:      jst.Date(2022, 1, 1, 0, 0, 0, 0).Unix(),
-					EndAt:       jst.Date(2022, 1, 15, 0, 0, 0, 0).Unix(),
+					EndAt:       jst.Date(2022, 1, 15, 0, 0, 0, 0).Unix() - 1,
 					ClosedDates: []string{"20210202", "20210214"},
 				}
 				out := &lesson.CreateShiftsResponse{

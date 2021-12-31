@@ -60,6 +60,65 @@ func (h *apiV1Handler) ListShiftSummaries(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, res)
 }
 
+func (h *apiV1Handler) UpdateShiftSummarySchedule(ctx *gin.Context) {
+	c := util.SetMetadata(ctx)
+
+	req := &request.UpdateShiftSummaryScheduleRequest{}
+	if err := ctx.BindJSON(req); err != nil {
+		badRequest(ctx, err)
+		return
+	}
+	shiftSummaryID, err := strconv.ParseInt(ctx.Param("shiftId"), 10, 64)
+	if err != nil {
+		badRequest(ctx, err)
+		return
+	}
+	openAt, err := jst.ParseFromYYYYMMDD(req.OpenDate)
+	if err != nil {
+		badRequest(ctx, err)
+		return
+	}
+	endAt, err := jst.ParseFromYYYYMMDD(req.EndDate)
+	if err != nil {
+		badRequest(ctx, err)
+		return
+	}
+
+	in := &lesson.UpdateShiftSummaryScheduleRequest{
+		Id:     shiftSummaryID,
+		OpenAt: openAt.Unix(),
+		EndAt:  endAt.AddDate(0, 0, 1).Unix() - 1,
+	}
+	_, err = h.lesson.UpdateShiftSummarySchedule(c, in)
+	if err != nil {
+		httpError(ctx, err)
+		return
+	}
+
+	ctx.JSON(http.StatusNoContent, gin.H{})
+}
+
+func (h *apiV1Handler) DeleteShiftSummary(ctx *gin.Context) {
+	c := util.SetMetadata(ctx)
+
+	shiftSummaryID, err := strconv.ParseInt(ctx.Param("shiftId"), 10, 64)
+	if err != nil {
+		badRequest(ctx, err)
+		return
+	}
+
+	in := &lesson.DeleteShiftSummaryRequest{
+		Id: shiftSummaryID,
+	}
+	_, err = h.lesson.DeleteShiftSummary(c, in)
+	if err != nil {
+		httpError(ctx, err)
+		return
+	}
+
+	ctx.JSON(http.StatusNoContent, gin.H{})
+}
+
 func (h *apiV1Handler) ListShifts(ctx *gin.Context) {
 	c := util.SetMetadata(ctx)
 
@@ -128,7 +187,7 @@ func (h *apiV1Handler) CreateShifts(ctx *gin.Context) {
 	in := &lesson.CreateShiftsRequest{
 		YearMonth:   int32(yearMonth),
 		OpenAt:      openAt.Unix(),
-		EndAt:       endAt.AddDate(0, 0, 1).Unix(),
+		EndAt:       endAt.AddDate(0, 0, 1).Unix() - 1,
 		ClosedDates: req.ClosedDates,
 	}
 	out, err := h.lesson.CreateShifts(c, in)
