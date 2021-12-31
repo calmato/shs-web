@@ -25,7 +25,7 @@ const initialState: ShiftState = {
     updatedAt: '',
   },
   summaries: [],
-  details: new Map<string, ShiftDetail>(),
+  details: [],
 }
 
 @Module({
@@ -46,7 +46,7 @@ export default class ShiftModule extends VuexModule {
     return this.summaries
   }
 
-  public get getDetails(): Map<string, ShiftDetail> {
+  public get getDetails(): ShiftDetail[] {
     return this.details
   }
 
@@ -56,7 +56,7 @@ export default class ShiftModule extends VuexModule {
   }
 
   @Mutation
-  private setDetails({ summary, details }: { summary: ShiftSummary; details: Map<string, ShiftDetail> }): void {
+  private setDetails({ summary, details }: { summary: ShiftSummary; details: ShiftDetail[] }): void {
     this.summary = summary
     this.details = details
   }
@@ -113,14 +113,12 @@ export default class ShiftModule extends VuexModule {
       .$post('/v1/shifts', req)
       .then((res: ShiftDetailsResponse) => {
         const summary: ShiftSummary = { ...res.summary }
-        const details = new Map<string, ShiftDetail>()
 
-        Object.keys(res.shifts).forEach((key: string) => {
-          const shift: ShiftDetailResponse = res.shifts[key]
+        const details: ShiftDetail[] = res.shifts.map((shift: ShiftDetailResponse): ShiftDetail => {
           const lessons: ShiftDetailLesson[] = shift.lessons.map((lesson: LessonResponse): ShiftDetailLesson => {
             return { ...lesson }
           })
-          details.set(key, { isClosed: shift.isClosed, lessons })
+          return { ...shift, lessons }
         })
 
         this.setDetails({ summary, details })

@@ -18,6 +18,7 @@ export interface ShiftDetailLesson {
 }
 
 export interface ShiftDetail {
+  date: string
   isClosed: boolean
   lessons: ShiftDetailLesson[]
 }
@@ -25,5 +26,5 @@ export interface ShiftDetail {
 export interface ShiftState {
   summary: ShiftSummary
   summaries: ShiftSummary[]
-  details: Map<string, ShiftDetail>
+  details: ShiftDetail[]
 }

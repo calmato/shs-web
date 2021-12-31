@@ -33,6 +33,7 @@ export interface ShiftDetailLesson {
 }
 
 export interface ShiftDetail {
+  date: string
   isClosed: boolean
   lessons: ShiftDetailLesson[]
 }
@@ -43,5 +44,5 @@ export interface ShiftSummariesResponse {
 
 export interface ShiftDetailsResponse {
   summary: ShiftSummary
-  shifts: { [key: string]: ShiftDetail }
+  shifts: ShiftDetail[]
 }

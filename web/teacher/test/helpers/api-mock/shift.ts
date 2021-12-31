@@ -53,18 +53,20 @@ export const createShifts: { [key: string]: ShiftDetailsResponse } = {
       createdAt: '2021-12-30T19:25:57+09:00',
       updatedAt: '2021-12-30T19:25:57+09:00',
     },
-    shifts: {
-      '20210201': {
+    shifts: [
+      {
+        date: '20210201',
         isClosed: false,
         lessons: [
           { id: 1, startTime: '1700', endTime: '1830' },
           { id: 2, startTime: '1830', endTime: '2000' },
         ],
       },
-      '20210202': {
+      {
+        date: '20210202',
         isClosed: true,
         lessons: [],
       },
-    },
+    ],
   },
 }
