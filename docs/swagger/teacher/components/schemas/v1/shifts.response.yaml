@@ -128,7 +128,7 @@ shiftsResponse:
       createdAt: '2021-12-12T12:12:30.100Z'
       updatedAt: '2021-12-12T12:12:30.100Z'
     shifts:
-    - date: 20220201
+    - date: '20220201'
       isClosed: false
       lessons:
       - id: 1
@@ -137,10 +137,10 @@ shiftsResponse:
       - id: 2
         startTime: '1830'
         endTime: '2000'
-    - date: 20220202
+    - date: '20220202'
       isClosed: true
       lessons: []
-    - date: 20220203
+    - date: '20220203'
       isClosed: false
       lessons:
       - id: 3
