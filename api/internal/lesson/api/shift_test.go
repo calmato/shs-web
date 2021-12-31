@@ -329,7 +329,7 @@ func TestDeleteShiftSummary(t *testing.T) {
 			name: "failed to delete shift summary",
 			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
 				mocks.validator.EXPECT().DeleteShiftSummary(req).Return(nil)
-				mocks.db.ShiftSummary.EXPECT().Delete(ctx, int64(1)).Return(nil, errmock)
+				mocks.db.ShiftSummary.EXPECT().Delete(ctx, int64(1)).Return(errmock)
 			},
 			req: req,
 			expect: &testResponse{

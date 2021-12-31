@@ -290,7 +290,7 @@ func TestShiftSummary_Delete(t *testing.T) {
 			ctx, cancel := context.WithCancel(context.Background())
 			defer cancel()
 
-			_ = m.dbDelete(ctx, shiftSummaryTable)
+			_ = m.dbDelete(ctx, shiftTable, shiftSummaryTable)
 			tt.setup(ctx, t, m)
 
 			db := NewShiftSummary(m.db)
