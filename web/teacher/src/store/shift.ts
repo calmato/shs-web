@@ -128,6 +128,28 @@ export default class ShiftModule extends VuexModule {
         throw new ApiError(res.status, res.message, res)
       })
   }
+
+  @Action({ rawError: true })
+  public async listShiftDetails({ summaryId }: { summaryId: number }): Promise<void> {
+    await $axios
+      .$get(`/v1/shifts/${summaryId}`)
+      .then((res: ShiftDetailsResponse) => {
+        const summary: ShiftSummary = { ...res.summary }
+
+        const details: ShiftDetail[] = res.shifts.map((shift: ShiftDetailResponse): ShiftDetail => {
+          const lessons: ShiftDetailLesson[] = shift.lessons.map((lesson: LessonResponse): ShiftDetailLesson => {
+            return { ...lesson }
+          })
+          return { ...shift, lessons }
+        })
+
+        this.setDetails({ summary, details })
+      })
+      .catch((err: AxiosError) => {
+        const res: ErrorResponse = { ...err.response?.data }
+        throw new ApiError(res.status, res.message, res)
+      })
+  }
 }
 
 function replaceDate(date: string, oldVal: string, newVal: string): string {

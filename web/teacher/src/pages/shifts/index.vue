@@ -104,7 +104,7 @@ export default defineComponent({
     }
 
     const handleClickNewLesson = (shift: ShiftSummary): void => {
-      console.log('click', 'new', 'lesson', shift)
+      router.push(`/shifts/${shift.id}`)
     }
 
     const handleClickAddClosedDate = (): void => {

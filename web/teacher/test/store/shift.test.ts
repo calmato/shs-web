@@ -105,6 +105,58 @@ describe('store/shift', () => {
       })
     })
 
+    describe('listShiftDetails', () => {
+      describe('success', () => {
+        beforeEach(() => {
+          setSafetyMode(true)
+        })
+
+        it('changing state', async () => {
+          await ShiftStore.listShiftDetails({ summaryId: 1 })
+          expect(ShiftStore.getSummary).toEqual({
+            id: 1,
+            year: 2022,
+            month: 2,
+            status: ShiftStatus.FINISHED,
+            openAt: '2021-01-01T00:00:00+09:00',
+            endAt: '2021-01-15T00:00:00+09:00',
+            createdAt: '2021-12-30T19:25:57+09:00',
+            updatedAt: '2021-12-30T19:25:57+09:00',
+          })
+          expect(ShiftStore.getDetails).toEqual([
+            {
+              date: '20210201',
+              isClosed: false,
+              lessons: [
+                { id: 1, startTime: '1700', endTime: '1830' },
+                { id: 2, startTime: '1830', endTime: '2000' },
+              ],
+            },
+            {
+              date: '20210202',
+              isClosed: true,
+              lessons: [],
+            },
+          ])
+        })
+      })
+
+      describe('failure', () => {
+        beforeEach(() => {
+          setSafetyMode(false)
+        })
+
+        it('return reject', async () => {
+          const err = new ApiError(400, 'api error', {
+            status: 400,
+            message: 'api error',
+            details: 'some error',
+          } as ErrorResponse)
+          await expect(ShiftStore.listShiftDetails({ summaryId: 1 })).rejects.toThrow(err)
+        })
+      })
+    })
+
     describe('createShifts', () => {
       let form: ShiftsNewForm
       beforeEach(() => {

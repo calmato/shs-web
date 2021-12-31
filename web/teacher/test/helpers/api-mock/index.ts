@@ -17,6 +17,7 @@ export default {
   get: {
     ...AuthStore.showAuth,
     ...ShiftStore.listShiftSummaries,
+    ...ShiftStore.listShiftDetails,
     ...UserStore.listTeachers,
   },
   post: {
