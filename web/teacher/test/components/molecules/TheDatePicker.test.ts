@@ -1,28 +1,17 @@
 import { shallowMount } from '@vue/test-utils'
 import * as Options from '~~/test/helpers/component-helper'
-import TheTextField from '~/components/atoms/TheTextField.vue'
+import TheDatePicker from '~/components/molecules/TheDatePicker.vue'
 
-describe('components/atoms/TheTextField', () => {
+describe('components/molecules/TheDatePicker', () => {
   let wrapper: any
   beforeEach(() => {
-    wrapper = shallowMount(TheTextField, {
+    wrapper = shallowMount(TheDatePicker, {
       ...Options,
     })
   })
 
   describe('script', () => {
     describe('props', () => {
-      describe('autofocus', () => {
-        it('初期値', () => {
-          expect(wrapper.props().autofocus).toBeFalsy()
-        })
-
-        it('値が代入されること', async () => {
-          await wrapper.setProps({ autofocus: true })
-          expect(wrapper.props().autofocus).toBeTruthy()
-        })
-      })
-
       describe('label', () => {
         it('初期値', () => {
           expect(wrapper.props().label).toBe('')
@@ -34,6 +23,17 @@ describe('components/atoms/TheTextField', () => {
         })
       })
 
+      describe('locale', () => {
+        it('初期値', () => {
+          expect(wrapper.props().locale).toBe('ja')
+        })
+
+        it('値が代入されること', async () => {
+          await wrapper.setProps({ locale: 'us' })
+          expect(wrapper.props().locale).toBe('us')
+        })
+      })
+
       describe('name', () => {
         it('初期値', () => {
           expect(wrapper.props().name).toBe('')
@@ -42,39 +42,6 @@ describe('components/atoms/TheTextField', () => {
         it('値が代入されること', async () => {
           await wrapper.setProps({ name: 'test' })
           expect(wrapper.props().name).toBe('test')
-        })
-      })
-
-      describe('outlined', () => {
-        it('初期値', () => {
-          expect(wrapper.props().outlined).toBeFalsy()
-        })
-
-        it('値が代入されること', async () => {
-          await wrapper.setProps({ outlined: true })
-          expect(wrapper.props().outlined).toBeTruthy()
-        })
-      })
-
-      describe('prependIcon', () => {
-        it('初期値', () => {
-          expect(wrapper.props().prependIcon).toBeUndefined()
-        })
-
-        it('値が代入されること', async () => {
-          await wrapper.setProps({ prependIcon: 'mdi-plus' })
-          expect(wrapper.props().prependIcon).toBe('mdi-plus')
-        })
-      })
-
-      describe('readonly', () => {
-        it('初期値', () => {
-          expect(wrapper.props().readonly).toBeFalsy()
-        })
-
-        it('値が代入されること', async () => {
-          await wrapper.setProps({ readonly: true })
-          expect(wrapper.props().readonly).toBeTruthy()
         })
       })
 
@@ -91,12 +58,12 @@ describe('components/atoms/TheTextField', () => {
 
       describe('type', () => {
         it('初期値', () => {
-          expect(wrapper.props().type).toBe('text')
+          expect(wrapper.props().type).toBe('date')
         })
 
         it('値が代入されること', async () => {
-          await wrapper.setProps({ type: 'password' })
-          expect(wrapper.props().type).toBe('password')
+          await wrapper.setProps({ type: 'month' })
+          expect(wrapper.props().type).toBe('month')
         })
       })
 
@@ -119,9 +86,9 @@ describe('components/atoms/TheTextField', () => {
         })
 
         it('setter', async () => {
-          await wrapper.setData({ formData: 'test' })
+          await wrapper.setData({ formData: '2022-01-01' })
           expect(wrapper.emitted('update:value')).toBeTruthy()
-          expect(wrapper.emitted('update:value')[0][0]).toBe('test')
+          expect(wrapper.emitted('update:value')[0][0]).toBe('2022-01-01')
         })
       })
     })

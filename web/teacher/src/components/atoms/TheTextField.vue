@@ -8,6 +8,8 @@
       :success="valid"
       :autofocus="autofocus"
       :outlined="outlined"
+      :readonly="readonly"
+      :prepend-icon="prependIcon"
     />
   </validation-provider>
 </template>
@@ -35,6 +37,16 @@ export default defineComponent({
     outlined: {
       type: Boolean,
       required: false,
+      default: false,
+    },
+    prependIcon: {
+      type: String,
+      required: false,
+      default: undefined,
+    },
+    readonly: {
+      type: Boolean,
+      require: false,
       default: false,
     },
     rules: {

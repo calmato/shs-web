@@ -20,6 +20,7 @@ export default {
     ...UserStore.listTeachers,
   },
   post: {
+    ...ShiftStore.createShifts,
     ...UserStore.createTeacher,
   },
   patch: {},

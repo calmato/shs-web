@@ -2,6 +2,7 @@ import { shallowMount } from '@vue/test-utils'
 import * as Options from '~~/test/helpers/component-helper'
 import PcShiftTop from '~/components/templates/PcShiftTop.vue'
 import { ShiftSummary } from '~/types/store'
+import { ShiftsNewForm, ShiftsNewOptions, ShiftsNewParams } from '~/types/form'
 
 describe('components/templates/PcShiftTop', () => {
   let wrapper: any
@@ -13,6 +14,51 @@ describe('components/templates/PcShiftTop', () => {
 
   describe('script', () => {
     describe('props', () => {
+      describe('newDialog', () => {
+        it('初期値', () => {
+          expect(wrapper.props().newDialog).toBeFalsy()
+        })
+
+        it('値が代入されること', async () => {
+          await wrapper.setProps({ newDialog: true })
+          expect(wrapper.props().newDialog).toBeTruthy()
+        })
+      })
+
+      describe('newForm', () => {
+        it('初期値', () => {
+          expect(wrapper.props().newForm).toEqual({
+            params: ShiftsNewParams,
+            options: ShiftsNewOptions,
+          })
+        })
+
+        it('値が代入されること', async () => {
+          const form: ShiftsNewForm = {
+            params: {
+              yearMonth: '2022-02',
+              openDate: '2022-01-01',
+              endDate: '2022-01-15',
+              closedDates: [],
+            },
+            options: ShiftsNewOptions,
+          }
+          await wrapper.setProps({ newForm: form })
+          expect(wrapper.props().newForm).toBe(form)
+        })
+      })
+
+      describe('loading', () => {
+        it('初期値', () => {
+          expect(wrapper.props().loading).toBeFalsy()
+        })
+
+        it('値が代入されること', async () => {
+          await wrapper.setProps({ loading: true })
+          expect(wrapper.props().loading).toBeTruthy()
+        })
+      })
+
       describe('acceptingSummaries', () => {
         it('初期値', () => {
           expect(wrapper.props().acceptingSummaries).toEqual([])
@@ -84,6 +130,13 @@ describe('components/templates/PcShiftTop', () => {
     })
 
     describe('methods', () => {
+      describe('toggleNewDialog', () => {
+        it('emitが実行されること', async () => {
+          await wrapper.vm.toggleNewDialog()
+          expect(wrapper.emitted('toggle:new-dialog')).toBeTruthy()
+        })
+      })
+
       describe('onClickNewShift', () => {
         it('emitが実行されること', async () => {
           await wrapper.vm.onClickNewShift()
@@ -124,6 +177,27 @@ describe('components/templates/PcShiftTop', () => {
           await wrapper.vm.onClickNewLesson(summary)
           expect(wrapper.emitted('click:new-lesson')).toBeTruthy()
           expect(wrapper.emitted('click:new-lesson')[0][0]).toBe(summary)
+        })
+      })
+
+      describe('onClickAddClosedDate', () => {
+        it('emitが実行されること', async () => {
+          await wrapper.vm.onClickAddClosedDate()
+          expect(wrapper.emitted('click:add-closed-date')).toBeTruthy()
+        })
+      })
+
+      describe('onClickRemoveClosedDate', () => {
+        it('emitが実行されること', async () => {
+          await wrapper.vm.onClickRemoveClosedDate()
+          expect(wrapper.emitted('click:remove-closed-date')).toBeTruthy()
+        })
+      })
+
+      describe('onSubmitNew', () => {
+        it('emitが実行されること', async () => {
+          await wrapper.vm.onSubmitNew()
+          expect(wrapper.emitted('submit:new')).toBeTruthy()
         })
       })
     })
