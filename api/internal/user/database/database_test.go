@@ -97,6 +97,11 @@ func TestDBError(t *testing.T) {
 			expect: ErrUnknown,
 		},
 		{
+			name:   "record duplicated",
+			err:    &mysql.MySQLError{Number: 1062},
+			expect: ErrAlreadyExists,
+		},
+		{
 			name:   "invalid argument",
 			err:    gorm.ErrEmptySlice,
 			expect: ErrInvalidArgument,
