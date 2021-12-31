@@ -3,6 +3,11 @@
  * Request
  * ---------------------------
  */
+export interface UpdateShiftSummaryScheduleRequest {
+  openDate: string
+  endDate: string
+}
+
 export interface CreateShiftsRequest {
   yearMonth: string
   openDate: string

@@ -5,6 +5,8 @@
       class="hidden-sm-and-down"
       :new-dialog="newDialog"
       :new-form="newForm"
+      :edit-dialog="editDialog"
+      :edit-form="editForm"
       :loading="loading"
       :accepting-summaries="getAcceptingSummaries()"
       :finished-summaries="getFinishedSummaries()"
@@ -15,7 +17,10 @@
       @click:add-closed-date="handleClickAddClosedDate"
       @click:remove-closed-date="handleClickRemoveClosedDate"
       @toggle:new-dialog="toggleNewDialog"
+      @toggle:edit-dialog="toggleEditDialog"
       @submit:new="handleSubmitCreateShifts"
+      @submit:edit="handleSubmitUpdateShiftSummarySchedule"
+      @submit:delete="handleSubmitDeleteShifts"
     />
     <!-- スマホレイアウト -->
     <mb-shift-top class="hidden-md-and-up" @click="handleClickTop" />
@@ -26,8 +31,16 @@
 import { computed, defineComponent, reactive, ref, SetupContext, useAsync } from '@nuxtjs/composition-api'
 import MbShiftTop from '~/components/templates/MbShiftTop.vue'
 import PcShiftTop from '~/components/templates/PcShiftTop.vue'
+import dayjs from '~/plugins/dayjs'
 import { CommonStore, ShiftStore } from '~/store'
-import { ShiftsNewForm, ShiftsNewOptions, ShiftsNewParams } from '~/types/form'
+import {
+  ShiftsNewForm,
+  ShiftsNewOptions,
+  ShiftsNewParams,
+  ShiftSummaryEditScheduleForm,
+  ShiftSummaryEditScheduleOptions,
+  ShiftSummaryEditScheduleParams,
+} from '~/types/form'
 import { PromiseState, ShiftStatus, ShiftSummary } from '~/types/store'
 
 export default defineComponent({
@@ -41,10 +54,15 @@ export default defineComponent({
     const store = root.$store
 
     const newDialog = ref<boolean>(false)
+    const editDialog = ref<boolean>(false)
 
     const newForm = reactive<ShiftsNewForm>({
       params: { ...ShiftsNewParams },
       options: { ...ShiftsNewOptions },
+    })
+    const editForm = reactive<ShiftSummaryEditScheduleForm>({
+      params: { ...ShiftSummaryEditScheduleParams },
+      options: { ...ShiftSummaryEditScheduleOptions },
     })
 
     const summaries = computed<ShiftSummary[]>(() => store.getters['shift/getSummaries'])
@@ -94,13 +112,26 @@ export default defineComponent({
       newDialog.value = !newDialog.value
     }
 
+    const toggleEditDialog = (shift?: ShiftSummary): void => {
+      const format: string = 'YYYY-MM-DD'
+      if (shift) {
+        editForm.params = {
+          summaryId: shift.id,
+          openDate: dayjs(shift.openAt).tz().format(format),
+          endDate: dayjs(shift.endAt).tz().format(format),
+        }
+      } else {
+        editForm.params = { ...ShiftSummaryEditScheduleParams }
+      }
+      editDialog.value = !editDialog.value
+    }
+
     const handleClickNewShift = (): void => {
-      console.log('click', 'new', 'shift')
       toggleNewDialog()
     }
 
     const handleClickEditShift = (shift: ShiftSummary): void => {
-      console.log('click', 'edit', 'sihft', shift)
+      toggleEditDialog(shift)
     }
 
     const handleClickNewLesson = (shift: ShiftSummary): void => {
@@ -134,14 +165,29 @@ export default defineComponent({
         })
     }
 
+    const handleSubmitUpdateShiftSummarySchedule = (): void => {
+      console.log('click', 'submit:update', editForm)
+      toggleEditDialog()
+      CommonStore.showSnackbar({ color: 'success', message: '[Mock] シフト募集期間を更新しました。' })
+    }
+
+    const handleSubmitDeleteShifts = (): void => {
+      console.log('click', 'submit:delete', editForm)
+      toggleEditDialog()
+      CommonStore.showSnackbar({ color: 'success', message: '[Mock] 削除しました。' })
+    }
+
     return {
       newDialog,
       newForm,
+      editDialog,
+      editForm,
       loading,
       getAcceptingSummaries,
       getFinishedSummaries,
       getWaitingSummaries,
       toggleNewDialog,
+      toggleEditDialog,
       handleClickNewShift,
       handleClickEditShift,
       handleClickNewLesson,
@@ -149,6 +195,8 @@ export default defineComponent({
       handleClickRemoveClosedDate,
       handleClickTop,
       handleSubmitCreateShifts,
+      handleSubmitUpdateShiftSummarySchedule,
+      handleSubmitDeleteShifts,
     }
   },
 })
