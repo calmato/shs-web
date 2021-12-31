@@ -74,8 +74,11 @@ func dbError(err error) error {
 	}
 
 	//nolint:gocritic
-	switch err.(type) {
+	switch err := err.(type) {
 	case *mysql.MySQLError:
+		if err.Number == 1062 {
+			return fmt.Errorf("%w: %s", ErrAlreadyExists, err)
+		}
 		return fmt.Errorf("%w: %s", ErrUnknown, err)
 	}
 

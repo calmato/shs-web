@@ -57,6 +57,8 @@ func gRPCError(err error) error {
 		return status.Error(codes.InvalidArgument, err.Error())
 	case errors.Is(err, database.ErrNotFound):
 		return status.Error(codes.NotFound, err.Error())
+	case errors.Is(err, database.ErrAlreadyExists):
+		return status.Error(codes.AlreadyExists, err.Error())
 	case errors.Is(err, database.ErrNotImplemented):
 		return status.Error(codes.Unimplemented, err.Error())
 	default:
