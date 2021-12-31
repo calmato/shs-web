@@ -80,9 +80,9 @@ func (h *apiV1Handler) ListShifts(ctx *gin.Context) {
 		return nil
 	})
 	var gshifts gentity.Shifts
-	eg.Go(func() error {
+	eg.Go(func() (err error) {
 		gshifts, err = h.listShiftsBySummaryID(ectx, shiftSummaryID)
-		return nil
+		return
 	})
 	if err := eg.Wait(); err != nil {
 		httpError(ctx, err)
