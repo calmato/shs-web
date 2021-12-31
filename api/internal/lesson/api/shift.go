@@ -177,6 +177,7 @@ func (s *lessonService) CreateShifts(
 		return nil, gRPCError(err)
 	}
 
+	summary.Fill(s.now())
 	res := &lesson.CreateShiftsResponse{
 		Summary: summary.Proto(),
 		Shifts:  shifts.Proto(),
