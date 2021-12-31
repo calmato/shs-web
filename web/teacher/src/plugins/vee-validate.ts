@@ -3,7 +3,7 @@ import Vue from 'vue'
 import { ValidationProvider, ValidationObserver, localize, extend } from 'vee-validate'
 import ja from 'vee-validate/dist/locale/ja.json'
 import { required, confirmed, max, min, email, image, alpha_dash, size } from 'vee-validate/dist/rules'
-import { ValidationRule } from 'vee-validate/dist/types/types'
+import { RuleParamSchema, ValidationRule } from 'vee-validate/dist/types/types'
 import dayjs from '~/plugins/dayjs'
 
 Vue.component('ValidationProvider', ValidationProvider)
@@ -32,8 +32,8 @@ const passwordCustomRule: ValidationRule = {
 }
 
 const afterCustomRule: ValidationRule = {
-  params: ['target'],
-  validate: (value, params) => {
+  params: ['target'] as RuleParamSchema[],
+  validate: (value: string, params: Record<string, any>) => {
     const target = params['target']
     const date1 = dayjs(value)
     const date2 = dayjs(target)
