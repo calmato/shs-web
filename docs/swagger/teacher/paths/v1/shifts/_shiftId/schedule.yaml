@@ -1,5 +1,5 @@
-get:
-  summary: シフト募集詳細一覧
+patch:
+  summary: シフト募集期間の更新
   tags:
   - Shift
   security:
@@ -13,16 +13,20 @@ get:
       format: int64
     description: シフト募集ID
     example: 1
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: './../../../../openapi.yaml#/components/schemas/v1UpdateShiftSummaryScheduleRequest'
   responses:
-    200:
+    204:
       description: A successful response.
       content:
-        application/json:
-          schema:
-            $ref: './../../../openapi.yaml#/components/schemas/v1ShiftsResponse'
+        application/json: {}
     default:
       description: An unexpected error response.
       content:
         application/json:
           schema:
-            $ref: './../../../openapi.yaml#/components/schemas/errorResponse'
+            $ref: './../../../../openapi.yaml#/components/schemas/errorResponse'
