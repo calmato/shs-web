@@ -44,10 +44,25 @@ func TestShiftSummary_List(t *testing.T) {
 		want  want
 	}{
 		{
-			name:  "success",
+			name:  "success order by asc",
 			setup: func(ctx context.Context, t *testing.T, m *mocks) {},
 			args: args{
-				params: &ListShiftSummariesParams{},
+				params: &ListShiftSummariesParams{
+					OrderBy: OrderByAsc,
+				},
+			},
+			want: want{
+				summaries: summaries,
+				isErr:     false,
+			},
+		},
+		{
+			name:  "success order by desc",
+			setup: func(ctx context.Context, t *testing.T, m *mocks) {},
+			args: args{
+				params: &ListShiftSummariesParams{
+					OrderBy: OrderByAsc,
+				},
 			},
 			want: want{
 				summaries: summaries,

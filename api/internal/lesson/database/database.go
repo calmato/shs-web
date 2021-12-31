@@ -54,10 +54,19 @@ type Shift interface {
 /**
  * params
  */
+type OrderBy int32
+
+const (
+	OrderByNone OrderBy = iota
+	OrderByAsc
+	OrderByDesc
+)
+
 type ListShiftSummariesParams struct {
-	Limit  int
-	Offset int
-	Status entity.ShiftStatus
+	Limit   int
+	Offset  int
+	Status  entity.ShiftStatus
+	OrderBy OrderBy
 }
 
 /**

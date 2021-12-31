@@ -47,6 +47,13 @@ func (s *shiftSummary) List(
 		stmt.Where("end_at < ?", now)
 	}
 
+	switch params.OrderBy {
+	case OrderByAsc:
+		stmt.Order("`year_month` ASC")
+	case OrderByDesc:
+		stmt.Order("`year_month` DESC")
+	}
+
 	if params.Limit > 0 {
 		stmt.Limit(params.Limit)
 	}

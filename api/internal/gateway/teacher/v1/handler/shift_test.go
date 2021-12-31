@@ -39,9 +39,10 @@ func TestListShiftSummaries(t *testing.T) {
 			name: "success",
 			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
 				in := &lesson.ListShiftSummariesRequest{
-					Limit:  30,
-					Offset: 0,
-					Status: lesson.ShiftStatus_SHIFT_STATUS_ACCEPTING,
+					Limit:   30,
+					Offset:  0,
+					Status:  lesson.ShiftStatus_SHIFT_STATUS_ACCEPTING,
+					OrderBy: lesson.ListShiftSummariesRequest_ORDER_BY_YEAR_MONTH_DESC,
 				}
 				out := &lesson.ListShiftSummariesResponse{Summaries: summaries}
 				mocks.lesson.EXPECT().ListShiftSummaries(gomock.Any(), in).Return(out, nil)
@@ -93,9 +94,10 @@ func TestListShiftSummaries(t *testing.T) {
 			name: "failed to list shift summaries",
 			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
 				in := &lesson.ListShiftSummariesRequest{
-					Limit:  30,
-					Offset: 0,
-					Status: lesson.ShiftStatus_SHIFT_STATUS_ACCEPTING,
+					Limit:   30,
+					Offset:  0,
+					Status:  lesson.ShiftStatus_SHIFT_STATUS_ACCEPTING,
+					OrderBy: lesson.ListShiftSummariesRequest_ORDER_BY_YEAR_MONTH_DESC,
 				}
 				mocks.lesson.EXPECT().ListShiftSummaries(gomock.Any(), in).Return(nil, errmock)
 			},

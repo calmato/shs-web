@@ -22,7 +22,8 @@ func (s *lessonService) ListShiftSummaries(
 	sharedKey := fmt.Sprintf("%s:%d:%d:%d", prefixKey, req.Status, req.Limit, req.Offset)
 	res, err, _ := s.sharedGroup.Do(sharedKey, func() (interface{}, error) {
 		status, _ := entity.NewShiftStatus(req.Status)
-		summaries, total, err := s.listShiftSummaries(ctx, status, req.Limit, req.Offset)
+		orderBy := s.getShiftsummariesOrderBy(req.OrderBy)
+		summaries, total, err := s.listShiftSummaries(ctx, status, req.Limit, req.Offset, orderBy)
 		if err != nil {
 			return nil, err
 		}
@@ -39,16 +40,28 @@ func (s *lessonService) ListShiftSummaries(
 	return res.(*lesson.ListShiftSummariesResponse), nil
 }
 
+func (s *lessonService) getShiftsummariesOrderBy(orderBy lesson.ListShiftSummariesRequest_OrderBy) database.OrderBy {
+	switch orderBy {
+	case lesson.ListShiftSummariesRequest_ORDER_BY_YEAR_MONTH_ASC:
+		return database.OrderByAsc
+	case lesson.ListShiftSummariesRequest_ORDER_BY_YEAR_MONTH_DESC:
+		return database.OrderByDesc
+	default:
+		return database.OrderByNone
+	}
+}
+
 func (s *lessonService) listShiftSummaries(
-	ctx context.Context, status entity.ShiftStatus, limit, offset int64,
+	ctx context.Context, status entity.ShiftStatus, limit, offset int64, orderBy database.OrderBy,
 ) (entity.ShiftSummaries, int64, error) {
 	eg, ectx := errgroup.WithContext(ctx)
 	var summaries entity.ShiftSummaries
 	eg.Go(func() (err error) {
 		params := &database.ListShiftSummariesParams{
-			Status: status,
-			Limit:  int(limit),
-			Offset: int(offset),
+			Status:  status,
+			Limit:   int(limit),
+			Offset:  int(offset),
+			OrderBy: orderBy,
 		}
 		summaries, err = s.db.ShiftSummary.List(ectx, params)
 		return

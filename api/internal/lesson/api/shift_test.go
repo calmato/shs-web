@@ -12,6 +12,7 @@ import (
 	"github.com/calmato/shs-web/api/proto/classroom"
 	"github.com/calmato/shs-web/api/proto/lesson"
 	"github.com/golang/mock/gomock"
+	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/protobuf/proto"
 )
@@ -21,14 +22,16 @@ func TestListShiftSummaries(t *testing.T) {
 	now := jst.Now()
 
 	req := &lesson.ListShiftSummariesRequest{
-		Status: lesson.ShiftStatus_SHIFT_STATUS_ACCEPTING,
-		Limit:  30,
-		Offset: 0,
+		Status:  lesson.ShiftStatus_SHIFT_STATUS_ACCEPTING,
+		Limit:   30,
+		Offset:  0,
+		OrderBy: lesson.ListShiftSummariesRequest_ORDER_BY_YEAR_MONTH_DESC,
 	}
 	params := &database.ListShiftSummariesParams{
-		Status: entity.ShiftStatusAccepting,
-		Limit:  30,
-		Offset: 0,
+		Status:  entity.ShiftStatusAccepting,
+		Limit:   30,
+		Offset:  0,
+		OrderBy: database.OrderByDesc,
 	}
 	summaries := entity.ShiftSummaries{
 		{
@@ -114,6 +117,40 @@ func TestListShiftSummaries(t *testing.T) {
 		t.Run(tt.name, testGRPC(tt.setup, tt.expect, func(ctx context.Context, service *lessonService) (proto.Message, error) {
 			return service.ListShiftSummaries(ctx, tt.req)
 		}))
+	}
+}
+
+func TestGetShiftSummariesOrderBy(t *testing.T) {
+	t.Parallel()
+	tests := []struct {
+		name    string
+		orderBy lesson.ListShiftSummariesRequest_OrderBy
+		expect  database.OrderBy
+	}{
+		{
+			name:    "order by asc",
+			orderBy: lesson.ListShiftSummariesRequest_ORDER_BY_YEAR_MONTH_ASC,
+			expect:  database.OrderByAsc,
+		},
+		{
+			name:    "order by desc",
+			orderBy: lesson.ListShiftSummariesRequest_ORDER_BY_YEAR_MONTH_DESC,
+			expect:  database.OrderByDesc,
+		},
+		{
+			name:    "order by none",
+			orderBy: lesson.ListShiftSummariesRequest_ORDER_BY_YEAR_MONTH_NONE,
+			expect:  database.OrderByNone,
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			service := &lessonService{}
+			assert.Equal(t, tt.expect, service.getShiftsummariesOrderBy(tt.orderBy))
+		})
 	}
 }
 
