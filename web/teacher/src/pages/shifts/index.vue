@@ -165,16 +165,34 @@ export default defineComponent({
         })
     }
 
-    const handleSubmitUpdateShiftSummarySchedule = (): void => {
-      console.log('click', 'submit:update', editForm)
-      toggleEditDialog()
-      CommonStore.showSnackbar({ color: 'success', message: '[Mock] シフト募集期間を更新しました。' })
+    const handleSubmitUpdateShiftSummarySchedule = async (): Promise<void> => {
+      CommonStore.startConnection()
+      await ShiftStore.updateShiftSummarySchedule({ form: editForm })
+        .then(() => {
+          toggleEditDialog()
+          CommonStore.showSnackbar({ color: 'success', message: 'シフトの募集期間を更新しました。' })
+        })
+        .catch((err: Error) => {
+          CommonStore.showErrorInSnackbar(err)
+        })
+        .finally(() => {
+          CommonStore.endConnection()
+        })
     }
 
-    const handleSubmitDeleteShifts = (): void => {
-      console.log('click', 'submit:delete', editForm)
-      toggleEditDialog()
-      CommonStore.showSnackbar({ color: 'success', message: '[Mock] 削除しました。' })
+    const handleSubmitDeleteShifts = async (): Promise<void> => {
+      CommonStore.startConnection()
+      await ShiftStore.deleteShifts({ summaryId: editForm.params.summaryId })
+        .then(() => {
+          toggleEditDialog()
+          CommonStore.showSnackbar({ color: 'success', message: 'シフト募集を削除しました。' })
+        })
+        .catch((err: Error) => {
+          CommonStore.showErrorInSnackbar(err)
+        })
+        .finally(() => {
+          CommonStore.endConnection()
+        })
     }
 
     return {

@@ -70,17 +70,6 @@ export default class ShiftModule extends VuexModule {
   }
 
   @Mutation
-  private replaceSummaries({ summary }: { summary: ShiftSummary }): void {
-    const index: number = this.summaries.findIndex((val: ShiftSummary) => {
-      return val.id === summary.id
-    })
-    if (index === -1) {
-      return
-    }
-    this.summaries.splice(index, 1, summary)
-  }
-
-  @Mutation
   private replaceSummariesSchedule({
     summaryId,
     openAt,
@@ -90,15 +79,13 @@ export default class ShiftModule extends VuexModule {
     openAt: string
     endAt: string
   }): void {
-    const summary: ShiftSummary | undefined = this.summaries.find((val: ShiftSummary) => {
+    const index: number = this.summaries.findIndex((val: ShiftSummary) => {
       return val.id === summaryId
     })
-    if (!summary) {
+    if (index === -1) {
       return
     }
-    summary.openAt = openAt
-    summary.endAt = endAt
-    this.replaceSummaries({ summary })
+    this.summaries.splice(index, 1, { ...this.summaries[index], openAt, endAt })
   }
 
   @Mutation
@@ -156,7 +143,7 @@ export default class ShiftModule extends VuexModule {
     }
 
     await $axios
-      .$patch(`/v1/shifts/${summaryId}/shedule`, req)
+      .$patch(`/v1/shifts/${summaryId}/schedule`, req)
       .then(() => {
         const format: string = 'YYYY-MM-DDThh:mm:ss'
         const openAt: string = dayjs(form.params.openDate).tz().format(format)
