@@ -18,6 +18,7 @@ type RequestValidation interface {
 	DeleteShiftSummary(req *lesson.DeleteShiftSummaryRequest) error
 	ListShifts(req *lesson.ListShiftsRequest) error
 	CreateShifts(req *lesson.CreateShiftsRequest) error
+	UpsertTeacherShifts(req *lesson.UpsertTeacherShiftsRequest) error
 }
 
 type requestValidation struct{}

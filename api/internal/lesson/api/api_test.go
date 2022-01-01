@@ -13,6 +13,7 @@ import (
 	mock_database "github.com/calmato/shs-web/api/mock/lesson/database"
 	mock_validation "github.com/calmato/shs-web/api/mock/lesson/validation"
 	mock_classroom "github.com/calmato/shs-web/api/mock/proto/classroom"
+	mock_user "github.com/calmato/shs-web/api/mock/proto/user"
 	"github.com/calmato/shs-web/api/pkg/jst"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
@@ -30,11 +31,13 @@ type mocks struct {
 	db        *dbMocks
 	validator *mock_validation.MockRequestValidation
 	classroom *mock_classroom.MockClassroomServiceClient
+	user      *mock_user.MockUserServiceClient
 }
 
 type dbMocks struct {
 	ShiftSummary *mock_database.MockShiftSummary
 	Shift        *mock_database.MockShift
+	TeacherShift *mock_database.MockTeacherShift
 }
 
 type testResponse struct {
@@ -54,6 +57,7 @@ func newMocks(ctrl *gomock.Controller) *mocks {
 		db:        newDBMocks(ctrl),
 		validator: mock_validation.NewMockRequestValidation(ctrl),
 		classroom: mock_classroom.NewMockClassroomServiceClient(ctrl),
+		user:      mock_user.NewMockUserServiceClient(ctrl),
 	}
 }
 
@@ -61,6 +65,7 @@ func newDBMocks(ctrl *gomock.Controller) *dbMocks {
 	return &dbMocks{
 		ShiftSummary: mock_database.NewMockShiftSummary(ctrl),
 		Shift:        mock_database.NewMockShift(ctrl),
+		TeacherShift: mock_database.NewMockTeacherShift(ctrl),
 	}
 }
 
@@ -73,9 +78,11 @@ func newLessonService(mocks *mocks, opts *testOptions) *lessonService {
 		db: &database.Database{
 			ShiftSummary: mocks.db.ShiftSummary,
 			Shift:        mocks.db.Shift,
+			TeacherShift: mocks.db.TeacherShift,
 		},
 		validator: mocks.validator,
 		classroom: mocks.classroom,
+		user:      mocks.user,
 	}
 }
 

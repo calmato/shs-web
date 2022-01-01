@@ -10,6 +10,7 @@ import (
 	"github.com/calmato/shs-web/api/pkg/database"
 	"github.com/calmato/shs-web/api/proto/classroom"
 	"github.com/calmato/shs-web/api/proto/lesson"
+	"github.com/calmato/shs-web/api/proto/user"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
@@ -24,10 +25,12 @@ type params struct {
 	logger              *zap.Logger
 	db                  *database.Client
 	classroomServiceURL string
+	userServiceURL      string
 }
 
 type gRPCClient struct {
 	classroom classroom.ClassroomServiceClient
+	user      user.UserServiceClient
 }
 
 func newRegistry(params *params) (*registry, error) {
@@ -44,6 +47,7 @@ func newRegistry(params *params) (*registry, error) {
 		WaitGroup:        &sync.WaitGroup{},
 		Database:         db.NewDatabase(dbParams),
 		ClassroomService: cli.classroom,
+		UserService:      cli.user,
 	}
 
 	return &registry{
@@ -61,9 +65,14 @@ func newGRPCClient(params *params) (*gRPCClient, error) {
 	if err != nil {
 		return nil, err
 	}
+	userConn, err := grpc.Dial(params.userServiceURL, opts...)
+	if err != nil {
+		return nil, err
+	}
 
 	return &gRPCClient{
 		classroom: classroom.NewClassroomServiceClient(classroomConn),
+		user:      user.NewUserServiceClient(userConn),
 	}, nil
 }
 

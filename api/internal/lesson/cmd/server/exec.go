@@ -58,6 +58,7 @@ func Exec() error {
 		logger:              logger,
 		db:                  db,
 		classroomServiceURL: conf.ClassroomServiceURL,
+		userServiceURL:      conf.UserServiceURL,
 	}
 	reg, err := newRegistry(regParams)
 	if err != nil {
