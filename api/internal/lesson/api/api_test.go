@@ -158,6 +158,11 @@ func TestGRPCError(t *testing.T) {
 			expect: codes.Unimplemented,
 		},
 		{
+			name:   "grpc error",
+			err:    status.Error(codes.Unavailable, "test"),
+			expect: codes.Unavailable,
+		},
+		{
 			name:   "other error",
 			err:    errmock,
 			expect: codes.Internal,
