@@ -1,5 +1,11 @@
 <template>
   <v-container class="px-0">
+    <the-subject-select-form-item
+      :user="user"
+      :elementary-school-subjects="elementarySchoolSubjects"
+      :junior-high-school-subjects="juniorHighSchoolSubjects"
+      :high-school-subjects="highSchoolSubjects"
+    />
     <v-row class="py-4">
       <v-col cols="12">
         <div class="text-subtitle-1">ユーザー設定</div>
@@ -39,9 +45,21 @@
 
 <script lang="ts">
 import { defineComponent, PropType, SetupContext } from '@nuxtjs/composition-api'
+import TheSubjectSelectFormItem from '~/components/molecules/TheSubjectSelectFormItem.vue'
 import { Menu } from '~/types/props/setting'
+import { Subject } from '~/types/store'
+
+interface UserPoop {
+  lastName: string
+  firstName: string
+  lastNameKana: string
+  firstNameKana: string
+}
 
 export default defineComponent({
+  components: {
+    TheSubjectSelectFormItem,
+  },
   props: {
     userItems: {
       type: Array as PropType<Menu[]>,
@@ -49,6 +67,28 @@ export default defineComponent({
     },
     systemItems: {
       type: Array as PropType<Menu[]>,
+      default: () => [],
+    },
+    user: {
+      type: Object as PropType<UserPoop>,
+      default: () => ({
+        lastName: '',
+        firstName: '',
+        lastNameKana: '',
+        firstNameKana: '',
+      }),
+    },
+
+    elementarySchoolSubjects: {
+      type: Array as PropType<Subject[]>,
+      default: () => [],
+    },
+    juniorHighSchoolSubjects: {
+      type: Array as PropType<Subject[]>,
+      default: () => [],
+    },
+    highSchoolSubjects: {
+      type: Array as PropType<Subject[]>,
       default: () => [],
     },
   },
