@@ -23,7 +23,10 @@ func TestUpsertTeacherShifts(t *testing.T) {
 		Desided:        true,
 	}
 	teacher := &user.Teacher{Id: "teacherid"}
-	shifts := entity.Shifts{{ID: 1}, {ID: 2}}
+	shifts := entity.Shifts{
+		{ID: 1, ShiftSummaryID: 1},
+		{ID: 2, ShiftSummaryID: 1},
+	}
 	teacherSubmission := &entity.TeacherSubmission{
 		TeacherID:      "teacherid",
 		ShiftSummaryID: 1,

@@ -2,13 +2,13 @@ package api
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/calmato/shs-web/api/internal/lesson/entity"
-	"github.com/calmato/shs-web/api/internal/lesson/validation"
 	"github.com/calmato/shs-web/api/proto/lesson"
 	"github.com/calmato/shs-web/api/proto/user"
 	"golang.org/x/sync/errgroup"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 func (s *lessonService) UpsertTeacherShifts(
@@ -25,13 +25,13 @@ func (s *lessonService) UpsertTeacherShifts(
 		return
 	})
 	eg.Go(func() error {
-		shifts, err := s.db.Shift.MultiGet(ectx, req.ShiftIds, "id")
+		shifts, err := s.db.Shift.MultiGet(ectx, req.ShiftIds, "id", "shift_summary_id")
 		if err != nil {
 			return err
 		}
+		shifts = shifts.GroupByShiftSummaryID()[req.ShiftSummaryId]
 		if len(req.ShiftIds) != len(shifts) {
-			err := fmt.Errorf("api: shift ids length is unmatch: %w", validation.ErrRequestValidation)
-			return err
+			return status.Error(codes.InvalidArgument, "api: shift ids length is unmatch")
 		}
 		return nil
 	})

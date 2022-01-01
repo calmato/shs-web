@@ -169,6 +169,90 @@ func TestShift_Proto(t *testing.T) {
 	}
 }
 
+func TestShifts_GroupByShiftSummaryID(t *testing.T) {
+	t.Parallel()
+	now := jst.Now()
+	tests := []struct {
+		name   string
+		shifts Shifts
+		expect map[int64]Shifts
+	}{
+		{
+			name: "success",
+			shifts: Shifts{
+				{
+					ID:             1,
+					ShiftSummaryID: 1,
+					Date:           jst.Date(2021, 12, 26, 0, 0, 0, 0),
+					StartTime:      "1700",
+					EndTime:        "1830",
+					CreatedAt:      now,
+					UpdatedAt:      now,
+				},
+				{
+					ID:             2,
+					ShiftSummaryID: 1,
+					Date:           jst.Date(2021, 12, 26, 0, 0, 0, 0),
+					StartTime:      "1700",
+					EndTime:        "1830",
+					CreatedAt:      now,
+					UpdatedAt:      now,
+				},
+				{
+					ID:             3,
+					ShiftSummaryID: 2,
+					Date:           jst.Date(2021, 12, 26, 0, 0, 0, 0),
+					StartTime:      "1700",
+					EndTime:        "1830",
+					CreatedAt:      now,
+					UpdatedAt:      now,
+				},
+			},
+			expect: map[int64]Shifts{
+				1: {
+					{
+						ID:             1,
+						ShiftSummaryID: 1,
+						Date:           jst.Date(2021, 12, 26, 0, 0, 0, 0),
+						StartTime:      "1700",
+						EndTime:        "1830",
+						CreatedAt:      now,
+						UpdatedAt:      now,
+					},
+					{
+						ID:             2,
+						ShiftSummaryID: 1,
+						Date:           jst.Date(2021, 12, 26, 0, 0, 0, 0),
+						StartTime:      "1700",
+						EndTime:        "1830",
+						CreatedAt:      now,
+						UpdatedAt:      now,
+					},
+				},
+				2: {
+					{
+						ID:             3,
+						ShiftSummaryID: 2,
+						Date:           jst.Date(2021, 12, 26, 0, 0, 0, 0),
+						StartTime:      "1700",
+						EndTime:        "1830",
+						CreatedAt:      now,
+						UpdatedAt:      now,
+					},
+				},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tt.expect, tt.shifts.GroupByShiftSummaryID())
+		})
+	}
+}
+
 func TestShifts_Proto(t *testing.T) {
 	t.Parallel()
 	now := jst.Now()

@@ -93,6 +93,17 @@ func (s *Shift) Proto() *lesson.Shift {
 	}
 }
 
+func (ss Shifts) GroupByShiftSummaryID() map[int64]Shifts {
+	shifts := make(map[int64]Shifts, 0)
+	for _, s := range ss {
+		if _, ok := shifts[s.ShiftSummaryID]; !ok {
+			shifts[s.ShiftSummaryID] = make(Shifts, 0, len(ss))
+		}
+		shifts[s.ShiftSummaryID] = append(shifts[s.ShiftSummaryID], s)
+	}
+	return shifts
+}
+
 func (ss Shifts) Proto() []*lesson.Shift {
 	shifts := make([]*lesson.Shift, len(ss))
 	for i := range ss {
