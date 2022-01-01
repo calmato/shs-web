@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/calmato/shs-web/api/internal/lesson/entity"
 	"github.com/calmato/shs-web/api/pkg/database"
@@ -16,6 +17,7 @@ import (
 var (
 	ErrInvalidArgument = errors.New("database: invalid argument")
 	ErrNotFound        = errors.New("database: not found")
+	ErrAlreadyExists   = errors.New("database: already exists")
 	ErrNotImplemented  = errors.New("database: not implemented")
 	ErrInternal        = errors.New("database: internal")
 	ErrUnknown         = errors.New("database: unknown")
@@ -43,6 +45,8 @@ func NewDatabase(params *Params) *Database {
 type ShiftSummary interface {
 	List(ctx context.Context, p *ListShiftSummariesParams, fields ...string) (entity.ShiftSummaries, error)
 	Get(ctx context.Context, id int64, fields ...string) (*entity.ShiftSummary, error)
+	UpdateSchedule(ctx context.Context, id int64, openAt, endAt time.Time) error
+	Delete(ctx context.Context, id int64) error
 	Count(ctx context.Context) (int64, error)
 }
 
@@ -54,10 +58,19 @@ type Shift interface {
 /**
  * params
  */
+type OrderBy int32
+
+const (
+	OrderByNone OrderBy = iota
+	OrderByAsc
+	OrderByDesc
+)
+
 type ListShiftSummariesParams struct {
-	Limit  int
-	Offset int
-	Status entity.ShiftStatus
+	Limit   int
+	Offset  int
+	Status  entity.ShiftStatus
+	OrderBy OrderBy
 }
 
 /**
@@ -69,8 +82,11 @@ func dbError(err error) error {
 	}
 
 	//nolint:gocritic
-	switch err.(type) {
+	switch err := err.(type) {
 	case *mysql.MySQLError:
+		if err.Number == 1062 {
+			return fmt.Errorf("%w: %s", ErrAlreadyExists, err)
+		}
 		return fmt.Errorf("%w: %s", ErrUnknown, err)
 	}
 

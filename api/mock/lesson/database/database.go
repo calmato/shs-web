@@ -7,6 +7,7 @@ package mock_database
 import (
 	context "context"
 	reflect "reflect"
+	time "time"
 
 	database "github.com/calmato/shs-web/api/internal/lesson/database"
 	entity "github.com/calmato/shs-web/api/internal/lesson/entity"
@@ -51,6 +52,20 @@ func (mr *MockShiftSummaryMockRecorder) Count(ctx interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Count", reflect.TypeOf((*MockShiftSummary)(nil).Count), ctx)
 }
 
+// Delete mocks base method.
+func (m *MockShiftSummary) Delete(ctx context.Context, id int64) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Delete", ctx, id)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Delete indicates an expected call of Delete.
+func (mr *MockShiftSummaryMockRecorder) Delete(ctx, id interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockShiftSummary)(nil).Delete), ctx, id)
+}
+
 // Get mocks base method.
 func (m *MockShiftSummary) Get(ctx context.Context, id int64, fields ...string) (*entity.ShiftSummary, error) {
 	m.ctrl.T.Helper()
@@ -89,6 +104,20 @@ func (mr *MockShiftSummaryMockRecorder) List(ctx, p interface{}, fields ...inter
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{ctx, p}, fields...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "List", reflect.TypeOf((*MockShiftSummary)(nil).List), varargs...)
+}
+
+// UpdateSchedule mocks base method.
+func (m *MockShiftSummary) UpdateSchedule(ctx context.Context, id int64, openAt, endAt time.Time) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateSchedule", ctx, id, openAt, endAt)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateSchedule indicates an expected call of UpdateSchedule.
+func (mr *MockShiftSummaryMockRecorder) UpdateSchedule(ctx, id, openAt, endAt interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateSchedule", reflect.TypeOf((*MockShiftSummary)(nil).UpdateSchedule), ctx, id, openAt, endAt)
 }
 
 // MockShift is a mock of Shift interface.

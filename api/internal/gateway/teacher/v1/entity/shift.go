@@ -9,7 +9,6 @@ import (
 
 type Shift struct {
 	ID        int64  `json:"id"`
-	Date      string `json:"date"`
 	StartTime string `json:"startTime"`
 	EndTime   string `json:"endTime"`
 }
@@ -17,20 +16,16 @@ type Shift struct {
 type Shifts []*Shift
 
 type ShiftDetail struct {
-	IsClosed bool                 `json:"isClosed"`
-	Lessons  []*ShiftDetailLesson `json:"lessons"`
+	Date     string `json:"date"`
+	IsClosed bool   `json:"isClosed"`
+	Lessons  Shifts `json:"lessons"`
 }
 
-type ShiftDetailLesson struct {
-	ID        int64  `json:"id"`
-	StartTime string `json:"startTime"`
-	EndTime   string `json:"endTime"`
-}
+type ShiftDetails []*ShiftDetail
 
 func NewShift(shift *entity.Shift) *Shift {
 	return &Shift{
 		ID:        shift.Id,
-		Date:      shift.Date,
 		StartTime: shift.StartTime,
 		EndTime:   shift.EndTime,
 	}
@@ -44,15 +39,23 @@ func NewShifts(shifts entity.Shifts) Shifts {
 	return ss
 }
 
-func NewShiftDetailsForMonth(summary *ShiftSummary, shiftsMap map[time.Time]Shifts) map[string]*ShiftDetail {
+func NewShiftDetail(shifts entity.Shifts, date time.Time, isClosed bool) *ShiftDetail {
+	return &ShiftDetail{
+		Date:     jst.FormatYYYYMMDD(date),
+		IsClosed: isClosed,
+		Lessons:  NewShifts(shifts),
+	}
+}
+
+func NewShiftDetailsForMonth(summary *ShiftSummary, shiftsMap map[time.Time]entity.Shifts) ShiftDetails {
 	const maxDays = 31
 	firstDate, finalDate := newFirstAndFinalOfMonth(summary)
 
-	details := make(map[string]*ShiftDetail, maxDays)
+	details := make(ShiftDetails, 0, maxDays)
 	for date := firstDate; date.Before(finalDate); date = date.AddDate(0, 0, 1) {
-		day := jst.FormatYYYYMMDD(date)
-		shifts, ok := shiftsMap[date] // 取得できない == 休校
-		details[day] = newShiftDetail(shifts, !ok)
+		shifts, isOpened := shiftsMap[date] // 取得できない == 休校
+		detail := NewShiftDetail(shifts, date, !isOpened)
+		details = append(details, detail)
 	}
 	return details
 }
@@ -61,37 +64,4 @@ func newFirstAndFinalOfMonth(summary *ShiftSummary) (time.Time, time.Time) {
 	firstDate := jst.BeginningOfMonth(int(summary.Year), int(summary.Month))
 	finalDate := firstDate.AddDate(0, 1, 0)
 	return firstDate, finalDate
-}
-
-func newShiftDetail(shifts Shifts, isClosed bool) *ShiftDetail {
-	lessons := make([]*ShiftDetailLesson, len(shifts))
-	for i := range shifts {
-		lesson := &ShiftDetailLesson{
-			ID:        shifts[i].ID,
-			StartTime: shifts[i].StartTime,
-			EndTime:   shifts[i].EndTime,
-		}
-		lessons[i] = lesson
-	}
-	return &ShiftDetail{
-		IsClosed: isClosed,
-		Lessons:  lessons,
-	}
-}
-
-func (ss Shifts) GroupByDate() (map[time.Time]Shifts, error) {
-	const maxDays = 31
-	const maxLessons = 5
-	res := make(map[time.Time]Shifts, maxDays)
-	for _, s := range ss {
-		date, err := jst.ParseFromYYYYMMDD(s.Date)
-		if err != nil {
-			return nil, err
-		}
-		if _, ok := res[date]; !ok {
-			res[date] = make(Shifts, 0, maxLessons)
-		}
-		res[date] = append(res[date], s)
-	}
-	return res, nil
 }

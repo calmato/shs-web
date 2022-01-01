@@ -12,6 +12,7 @@ import (
 	"github.com/calmato/shs-web/api/proto/classroom"
 	"github.com/calmato/shs-web/api/proto/lesson"
 	"github.com/golang/mock/gomock"
+	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/protobuf/proto"
 )
@@ -21,14 +22,16 @@ func TestListShiftSummaries(t *testing.T) {
 	now := jst.Now()
 
 	req := &lesson.ListShiftSummariesRequest{
-		Status: lesson.ShiftStatus_SHIFT_STATUS_ACCEPTING,
-		Limit:  30,
-		Offset: 0,
+		Status:  lesson.ShiftStatus_SHIFT_STATUS_ACCEPTING,
+		Limit:   30,
+		Offset:  0,
+		OrderBy: lesson.ListShiftSummariesRequest_ORDER_BY_YEAR_MONTH_DESC,
 	}
 	params := &database.ListShiftSummariesParams{
-		Status: entity.ShiftStatusAccepting,
-		Limit:  30,
-		Offset: 0,
+		Status:  entity.ShiftStatusAccepting,
+		Limit:   30,
+		Offset:  0,
+		OrderBy: database.OrderByDesc,
 	}
 	summaries := entity.ShiftSummaries{
 		{
@@ -117,6 +120,40 @@ func TestListShiftSummaries(t *testing.T) {
 	}
 }
 
+func TestGetShiftSummariesOrderBy(t *testing.T) {
+	t.Parallel()
+	tests := []struct {
+		name    string
+		orderBy lesson.ListShiftSummariesRequest_OrderBy
+		expect  database.OrderBy
+	}{
+		{
+			name:    "order by asc",
+			orderBy: lesson.ListShiftSummariesRequest_ORDER_BY_YEAR_MONTH_ASC,
+			expect:  database.OrderByAsc,
+		},
+		{
+			name:    "order by desc",
+			orderBy: lesson.ListShiftSummariesRequest_ORDER_BY_YEAR_MONTH_DESC,
+			expect:  database.OrderByDesc,
+		},
+		{
+			name:    "order by none",
+			orderBy: lesson.ListShiftSummariesRequest_ORDER_BY_YEAR_MONTH_NONE,
+			expect:  database.OrderByNone,
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			service := &lessonService{}
+			assert.Equal(t, tt.expect, service.getShiftsummariesOrderBy(tt.orderBy))
+		})
+	}
+}
+
 func TestGetShiftSummary(t *testing.T) {
 	t.Parallel()
 	now := jst.Now()
@@ -188,6 +225,123 @@ func TestGetShiftSummary(t *testing.T) {
 		tt := tt
 		t.Run(tt.name, testGRPC(tt.setup, tt.expect, func(ctx context.Context, service *lessonService) (proto.Message, error) {
 			return service.GetShiftSummary(ctx, tt.req)
+		}))
+	}
+}
+
+func TestUpdateShiftSummarySchedule(t *testing.T) {
+	t.Parallel()
+	now := jst.Date(2022, 1, 1, 0, 0, 0, 0)
+
+	req := &lesson.UpdateShiftSummaryScheduleRequest{
+		Id:     1,
+		OpenAt: now.Unix(),
+		EndAt:  now.Unix(),
+	}
+
+	tests := []struct {
+		name   string
+		setup  func(ctx context.Context, t *testing.T, mocks *mocks)
+		req    *lesson.UpdateShiftSummaryScheduleRequest
+		expect *testResponse
+	}{
+		{
+			name: "success",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				mocks.validator.EXPECT().UpdateShiftSummarySchedule(req).Return(nil)
+				mocks.db.ShiftSummary.EXPECT().UpdateSchedule(ctx, int64(1), now, now).Return(nil)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.OK,
+				body: &lesson.UpdateShiftSummaryShceduleResponse{},
+			},
+		},
+		{
+			name: "invalid argument",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				req := &lesson.UpdateShiftSummaryScheduleRequest{}
+				mocks.validator.EXPECT().UpdateShiftSummarySchedule(req).Return(validation.ErrRequestValidation)
+			},
+			req: &lesson.UpdateShiftSummaryScheduleRequest{},
+			expect: &testResponse{
+				code: codes.InvalidArgument,
+			},
+		},
+		{
+			name: "invalid argument",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				mocks.validator.EXPECT().UpdateShiftSummarySchedule(req).Return(nil)
+				mocks.db.ShiftSummary.EXPECT().UpdateSchedule(ctx, int64(1), now, now).Return(errmock)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.Internal,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, testGRPC(tt.setup, tt.expect, func(ctx context.Context, service *lessonService) (proto.Message, error) {
+			return service.UpdateShiftSummarySchedule(ctx, tt.req)
+		}))
+	}
+}
+
+func TestDeleteShiftSummary(t *testing.T) {
+	t.Parallel()
+
+	req := &lesson.DeleteShiftSummaryRequest{
+		Id: 1,
+	}
+
+	tests := []struct {
+		name   string
+		setup  func(ctx context.Context, t *testing.T, mocks *mocks)
+		req    *lesson.DeleteShiftSummaryRequest
+		expect *testResponse
+	}{
+		{
+			name: "success",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				mocks.validator.EXPECT().DeleteShiftSummary(req).Return(nil)
+				mocks.db.ShiftSummary.EXPECT().Delete(ctx, int64(1)).Return(nil)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.OK,
+				body: &lesson.DeleteShiftSummaryResponse{},
+			},
+		},
+		{
+			name: "invalid argument",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				req := &lesson.DeleteShiftSummaryRequest{}
+				mocks.validator.EXPECT().DeleteShiftSummary(req).Return(validation.ErrRequestValidation)
+			},
+			req: &lesson.DeleteShiftSummaryRequest{},
+			expect: &testResponse{
+				code: codes.InvalidArgument,
+			},
+		},
+		{
+			name: "failed to delete shift summary",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				mocks.validator.EXPECT().DeleteShiftSummary(req).Return(nil)
+				mocks.db.ShiftSummary.EXPECT().Delete(ctx, int64(1)).Return(errmock)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.Internal,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, testGRPC(tt.setup, tt.expect, func(ctx context.Context, service *lessonService) (proto.Message, error) {
+			return service.DeleteShiftSummary(ctx, tt.req)
 		}))
 	}
 }

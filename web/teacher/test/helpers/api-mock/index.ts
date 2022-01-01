@@ -17,14 +17,19 @@ export default {
   get: {
     ...AuthStore.showAuth,
     ...ShiftStore.listShiftSummaries,
+    ...ShiftStore.listShiftDetails,
     ...UserStore.listTeachers,
   },
   post: {
     ...ShiftStore.createShifts,
     ...UserStore.createTeacher,
   },
-  patch: {},
+  patch: {
+    ...ShiftStore.updateShiftSummarySchedule,
+  },
   put: {},
-  delete: {},
+  delete: {
+    ...ShiftStore.deleteShifts,
+  },
   error: err,
 }

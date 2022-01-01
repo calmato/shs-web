@@ -1,3 +1,5 @@
+export interface IHidden {}
+
 export interface ISelect {
   label: string
   rules: object

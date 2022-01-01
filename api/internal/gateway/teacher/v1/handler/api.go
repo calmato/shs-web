@@ -92,6 +92,8 @@ func (h *apiV1Handler) AdminRoutes(rg *gin.RouterGroup) {
 	rg.PATCH("/v1/schedules", h.UpdateSchedules)
 	rg.PATCH("/v1/rooms", h.UpdateRoomsTotal)
 	rg.POST("/v1/shifts", h.CreateShifts)
+	rg.PATCH("/v1/shifts/:shiftId/schedule", h.UpdateShiftSummarySchedule)
+	rg.DELETE("/v1/shifts/:shiftId", h.DeleteShiftSummary)
 }
 
 func (h *apiV1Handler) NoAuthRoutes(rg *gin.RouterGroup) {}

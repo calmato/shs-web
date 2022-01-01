@@ -44,10 +44,25 @@ func TestShiftSummary_List(t *testing.T) {
 		want  want
 	}{
 		{
-			name:  "success",
+			name:  "success order by asc",
 			setup: func(ctx context.Context, t *testing.T, m *mocks) {},
 			args: args{
-				params: &ListShiftSummariesParams{},
+				params: &ListShiftSummariesParams{
+					OrderBy: OrderByAsc,
+				},
+			},
+			want: want{
+				summaries: summaries,
+				isErr:     false,
+			},
+		},
+		{
+			name:  "success order by desc",
+			setup: func(ctx context.Context, t *testing.T, m *mocks) {},
+			args: args{
+				params: &ListShiftSummariesParams{
+					OrderBy: OrderByDesc,
+				},
 			},
 			want: want{
 				summaries: summaries,
@@ -164,6 +179,123 @@ func TestShiftSummary_Get(t *testing.T) {
 				assert.NoError(t, err)
 				assert.Equal(t, tt.want.summary.Status, actual.Status)
 			}
+		})
+	}
+}
+
+func TestShiftSummary_UpdateSchedule(t *testing.T) {
+	m, err := newMock()
+	require.NoError(t, err)
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	_ = m.dbDelete(ctx, shiftSummaryTable)
+
+	now := jst.Now()
+	summary := testShiftSummary(1, 202202, now.AddDate(0, 0, -1), now.AddDate(0, 0, 1), now)
+
+	type args struct {
+		summaryID int64
+		openAt    time.Time
+		endAt     time.Time
+	}
+	type want struct {
+		isErr bool
+	}
+	tests := []struct {
+		name  string
+		setup func(ctx context.Context, t *testing.T, m *mocks)
+		args  args
+		want  want
+	}{
+		{
+			name: "success",
+			setup: func(ctx context.Context, t *testing.T, m *mocks) {
+				err = m.db.DB.Create(&summary).Error
+				require.NoError(t, err)
+			},
+			args: args{
+				summaryID: 1,
+				openAt:    jst.Now(),
+				endAt:     jst.Now(),
+			},
+			want: want{
+				isErr: false,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			ctx, cancel := context.WithCancel(context.Background())
+			defer cancel()
+
+			_ = m.dbDelete(ctx, shiftSummaryTable)
+			tt.setup(ctx, t, m)
+
+			db := NewShiftSummary(m.db)
+			err := db.UpdateSchedule(ctx, tt.args.summaryID, tt.args.openAt, tt.args.endAt)
+			assert.Equal(t, tt.want.isErr, err != nil, err)
+		})
+	}
+}
+
+func TestShiftSummary_Delete(t *testing.T) {
+	m, err := newMock()
+	require.NoError(t, err)
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	_ = m.dbDelete(ctx, shiftSummaryTable)
+
+	now := jst.Now()
+
+	summary := testShiftSummary(1, 202202, now.AddDate(0, 0, -1), now.AddDate(0, 0, 1), now)
+	shifts := make(entity.Shifts, 3)
+	shifts[0] = testShift(1, 1, jst.Date(2022, 2, 1, 0, 0, 0, 0), "1700", "1830", now)
+	shifts[1] = testShift(2, 1, jst.Date(2022, 2, 1, 0, 0, 0, 0), "1830", "2000", now)
+	shifts[2] = testShift(3, 1, jst.Date(2022, 2, 2, 0, 0, 0, 0), "1700", "1830", now)
+
+	type args struct {
+		summaryID int64
+	}
+	type want struct {
+		isErr bool
+	}
+	tests := []struct {
+		name  string
+		setup func(ctx context.Context, t *testing.T, m *mocks)
+		args  args
+		want  want
+	}{
+		{
+			name: "success",
+			setup: func(ctx context.Context, t *testing.T, m *mocks) {
+				err = m.db.DB.Create(&summary).Error
+				require.NoError(t, err)
+				err = m.db.DB.Create(&shifts).Error
+				require.NoError(t, err)
+			},
+			args: args{
+				summaryID: 1,
+			},
+			want: want{
+				isErr: false,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			ctx, cancel := context.WithCancel(context.Background())
+			defer cancel()
+
+			_ = m.dbDelete(ctx, shiftTable, shiftSummaryTable)
+			tt.setup(ctx, t, m)
+
+			db := NewShiftSummary(m.db)
+			err := db.Delete(ctx, tt.args.summaryID)
+			assert.Equal(t, tt.want.isErr, err != nil, err)
 		})
 	}
 }

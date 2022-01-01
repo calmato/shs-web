@@ -36,7 +36,7 @@ schedulesResponse:
     - weekday: 1
       isClosed: false
       lessons:
-      - startTime: 1700
-        endTime: 1830
-      - startTime: 1830
-        endTime: 2000
+      - startTime: '1700'
+        endTime: '1830'
+      - startTime: '1830'
+        endTime: '2000'

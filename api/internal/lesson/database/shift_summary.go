@@ -47,6 +47,13 @@ func (s *shiftSummary) List(
 		stmt.Where("end_at < ?", now)
 	}
 
+	switch params.OrderBy {
+	case OrderByAsc:
+		stmt.Order("`year_month` ASC")
+	case OrderByDesc:
+		stmt.Order("`year_month` DESC")
+	}
+
 	if params.Limit > 0 {
 		stmt.Limit(params.Limit)
 	}
@@ -77,6 +84,45 @@ func (s *shiftSummary) Get(ctx context.Context, id int64, fields ...string) (*en
 	}
 	summary.Fill(s.now())
 	return summary, nil
+}
+
+func (s *shiftSummary) UpdateSchedule(ctx context.Context, id int64, openAt, endAt time.Time) error {
+	tx, err := s.db.Begin()
+	if err != nil {
+		return dbError(err)
+	}
+	defer s.db.Close(tx)
+
+	params := map[string]interface{}{
+		"id":         id,
+		"open_at":    openAt,
+		"end_at":     endAt,
+		"updated_at": s.now(),
+	}
+
+	err = tx.Table(shiftSummaryTable).Where("id = ?", id).Updates(params).Error
+	if err != nil {
+		tx.Rollback()
+		return dbError(err)
+	}
+	return dbError(tx.Commit().Error)
+}
+
+func (s *shiftSummary) Delete(ctx context.Context, id int64) error {
+	tx, err := s.db.Begin()
+	if err != nil {
+		return dbError(err)
+	}
+	defer s.db.Close(tx)
+
+	err = tx.Table(shiftSummaryTable).
+		Where("id = ?", id).
+		Delete(&entity.ShiftSummary{}).Error
+	if err != nil {
+		tx.Rollback()
+		return dbError(err)
+	}
+	return dbError(tx.Commit().Error)
 }
 
 func (s *shiftSummary) Count(ctx context.Context) (int64, error) {

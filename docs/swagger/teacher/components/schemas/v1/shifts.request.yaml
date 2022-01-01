@@ -1,3 +1,17 @@
+updateShiftSummaryScheduleRequest:
+  type: object
+  properties:
+    openDate:
+      type: string
+      description: シフト募集開始日
+      format: 'YYYYMMDD'
+    endDate:
+      type: string
+      description: シフト募集締切日
+      format: 'YYYYMMDD'
+  example:
+    openDate: '20210101'
+    endDate: '20210114'
 createShiftsRequest:
   type: object
   properties:

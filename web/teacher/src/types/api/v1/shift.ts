@@ -3,6 +3,11 @@
  * Request
  * ---------------------------
  */
+export interface UpdateShiftSummaryScheduleRequest {
+  openDate: string
+  endDate: string
+}
+
 export interface CreateShiftsRequest {
   yearMonth: string
   openDate: string
@@ -33,6 +38,7 @@ export interface ShiftDetailLesson {
 }
 
 export interface ShiftDetail {
+  date: string
   isClosed: boolean
   lessons: ShiftDetailLesson[]
 }
@@ -43,5 +49,5 @@ export interface ShiftSummariesResponse {
 
 export interface ShiftDetailsResponse {
   summary: ShiftSummary
-  shifts: { [key: string]: ShiftDetail }
+  shifts: ShiftDetail[]
 }

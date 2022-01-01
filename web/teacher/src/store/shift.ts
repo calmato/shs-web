@@ -1,17 +1,20 @@
 import { Module, VuexModule, Mutation, Action } from 'vuex-module-decorators'
 import { AxiosError } from 'axios'
 import { $axios } from '~/plugins/axios'
+import dayjs from '~/plugins/dayjs'
 import {
+  CreateShiftsRequest,
+  ShiftDetailsResponse,
   ShiftSummariesResponse,
   ShiftSummary as ShiftSummaryResponse,
   ShiftDetail as ShiftDetailResponse,
   ShiftDetailLesson as LessonResponse,
+  UpdateShiftSummaryScheduleRequest,
 } from '~/types/api/v1'
 import { ShiftDetail, ShiftStatus, ShiftState, ShiftSummary, ShiftDetailLesson } from '~/types/store'
 import { ErrorResponse } from '~/types/api/exception'
 import { ApiError } from '~/types/exception'
-import { ShiftsNewForm } from '~/types/form'
-import { CreateShiftsRequest, ShiftDetailsResponse } from '~/types/api/v1/shift'
+import { ShiftsNewForm, ShiftSummaryEditScheduleForm } from '~/types/form'
 
 const initialState: ShiftState = {
   summary: {
@@ -25,7 +28,7 @@ const initialState: ShiftState = {
     updatedAt: '',
   },
   summaries: [],
-  details: new Map<string, ShiftDetail>(),
+  details: [],
 }
 
 @Module({
@@ -46,7 +49,7 @@ export default class ShiftModule extends VuexModule {
     return this.summaries
   }
 
-  public get getDetails(): Map<string, ShiftDetail> {
+  public get getDetails(): ShiftDetail[] {
     return this.details
   }
 
@@ -56,9 +59,44 @@ export default class ShiftModule extends VuexModule {
   }
 
   @Mutation
-  private setDetails({ summary, details }: { summary: ShiftSummary; details: Map<string, ShiftDetail> }): void {
+  private setDetails({ summary, details }: { summary: ShiftSummary; details: ShiftDetail[] }): void {
     this.summary = summary
     this.details = details
+  }
+
+  @Mutation
+  private addSummaries({ summary }: { summary: ShiftSummary }): void {
+    this.summaries.unshift(summary)
+  }
+
+  @Mutation
+  private replaceSummariesSchedule({
+    summaryId,
+    openAt,
+    endAt,
+  }: {
+    summaryId: number
+    openAt: string
+    endAt: string
+  }): void {
+    const index: number = this.summaries.findIndex((val: ShiftSummary) => {
+      return val.id === summaryId
+    })
+    if (index === -1) {
+      return
+    }
+    this.summaries.splice(index, 1, { ...this.summaries[index], openAt, endAt })
+  }
+
+  @Mutation
+  private removeSummaries({ summaryId }: { summaryId: number }): void {
+    const index: number = this.summaries.findIndex((val: ShiftSummary) => {
+      return val.id === summaryId
+    })
+    if (index === -1) {
+      return
+    }
+    this.summaries.splice(index, 1)
   }
 
   @Action({})
@@ -97,6 +135,29 @@ export default class ShiftModule extends VuexModule {
   }
 
   @Action({ rawError: true })
+  public async updateShiftSummarySchedule({ form }: { form: ShiftSummaryEditScheduleForm }): Promise<void> {
+    const summaryId: number = form.params.summaryId
+    const req: UpdateShiftSummaryScheduleRequest = {
+      openDate: replaceDate(form.params.openDate, '-', ''),
+      endDate: replaceDate(form.params.endDate, '-', ''),
+    }
+
+    await $axios
+      .$patch(`/v1/shifts/${summaryId}/schedule`, req)
+      .then(() => {
+        const format: string = 'YYYY-MM-DDThh:mm:ss'
+        const openAt: string = dayjs(form.params.openDate).tz().format(format)
+        const endAt: string = dayjs(form.params.endDate).tz().format(format)
+
+        this.replaceSummariesSchedule({ summaryId, openAt, endAt })
+      })
+      .catch((err: AxiosError) => {
+        const res: ErrorResponse = { ...err.response?.data }
+        throw new ApiError(res.status, res.message, res)
+      })
+  }
+
+  @Action({ rawError: true })
   public async createShifts({ form }: { form: ShiftsNewForm }): Promise<void> {
     const closedDates = form.params.closedDates.map((closedDate: string): string => {
       return replaceDate(closedDate, '-', '')
@@ -113,14 +174,48 @@ export default class ShiftModule extends VuexModule {
       .$post('/v1/shifts', req)
       .then((res: ShiftDetailsResponse) => {
         const summary: ShiftSummary = { ...res.summary }
-        const details = new Map<string, ShiftDetail>()
 
-        Object.keys(res.shifts).forEach((key: string) => {
-          const shift: ShiftDetailResponse = res.shifts[key]
+        const details: ShiftDetail[] = res.shifts.map((shift: ShiftDetailResponse): ShiftDetail => {
           const lessons: ShiftDetailLesson[] = shift.lessons.map((lesson: LessonResponse): ShiftDetailLesson => {
             return { ...lesson }
           })
-          details.set(key, { isClosed: shift.isClosed, lessons })
+          return { ...shift, lessons }
+        })
+
+        this.addSummaries({ summary })
+        this.setDetails({ summary, details })
+      })
+      .catch((err: AxiosError) => {
+        const res: ErrorResponse = { ...err.response?.data }
+        throw new ApiError(res.status, res.message, res)
+      })
+  }
+
+  @Action({ rawError: true })
+  public async deleteShifts({ summaryId }: { summaryId: number }): Promise<void> {
+    await $axios
+      .$delete(`/v1/shifts/${summaryId}`)
+      .then(() => {
+        this.removeSummaries({ summaryId })
+      })
+      .catch((err: AxiosError) => {
+        const res: ErrorResponse = { ...err.response?.data }
+        throw new ApiError(res.status, res.message, res)
+      })
+  }
+
+  @Action({ rawError: true })
+  public async listShiftDetails({ summaryId }: { summaryId: number }): Promise<void> {
+    await $axios
+      .$get(`/v1/shifts/${summaryId}`)
+      .then((res: ShiftDetailsResponse) => {
+        const summary: ShiftSummary = { ...res.summary }
+
+        const details: ShiftDetail[] = res.shifts.map((shift: ShiftDetailResponse): ShiftDetail => {
+          const lessons: ShiftDetailLesson[] = shift.lessons.map((lesson: LessonResponse): ShiftDetailLesson => {
+            return { ...lesson }
+          })
+          return { ...shift, lessons }
         })
 
         this.setDetails({ summary, details })
