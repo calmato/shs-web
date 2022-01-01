@@ -7,6 +7,15 @@ import (
 	"gorm.io/gorm"
 )
 
+type SchoolType int32
+
+const (
+	SchoolTypeUnknown          SchoolType = 0
+	SchoolTypeElementarySchool SchoolType = 1
+	SchoolTypeJuniorHighSchool SchoolType = 2
+	SchoolTypeHighSchool       SchoolType = 3
+)
+
 type Student struct {
 	ID            string         `gorm:"primaryKey;<-:create"`
 	LastName      string         `gorm:""`
@@ -15,6 +24,8 @@ type Student struct {
 	FirstNameKana string         `gorm:""`
 	Mail          string         `gorm:""`
 	BirthYear     int64          `gorm:""`
+	Schooltype    SchoolType     `gorm:"-"`
+	Grade         int64          `gorm:"-"`
 	Password      string         `gorm:"-"`
 	CreatedAt     time.Time      `gorm:"<-:create"`
 	UpdatedAt     time.Time      `gorm:""`
@@ -22,6 +33,43 @@ type Student struct {
 }
 
 type Students []*Student
+
+func (s *Student) Fill(now time.Time) {
+	year := int64(now.Year())
+	month := int(now.Month())
+	age := year - s.BirthYear
+	if month < 4 {
+		switch {
+		case age >= 8 && age <= 13:
+			s.Schooltype = SchoolTypeElementarySchool
+			s.Grade = age - 7
+		case age >= 14 && age <= 16:
+			s.Schooltype = SchoolTypeJuniorHighSchool
+			s.Grade = age - 13
+		case age >= 17 && age <= 19:
+			s.Schooltype = SchoolTypeHighSchool
+			s.Grade = age - 16
+		default:
+			s.Schooltype = SchoolTypeUnknown
+			s.Grade = 0
+		}
+	} else {
+		switch {
+		case age >= 7 && age <= 12:
+			s.Schooltype = SchoolTypeElementarySchool
+			s.Grade = age - 6
+		case age >= 13 && age <= 15:
+			s.Schooltype = SchoolTypeJuniorHighSchool
+			s.Grade = age - 12
+		case age >= 16 && age <= 18:
+			s.Schooltype = SchoolTypeHighSchool
+			s.Grade = age - 15
+		default:
+			s.Schooltype = SchoolTypeUnknown
+			s.Grade = 0
+		}
+	}
+}
 
 func (s *Student) Proto() *user.Student {
 	return &user.Student{
@@ -32,8 +80,16 @@ func (s *Student) Proto() *user.Student {
 		FirstNameKana: s.FirstNameKana,
 		Mail:          s.Mail,
 		BirthYear:     s.BirthYear,
+		SchoolType:    user.SchoolType(s.Schooltype),
+		Grade:         s.Grade,
 		CreatedAt:     s.CreatedAt.Unix(),
 		UpdatedAt:     s.CreatedAt.Unix(),
+	}
+}
+
+func (ss Students) Fill(now time.Time) {
+	for i := range ss {
+		ss[i].Fill(now)
 	}
 }
 
