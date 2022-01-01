@@ -86,8 +86,8 @@ func (h *apiV1Handler) UpdateShiftSummarySchedule(ctx *gin.Context) {
 
 	in := &lesson.UpdateShiftSummaryScheduleRequest{
 		Id:     shiftSummaryID,
-		OpenAt: openAt.Unix(),
-		EndAt:  endAt.AddDate(0, 0, 1).Unix() - 1,
+		OpenAt: jst.BeginningOfDay(openAt).Unix(),
+		EndAt:  jst.EndOfDay(endAt).Unix(),
 	}
 	_, err = h.lesson.UpdateShiftSummarySchedule(c, in)
 	if err != nil {
@@ -186,8 +186,8 @@ func (h *apiV1Handler) CreateShifts(ctx *gin.Context) {
 
 	in := &lesson.CreateShiftsRequest{
 		YearMonth:   int32(yearMonth),
-		OpenAt:      openAt.Unix(),
-		EndAt:       endAt.AddDate(0, 0, 1).Unix() - 1,
+		OpenAt:      jst.BeginningOfDay(openAt).Unix(),
+		EndAt:       jst.EndOfDay(endAt).Unix(),
 		ClosedDates: req.ClosedDates,
 	}
 	out, err := h.lesson.CreateShifts(c, in)

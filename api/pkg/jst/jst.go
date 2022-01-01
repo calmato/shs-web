@@ -12,26 +12,22 @@ func Date(year int, month time.Month, day, hour, min, sec, nsec int) time.Time {
 	return time.Date(year, month, day, hour, min, sec, nsec, jst)
 }
 
-func BegginingOfDay(t time.Time) time.Time {
+func BeginningOfDay(t time.Time) time.Time {
 	year, month, day := t.In(jst).Date()
 	return Date(year, month, day, 0, 0, 0, 0)
-}
-
-func BegginingOfWeek(t time.Time, week time.Weekday) time.Time {
-	t = BegginingOfDay(t)
-	days := int(t.Weekday() - week)
-	if t.Weekday() < week {
-		days += 7
-	}
-	return t.AddDate(0, 0, -days)
 }
 
 func BeginningOfMonth(year, month int) time.Time {
 	return Date(year, time.Month(month), 1, 0, 0, 0, 0)
 }
 
+func EndOfDay(t time.Time) time.Time {
+	year, month, day := t.In(jst).Date()
+	return Date(year, month, day, 23, 59, 59, int(time.Second-time.Nanosecond))
+}
+
 func EndOfMonth(year, month int) time.Time {
-	return Date(year, time.Month(month+1), 0, 0, 0, 0, 0)
+	return Date(year, time.Month(month), 1, 0, 0, 0, 0).AddDate(0, 1, 0).Add(-time.Nanosecond)
 }
 
 func Format(t time.Time, format string) string {
@@ -60,6 +56,10 @@ func Parse(format, target string) (time.Time, error) {
 
 func ParseFromYYYYMMDD(yyyymmdd string) (time.Time, error) {
 	return time.ParseInLocation("20060102", yyyymmdd, jst)
+}
+
+func ParseFromYYYYMM(yyyymm string) (time.Time, error) {
+	return time.ParseInLocation("200601", yyyymm, jst)
 }
 
 func ParseFromHHMMSS(hhmmss string) (time.Time, error) {
