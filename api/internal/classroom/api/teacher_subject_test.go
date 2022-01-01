@@ -8,6 +8,7 @@ import (
 	"github.com/calmato/shs-web/api/internal/classroom/validation"
 	"github.com/calmato/shs-web/api/pkg/jst"
 	"github.com/calmato/shs-web/api/proto/classroom"
+	"github.com/calmato/shs-web/api/proto/user"
 	"github.com/golang/mock/gomock"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/protobuf/proto"
@@ -271,6 +272,7 @@ func TestUpsertTeacherSubject(t *testing.T) {
 		SubjectIds: []int64{1, 2},
 		SchoolType: classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL,
 	}
+	teacher := &user.Teacher{Id: "teacherid"}
 	subjects := entity.Subjects{
 		{
 			ID:         1,
@@ -307,9 +309,12 @@ func TestUpsertTeacherSubject(t *testing.T) {
 		{
 			name: "success",
 			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				in := &user.GetTeacherRequest{Id: "teacherid"}
+				out := &user.GetTeacherResponse{Teacher: teacher}
 				schoolType := entity.SchoolTypeHighSchool
 				mocks.validator.EXPECT().UpsertTeacherSubject(req).Return(nil)
-				mocks.db.Subject.EXPECT().MultiGet(ctx, gomock.Any()).Return(subjects, nil)
+				mocks.user.EXPECT().GetTeacher(gomock.Any(), in).Return(out, nil)
+				mocks.db.Subject.EXPECT().MultiGet(gomock.Any(), gomock.Any()).Return(subjects, nil)
 				mocks.db.TeacherSubject.EXPECT().Replace(ctx, schoolType, teachersubjects).Return(nil)
 			},
 			req: req,
@@ -343,10 +348,26 @@ func TestUpsertTeacherSubject(t *testing.T) {
 			},
 		},
 		{
+			name: "failed to get teacher",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				in := &user.GetTeacherRequest{Id: "teacherid"}
+				mocks.validator.EXPECT().UpsertTeacherSubject(req).Return(nil)
+				mocks.user.EXPECT().GetTeacher(gomock.Any(), in).Return(nil, errmock)
+				mocks.db.Subject.EXPECT().MultiGet(gomock.Any(), gomock.Any()).Return(subjects, nil)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.Internal,
+			},
+		},
+		{
 			name: "failed to multi get subjects",
 			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				in := &user.GetTeacherRequest{Id: "teacherid"}
+				out := &user.GetTeacherResponse{Teacher: teacher}
 				mocks.validator.EXPECT().UpsertTeacherSubject(req).Return(nil)
-				mocks.db.Subject.EXPECT().MultiGet(ctx, gomock.Any()).Return(nil, errmock)
+				mocks.user.EXPECT().GetTeacher(gomock.Any(), in).Return(out, nil)
+				mocks.db.Subject.EXPECT().MultiGet(gomock.Any(), gomock.Any()).Return(nil, errmock)
 			},
 			req: req,
 			expect: &testResponse{
@@ -357,14 +378,19 @@ func TestUpsertTeacherSubject(t *testing.T) {
 			name: "failed to unmatch subject ids",
 			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
 				req := &classroom.UpsertTeacherSubjectRequest{
+					TeacherId:  "teacherid",
 					SubjectIds: []int64{1, 2},
 					SchoolType: classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL,
 				}
+				in := &user.GetTeacherRequest{Id: "teacherid"}
+				out := &user.GetTeacherResponse{Teacher: teacher}
 				subjects := entity.Subjects{}
 				mocks.validator.EXPECT().UpsertTeacherSubject(req).Return(nil)
+				mocks.user.EXPECT().GetTeacher(gomock.Any(), in).Return(out, nil)
 				mocks.db.Subject.EXPECT().MultiGet(ctx, gomock.Any()).Return(subjects, nil)
 			},
 			req: &classroom.UpsertTeacherSubjectRequest{
+				TeacherId:  "teacherid",
 				SubjectIds: []int64{1, 2},
 				SchoolType: classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL,
 			},
@@ -375,9 +401,12 @@ func TestUpsertTeacherSubject(t *testing.T) {
 		{
 			name: "failed to replace teacher subjects",
 			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				in := &user.GetTeacherRequest{Id: "teacherid"}
+				out := &user.GetTeacherResponse{Teacher: teacher}
 				schoolType := entity.SchoolTypeHighSchool
 				mocks.validator.EXPECT().UpsertTeacherSubject(req).Return(nil)
-				mocks.db.Subject.EXPECT().MultiGet(ctx, gomock.Any()).Return(subjects, nil)
+				mocks.user.EXPECT().GetTeacher(gomock.Any(), in).Return(out, nil)
+				mocks.db.Subject.EXPECT().MultiGet(gomock.Any(), gomock.Any()).Return(subjects, nil)
 				mocks.db.TeacherSubject.EXPECT().Replace(ctx, schoolType, teachersubjects).Return(errmock)
 			},
 			req: req,

@@ -12,6 +12,7 @@ import (
 	"github.com/calmato/shs-web/api/internal/classroom/validation"
 	mock_database "github.com/calmato/shs-web/api/mock/classroom/database"
 	mock_validation "github.com/calmato/shs-web/api/mock/classroom/validation"
+	mock_user "github.com/calmato/shs-web/api/mock/proto/user"
 	"github.com/calmato/shs-web/api/pkg/jst"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
@@ -28,6 +29,7 @@ var errmock = errors.New("some error")
 type mocks struct {
 	db        *dbMocks
 	validator *mock_validation.MockRequestValidation
+	user      *mock_user.MockUserServiceClient
 }
 
 type dbMocks struct {
@@ -53,6 +55,7 @@ func newMocks(ctrl *gomock.Controller) *mocks {
 	return &mocks{
 		db:        newDBMocks(ctrl),
 		validator: mock_validation.NewMockRequestValidation(ctrl),
+		user:      mock_user.NewMockUserServiceClient(ctrl),
 	}
 }
 
@@ -78,6 +81,7 @@ func newClassroomService(mocks *mocks, opts *testOptions) *classroomService {
 			Room:           mocks.db.Room,
 		},
 		validator: mocks.validator,
+		user:      mocks.user,
 	}
 }
 
