@@ -83,6 +83,89 @@ func TestShift_ListBySummaryID(t *testing.T) {
 	}
 }
 
+func TestShift_MultiGet(t *testing.T) {
+	m, err := newMock()
+	require.NoError(t, err)
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	_ = m.dbDelete(ctx, shiftTable, shiftSummaryTable)
+
+	now := jst.Now()
+
+	openAt := jst.Date(2022, 1, 1, 0, 0, 0, 0)
+	endAt := jst.Date(2021, 1, 14, 23, 59, 59, 0)
+	summary := testShiftSummary(1, 202202, openAt, endAt, now)
+	err = m.db.DB.Create(&summary).Error
+	require.NoError(t, err)
+
+	shifts := make(entity.Shifts, 3)
+	shifts[0] = testShift(1, 1, jst.Date(2022, 2, 1, 0, 0, 0, 0), "1700", "1830", now)
+	shifts[1] = testShift(2, 1, jst.Date(2022, 2, 1, 0, 0, 0, 0), "1830", "2000", now)
+	shifts[2] = testShift(3, 1, jst.Date(2022, 2, 2, 0, 0, 0, 0), "1700", "1830", now)
+	err = m.db.DB.Create(&shifts).Error
+	require.NoError(t, err)
+
+	type args struct {
+		shiftIDs []int64
+	}
+	type want struct {
+		shifts entity.Shifts
+		isErr  bool
+	}
+	tests := []struct {
+		name  string
+		setup func(ctx context.Context, t *testing.T, m *mocks)
+		args  args
+		want  want
+	}{
+		{
+			name:  "success",
+			setup: func(ctx context.Context, t *testing.T, m *mocks) {},
+			args: args{
+				shiftIDs: []int64{1, 2, 3},
+			},
+			want: want{
+				shifts: shifts,
+				isErr:  false,
+			},
+		},
+		{
+			name:  "success is empty",
+			setup: func(ctx context.Context, t *testing.T, m *mocks) {},
+			args: args{
+				shiftIDs: []int64{},
+			},
+			want: want{
+				shifts: entity.Shifts{},
+				isErr:  false,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			ctx, cancel := context.WithCancel(context.Background())
+			defer cancel()
+
+			tt.setup(ctx, t, m)
+
+			db := NewShift(m.db)
+			actual, err := db.MultiGet(ctx, tt.args.shiftIDs)
+			assert.Equal(t, tt.want.isErr, err != nil, err)
+			assert.Len(t, actual, len(tt.want.shifts))
+			for i, shift := range tt.want.shifts {
+				shift.Date = actual[i].Date
+				shift.CreatedAt = actual[i].CreatedAt
+				shift.UpdatedAt = actual[i].UpdatedAt
+				assert.Contains(t, actual, shift)
+			}
+		})
+	}
+}
+
 func TestShift_MultipleCreate(t *testing.T) {
 	m, err := newMock()
 	require.NoError(t, err)
