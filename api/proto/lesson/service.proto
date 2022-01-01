@@ -9,6 +9,8 @@ import "github.com/envoyproxy/protoc-gen-validate/validate/validate.proto";
 import "lesson/common.proto";
 import "lesson/shift.proto";
 import "lesson/shift_summary.proto";
+import "lesson/teacher_submission.proto";
+import "lesson/teacher_shift.proto";
 
 service LessonService {
   rpc ListShiftSummaries(ListShiftSummariesRequest) returns (ListShiftSummariesResponse);
@@ -17,6 +19,7 @@ service LessonService {
   rpc DeleteShiftSummary(DeleteShiftSummaryRequest) returns (DeleteShiftSummaryResponse);
   rpc ListShifts(ListShiftsRequest) returns (ListShiftsResponse);
   rpc CreateShifts(CreateShiftsRequest) returns (CreateShiftsResponse);
+  rpc UpsertTeacherShifts(UpsertTeacherShiftsRequest) returns (UpsertTeacherShiftsResponse);
 }
 
 message ListShiftSummariesRequest {
@@ -76,4 +79,16 @@ message CreateShiftsRequest {
 message CreateShiftsResponse {
   ShiftSummary   summary = 1;
   repeated Shift shifts  = 2;
+}
+
+message UpsertTeacherShiftsRequest {
+  string         teacher_id       = 1 [(validate.rules).string = { min_len: 1 }];
+  int64          shift_summary_id = 2 [(validate.rules).int64 = { gt: 0 }];
+  repeated int64 shift_ids        = 3 [(validate.rules).repeated = { unique: true, items: { int64: { gt: 0 }}}];
+  bool           desided          = 4;
+}
+
+message UpsertTeacherShiftsResponse {
+  TeacherSubmission     submission = 1;
+  repeated TeacherShift shifts     = 2;
 }

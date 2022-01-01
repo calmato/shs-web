@@ -117,3 +117,17 @@ func (mr *MockRequestValidationMockRecorder) UpdateShiftSummarySchedule(req inte
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateShiftSummarySchedule", reflect.TypeOf((*MockRequestValidation)(nil).UpdateShiftSummarySchedule), req)
 }
+
+// UpsertTeacherShifts mocks base method.
+func (m *MockRequestValidation) UpsertTeacherShifts(req *lesson.UpsertTeacherShiftsRequest) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpsertTeacherShifts", req)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpsertTeacherShifts indicates an expected call of UpsertTeacherShifts.
+func (mr *MockRequestValidationMockRecorder) UpsertTeacherShifts(req interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpsertTeacherShifts", reflect.TypeOf((*MockRequestValidation)(nil).UpsertTeacherShifts), req)
+}

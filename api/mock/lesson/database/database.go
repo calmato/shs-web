@@ -163,6 +163,26 @@ func (mr *MockShiftMockRecorder) ListBySummaryID(ctx, summaryID interface{}, fie
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListBySummaryID", reflect.TypeOf((*MockShift)(nil).ListBySummaryID), varargs...)
 }
 
+// MultiGet mocks base method.
+func (m *MockShift) MultiGet(ctx context.Context, ids []int64, fields ...string) (entity.Shifts, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, ids}
+	for _, a := range fields {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "MultiGet", varargs...)
+	ret0, _ := ret[0].(entity.Shifts)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// MultiGet indicates an expected call of MultiGet.
+func (mr *MockShiftMockRecorder) MultiGet(ctx, ids interface{}, fields ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, ids}, fields...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MultiGet", reflect.TypeOf((*MockShift)(nil).MultiGet), varargs...)
+}
+
 // MultipleCreate mocks base method.
 func (m *MockShift) MultipleCreate(ctx context.Context, summary *entity.ShiftSummary, shifts entity.Shifts) error {
 	m.ctrl.T.Helper()
@@ -175,4 +195,41 @@ func (m *MockShift) MultipleCreate(ctx context.Context, summary *entity.ShiftSum
 func (mr *MockShiftMockRecorder) MultipleCreate(ctx, summary, shifts interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MultipleCreate", reflect.TypeOf((*MockShift)(nil).MultipleCreate), ctx, summary, shifts)
+}
+
+// MockTeacherShift is a mock of TeacherShift interface.
+type MockTeacherShift struct {
+	ctrl     *gomock.Controller
+	recorder *MockTeacherShiftMockRecorder
+}
+
+// MockTeacherShiftMockRecorder is the mock recorder for MockTeacherShift.
+type MockTeacherShiftMockRecorder struct {
+	mock *MockTeacherShift
+}
+
+// NewMockTeacherShift creates a new mock instance.
+func NewMockTeacherShift(ctrl *gomock.Controller) *MockTeacherShift {
+	mock := &MockTeacherShift{ctrl: ctrl}
+	mock.recorder = &MockTeacherShiftMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockTeacherShift) EXPECT() *MockTeacherShiftMockRecorder {
+	return m.recorder
+}
+
+// Replace mocks base method.
+func (m *MockTeacherShift) Replace(ctx context.Context, submission *entity.TeacherSubmission, shifts entity.TeacherShifts) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Replace", ctx, submission, shifts)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Replace indicates an expected call of Replace.
+func (mr *MockTeacherShiftMockRecorder) Replace(ctx, submission, shifts interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Replace", reflect.TypeOf((*MockTeacherShift)(nil).Replace), ctx, submission, shifts)
 }

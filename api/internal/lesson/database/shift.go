@@ -41,6 +41,19 @@ func (s *shift) ListBySummaryID(ctx context.Context, summaryID int64, fields ...
 	return shifts, dbError(err)
 }
 
+func (s *shift) MultiGet(ctx context.Context, ids []int64, fields ...string) (entity.Shifts, error) {
+	var shifts entity.Shifts
+	if len(fields) == 0 {
+		fields = shiftFields
+	}
+
+	stmt := s.db.DB.Table(shiftTable).Select(fields).
+		Where("id IN (?)", ids)
+
+	err := stmt.Find(&shifts).Error
+	return shifts, dbError(err)
+}
+
 func (s *shift) MultipleCreate(ctx context.Context, summary *entity.ShiftSummary, shifts entity.Shifts) error {
 	now := s.now()
 

@@ -156,6 +156,26 @@ func (mr *MockLessonServiceClientMockRecorder) UpdateShiftSummarySchedule(ctx, i
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateShiftSummarySchedule", reflect.TypeOf((*MockLessonServiceClient)(nil).UpdateShiftSummarySchedule), varargs...)
 }
 
+// UpsertTeacherShifts mocks base method.
+func (m *MockLessonServiceClient) UpsertTeacherShifts(ctx context.Context, in *lesson.UpsertTeacherShiftsRequest, opts ...grpc.CallOption) (*lesson.UpsertTeacherShiftsResponse, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "UpsertTeacherShifts", varargs...)
+	ret0, _ := ret[0].(*lesson.UpsertTeacherShiftsResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UpsertTeacherShifts indicates an expected call of UpsertTeacherShifts.
+func (mr *MockLessonServiceClientMockRecorder) UpsertTeacherShifts(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpsertTeacherShifts", reflect.TypeOf((*MockLessonServiceClient)(nil).UpsertTeacherShifts), varargs...)
+}
+
 // MockLessonServiceServer is a mock of LessonServiceServer interface.
 type MockLessonServiceServer struct {
 	ctrl     *gomock.Controller
@@ -267,6 +287,21 @@ func (m *MockLessonServiceServer) UpdateShiftSummarySchedule(arg0 context.Contex
 func (mr *MockLessonServiceServerMockRecorder) UpdateShiftSummarySchedule(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateShiftSummarySchedule", reflect.TypeOf((*MockLessonServiceServer)(nil).UpdateShiftSummarySchedule), arg0, arg1)
+}
+
+// UpsertTeacherShifts mocks base method.
+func (m *MockLessonServiceServer) UpsertTeacherShifts(arg0 context.Context, arg1 *lesson.UpsertTeacherShiftsRequest) (*lesson.UpsertTeacherShiftsResponse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpsertTeacherShifts", arg0, arg1)
+	ret0, _ := ret[0].(*lesson.UpsertTeacherShiftsResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UpsertTeacherShifts indicates an expected call of UpsertTeacherShifts.
+func (mr *MockLessonServiceServerMockRecorder) UpsertTeacherShifts(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpsertTeacherShifts", reflect.TypeOf((*MockLessonServiceServer)(nil).UpsertTeacherShifts), arg0, arg1)
 }
 
 // mustEmbedUnimplementedLessonServiceServer mocks base method.

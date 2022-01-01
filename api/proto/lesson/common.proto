@@ -10,3 +10,10 @@ enum ShiftStatus {
   SHIFT_STATUS_ACCEPTING = 2; // 募集中
   SHIFT_STATUS_FINISHED  = 3; // 募集終了
 }
+
+enum TeacherSubmissionStatus {
+  TEACHER_SUBMISSION_STATUS_UNKNOWN   = 0; // 講師シフト提出状況不明
+  TEACHER_SUBMISSION_STATUS_WAITING   = 1; // 提出前
+  TEACHER_SUBMISSION_STATUS_EDITING   = 2; // 編集中
+  TEACHER_SUBMISSION_STATUS_SUBMITTED = 3; // 提出済み
+}
