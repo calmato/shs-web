@@ -86,7 +86,7 @@ message CreateStudentRequest {
   string password              = 7 [(validate.rules).string = { min_len: 6 max_len: 32 pattern: "^[a-zA-Z0-9_!@#$_%^&*.?()-=+]*$" }];
   string password_confirmation = 8 [(validate.rules).string = { min_len: 1 }];
   SchoolType school_type       = 9;
-  int64 grade                  = 10
+  int64 grade                  = 10;
 }
 
 message CreateStudentResponse {
