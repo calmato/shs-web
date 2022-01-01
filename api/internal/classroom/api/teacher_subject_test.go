@@ -262,11 +262,11 @@ func TestGetTeacherSubject(t *testing.T) {
 	}
 }
 
-func TestUpdateTeacherSubject(t *testing.T) {
+func TestUpsertTeacherSubject(t *testing.T) {
 	t.Parallel()
 
 	now := jst.Now()
-	req := &classroom.UpdateTeacherSubjectRequest{
+	req := &classroom.UpsertTeacherSubjectRequest{
 		TeacherId:  "teacherid",
 		SubjectIds: []int64{1, 2},
 		SchoolType: classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL,
@@ -301,30 +301,30 @@ func TestUpdateTeacherSubject(t *testing.T) {
 	tests := []struct {
 		name   string
 		setup  func(ctx context.Context, t *testing.T, mocks *mocks)
-		req    *classroom.UpdateTeacherSubjectRequest
+		req    *classroom.UpsertTeacherSubjectRequest
 		expect *testResponse
 	}{
 		{
 			name: "success",
 			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
 				schoolType := entity.SchoolTypeHighSchool
-				mocks.validator.EXPECT().UpdateTeacherSubject(req).Return(nil)
+				mocks.validator.EXPECT().UpsertTeacherSubject(req).Return(nil)
 				mocks.db.Subject.EXPECT().MultiGet(ctx, gomock.Any()).Return(subjects, nil)
 				mocks.db.TeacherSubject.EXPECT().Replace(ctx, schoolType, teachersubjects).Return(nil)
 			},
 			req: req,
 			expect: &testResponse{
 				code: codes.OK,
-				body: &classroom.UpdateTeacherSubjectResponse{},
+				body: &classroom.UpsertTeacherSubjectResponse{},
 			},
 		},
 		{
 			name: "invalid argument",
 			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
-				req := &classroom.UpdateTeacherSubjectRequest{}
-				mocks.validator.EXPECT().UpdateTeacherSubject(req).Return(validation.ErrRequestValidation)
+				req := &classroom.UpsertTeacherSubjectRequest{}
+				mocks.validator.EXPECT().UpsertTeacherSubject(req).Return(validation.ErrRequestValidation)
 			},
-			req: &classroom.UpdateTeacherSubjectRequest{},
+			req: &classroom.UpsertTeacherSubjectRequest{},
 			expect: &testResponse{
 				code: codes.InvalidArgument,
 			},
@@ -332,10 +332,10 @@ func TestUpdateTeacherSubject(t *testing.T) {
 		{
 			name: "failed to invalid school type",
 			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
-				req := &classroom.UpdateTeacherSubjectRequest{}
-				mocks.validator.EXPECT().UpdateTeacherSubject(req).Return(nil)
+				req := &classroom.UpsertTeacherSubjectRequest{}
+				mocks.validator.EXPECT().UpsertTeacherSubject(req).Return(nil)
 			},
-			req: &classroom.UpdateTeacherSubjectRequest{
+			req: &classroom.UpsertTeacherSubjectRequest{
 				SchoolType: classroom.SchoolType_SCHOOL_TYPE_UNKNOWN,
 			},
 			expect: &testResponse{
@@ -345,7 +345,7 @@ func TestUpdateTeacherSubject(t *testing.T) {
 		{
 			name: "failed to multi get subjects",
 			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
-				mocks.validator.EXPECT().UpdateTeacherSubject(req).Return(nil)
+				mocks.validator.EXPECT().UpsertTeacherSubject(req).Return(nil)
 				mocks.db.Subject.EXPECT().MultiGet(ctx, gomock.Any()).Return(nil, errmock)
 			},
 			req: req,
@@ -356,15 +356,15 @@ func TestUpdateTeacherSubject(t *testing.T) {
 		{
 			name: "failed to unmatch subject ids",
 			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
-				req := &classroom.UpdateTeacherSubjectRequest{
+				req := &classroom.UpsertTeacherSubjectRequest{
 					SubjectIds: []int64{1, 2},
 					SchoolType: classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL,
 				}
 				subjects := entity.Subjects{}
-				mocks.validator.EXPECT().UpdateTeacherSubject(req).Return(nil)
+				mocks.validator.EXPECT().UpsertTeacherSubject(req).Return(nil)
 				mocks.db.Subject.EXPECT().MultiGet(ctx, gomock.Any()).Return(subjects, nil)
 			},
-			req: &classroom.UpdateTeacherSubjectRequest{
+			req: &classroom.UpsertTeacherSubjectRequest{
 				SubjectIds: []int64{1, 2},
 				SchoolType: classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL,
 			},
@@ -376,7 +376,7 @@ func TestUpdateTeacherSubject(t *testing.T) {
 			name: "failed to replace teacher subjects",
 			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
 				schoolType := entity.SchoolTypeHighSchool
-				mocks.validator.EXPECT().UpdateTeacherSubject(req).Return(nil)
+				mocks.validator.EXPECT().UpsertTeacherSubject(req).Return(nil)
 				mocks.db.Subject.EXPECT().MultiGet(ctx, gomock.Any()).Return(subjects, nil)
 				mocks.db.TeacherSubject.EXPECT().Replace(ctx, schoolType, teachersubjects).Return(errmock)
 			},
@@ -390,7 +390,7 @@ func TestUpdateTeacherSubject(t *testing.T) {
 	for _, tt := range tests {
 		tt := tt
 		t.Run(tt.name, testGRPC(tt.setup, tt.expect, func(ctx context.Context, service *classroomService) (proto.Message, error) {
-			return service.UpdateTeacherSubject(ctx, tt.req)
+			return service.UpsertTeacherSubject(ctx, tt.req)
 		}))
 	}
 }

@@ -78,10 +78,12 @@ func (s *teacherSubject) Replace(
 		return dbError(err)
 	}
 
-	err = tx.Table(teacherSubjectTable).Create(&subjects).Error
-	if err != nil {
-		tx.Rollback()
-		return dbError(err)
+	if len(subjects) > 0 {
+		err = tx.Table(teacherSubjectTable).Create(&subjects).Error
+		if err != nil {
+			tx.Rollback()
+			return dbError(err)
+		}
 	}
 	return dbError(tx.Commit().Error)
 }

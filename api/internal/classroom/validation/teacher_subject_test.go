@@ -91,18 +91,18 @@ func TestGetTeacherSubject(t *testing.T) {
 	}
 }
 
-func TestUpdateTeacherSubject(t *testing.T) {
+func TestUpsertTeacherSubject(t *testing.T) {
 	t.Parallel()
 	validator := NewRequestValidation()
 
 	tests := []struct {
 		name  string
-		req   *classroom.UpdateTeacherSubjectRequest
+		req   *classroom.UpsertTeacherSubjectRequest
 		isErr bool
 	}{
 		{
 			name: "success",
-			req: &classroom.UpdateTeacherSubjectRequest{
+			req: &classroom.UpsertTeacherSubjectRequest{
 				TeacherId:  "teacherid",
 				SubjectIds: []int64{},
 				SchoolType: classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL,
@@ -111,7 +111,7 @@ func TestUpdateTeacherSubject(t *testing.T) {
 		},
 		{
 			name: "TeacherId is items.min_len",
-			req: &classroom.UpdateTeacherSubjectRequest{
+			req: &classroom.UpsertTeacherSubjectRequest{
 				TeacherId:  "",
 				SubjectIds: []int64{1, 2},
 				SchoolType: classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL,
@@ -120,7 +120,7 @@ func TestUpdateTeacherSubject(t *testing.T) {
 		},
 		{
 			name: "SubjectIds is unique",
-			req: &classroom.UpdateTeacherSubjectRequest{
+			req: &classroom.UpsertTeacherSubjectRequest{
 				TeacherId:  "",
 				SubjectIds: []int64{1, 1},
 				SchoolType: classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL,
@@ -129,7 +129,7 @@ func TestUpdateTeacherSubject(t *testing.T) {
 		},
 		{
 			name: "SubjectIds is items.gt",
-			req: &classroom.UpdateTeacherSubjectRequest{
+			req: &classroom.UpsertTeacherSubjectRequest{
 				TeacherId:  "",
 				SubjectIds: []int64{0},
 				SchoolType: classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL,
@@ -138,7 +138,7 @@ func TestUpdateTeacherSubject(t *testing.T) {
 		},
 		{
 			name: "SchoolType is defined_only",
-			req: &classroom.UpdateTeacherSubjectRequest{
+			req: &classroom.UpsertTeacherSubjectRequest{
 				TeacherId:  "",
 				SubjectIds: []int64{1, 2},
 				SchoolType: classroom.SchoolType_SCHOOL_TYPE_UNKNOWN,
@@ -151,7 +151,7 @@ func TestUpdateTeacherSubject(t *testing.T) {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			err := validator.UpdateTeacherSubject(tt.req)
+			err := validator.UpsertTeacherSubject(tt.req)
 			assert.Equal(t, tt.isErr, err != nil, err)
 		})
 	}

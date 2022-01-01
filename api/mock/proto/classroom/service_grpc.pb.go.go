@@ -296,24 +296,24 @@ func (mr *MockClassroomServiceClientMockRecorder) UpdateSubject(ctx, in interfac
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateSubject", reflect.TypeOf((*MockClassroomServiceClient)(nil).UpdateSubject), varargs...)
 }
 
-// UpdateTeacherSubject mocks base method.
-func (m *MockClassroomServiceClient) UpdateTeacherSubject(ctx context.Context, in *classroom.UpdateTeacherSubjectRequest, opts ...grpc.CallOption) (*classroom.UpdateTeacherSubjectResponse, error) {
+// UpsertTeacherSubject mocks base method.
+func (m *MockClassroomServiceClient) UpsertTeacherSubject(ctx context.Context, in *classroom.UpsertTeacherSubjectRequest, opts ...grpc.CallOption) (*classroom.UpsertTeacherSubjectResponse, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
-	ret := m.ctrl.Call(m, "UpdateTeacherSubject", varargs...)
-	ret0, _ := ret[0].(*classroom.UpdateTeacherSubjectResponse)
+	ret := m.ctrl.Call(m, "UpsertTeacherSubject", varargs...)
+	ret0, _ := ret[0].(*classroom.UpsertTeacherSubjectResponse)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// UpdateTeacherSubject indicates an expected call of UpdateTeacherSubject.
-func (mr *MockClassroomServiceClientMockRecorder) UpdateTeacherSubject(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+// UpsertTeacherSubject indicates an expected call of UpsertTeacherSubject.
+func (mr *MockClassroomServiceClientMockRecorder) UpsertTeacherSubject(ctx, in interface{}, opts ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{ctx, in}, opts...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateTeacherSubject", reflect.TypeOf((*MockClassroomServiceClient)(nil).UpdateTeacherSubject), varargs...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpsertTeacherSubject", reflect.TypeOf((*MockClassroomServiceClient)(nil).UpsertTeacherSubject), varargs...)
 }
 
 // MockClassroomServiceServer is a mock of ClassroomServiceServer interface.
@@ -534,19 +534,19 @@ func (mr *MockClassroomServiceServerMockRecorder) UpdateSubject(arg0, arg1 inter
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateSubject", reflect.TypeOf((*MockClassroomServiceServer)(nil).UpdateSubject), arg0, arg1)
 }
 
-// UpdateTeacherSubject mocks base method.
-func (m *MockClassroomServiceServer) UpdateTeacherSubject(arg0 context.Context, arg1 *classroom.UpdateTeacherSubjectRequest) (*classroom.UpdateTeacherSubjectResponse, error) {
+// UpsertTeacherSubject mocks base method.
+func (m *MockClassroomServiceServer) UpsertTeacherSubject(arg0 context.Context, arg1 *classroom.UpsertTeacherSubjectRequest) (*classroom.UpsertTeacherSubjectResponse, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "UpdateTeacherSubject", arg0, arg1)
-	ret0, _ := ret[0].(*classroom.UpdateTeacherSubjectResponse)
+	ret := m.ctrl.Call(m, "UpsertTeacherSubject", arg0, arg1)
+	ret0, _ := ret[0].(*classroom.UpsertTeacherSubjectResponse)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// UpdateTeacherSubject indicates an expected call of UpdateTeacherSubject.
-func (mr *MockClassroomServiceServerMockRecorder) UpdateTeacherSubject(arg0, arg1 interface{}) *gomock.Call {
+// UpsertTeacherSubject indicates an expected call of UpsertTeacherSubject.
+func (mr *MockClassroomServiceServerMockRecorder) UpsertTeacherSubject(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateTeacherSubject", reflect.TypeOf((*MockClassroomServiceServer)(nil).UpdateTeacherSubject), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpsertTeacherSubject", reflect.TypeOf((*MockClassroomServiceServer)(nil).UpsertTeacherSubject), arg0, arg1)
 }
 
 // mustEmbedUnimplementedClassroomServiceServer mocks base method.

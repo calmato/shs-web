@@ -20,7 +20,7 @@ type RequestValidation interface {
 	DeleteSubject(req *classroom.DeleteSubjectRequest) error
 	MultiGetTeacherSubjects(req *classroom.MultiGetTeacherSubjectsRequest) error
 	GetTeacherSubject(req *classroom.GetTeacherSubjectRequest) error
-	UpdateTeacherSubject(req *classroom.UpdateTeacherSubjectRequest) error
+	UpsertTeacherSubject(req *classroom.UpsertTeacherSubjectRequest) error
 	ListSchedules(req *classroom.ListSchedulesRequest) error
 	GetSchedule(req *classroom.GetScheduleRequest) error
 	UpdateSchedules(req *classroom.UpdateSchedulesRequest) error

@@ -70,10 +70,10 @@ func (s *classroomService) GetTeacherSubject(
 	return res, nil
 }
 
-func (s *classroomService) UpdateTeacherSubject(
-	ctx context.Context, req *classroom.UpdateTeacherSubjectRequest,
-) (*classroom.UpdateTeacherSubjectResponse, error) {
-	if err := s.validator.UpdateTeacherSubject(req); err != nil {
+func (s *classroomService) UpsertTeacherSubject(
+	ctx context.Context, req *classroom.UpsertTeacherSubjectRequest,
+) (*classroom.UpsertTeacherSubjectResponse, error) {
+	if err := s.validator.UpsertTeacherSubject(req); err != nil {
 		return nil, gRPCError(err)
 	}
 
@@ -95,6 +95,6 @@ func (s *classroomService) UpdateTeacherSubject(
 		return nil, gRPCError(err)
 	}
 
-	res := &classroom.UpdateTeacherSubjectResponse{}
+	res := &classroom.UpsertTeacherSubjectResponse{}
 	return res, nil
 }
