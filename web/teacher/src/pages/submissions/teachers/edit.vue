@@ -1,20 +1,22 @@
 <template>
-  <the-submission-edit />
+  <the-submission-edit :items="submissionsEdit" />
 </template>
 
 <script lang="ts">
-import { computed, defineComponent } from '@nuxtjs/composition-api'
+import { computed, defineComponent, SetupContext } from '@nuxtjs/composition-api'
 import TheSubmissionEdit from '~/components/templates/TheSubmissionEdit.vue'
 import { SubmissionEditState } from '~/types/props/submission'
 
 export default defineComponent({
-  components: {
-    TheSubmissionEdit,
-  },
+  components: { TheSubmissionEdit },
 
-  setup(_) {
+  setup(_, { root }: SetupContext) {
+    const store = root.$store
     const submissionsEdit = computed<SubmissionEditState>(() => store.getters['submission/getSubmissionsEdit'])
-    console.log(submissionsEdit)
+
+    return {
+      submissionsEdit,
+    }
   },
 })
 </script>
