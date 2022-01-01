@@ -47,6 +47,10 @@ func gRPCError(err error) error {
 		return nil
 	}
 
+	if _, ok := status.FromError(err); ok {
+		return err
+	}
+
 	switch {
 	case errors.Is(err, validation.ErrRequestValidation),
 		errors.Is(err, database.ErrInvalidArgument):
