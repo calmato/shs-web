@@ -27,7 +27,7 @@ func EndOfDay(t time.Time) time.Time {
 }
 
 func EndOfMonth(year, month int) time.Time {
-	return Date(year, time.Month(month), 0, 0, 0, 0, 0).AddDate(0, 1, 0).Add(-time.Nanosecond)
+	return Date(year, time.Month(month), 1, 0, 0, 0, 0).AddDate(0, 1, 0).Add(-time.Nanosecond)
 }
 
 func Format(t time.Time, format string) string {

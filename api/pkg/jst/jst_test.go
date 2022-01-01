@@ -33,7 +33,7 @@ func TestToTime(t *testing.T) {
 			now:                    time.Date(2021, 8, 2, 18, 30, 0, 0, jst),
 			expectBeginningOfDay:   time.Date(2021, 8, 2, 0, 0, 0, 0, jst),
 			expectBeginningOfMonth: time.Date(2021, 8, 1, 0, 0, 0, 0, jst),
-			expectEndOfDay:         time.Date(2021, 8, 12, 0, 0, 0, 0, jst).Add(-time.Nanosecond),
+			expectEndOfDay:         time.Date(2021, 8, 3, 0, 0, 0, 0, jst).Add(-time.Nanosecond),
 			expectEndOfMonth:       time.Date(2021, 9, 1, 0, 0, 0, 0, jst).Add(-time.Nanosecond),
 		},
 	}
@@ -154,7 +154,7 @@ func TestParseFromYYYYMM(t *testing.T) {
 		{
 			name:      "success",
 			target:    "202108",
-			expect:    time.Date(2021, 8, 0, 0, 0, 0, 0, jst),
+			expect:    time.Date(2021, 8, 1, 0, 0, 0, 0, jst),
 			expectErr: false,
 		},
 	}
