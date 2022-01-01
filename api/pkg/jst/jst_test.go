@@ -21,20 +21,20 @@ func TestDate(t *testing.T) {
 func TestToTime(t *testing.T) {
 	t.Parallel()
 	tests := []struct {
-		name                 string
-		now                  time.Time
-		expectDay            time.Time
-		expectWeek           time.Time
-		expectBeggingOfMonth time.Time
-		expectEndOfMonth     time.Time
+		name                   string
+		now                    time.Time
+		expectBeginningOfDay   time.Time
+		expectBeginningOfMonth time.Time
+		expectEndOfDay         time.Time
+		expectEndOfMonth       time.Time
 	}{
 		{
-			name:                 "success",
-			now:                  time.Date(2021, 8, 2, 18, 30, 0, 0, jst),
-			expectDay:            time.Date(2021, 8, 2, 0, 0, 0, 0, jst),
-			expectWeek:           time.Date(2021, 8, 1, 0, 0, 0, 0, jst),
-			expectBeggingOfMonth: time.Date(2021, 8, 1, 0, 0, 0, 0, jst),
-			expectEndOfMonth:     time.Date(2021, 8, 31, 0, 0, 0, 0, jst),
+			name:                   "success",
+			now:                    time.Date(2021, 8, 2, 18, 30, 0, 0, jst),
+			expectBeginningOfDay:   time.Date(2021, 8, 2, 0, 0, 0, 0, jst),
+			expectBeginningOfMonth: time.Date(2021, 8, 1, 0, 0, 0, 0, jst),
+			expectEndOfDay:         time.Date(2021, 8, 12, 0, 0, 0, 0, jst).Add(-time.Nanosecond),
+			expectEndOfMonth:       time.Date(2021, 9, 1, 0, 0, 0, 0, jst).Add(-time.Nanosecond),
 		},
 	}
 
@@ -42,9 +42,9 @@ func TestToTime(t *testing.T) {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			assert.Equal(t, tt.expectDay, BegginingOfDay(tt.now))
-			assert.Equal(t, tt.expectWeek, BegginingOfWeek(tt.expectWeek, 7))
-			assert.Equal(t, tt.expectBeggingOfMonth, BeginningOfMonth(tt.now.Year(), int(tt.now.Month())))
+			assert.Equal(t, tt.expectBeginningOfDay, BeginningOfDay(tt.now))
+			assert.Equal(t, tt.expectBeginningOfMonth, BeginningOfMonth(tt.now.Year(), int(tt.now.Month())))
+			assert.Equal(t, tt.expectEndOfDay, EndOfDay(tt.now))
 			assert.Equal(t, tt.expectEndOfMonth, EndOfMonth(tt.now.Year(), int(tt.now.Month())))
 		})
 	}
@@ -137,6 +137,33 @@ func TestParseFromYYYYMMDD(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 			actual, err := ParseFromYYYYMMDD(tt.target)
+			assert.Equal(t, tt.expectErr, err != nil, err)
+			assert.Equal(t, tt.expect, actual)
+		})
+	}
+}
+
+func TestParseFromYYYYMM(t *testing.T) {
+	t.Parallel()
+	tests := []struct {
+		name      string
+		target    string
+		expect    time.Time
+		expectErr bool
+	}{
+		{
+			name:      "success",
+			target:    "202108",
+			expect:    time.Date(2021, 8, 0, 0, 0, 0, 0, jst),
+			expectErr: false,
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			actual, err := ParseFromYYYYMM(tt.target)
 			assert.Equal(t, tt.expectErr, err != nil, err)
 			assert.Equal(t, tt.expect, actual)
 		})

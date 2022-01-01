@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"testing"
+	"time"
 
 	"github.com/calmato/shs-web/api/internal/gateway/teacher/v1/entity"
 	"github.com/calmato/shs-web/api/internal/gateway/teacher/v1/request"
@@ -135,7 +136,7 @@ func TestUpdateShiftSummarySchedule(t *testing.T) {
 				in := &lesson.UpdateShiftSummaryScheduleRequest{
 					Id:     1,
 					OpenAt: jst.Date(2022, 1, 1, 0, 0, 0, 0).Unix(),
-					EndAt:  jst.Date(2022, 1, 15, 0, 0, 0, 0).Unix() - 1,
+					EndAt:  jst.Date(2022, 1, 14, 23, 59, 59, int(time.Second-time.Nanosecond)).Unix(),
 				}
 				out := &lesson.UpdateShiftSummaryShceduleResponse{}
 				mocks.lesson.EXPECT().UpdateShiftSummarySchedule(gomock.Any(), in).Return(out, nil)
@@ -191,7 +192,7 @@ func TestUpdateShiftSummarySchedule(t *testing.T) {
 				in := &lesson.UpdateShiftSummaryScheduleRequest{
 					Id:     1,
 					OpenAt: jst.Date(2022, 1, 1, 0, 0, 0, 0).Unix(),
-					EndAt:  jst.Date(2022, 1, 15, 0, 0, 0, 0).Unix() - 1,
+					EndAt:  jst.Date(2022, 1, 14, 23, 59, 59, int(time.Second-time.Nanosecond)).Unix(),
 				}
 				mocks.lesson.EXPECT().UpdateShiftSummarySchedule(gomock.Any(), in).Return(nil, errmock)
 			},
@@ -517,7 +518,7 @@ func TestCreateShifts(t *testing.T) {
 				in := &lesson.CreateShiftsRequest{
 					YearMonth:   202202,
 					OpenAt:      jst.Date(2022, 1, 1, 0, 0, 0, 0).Unix(),
-					EndAt:       jst.Date(2022, 1, 15, 0, 0, 0, 0).Unix() - 1,
+					EndAt:       jst.Date(2022, 1, 14, 23, 59, 59, int(time.Second-time.Nanosecond)).Unix(),
 					ClosedDates: []string{"20210202", "20210214"},
 				}
 				out := &lesson.CreateShiftsResponse{
@@ -636,7 +637,7 @@ func TestCreateShifts(t *testing.T) {
 				in := &lesson.CreateShiftsRequest{
 					YearMonth:   202202,
 					OpenAt:      jst.Date(2022, 1, 1, 0, 0, 0, 0).Unix(),
-					EndAt:       jst.Date(2022, 1, 15, 0, 0, 0, 0).Unix() - 1,
+					EndAt:       jst.Date(2022, 1, 14, 23, 59, 59, int(time.Second-time.Nanosecond)).Unix(),
 					ClosedDates: []string{"20210202", "20210214"},
 				}
 				mocks.lesson.EXPECT().CreateShifts(gomock.Any(), in).Return(nil, errmock)
@@ -657,7 +658,7 @@ func TestCreateShifts(t *testing.T) {
 				in := &lesson.CreateShiftsRequest{
 					YearMonth:   202202,
 					OpenAt:      jst.Date(2022, 1, 1, 0, 0, 0, 0).Unix(),
-					EndAt:       jst.Date(2022, 1, 15, 0, 0, 0, 0).Unix() - 1,
+					EndAt:       jst.Date(2022, 1, 14, 23, 59, 59, int(time.Second-time.Nanosecond)).Unix(),
 					ClosedDates: []string{"20210202", "20210214"},
 				}
 				out := &lesson.CreateShiftsResponse{
