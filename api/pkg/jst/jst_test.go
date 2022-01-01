@@ -221,3 +221,31 @@ func TestParseFromUnix(t *testing.T) {
 		})
 	}
 }
+
+func TestFiscalYear(t *testing.T) {
+	t.Parallel()
+	tests := []struct {
+		name   string
+		target time.Time
+		expect int
+	}{
+		{
+			name:   "success to return this year",
+			target: time.Date(2022, 4, 1, 0, 0, 0, 0, jst),
+			expect: 2022,
+		},
+		{
+			name:   "success to return last year",
+			target: time.Date(2022, 1, 1, 0, 0, 0, 0, jst),
+			expect: 2021,
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tt.expect, FiscalYear(tt.target))
+		})
+	}
+}
