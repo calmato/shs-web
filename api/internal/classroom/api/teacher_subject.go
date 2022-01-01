@@ -6,6 +6,8 @@ import (
 
 	"github.com/calmato/shs-web/api/internal/classroom/entity"
 	"github.com/calmato/shs-web/api/proto/classroom"
+	"github.com/calmato/shs-web/api/proto/user"
+	"golang.org/x/sync/errgroup"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -76,17 +78,30 @@ func (s *classroomService) UpsertTeacherSubject(
 	if err := s.validator.UpsertTeacherSubject(req); err != nil {
 		return nil, gRPCError(err)
 	}
-
 	schoolType, err := entity.NewSchoolType(req.SchoolType)
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
-	subjects, err := s.db.Subject.MultiGet(ctx, req.SubjectIds)
-	if err != nil {
+
+	eg, ectx := errgroup.WithContext(ctx)
+	eg.Go(func() (err error) {
+		in := &user.GetTeacherRequest{Id: req.TeacherId}
+		_, err = s.user.GetTeacher(ectx, in)
+		return err
+	})
+	var subjects entity.Subjects
+	eg.Go(func() (err error) {
+		subjects, err = s.db.Subject.MultiGet(ctx, req.SubjectIds)
+		if err != nil {
+			return
+		}
+		if len(subjects) != len(req.SubjectIds) {
+			err = status.Error(codes.InvalidArgument, "api: subject ids length is unmatch")
+		}
+		return
+	})
+	if err := eg.Wait(); err != nil {
 		return nil, gRPCError(err)
-	}
-	if len(subjects) != len(req.SubjectIds) {
-		return nil, status.Error(codes.InvalidArgument, "api: subject ids length is unmatch")
 	}
 
 	teacherSubjects := entity.NewTeacherSubjects(req.TeacherId, req.SubjectIds)
