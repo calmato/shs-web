@@ -58,12 +58,12 @@ func (h *apiV1Handler) UpdateMySubjects(ctx *gin.Context) {
 		return
 	}
 
-	in := &classroom.UpdateTeacherSubjectRequest{
+	in := &classroom.UpsertTeacherSubjectRequest{
 		TeacherId:  teacherID,
 		SubjectIds: req.SubjectIDs,
 		SchoolType: schoolType,
 	}
-	_, err = h.classroom.UpdateTeacherSubject(c, in)
+	_, err = h.classroom.UpsertTeacherSubject(c, in)
 	if err != nil {
 		httpError(ctx, err)
 		return

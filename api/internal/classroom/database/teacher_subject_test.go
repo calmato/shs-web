@@ -169,6 +169,33 @@ func TestTeacherSubject_Replace(t *testing.T) {
 				isErr: false,
 			},
 		},
+		{
+			name: "success to subject length is 0",
+			setup: func(ctx context.Context, t *testing.T, m *mocks) {
+				err := m.db.DB.Create(teacherSubjects).Error
+				require.NoError(t, err)
+			},
+			args: args{
+				schoolType: entity.SchoolTypeHighSchool,
+				subjects:   entity.TeacherSubjects{},
+			},
+			want: want{
+				isErr: false,
+			},
+		},
+		{
+			name:  "failed to insert subject",
+			setup: func(ctx context.Context, t *testing.T, m *mocks) {},
+			args: args{
+				schoolType: entity.SchoolTypeHighSchool,
+				subjects: entity.TeacherSubjects{
+					testTeacherSubject(teacherID1, 0, now),
+				},
+			},
+			want: want{
+				isErr: true,
+			},
+		},
 	}
 
 	for _, tt := range tests {

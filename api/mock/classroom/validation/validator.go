@@ -216,16 +216,16 @@ func (mr *MockRequestValidationMockRecorder) UpdateSubject(req interface{}) *gom
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateSubject", reflect.TypeOf((*MockRequestValidation)(nil).UpdateSubject), req)
 }
 
-// UpdateTeacherSubject mocks base method.
-func (m *MockRequestValidation) UpdateTeacherSubject(req *classroom.UpdateTeacherSubjectRequest) error {
+// UpsertTeacherSubject mocks base method.
+func (m *MockRequestValidation) UpsertTeacherSubject(req *classroom.UpsertTeacherSubjectRequest) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "UpdateTeacherSubject", req)
+	ret := m.ctrl.Call(m, "UpsertTeacherSubject", req)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// UpdateTeacherSubject indicates an expected call of UpdateTeacherSubject.
-func (mr *MockRequestValidationMockRecorder) UpdateTeacherSubject(req interface{}) *gomock.Call {
+// UpsertTeacherSubject indicates an expected call of UpsertTeacherSubject.
+func (mr *MockRequestValidationMockRecorder) UpsertTeacherSubject(req interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateTeacherSubject", reflect.TypeOf((*MockRequestValidation)(nil).UpdateTeacherSubject), req)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpsertTeacherSubject", reflect.TypeOf((*MockRequestValidation)(nil).UpsertTeacherSubject), req)
 }

@@ -136,13 +136,13 @@ func TestUpdateMySubjects(t *testing.T) {
 		{
 			name: "success",
 			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
-				in := &classroom.UpdateTeacherSubjectRequest{
+				in := &classroom.UpsertTeacherSubjectRequest{
 					TeacherId:  idmock,
 					SubjectIds: []int64{1},
 					SchoolType: classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL,
 				}
-				out := &classroom.UpdateTeacherSubjectResponse{}
-				mocks.classroom.EXPECT().UpdateTeacherSubject(gomock.Any(), in).Return(out, nil)
+				out := &classroom.UpsertTeacherSubjectResponse{}
+				mocks.classroom.EXPECT().UpsertTeacherSubject(gomock.Any(), in).Return(out, nil)
 			},
 			req: &request.UpdateMySubjectRequest{
 				SchoolType: int32(classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL),
@@ -166,12 +166,12 @@ func TestUpdateMySubjects(t *testing.T) {
 		{
 			name: "failed to update teacher subject",
 			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
-				in := &classroom.UpdateTeacherSubjectRequest{
+				in := &classroom.UpsertTeacherSubjectRequest{
 					TeacherId:  idmock,
 					SubjectIds: []int64{1},
 					SchoolType: classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL,
 				}
-				mocks.classroom.EXPECT().UpdateTeacherSubject(gomock.Any(), in).Return(nil, errmock)
+				mocks.classroom.EXPECT().UpsertTeacherSubject(gomock.Any(), in).Return(nil, errmock)
 			},
 			req: &request.UpdateMySubjectRequest{
 				SchoolType: int32(classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL),
