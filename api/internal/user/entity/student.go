@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"jst"
 	"time"
 
 	"github.com/calmato/shs-web/api/proto/user"
@@ -35,39 +36,21 @@ type Student struct {
 type Students []*Student
 
 func (s *Student) Fill(now time.Time) {
-	year := int64(now.Year())
-	month := int(now.Month())
+	year := jst.FisicalYear(now)
 	age := year - s.BirthYear
-	if month < 4 {
-		switch {
-		case age >= 8 && age <= 13:
-			s.Schooltype = SchoolTypeElementarySchool
-			s.Grade = age - 7
-		case age >= 14 && age <= 16:
-			s.Schooltype = SchoolTypeJuniorHighSchool
-			s.Grade = age - 13
-		case age >= 17 && age <= 19:
-			s.Schooltype = SchoolTypeHighSchool
-			s.Grade = age - 16
-		default:
-			s.Schooltype = SchoolTypeUnknown
-			s.Grade = 0
-		}
-	} else {
-		switch {
-		case age >= 7 && age <= 12:
-			s.Schooltype = SchoolTypeElementarySchool
-			s.Grade = age - 6
-		case age >= 13 && age <= 15:
-			s.Schooltype = SchoolTypeJuniorHighSchool
-			s.Grade = age - 12
-		case age >= 16 && age <= 18:
-			s.Schooltype = SchoolTypeHighSchool
-			s.Grade = age - 15
-		default:
-			s.Schooltype = SchoolTypeUnknown
-			s.Grade = 0
-		}
+	switch {
+	case age >= 7 && age <= 12:
+		s.Schooltype = SchoolTypeElementarySchool
+		s.Grade = age - 6
+	case age >= 13 && age <= 15:
+		s.Schooltype = SchoolTypeJuniorHighSchool
+		s.Grade = age - 12
+	case age >= 16 && age <= 18:
+		s.Schooltype = SchoolTypeHighSchool
+		s.Grade = age - 15
+	default:
+		s.Schooltype = SchoolTypeUnknown
+		s.Grade = 0
 	}
 }
 
