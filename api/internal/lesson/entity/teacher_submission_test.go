@@ -40,72 +40,6 @@ func TestTeacherSubmission(t *testing.T) {
 	}
 }
 
-func TestTeacherSubmission_Fill(t *testing.T) {
-	t.Parallel()
-	now := jst.Now()
-	tests := []struct {
-		name       string
-		submission *TeacherSubmission
-		shifts     TeacherShifts
-		expect     TeacherSubmissionStatus
-	}{
-		{
-			name: "success to status submitted",
-			submission: &TeacherSubmission{
-				TeacherID:      "teacherid",
-				ShiftSummaryID: 1,
-				Decided:        true,
-				Status:         TeacherSubmissionStatusUnknown,
-				CreatedAt:      now,
-				UpdatedAt:      now,
-			},
-			shifts: TeacherShifts{},
-			expect: TeacherSubmissionStatusSubmitted,
-		},
-		{
-			name: "success to status editing",
-			submission: &TeacherSubmission{
-				TeacherID:      "teacherid",
-				ShiftSummaryID: 1,
-				Decided:        false,
-				Status:         TeacherSubmissionStatusUnknown,
-				CreatedAt:      now,
-				UpdatedAt:      now,
-			},
-			shifts: TeacherShifts{
-				{
-					TeacherID:      "teacherid",
-					ShiftSummaryID: 1,
-					ShiftID:        1,
-				},
-			},
-			expect: TeacherSubmissionStatusEditing,
-		},
-		{
-			name: "success to status waiting",
-			submission: &TeacherSubmission{
-				TeacherID:      "teacherid",
-				ShiftSummaryID: 1,
-				Decided:        false,
-				Status:         TeacherSubmissionStatusUnknown,
-				CreatedAt:      now,
-				UpdatedAt:      now,
-			},
-			shifts: TeacherShifts{},
-			expect: TeacherSubmissionStatusWaiting,
-		},
-	}
-
-	for _, tt := range tests {
-		tt := tt
-		t.Run(tt.name, func(t *testing.T) {
-			t.Parallel()
-			tt.submission.Fill(tt.shifts)
-			assert.Equal(t, tt.expect, tt.submission.Status)
-		})
-	}
-}
-
 func TestTeacherSubmission_Proto(t *testing.T) {
 	t.Parallel()
 	now := jst.Now()
@@ -120,7 +54,6 @@ func TestTeacherSubmission_Proto(t *testing.T) {
 				TeacherID:      "teacherid",
 				ShiftSummaryID: 1,
 				Decided:        true,
-				Status:         TeacherSubmissionStatusEditing,
 				CreatedAt:      now,
 				UpdatedAt:      now,
 			},
@@ -128,7 +61,6 @@ func TestTeacherSubmission_Proto(t *testing.T) {
 				TeacherId:      "teacherid",
 				ShiftSummaryId: 1,
 				Decided:        true,
-				Status:         lesson.TeacherSubmissionStatus_TEACHER_SUBMISSION_STATUS_EDITING,
 				CreatedAt:      now.Unix(),
 				UpdatedAt:      now.Unix(),
 			},

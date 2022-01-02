@@ -46,7 +46,6 @@ func (s *lessonService) UpsertTeacherShifts(
 		return nil, gRPCError(err)
 	}
 
-	submission.Fill(shifts)
 	res := &lesson.UpsertTeacherShiftsResponse{
 		Submission: submission.Proto(),
 		Shifts:     shifts.Proto(),

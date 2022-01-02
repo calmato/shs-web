@@ -69,7 +69,6 @@ func TestUpsertTeacherShifts(t *testing.T) {
 						TeacherId:      "teacherid",
 						ShiftSummaryId: 1,
 						Decided:        true,
-						Status:         lesson.TeacherSubmissionStatus_TEACHER_SUBMISSION_STATUS_SUBMITTED,
 						CreatedAt:      time.Time{}.Unix(),
 						UpdatedAt:      time.Time{}.Unix(),
 					},
