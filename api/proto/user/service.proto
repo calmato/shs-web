@@ -82,11 +82,10 @@ message CreateStudentRequest {
   string last_name_kana        = 3 [(validate.rules).string = { min_len: 1 max_len: 32, pattern: "^[ぁ-ゔー]*$" }];
   string first_name_kana       = 4 [(validate.rules).string = { min_len: 1 max_len: 32, pattern: "^[ぁ-ゔー]*$" }];
   string mail                  = 5 [(validate.rules).string = { min_len: 1 max_len: 256 email: true }];
-  int64  birth_year            = 6 [(validate.rules).int64 = { gte: 1900 lte: 9999 }];
-  string password              = 7 [(validate.rules).string = { min_len: 6 max_len: 32 pattern: "^[a-zA-Z0-9_!@#$_%^&*.?()-=+]*$" }];
-  string password_confirmation = 8 [(validate.rules).string = { min_len: 1 }];
-  SchoolType school_type       = 9;
-  int64 grade                  = 10;
+  string password              = 6 [(validate.rules).string = { min_len: 6 max_len: 32 pattern: "^[a-zA-Z0-9_!@#$_%^&*.?()-=+]*$" }];
+  string password_confirmation = 7 [(validate.rules).string = { min_len: 1 }];
+  SchoolType school_type       = 8 [(validate.rules).enum   = { defined_only: true }];
+  int64 grade                  = 9 [(validate.rules).int64  = { gt: 0, lt: 7 }];
 }
 
 message CreateStudentResponse {
