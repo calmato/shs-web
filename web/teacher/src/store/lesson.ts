@@ -1,4 +1,6 @@
 import { Module, VuexModule, Mutation, Action } from 'vuex-module-decorators'
+import { AxiosResponse } from 'axios'
+import { $axios } from '~/plugins/axios'
 import { Lesson, LessonState, SchoolType, Subject, SubjectMap } from '~/types/store'
 
 const initialState: LessonState = {
@@ -81,5 +83,15 @@ export default class LessonModule extends VuexModule {
   public factory(): void {
     this.setSubjects(initialState.subjects)
     this.setLessons(initialState.lessons)
+  }
+
+  @Action({})
+  public async getAllSubjects(): Promise<void> {
+    try {
+      const res: AxiosResponse<{ subjects: Subject[] }> = await $axios.$get('/v1/subjects')
+      this.setSubjects(res.data.subjects)
+    } catch (e) {
+      return Promise.reject(e)
+    }
   }
 }
