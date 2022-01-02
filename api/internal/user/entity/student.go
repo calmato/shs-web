@@ -1,9 +1,9 @@
 package entity
 
 import (
-	"jst"
 	"time"
 
+	"github.com/calmato/shs-web/api/pkg/jst"
 	"github.com/calmato/shs-web/api/proto/user"
 	"gorm.io/gorm"
 )
@@ -36,7 +36,7 @@ type Student struct {
 type Students []*Student
 
 func (s *Student) Fill(now time.Time) {
-	year := jst.FisicalYear(now)
+	year := int64(jst.FiscalYear(now))
 	age := year - s.BirthYear
 	switch {
 	case age >= 7 && age <= 12:
