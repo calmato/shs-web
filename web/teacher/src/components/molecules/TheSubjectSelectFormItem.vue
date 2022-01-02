@@ -9,29 +9,47 @@
       <v-text-field class="flex-grow-1" label="氏名（名：かな）" :value="user.firstNameKana" readonly />
     </div>
     <v-select
+      v-model="elementarySchoolSubjectsFormData"
       label="担当科目（小学校）"
       chips
       multiple
       append-outer-icon="mdi-lead-pencil"
       item-text="name"
+      item-value="id"
       :items="elementarySchoolSubjects"
-    />
+    >
+      <template #selection="{ item }">
+        <v-chip label :color="item.color">{{ item.name }}</v-chip>
+      </template>
+    </v-select>
     <v-select
+      v-model="juniorHighSchoolSubjectsFormData"
       label="担当科目（中学校）"
       chips
       multiple
       append-outer-icon="mdi-lead-pencil"
       item-text="name"
+      item-value="id"
       :items="juniorHighSchoolSubjects"
-    />
+    >
+      <template #selection="{ item }">
+        <v-chip label :color="item.color">{{ item.name }}</v-chip>
+      </template>
+    </v-select>
     <v-select
+      v-model="highSchoolSubjectsFormData"
       label="担当科目（高校）"
       chips
       multiple
       append-outer-icon="mdi-lead-pencil"
       item-text="name"
+      item-value="id"
       :items="highSchoolSubjects"
-    />
+    >
+      <template #selection="{ item }">
+        <v-chip label :color="item.color">{{ item.name }}</v-chip>
+      </template>
+    </v-select>
   </the-form-group>
 </template>
 
@@ -50,10 +68,6 @@ export default defineComponent({
   components: {},
 
   props: {
-    subjectForm: {
-      type: Object,
-      default: () => ({}),
-    },
     user: {
       type: Object as PropType<UserPoop>,
       default: () => ({
@@ -75,16 +89,42 @@ export default defineComponent({
       type: Array as PropType<Subject[]>,
       default: () => [],
     },
+    elementarySchoolSubjectsFormValue: {
+      type: Array as PropType<number[]>,
+      default: () => [],
+    },
+    juniorHighSchoolSubjectsFormValue: {
+      type: Array as PropType<number[]>,
+      default: () => [],
+    },
+    highSchoolSubjectsFormValue: {
+      type: Array as PropType<number[]>,
+      default: () => [],
+    },
   },
 
   setup(props, { emit }) {
-    const formData = computed({
-      get: () => props.subjectForm,
-      set: (val: object) => emit('update:form', val),
+    const elementarySchoolSubjectsFormData = computed({
+      get: () => props.elementarySchoolSubjectsFormValue,
+      set: (val: object) => {
+        console.log(val)
+        emit('update:elementarySchoolSubjectsFormValue', val)
+      },
+    })
+
+    const juniorHighSchoolSubjectsFormData = computed({
+      get: () => props.juniorHighSchoolSubjectsFormValue,
+      set: (val: object) => emit('update:juniorHighSchoolSubjectsFormValue', val),
+    })
+    const highSchoolSubjectsFormData = computed({
+      get: () => props.highSchoolSubjectsFormValue,
+      set: (val: object) => emit('update:highSchoolSubjectsFormValue', val),
     })
 
     return {
-      formData,
+      elementarySchoolSubjectsFormData,
+      juniorHighSchoolSubjectsFormData,
+      highSchoolSubjectsFormData,
     }
   },
 })
