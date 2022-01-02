@@ -56,3 +56,11 @@ func (s *TeacherSubmission) Proto() *lesson.TeacherSubmission {
 		UpdatedAt:      s.UpdatedAt.Unix(),
 	}
 }
+
+func (ss TeacherSubmissions) Proto() []*lesson.TeacherSubmission {
+	submissions := make([]*lesson.TeacherSubmission, len(ss))
+	for i := range ss {
+		submissions[i] = ss[i].Proto()
+	}
+	return submissions
+}

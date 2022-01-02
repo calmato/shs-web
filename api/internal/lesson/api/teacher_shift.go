@@ -11,6 +11,24 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+func (s *lessonService) ListTeacherSubmissionsByShiftSummaryIDs(
+	ctx context.Context, req *lesson.ListTeacherSubmissionsByShiftSummaryIDsRequest,
+) (*lesson.ListTeacherSubmissionsByShiftSummaryIDsResponse, error) {
+	if err := s.validator.ListTeacherSubmissionsByShiftSummaryIDs(req); err != nil {
+		return nil, gRPCError(err)
+	}
+
+	submissions, err := s.db.TeacherSubmission.ListByShiftSummaryIDs(ctx, req.TeacherId, req.ShiftSummaryIds)
+	if err != nil {
+		return nil, gRPCError(err)
+	}
+
+	res := &lesson.ListTeacherSubmissionsByShiftSummaryIDsResponse{
+		Submissions: submissions.Proto(),
+	}
+	return res, nil
+}
+
 func (s *lessonService) UpsertTeacherShifts(
 	ctx context.Context, req *lesson.UpsertTeacherShiftsRequest,
 ) (*lesson.UpsertTeacherShiftsResponse, error) {

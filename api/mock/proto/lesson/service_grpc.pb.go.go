@@ -136,6 +136,26 @@ func (mr *MockLessonServiceClientMockRecorder) ListShifts(ctx, in interface{}, o
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListShifts", reflect.TypeOf((*MockLessonServiceClient)(nil).ListShifts), varargs...)
 }
 
+// ListTeacherSubmissionsByShiftSummaryIDs mocks base method.
+func (m *MockLessonServiceClient) ListTeacherSubmissionsByShiftSummaryIDs(ctx context.Context, in *lesson.ListTeacherSubmissionsByShiftSummaryIDsRequest, opts ...grpc.CallOption) (*lesson.ListTeacherSubmissionsByShiftSummaryIDsResponse, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "ListTeacherSubmissionsByShiftSummaryIDs", varargs...)
+	ret0, _ := ret[0].(*lesson.ListTeacherSubmissionsByShiftSummaryIDsResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListTeacherSubmissionsByShiftSummaryIDs indicates an expected call of ListTeacherSubmissionsByShiftSummaryIDs.
+func (mr *MockLessonServiceClientMockRecorder) ListTeacherSubmissionsByShiftSummaryIDs(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListTeacherSubmissionsByShiftSummaryIDs", reflect.TypeOf((*MockLessonServiceClient)(nil).ListTeacherSubmissionsByShiftSummaryIDs), varargs...)
+}
+
 // UpdateShiftSummarySchedule mocks base method.
 func (m *MockLessonServiceClient) UpdateShiftSummarySchedule(ctx context.Context, in *lesson.UpdateShiftSummaryScheduleRequest, opts ...grpc.CallOption) (*lesson.UpdateShiftSummaryShceduleResponse, error) {
 	m.ctrl.T.Helper()
@@ -272,6 +292,21 @@ func (m *MockLessonServiceServer) ListShifts(arg0 context.Context, arg1 *lesson.
 func (mr *MockLessonServiceServerMockRecorder) ListShifts(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListShifts", reflect.TypeOf((*MockLessonServiceServer)(nil).ListShifts), arg0, arg1)
+}
+
+// ListTeacherSubmissionsByShiftSummaryIDs mocks base method.
+func (m *MockLessonServiceServer) ListTeacherSubmissionsByShiftSummaryIDs(arg0 context.Context, arg1 *lesson.ListTeacherSubmissionsByShiftSummaryIDsRequest) (*lesson.ListTeacherSubmissionsByShiftSummaryIDsResponse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ListTeacherSubmissionsByShiftSummaryIDs", arg0, arg1)
+	ret0, _ := ret[0].(*lesson.ListTeacherSubmissionsByShiftSummaryIDsResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListTeacherSubmissionsByShiftSummaryIDs indicates an expected call of ListTeacherSubmissionsByShiftSummaryIDs.
+func (mr *MockLessonServiceServerMockRecorder) ListTeacherSubmissionsByShiftSummaryIDs(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListTeacherSubmissionsByShiftSummaryIDs", reflect.TypeOf((*MockLessonServiceServer)(nil).ListTeacherSubmissionsByShiftSummaryIDs), arg0, arg1)
 }
 
 // UpdateShiftSummarySchedule mocks base method.
