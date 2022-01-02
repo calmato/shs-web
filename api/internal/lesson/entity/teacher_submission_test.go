@@ -75,3 +75,45 @@ func TestTeacherSubmission_Proto(t *testing.T) {
 		})
 	}
 }
+
+func TestTeacherSubmissions_Proto(t *testing.T) {
+	t.Parallel()
+	now := jst.Now()
+	tests := []struct {
+		name        string
+		submissions TeacherSubmissions
+		expect      []*lesson.TeacherSubmission
+	}{
+		{
+			name: "success",
+			submissions: TeacherSubmissions{
+				{
+					TeacherID:      "teacherid",
+					ShiftSummaryID: 1,
+					Decided:        true,
+					Status:         TeacherSubmissionStatusEditing,
+					CreatedAt:      now,
+					UpdatedAt:      now,
+				},
+			},
+			expect: []*lesson.TeacherSubmission{
+				{
+					TeacherId:      "teacherid",
+					ShiftSummaryId: 1,
+					Decided:        true,
+					Status:         lesson.TeacherSubmissionStatus_TEACHER_SUBMISSION_STATUS_EDITING,
+					CreatedAt:      now.Unix(),
+					UpdatedAt:      now.Unix(),
+				},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tt.expect, tt.submissions.Proto())
+		})
+	}
+}

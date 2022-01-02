@@ -28,16 +28,18 @@ type Params struct {
 }
 
 type Database struct {
-	ShiftSummary ShiftSummary
-	Shift        Shift
-	TeacherShift TeacherShift
+	ShiftSummary      ShiftSummary
+	Shift             Shift
+	TeacherSubmission TeacherSubmission
+	TeacherShift      TeacherShift
 }
 
 func NewDatabase(params *Params) *Database {
 	return &Database{
-		ShiftSummary: NewShiftSummary(params.Database),
-		Shift:        NewShift(params.Database),
-		TeacherShift: NewTeacherShift(params.Database),
+		ShiftSummary:      NewShiftSummary(params.Database),
+		Shift:             NewShift(params.Database),
+		TeacherSubmission: NewTeacherSubmission(params.Database),
+		TeacherShift:      NewTeacherShift(params.Database),
 	}
 }
 
@@ -56,6 +58,12 @@ type Shift interface {
 	ListBySummaryID(ctx context.Context, summaryID int64, fields ...string) (entity.Shifts, error)
 	MultiGet(ctx context.Context, ids []int64, fields ...string) (entity.Shifts, error)
 	MultipleCreate(ctx context.Context, summary *entity.ShiftSummary, shifts entity.Shifts) error
+}
+
+type TeacherSubmission interface {
+	ListByShiftSummaryIDs(
+		ctx context.Context, teacherID string, summaryIDs []int64, fields ...string,
+	) (entity.TeacherSubmissions, error)
 }
 
 type TeacherShift interface {

@@ -197,6 +197,49 @@ func (mr *MockShiftMockRecorder) MultipleCreate(ctx, summary, shifts interface{}
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MultipleCreate", reflect.TypeOf((*MockShift)(nil).MultipleCreate), ctx, summary, shifts)
 }
 
+// MockTeacherSubmission is a mock of TeacherSubmission interface.
+type MockTeacherSubmission struct {
+	ctrl     *gomock.Controller
+	recorder *MockTeacherSubmissionMockRecorder
+}
+
+// MockTeacherSubmissionMockRecorder is the mock recorder for MockTeacherSubmission.
+type MockTeacherSubmissionMockRecorder struct {
+	mock *MockTeacherSubmission
+}
+
+// NewMockTeacherSubmission creates a new mock instance.
+func NewMockTeacherSubmission(ctrl *gomock.Controller) *MockTeacherSubmission {
+	mock := &MockTeacherSubmission{ctrl: ctrl}
+	mock.recorder = &MockTeacherSubmissionMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockTeacherSubmission) EXPECT() *MockTeacherSubmissionMockRecorder {
+	return m.recorder
+}
+
+// ListByShiftSummaryIDs mocks base method.
+func (m *MockTeacherSubmission) ListByShiftSummaryIDs(ctx context.Context, teacherID string, summaryIDs []int64, fields ...string) (entity.TeacherSubmissions, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, teacherID, summaryIDs}
+	for _, a := range fields {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "ListByShiftSummaryIDs", varargs...)
+	ret0, _ := ret[0].(entity.TeacherSubmissions)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListByShiftSummaryIDs indicates an expected call of ListByShiftSummaryIDs.
+func (mr *MockTeacherSubmissionMockRecorder) ListByShiftSummaryIDs(ctx, teacherID, summaryIDs interface{}, fields ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, teacherID, summaryIDs}, fields...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListByShiftSummaryIDs", reflect.TypeOf((*MockTeacherSubmission)(nil).ListByShiftSummaryIDs), varargs...)
+}
+
 // MockTeacherShift is a mock of TeacherShift interface.
 type MockTeacherShift struct {
 	ctrl     *gomock.Controller
