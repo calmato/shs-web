@@ -1,3 +1,5 @@
+import { SchoolType } from '~/types/store'
+
 interface Subject {
   id: number
   name: string
@@ -15,5 +17,7 @@ export interface AuthResponse {
   firstNameKana: string
   mail: string
   role: number
-  subjects: Map<number, Subject[]>
+  subjects: {
+    [key in SchoolType.ELEMENTARY_SCHOOL | SchoolType.JUNIOR_HIGH_SCHOOL | SchoolType.HIGH_SCHOOL]: Subject[]
+  }
 }
