@@ -1,5 +1,5 @@
 <template>
-  <the-form-group>
+  <form>
     <div class="d-flex h-stack">
       <v-text-field class="flex-grow-1" label="氏名（姓）" :value="user.lastName" readonly />
       <v-text-field class="flex-grow-1" label="氏名（名）" :value="user.firstName" readonly />
@@ -17,6 +17,7 @@
       item-text="name"
       item-value="id"
       :items="elementarySchoolSubjects"
+      @change="handleElementarySchoolSubjectsChange"
     >
       <template #selection="{ item }">
         <v-chip label :color="item.color">{{ item.name }}</v-chip>
@@ -31,6 +32,7 @@
       item-text="name"
       item-value="id"
       :items="juniorHighSchoolSubjects"
+      @change="handJuniorHighSchoolSubjectsChange"
     >
       <template #selection="{ item }">
         <v-chip label :color="item.color">{{ item.name }}</v-chip>
@@ -45,12 +47,13 @@
       item-text="name"
       item-value="id"
       :items="highSchoolSubjects"
+      @change="handleHighSchoolSubjectsChange"
     >
       <template #selection="{ item }">
         <v-chip label :color="item.color">{{ item.name }}</v-chip>
       </template>
     </v-select>
-  </the-form-group>
+  </form>
 </template>
 
 <script lang="ts">
@@ -118,10 +121,25 @@ export default defineComponent({
       set: (val: object) => emit('update:highSchoolSubjectsFormValue', val),
     })
 
+    const handleElementarySchoolSubjectsChange = (val: number[]) => {
+      emit('handleElementarySchoolSubjectsChange', val)
+    }
+
+    const handJuniorHighSchoolSubjectsChange = (val: number[]) => {
+      emit('handJuniorHighSchoolSubjectsChange', val)
+    }
+
+    const handleHighSchoolSubjectsChange = (val: number[]) => {
+      emit('handleHighSchoolSubjectsChange', val)
+    }
+
     return {
       elementarySchoolSubjectsFormData,
       juniorHighSchoolSubjectsFormData,
       highSchoolSubjectsFormData,
+      handleElementarySchoolSubjectsChange,
+      handJuniorHighSchoolSubjectsChange,
+      handleHighSchoolSubjectsChange,
     }
   },
 })
