@@ -106,10 +106,7 @@ export default defineComponent({
   setup(props, { emit }) {
     const elementarySchoolSubjectsFormData = computed({
       get: () => props.elementarySchoolSubjectsFormValue,
-      set: (val: object) => {
-        console.log(val)
-        emit('update:elementarySchoolSubjectsFormValue', val)
-      },
+      set: (val: object) => emit('update:elementarySchoolSubjectsFormValue', val),
     })
 
     const juniorHighSchoolSubjectsFormData = computed({
