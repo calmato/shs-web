@@ -130,7 +130,6 @@ export default class AuthModule extends VuexModule {
 
   @Action({ rawError: true })
   public async updateOwnSubjects(formData: SubjectUpdateForm): Promise<void> {
-    console.log('actions', formData)
     try {
       await $axios.$patch('/v1/me/subjects', formData)
     } catch (err) {
