@@ -2,7 +2,7 @@ import { setup, setSafetyMode, refresh } from '~~/test/helpers/store-helper'
 import { AuthStore } from '~/store'
 import { ApiError } from '~/types/exception'
 import { ErrorResponse } from '~/types/api/exception'
-import { Role, SchoolType, Subject } from '~/types/store'
+import { Role, SchoolType } from '~/types/store'
 
 const subjects = {
   [SchoolType.ELEMENTARY_SCHOOL]: [],
