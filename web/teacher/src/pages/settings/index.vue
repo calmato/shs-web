@@ -10,17 +10,20 @@
     :elementary-school-subjects-form-value.sync="elementarySchoolSubjectForm.subjectIDs"
     :junior-high-school-subjects-form-value.sync="juniorHighSchoolSubjectForm.subjectIDs"
     :high-school-subjects-form-value.sync="highSchoolSubjectForm.subjectIDs"
+    @handleElementarySchoolSubjectsChange="handleElementarySchoolSubjectsChange"
+    @handJuniorHighSchoolSubjectsChange="handJuniorHighSchoolSubjectsChange"
+    @handleHighSchoolSubjectsChange="handleHighSchoolSubjectsChange"
     @click="handleClick"
   />
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, reactive, SetupContext } from '@nuxtjs/composition-api'
+import { computed, defineComponent, onMounted, reactive, SetupContext } from '@nuxtjs/composition-api'
 import TheSettingTop from '~/components/templates/TheSettingTop.vue'
 import { AuthStore } from '~/store'
 import { SubjectUpdateForm } from '~/types/form'
 import { Menu } from '~/types/props/setting'
-import { AuthState, SchoolType, Subject } from '~/types/store'
+import { Auth, SchoolType, Subject } from '~/types/store'
 
 export default defineComponent({
   components: {
@@ -67,7 +70,7 @@ export default defineComponent({
       subjectIDs: [],
     })
 
-    const auth = computed<AuthState>(() => store.getters['auth/getAuth'])
+    const auth = computed<Auth>(() => store.getters['auth/getAuth'])
 
     const subjects = computed<Subject[]>(() => store.getters['lesson/getSubjects'])
     const elementarySchoolSubjects = computed<Subject[]>(() => subjects.value.filter((item) => item.schoolType === 1))
@@ -80,9 +83,45 @@ export default defineComponent({
         router.push('/signin')
         return
       }
-
       router.push(item.path)
     }
+
+    const handleElementarySchoolSubjectsChange = (_val: number[]) => {
+      AuthStore.updateOwnSubjects(elementarySchoolSubjectForm)
+    }
+
+    const handJuniorHighSchoolSubjectsChange = (_val: number[]) => {
+      AuthStore.updateOwnSubjects(juniorHighSchoolSubjectForm)
+    }
+
+    const handleHighSchoolSubjectsChange = (_val: number[]) => {
+      AuthStore.updateOwnSubjects(highSchoolSubjectForm)
+    }
+
+    onMounted(() => {
+      const defaultSubjects = auth.value.subjects
+      Object.keys(defaultSubjects).forEach((schoolTypeString: string) => {
+        const schoolType = Number(schoolTypeString) as
+          | SchoolType.ELEMENTARY_SCHOOL
+          | SchoolType.JUNIOR_HIGH_SCHOOL
+          | SchoolType.HIGH_SCHOOL
+        const _v = [1, 2, 3].includes(schoolType) ? defaultSubjects[schoolType] : undefined
+        const value = typeof _v !== 'undefined' ? _v.map((item) => item.id) : []
+        switch (schoolType) {
+          case SchoolType.ELEMENTARY_SCHOOL:
+            elementarySchoolSubjectForm.subjectIDs = value
+            break
+          case SchoolType.JUNIOR_HIGH_SCHOOL:
+            juniorHighSchoolSubjectForm.subjectIDs = value
+            break
+          case SchoolType.HIGH_SCHOOL:
+            highSchoolSubjectForm.subjectIDs = value
+            break
+          default:
+            break
+        }
+      })
+    })
 
     return {
       userItems,
@@ -95,6 +134,9 @@ export default defineComponent({
       elementarySchoolSubjectForm,
       juniorHighSchoolSubjectForm,
       highSchoolSubjectForm,
+      handleElementarySchoolSubjectsChange,
+      handJuniorHighSchoolSubjectsChange,
+      handleHighSchoolSubjectsChange,
     }
   },
 })
