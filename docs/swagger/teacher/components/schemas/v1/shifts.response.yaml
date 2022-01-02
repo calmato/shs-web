@@ -149,3 +149,64 @@ shiftsResponse:
       - id: 4
         startTime: '1830'
         endTime: '2000'
+teacherSubmissionsResponse:
+  type: object
+  properties:
+    summaries:
+      type: array
+      description: シフト募集概要一覧
+      items:
+        type: object
+        properties:
+          id:
+            type: integer
+            format: int64
+            description: シフト募集概要ID
+          year:
+            type: integer
+            format: int32
+            description: 年
+          month:
+            type: integer
+            format: int32
+            description: 月
+          shiftStatus:
+            type: integer
+            format: int32
+            description: シフト募集ステータス (0:不明, 1:募集前, 2:受付中, 3:締切後)
+          submissionStatus:
+            type: integer
+            format: int32
+            description: シフト提出ステータス (0:不明, 1:未提出, 2:提出済)
+          openAt:
+            type: string
+            description: シフト募集開始日時
+          endAt:
+            type: string
+            description: シフト募集締切日時
+          createdAt:
+            type: string
+            description: 登録日時
+          updatedAt:
+            type: string
+            description: 更新日時
+  example:
+    summaries:
+    - id: 1
+      year: 2022
+      month: 2
+      shiftStatus: 2
+      submissionStatus: 2
+      openAt: '2022-01-01T00:00:00Z'
+      endAt: '2022-01-14T23:59:59Z'
+      createdAt: '2021-12-12T12:12:30.100Z'
+      updatedAt: '2021-12-12T12:12:30.100Z'
+    - id: 2
+      year: 2022
+      month: 3
+      shiftStatus: 1
+      submissionStatus: 1
+      openAt: '2022-01-01T00:00:00Z'
+      endAt: '2022-01-14T23:59:59Z'
+      createdAt: '2021-12-12T12:12:30.100Z'
+      updatedAt: '2021-12-12T12:12:30.100Z'

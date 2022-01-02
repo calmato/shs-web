@@ -75,6 +75,7 @@ func (h *apiV1Handler) AuthRoutes(rg *gin.RouterGroup) {
 	rg.PATCH("/v1/me/password", h.UpdateMyPassword)
 	rg.GET("/v1/teachers", h.ListTeachers)
 	rg.GET("/v1/teachers/:teacherId", h.GetTeacher)
+	rg.GET("/v1/teachers/:teacherId/submissions", h.ListTeacherSubmissions)
 	rg.GET("/v1/subjects", h.ListSubjects)
 	rg.GET("/v1/schedules", h.ListSchedules)
 	rg.GET("/v1/rooms", h.GetRoomsTotal)

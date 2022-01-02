@@ -12,6 +12,20 @@ get:
       format: int32
     description: 募集ステータス (未指定:全ステータス, 1:募集前, 2:募集中, 3:募集締切後)
     example: 1
+  - in: query
+    name: limit
+    schema:
+      type: integer
+      format: int64
+    description: 取得上限 (デフォルト:30)
+    example: 30
+  - in: query
+    name: offset
+    schema:
+      type: integer
+      format: int64
+    description: 取得開始位置 (デフォルト:0)
+    example: 0
   responses:
     200:
       description: A successful response.

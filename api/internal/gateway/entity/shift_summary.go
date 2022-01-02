@@ -21,3 +21,11 @@ func NewShiftSummaries(summaries []*lesson.ShiftSummary) ShiftSummaries {
 	}
 	return ss
 }
+
+func (ss ShiftSummaries) IDs() []int64 {
+	res := make([]int64, len(ss))
+	for i := range ss {
+		res[i] = ss[i].Id
+	}
+	return res
+}

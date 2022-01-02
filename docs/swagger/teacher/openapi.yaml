@@ -17,6 +17,8 @@ tags:
   description: 授業コマ関連
 - name: Shift
   description: シフト作成関連
+- name: Submission
+  description: シフト提出関連
 - name: Other
   description: その他
 paths:
@@ -54,6 +56,9 @@ paths:
     $ref: './paths/v1/shifts/_shiftId/index.yaml'
   /v1/shifts/{shiftId}/schedule:
     $ref: './paths/v1/shifts/_shiftId/schedule.yaml'
+  # Submissions
+  /v1/teachers/{teacherId}/submissions:
+    $ref: './paths/v1/teachers/_teacherId/submissions/index.yaml'
   # Other
   /v1/rooms:
     $ref: './paths/v1/rooms/index.yaml'
@@ -108,5 +113,7 @@ components:
       $ref: './components/schemas/v1/shifts.response.yaml#/shiftSummariesResponse'
     v1ShiftsResponse:
       $ref: './components/schemas/v1/shifts.response.yaml#/shiftsResponse'
+    v1TeacherSubmissionsResponse:
+      $ref: './components/schemas/v1/shifts.response.yaml#/teacherSubmissionsResponse'
     v1RoomsTotalResponse:
       $ref: './components/schemas/v1/rooms.response.yaml#/roomsTotalResponse'
