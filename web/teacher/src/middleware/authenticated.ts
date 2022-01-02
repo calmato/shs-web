@@ -11,6 +11,7 @@ export default async ({ route, store, redirect }: Context) => {
     .dispatch('auth/authentication')
     .then(async () => {
       await store.dispatch('auth/showAuth')
+      await store.dispatch('lesson/getAllSubjects')
     })
     .catch(() => {
       redirect('/signin')
