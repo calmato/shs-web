@@ -8,3 +8,10 @@ enum Role {
   ROLE_TEACHER       = 0; // 講師
   ROLE_ADMINISTRATOR = 1; // 管理者
 }
+
+enum SchoolType {
+  SCHOOL_TYPE_UNKNOWN            = 0; // 校種未指定
+  SCHOOL_TYPE_ELEMENTARY_SCHOOL  = 1; // 小学校
+  SCHOOL_TYPE_JUNIOR_HIGH_SCHOOL = 2; // 中学校
+  SCHOOL_TYPE_HIGH_SCHOOL        = 3; // 高等学校
+}
