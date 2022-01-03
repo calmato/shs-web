@@ -387,7 +387,7 @@ func TestUpsertTeacherSubject(t *testing.T) {
 				subjects := entity.Subjects{}
 				mocks.validator.EXPECT().UpsertTeacherSubject(req).Return(nil)
 				mocks.user.EXPECT().GetTeacher(gomock.Any(), in).Return(out, nil)
-				mocks.db.Subject.EXPECT().MultiGet(ctx, gomock.Any()).Return(subjects, nil)
+				mocks.db.Subject.EXPECT().MultiGet(gomock.Any(), gomock.Any()).Return(subjects, nil)
 			},
 			req: &classroom.UpsertTeacherSubjectRequest{
 				TeacherId:  "teacherid",

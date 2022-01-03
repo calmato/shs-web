@@ -88,6 +88,7 @@ services:
       - DB_PORT=3306
       - DB_USERNAME=root
       - DB_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - USER_SERVICE_URL=user_api:8080
     ports:
       - 19010:8080
       - 19011:9090
