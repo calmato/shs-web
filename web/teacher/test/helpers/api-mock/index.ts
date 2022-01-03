@@ -1,5 +1,6 @@
 import * as AuthStore from './auth'
 import * as ShiftStore from './shift'
+import * as SubmissionStore from './submission'
 import * as UserStore from './user'
 import { ErrorResponse } from '~/types/api/exception'
 
@@ -18,6 +19,8 @@ export default {
     ...AuthStore.showAuth,
     ...ShiftStore.listShiftSummaries,
     ...ShiftStore.listShiftDetails,
+    ...SubmissionStore.listTeacherSubmissions,
+    ...SubmissionStore.listTeacherShifts,
     ...UserStore.listTeachers,
   },
   post: {

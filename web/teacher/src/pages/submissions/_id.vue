@@ -29,7 +29,7 @@ export default defineComponent({
     async function listTeacherShifts(): Promise<void> {
       CommonStore.startConnection()
 
-      const shiftId: number = route.params.id
+      const shiftId = Number(route.params.id)
 
       await SubmissionStore.listTeacherShifts({ teacherId: teacherId.value, shiftId })
         .catch((err: Error) => {

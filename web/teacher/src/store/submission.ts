@@ -7,7 +7,14 @@ import {
   TeacherShiftDetail as ShiftDetailResponse,
   TeacherShiftDetailLesson as LessonResponse,
 } from '~/types/api/v1'
-import { ShiftStatus, Submission, SubmissionState, SubmissionStatus, TeacherShiftDetail, TeacherShiftDetailLesson, TeacherShiftSummary } from '~/types/store'
+import {
+  ShiftStatus,
+  SubmissionState,
+  SubmissionStatus,
+  TeacherShiftDetail,
+  TeacherShiftDetailLesson,
+  TeacherShiftSummary,
+} from '~/types/store'
 import { $axios } from '~/plugins/axios'
 import { ErrorResponse } from '~/types/api/exception'
 import { ApiError } from '~/types/exception'
@@ -26,21 +33,6 @@ const initialState: SubmissionState = {
   },
   summaries: [],
   shifts: [],
-  // mock
-  submissions: [
-    {
-      title: '1月',
-      endDate: '20210125',
-      submissionStatus: '未提出',
-      editStatus: '入力する',
-    },
-    {
-      title: '2月',
-      endDate: '20230225',
-      submissionStatus: '提出済み',
-      editStatus: '編集する',
-    },
-  ],
 }
 
 @Module({
@@ -52,7 +44,6 @@ export default class SubmissionModule extends VuexModule {
   private summary: SubmissionState['summary'] = initialState.summary
   private summaries: SubmissionState['summaries'] = initialState.summaries
   private shifts: SubmissionState['shifts'] = initialState.shifts
-  private submissions: SubmissionState['submissions'] = initialState.submissions
 
   public get getSummary(): TeacherShiftSummary {
     return this.summary
@@ -66,10 +57,6 @@ export default class SubmissionModule extends VuexModule {
     return this.shifts
   }
 
-  public get getSubmissions(): Submission[] {
-    return this.submissions
-  }
-
   @Mutation
   private setSummaries({ summaries }: { summaries: TeacherShiftSummary[] }): void {
     this.summaries = summaries
@@ -79,6 +66,12 @@ export default class SubmissionModule extends VuexModule {
   private setShifts({ summary, shifts }: { summary: TeacherShiftSummary; shifts: TeacherShiftDetail[] }): void {
     this.summary = summary
     this.shifts = shifts
+  }
+
+  @Action({})
+  public factory(): void {
+    this.setSummaries({ ...initialState })
+    this.setShifts({ ...initialState })
   }
 
   @Action({ rawError: true })
@@ -104,9 +97,11 @@ export default class SubmissionModule extends VuexModule {
       .then((res: TeacherShiftsResponse) => {
         const summary: TeacherShiftSummary = { ...res.summary }
         const shifts: TeacherShiftDetail[] = res.shifts.map((shift: ShiftDetailResponse): TeacherShiftDetail => {
-          const lessons: TeacherShiftDetailLesson[] = shift.lessons.map((lesson: LessonResponse): TeacherShiftDetailLesson => {
-            return { ...lesson }
-          })
+          const lessons: TeacherShiftDetailLesson[] = shift.lessons.map(
+            (lesson: LessonResponse): TeacherShiftDetailLesson => {
+              return { ...lesson }
+            }
+          )
           return { ...shift, lessons }
         })
         this.setShifts({ summary, shifts })

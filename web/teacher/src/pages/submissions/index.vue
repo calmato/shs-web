@@ -1,15 +1,17 @@
 <template>
-  <the-submission :summaries="summaries" @click="handleClick" />
+  <the-submission-top :summaries="summaries" @click="handleClick" />
 </template>
 
 <script lang="ts">
 import { computed, defineComponent, SetupContext, useAsync } from '@nuxtjs/composition-api'
-import TheSubmission from '../../components/templates/TheSubmission.vue'
+import TheSubmissionTop from '~/components/templates/TheSubmissionTop.vue'
 import { CommonStore, SubmissionStore } from '~/store'
 import { TeacherShiftSummary } from '~/types/store'
 
 export default defineComponent({
-  components: { TheSubmission },
+  components: {
+    TheSubmissionTop,
+  },
 
   setup(_, { root }: SetupContext) {
     const router = root.$router
