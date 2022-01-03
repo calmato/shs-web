@@ -53,32 +53,53 @@ jobs:
       working-directory: .
       run: docker-compose -f docker-compose.ci.yaml up --build --detach mysql
 
-    - name: Wait start MySQL
-      run: |
-        #!/bin/bash
-        until mysqladmin ping -h${DB_HOST} -P${DB_PORT} -u${DB_USERNAME} -p${DB_PASSWORD}; do
-          echo 'mysql is unavailable - sleeping'
-          sleep 3
-        done
-        echo 'mysql is up - executing command'
-
     - name: Start Firebase emulator container
       working-directory: .
       run: docker-compose -f docker-compose.ci.yaml up --build --detach firebase
 
+    - name: Wait start MySQL
+      run: |
+        #!/bin/bash
+        retry=60
+
+        count=1
+        until [ mysqladmin ping -h${DB_HOST} -P${DB_PORT} -u${DB_USERNAME} -p${DB_PASSWORD} ]; do
+          echo 'mysql is unavailable - sleeping'
+          sleep 3
+          if [ $(expr $retry - $count) -le 0 ]; then
+            echo 'mysql is unavailable - throw error for timeout'
+            exit 1
+          fi
+          count=$(expr $count + 1)
+        done
+        echo 'mysql is up - executing command'
+
     - name: Wait start Firebase Authentication and Firestore
       run: |
         #!/bin/bash
+        retry=30
 
-        until curl ${FIREBASE_AUTH_EMULATOR_HOST}; do
+        count=1
+        until [ curl ${FIREBASE_AUTH_EMULATOR_HOST} ]; do
           echo 'firebase authentication is unavailable - sleeping'
           sleep 3
+          if [ $(expr $retry - $count) -le 0 ]; then
+            echo 'firebase authentication is unavailable - throw error for timeout'
+            exit 1
+          fi
+          count=$(expr $count + 1)
         done
         echo 'firebase authentication is up - executing command'
 
-        until curl ${FIRESTORE_EMULATOR_HOST}; do
+        count=1
+        until [ curl ${FIRESTORE_EMULATOR_HOST} ]; do
           echo 'firestore is unavailable - sleeping'
           sleep 3
+          if [ $(expr $retry - $count) -le 0 ]; then
+            echo 'firestore is unavailable - throw error for timeout'
+            exit 1
+          fi
+          count=$(expr $count + 1)
         done
         echo 'firestore is up - executing command'
 
