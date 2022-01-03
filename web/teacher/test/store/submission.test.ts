@@ -19,7 +19,7 @@ describe('store/submission', () => {
         id: 0,
         year: 0,
         month: 0,
-        shisftStatus: ShiftStatus.UNKNOWN,
+        shiftStatus: ShiftStatus.UNKNOWN,
         submissionStatus: SubmissionStatus.UNKNOWN,
         openAt: '',
         endAt: '',
