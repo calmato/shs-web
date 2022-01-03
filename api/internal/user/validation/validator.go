@@ -20,6 +20,7 @@ type RequestValidation interface {
 	UpdateTeacherMail(req *user.UpdateTeacherMailRequest) error
 	UpdateTeacherPassword(req *user.UpdateTeacherPasswordRequest) error
 	GetStudent(req *user.GetStudentRequest) error
+	CreateStudent(req *user.CreateStudentRequest) error
 }
 
 type requestValidation struct{}
