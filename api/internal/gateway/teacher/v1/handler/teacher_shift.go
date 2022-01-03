@@ -69,6 +69,65 @@ func (h *apiV1Handler) ListTeacherSubmissions(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, res)
 }
 
+func (h *apiV1Handler) ListTeacherShifts(ctx *gin.Context) {
+	c := util.SetMetadata(ctx)
+
+	teacherID := ctx.Param("teacherId")
+	if teacherID != getTeacherID(ctx) {
+		err := fmt.Errorf("api: %s is not your teacher id", teacherID)
+		forbidden(ctx, err)
+		return
+	}
+	shiftSummaryID, err := strconv.ParseInt(ctx.Param("summaryId"), 10, 64)
+	if err != nil {
+		badRequest(ctx, err)
+		return
+	}
+
+	eg, ectx := errgroup.WithContext(c)
+	var gsummary *gentity.ShiftSummary
+	eg.Go(func() (err error) {
+		gsummary, err = h.getShiftSummary(ectx, shiftSummaryID)
+		return
+	})
+	var gshifts gentity.Shifts
+	eg.Go(func() (err error) {
+		gshifts, err = h.listShiftsBySummaryID(ectx, shiftSummaryID)
+		return
+	})
+	var submission *gentity.TeacherSubmission
+	var teacherShifts gentity.TeacherShifts
+	eg.Go(func() error {
+		in := &lesson.ListTeacherShiftsRequest{
+			TeacherId:      teacherID,
+			ShiftSummaryId: shiftSummaryID,
+		}
+		out, err := h.lesson.ListTeacherShifts(ectx, in)
+		if err != nil {
+			return err
+		}
+		submission = gentity.NewTeacherSubmission(out.Submission)
+		teacherShifts = gentity.NewTeacherShifts(out.Shifts)
+		return nil
+	})
+	if err := eg.Wait(); err != nil {
+		httpError(ctx, err)
+		return
+	}
+	summary := entity.NewShiftSummary(gsummary)
+	shifts, err := gshifts.GroupByDate()
+	if err != nil {
+		httpError(ctx, err)
+		return
+	}
+
+	res := &response.TeacherShiftsResponse{
+		Summary: entity.NewTeacherSubmission(gsummary, submission),
+		Shifts:  entity.NewTeacherShiftDetailsForMonth(summary, shifts, teacherShifts.MapByShiftID()),
+	}
+	ctx.JSON(http.StatusOK, res)
+}
+
 func (h *apiV1Handler) UpsertTeacherShifts(ctx *gin.Context) {
 	c := util.SetMetadata(ctx)
 
@@ -91,24 +150,14 @@ func (h *apiV1Handler) UpsertTeacherShifts(ctx *gin.Context) {
 
 	eg, ectx := errgroup.WithContext(c)
 	var gsummary *gentity.ShiftSummary
-	eg.Go(func() error {
-		in := &lesson.GetShiftSummaryRequest{Id: shiftSummaryID}
-		out, err := h.lesson.GetShiftSummary(ectx, in)
-		if err != nil {
-			return err
-		}
-		gsummary = gentity.NewShiftSummary(out.Summary)
-		return nil
+	eg.Go(func() (err error) {
+		gsummary, err = h.getShiftSummary(ectx, shiftSummaryID)
+		return
 	})
 	var gshifts gentity.Shifts
-	eg.Go(func() error {
-		in := &lesson.ListShiftsRequest{ShiftSummaryId: shiftSummaryID}
-		out, err := h.lesson.ListShifts(ectx, in)
-		if err != nil {
-			return err
-		}
-		gshifts = gentity.NewShifts(out.Shifts)
-		return nil
+	eg.Go(func() (err error) {
+		gshifts, err = h.listShiftsBySummaryID(ectx, shiftSummaryID)
+		return
 	})
 	if err := eg.Wait(); err != nil {
 		httpError(ctx, err)
