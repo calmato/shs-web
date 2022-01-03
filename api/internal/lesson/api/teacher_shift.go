@@ -2,7 +2,9 @@ package api
 
 import (
 	"context"
+	"errors"
 
+	"github.com/calmato/shs-web/api/internal/lesson/database"
 	"github.com/calmato/shs-web/api/internal/lesson/entity"
 	"github.com/calmato/shs-web/api/proto/lesson"
 	"github.com/calmato/shs-web/api/proto/user"
@@ -47,7 +49,7 @@ func (s *lessonService) ListTeacherShifts(
 		shifts, err = s.db.TeacherShift.ListByShiftSummaryID(ectx, req.TeacherId, req.ShiftSummaryId)
 		return
 	})
-	if err := eg.Wait(); err != nil {
+	if err := eg.Wait(); err != nil && !errors.Is(err, database.ErrNotFound) {
 		return nil, gRPCError(err)
 	}
 
