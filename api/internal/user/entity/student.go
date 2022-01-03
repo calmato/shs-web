@@ -35,6 +35,35 @@ type Student struct {
 
 type Students []*Student
 
+func NewStudent(
+	lastName, firstName, lastNameKana, firstNameKana, mail, password string, schoolType SchoolType, grade int64, now time.Time,
+) *Student {
+	year := int64(jst.FiscalYear(now))
+	age := int64(0)
+	switch schoolType {
+	case SchoolTypeElementarySchool:
+		age = grade + 6
+	case SchoolTypeJuniorHighSchool:
+		age = grade + 12
+	case SchoolTypeHighSchool:
+		age = grade + 15
+	default:
+		age = 0
+	}
+	birthYear := year - age
+	return &Student{
+		LastName:      lastName,
+		FirstName:     firstName,
+		LastNameKana:  lastNameKana,
+		FirstNameKana: firstNameKana,
+		Mail:          mail,
+		BirthYear:     birthYear,
+		Schooltype:    schoolType,
+		Grade:         grade,
+		Password:      password,
+	}
+}
+
 func (s *Student) Fill(now time.Time) {
 	year := int64(jst.FiscalYear(now))
 	age := year - s.BirthYear
