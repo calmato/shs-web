@@ -58,21 +58,15 @@
 
 <script lang="ts">
 import { computed, defineComponent, PropType } from '@nuxtjs/composition-api'
+import { UserProps } from '~/types/props/setting'
 import { Subject } from '~/types/store'
-
-interface UserPoop {
-  lastName: string
-  firstName: string
-  lastNameKana: string
-  firstNameKana: string
-}
 
 export default defineComponent({
   components: {},
 
   props: {
     user: {
-      type: Object as PropType<UserPoop>,
+      type: Object as PropType<UserProps>,
       default: () => ({
         lastName: '',
         firstName: '',
