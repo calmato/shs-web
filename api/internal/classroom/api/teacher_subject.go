@@ -91,7 +91,7 @@ func (s *classroomService) UpsertTeacherSubject(
 	})
 	var subjects entity.Subjects
 	eg.Go(func() (err error) {
-		subjects, err = s.db.Subject.MultiGet(ctx, req.SubjectIds)
+		subjects, err = s.db.Subject.MultiGet(ectx, req.SubjectIds)
 		if err != nil {
 			return
 		}
