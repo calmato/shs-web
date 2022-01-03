@@ -76,6 +76,7 @@ func (h *apiV1Handler) AuthRoutes(rg *gin.RouterGroup) {
 	rg.GET("/v1/teachers", h.ListTeachers)
 	rg.GET("/v1/teachers/:teacherId", h.GetTeacher)
 	rg.GET("/v1/teachers/:teacherId/submissions", h.ListTeacherSubmissions)
+	rg.POST("/v1/teachers/:teacherId/submissions/:summaryId", h.UpsertTeacherShifts)
 	rg.GET("/v1/subjects", h.ListSubjects)
 	rg.GET("/v1/schedules", h.ListSchedules)
 	rg.GET("/v1/rooms", h.GetRoomsTotal)

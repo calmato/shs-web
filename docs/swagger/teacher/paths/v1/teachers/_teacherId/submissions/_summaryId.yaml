@@ -1,0 +1,42 @@
+post:
+  summary: シフト希望提出
+  tags:
+  - Submission
+  security:
+  - BearerAuth: []
+  parameters:
+  - in: path
+    name: teacherId
+    required: true
+    schema:
+      type: string
+    description: 講師ID
+    example: kSByoE6FetnPs5Byk3a9Zx
+  - in: path
+    name: summaryId
+    required: true
+    schema:
+      type: integer
+      format: int64
+    description: シフト募集サマリID
+    example: 1
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: './../../../../../openapi.yaml#/components/schemas/v1UpsertTeacherShiftsRequest'
+  responses:
+    200:
+      description: A successful response.
+      content:
+        application/json:
+          schema:
+            $ref: './../../../../../openapi.yaml#/components/schemas/v1TeacherShiftsResponse'
+    default:
+      description: An unexpected error response.
+      content:
+        application/json:
+          schema:
+            $ref: './../../../../../openapi.yaml#/components/schemas/errorResponse'
+

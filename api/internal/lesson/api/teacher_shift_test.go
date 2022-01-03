@@ -110,7 +110,7 @@ func TestUpsertTeacherShifts(t *testing.T) {
 		TeacherId:      "teacherid",
 		ShiftSummaryId: 1,
 		ShiftIds:       []int64{1, 2},
-		Desided:        true,
+		Decided:        true,
 	}
 	teacher := &user.Teacher{Id: "teacherid"}
 	shifts := entity.Shifts{

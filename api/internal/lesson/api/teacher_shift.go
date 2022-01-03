@@ -57,7 +57,7 @@ func (s *lessonService) UpsertTeacherShifts(
 		return nil, gRPCError(err)
 	}
 
-	submission := entity.NewTeacherSubmission(req.TeacherId, req.ShiftSummaryId, req.Desided)
+	submission := entity.NewTeacherSubmission(req.TeacherId, req.ShiftSummaryId, req.Decided)
 	shifts := entity.NewTeacherShifts(req.TeacherId, req.ShiftSummaryId, req.ShiftIds)
 	err := s.db.TeacherShift.Replace(ctx, submission, shifts)
 	if err != nil {
