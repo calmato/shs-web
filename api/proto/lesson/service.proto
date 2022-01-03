@@ -95,7 +95,7 @@ message UpsertTeacherShiftsRequest {
   string         teacher_id       = 1 [(validate.rules).string = { min_len: 1 }];
   int64          shift_summary_id = 2 [(validate.rules).int64 = { gt: 0 }];
   repeated int64 shift_ids        = 3 [(validate.rules).repeated = { unique: true, items: { int64: { gt: 0 }}}];
-  bool           desided          = 4;
+  bool           decided          = 4;
 }
 
 message UpsertTeacherShiftsResponse {

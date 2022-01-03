@@ -59,6 +59,8 @@ paths:
   # Submissions
   /v1/teachers/{teacherId}/submissions:
     $ref: './paths/v1/teachers/_teacherId/submissions/index.yaml'
+  /v1/teachers/{teacherId}/submissions/{summaryId}:
+    $ref: './paths/v1/teachers/_teacherId/submissions/_summaryId.yaml'
   # Other
   /v1/rooms:
     $ref: './paths/v1/rooms/index.yaml'
@@ -94,6 +96,8 @@ components:
       $ref: './components/schemas/v1/shifts.request.yaml#/updateShiftSummaryScheduleRequest'
     v1CreateShiftsRequest:
       $ref: './components/schemas/v1/shifts.request.yaml#/createShiftsRequest'
+    v1UpsertTeacherShiftsRequest:
+      $ref: './components/schemas/v1/shifts.request.yaml#/upsertTeacherShiftsRequest'
     v1UpdateRoomsTotalRequest:
       $ref: './components/schemas/v1/rooms.request.yaml#/updateRoomsTotalRequest'
     # Response
@@ -115,5 +119,7 @@ components:
       $ref: './components/schemas/v1/shifts.response.yaml#/shiftsResponse'
     v1TeacherSubmissionsResponse:
       $ref: './components/schemas/v1/shifts.response.yaml#/teacherSubmissionsResponse'
+    v1TeacherShiftsResponse:
+      $ref: './components/schemas/v1/shifts.response.yaml#/teacherShiftsResponse'
     v1RoomsTotalResponse:
       $ref: './components/schemas/v1/rooms.response.yaml#/roomsTotalResponse'

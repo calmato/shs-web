@@ -40,3 +40,16 @@ createShiftsRequest:
     closedDates:
     - '20220202'
     - '20220214'
+upsertTeacherShiftsRequest:
+  type: object
+  properties:
+    shiftIds:
+      type: array
+      description: 出勤可能シフトID一覧
+      items:
+        type: integer
+        format: int64
+  example:
+    shiftIds:
+    - 1
+    - 2

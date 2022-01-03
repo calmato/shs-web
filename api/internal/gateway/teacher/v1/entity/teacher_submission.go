@@ -48,7 +48,7 @@ func NewTeacherSubmissions(
 ) TeacherSubmissions {
 	ss := make(TeacherSubmissions, len(summaries))
 	for i, s := range summaries {
-		submission, _ := submissions[s.Id]
+		submission := submissions[s.Id] // null: 出勤不可
 		ss[i] = NewTeacherSubmission(s, submission)
 	}
 	return ss
