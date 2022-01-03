@@ -226,6 +226,10 @@ func TestUpsertTeacherShifts(t *testing.T) {
 		Decided:        true,
 	}
 	teacher := &user.Teacher{Id: "teacherid"}
+	summary := &entity.ShiftSummary{
+		ID:     1,
+		Status: entity.ShiftStatusAccepting,
+	}
 	shifts := entity.Shifts{
 		{ID: 1, ShiftSummaryID: 1},
 		{ID: 2, ShiftSummaryID: 1},
@@ -261,6 +265,7 @@ func TestUpsertTeacherShifts(t *testing.T) {
 				teacherOut := &user.GetTeacherResponse{Teacher: teacher}
 				mocks.validator.EXPECT().UpsertTeacherShifts(req).Return(nil)
 				mocks.user.EXPECT().GetTeacher(gomock.Any(), teacherIn).Return(teacherOut, nil)
+				mocks.db.ShiftSummary.EXPECT().Get(gomock.Any(), int64(1)).Return(summary, nil)
 				mocks.db.Shift.EXPECT().MultiGet(gomock.Any(), []int64{1, 2}, "id").Return(shifts, nil)
 				mocks.db.TeacherShift.EXPECT().Replace(ctx, teacherSubmission, teacherShifts).Return(nil)
 			},
@@ -311,6 +316,22 @@ func TestUpsertTeacherShifts(t *testing.T) {
 				teacherIn := &user.GetTeacherRequest{Id: "teacherid"}
 				mocks.validator.EXPECT().UpsertTeacherShifts(req).Return(nil)
 				mocks.user.EXPECT().GetTeacher(gomock.Any(), teacherIn).Return(nil, errmock)
+				mocks.db.ShiftSummary.EXPECT().Get(gomock.Any(), int64(1)).Return(summary, nil)
+				mocks.db.Shift.EXPECT().MultiGet(gomock.Any(), []int64{1, 2}, "id").Return(shifts, nil)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.Internal,
+			},
+		},
+		{
+			name: "failed to multi get shift summary",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				teacherIn := &user.GetTeacherRequest{Id: "teacherid"}
+				teacherOut := &user.GetTeacherResponse{Teacher: teacher}
+				mocks.validator.EXPECT().UpsertTeacherShifts(req).Return(nil)
+				mocks.user.EXPECT().GetTeacher(gomock.Any(), teacherIn).Return(teacherOut, nil)
+				mocks.db.ShiftSummary.EXPECT().Get(gomock.Any(), int64(1)).Return(nil, errmock)
 				mocks.db.Shift.EXPECT().MultiGet(gomock.Any(), []int64{1, 2}, "id").Return(shifts, nil)
 			},
 			req: req,
@@ -325,6 +346,7 @@ func TestUpsertTeacherShifts(t *testing.T) {
 				teacherOut := &user.GetTeacherResponse{Teacher: teacher}
 				mocks.validator.EXPECT().UpsertTeacherShifts(req).Return(nil)
 				mocks.user.EXPECT().GetTeacher(gomock.Any(), teacherIn).Return(teacherOut, nil)
+				mocks.db.ShiftSummary.EXPECT().Get(gomock.Any(), int64(1)).Return(summary, nil)
 				mocks.db.Shift.EXPECT().MultiGet(gomock.Any(), []int64{1, 2}, "id").Return(nil, errmock)
 			},
 			req: req,
@@ -340,11 +362,31 @@ func TestUpsertTeacherShifts(t *testing.T) {
 				shifts := entity.Shifts{}
 				mocks.validator.EXPECT().UpsertTeacherShifts(req).Return(nil)
 				mocks.user.EXPECT().GetTeacher(gomock.Any(), teacherIn).Return(teacherOut, nil)
+				mocks.db.ShiftSummary.EXPECT().Get(gomock.Any(), int64(1)).Return(summary, nil)
 				mocks.db.Shift.EXPECT().MultiGet(gomock.Any(), []int64{1, 2}, "id").Return(shifts, nil)
 			},
 			req: req,
 			expect: &testResponse{
 				code: codes.InvalidArgument,
+			},
+		},
+		{
+			name: "failed to outside of shift submission",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				teacherIn := &user.GetTeacherRequest{Id: "teacherid"}
+				teacherOut := &user.GetTeacherResponse{Teacher: teacher}
+				summary := &entity.ShiftSummary{
+					ID:     1,
+					Status: entity.ShiftStatusFinished,
+				}
+				mocks.validator.EXPECT().UpsertTeacherShifts(req).Return(nil)
+				mocks.user.EXPECT().GetTeacher(gomock.Any(), teacherIn).Return(teacherOut, nil)
+				mocks.db.ShiftSummary.EXPECT().Get(gomock.Any(), int64(1)).Return(summary, nil)
+				mocks.db.Shift.EXPECT().MultiGet(gomock.Any(), []int64{1, 2}, "id").Return(shifts, nil)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.FailedPrecondition,
 			},
 		},
 		{
@@ -354,6 +396,7 @@ func TestUpsertTeacherShifts(t *testing.T) {
 				teacherOut := &user.GetTeacherResponse{Teacher: teacher}
 				mocks.validator.EXPECT().UpsertTeacherShifts(req).Return(nil)
 				mocks.user.EXPECT().GetTeacher(gomock.Any(), teacherIn).Return(teacherOut, nil)
+				mocks.db.ShiftSummary.EXPECT().Get(gomock.Any(), int64(1)).Return(summary, nil)
 				mocks.db.Shift.EXPECT().MultiGet(gomock.Any(), []int64{1, 2}, "id").Return(shifts, nil)
 				mocks.db.TeacherShift.EXPECT().Replace(ctx, teacherSubmission, teacherShifts).Return(errmock)
 			},

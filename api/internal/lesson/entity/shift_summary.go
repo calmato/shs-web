@@ -56,6 +56,10 @@ func (s *ShiftSummary) Month() (int, error) {
 	return int(date.Month()), nil
 }
 
+func (s *ShiftSummary) IsSubmit() bool {
+	return s.Status == ShiftStatusAccepting
+}
+
 func (s *ShiftSummary) Fill(now time.Time) {
 	switch {
 	case now.Before(s.OpenAt): // 開始前: now < OpenAt
