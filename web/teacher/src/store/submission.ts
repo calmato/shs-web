@@ -1,20 +1,47 @@
-import { Module, VuexModule } from 'vuex-module-decorators'
-import { Submission } from '~/types/store/submission'
+import { Action, Module, Mutation, VuexModule } from 'vuex-module-decorators'
+import { AxiosError } from 'axios'
+import {
+  TeacherSubmissionsResponse,
+  TeacherShiftSummary as SummaryResponse,
+  TeacherShiftsResponse,
+  TeacherShiftDetail as ShiftDetailResponse,
+  TeacherShiftDetailLesson as LessonResponse,
+} from '~/types/api/v1'
+import { ShiftStatus, Submission, SubmissionState, SubmissionStatus, TeacherShiftDetail, TeacherShiftDetailLesson, TeacherShiftSummary } from '~/types/store'
+import { $axios } from '~/plugins/axios'
+import { ErrorResponse } from '~/types/api/exception'
+import { ApiError } from '~/types/exception'
 
-const initialState: Submission[] = [
-  {
-    title: '1月',
-    endDate: '20210125',
-    submissionStatus: '未提出',
-    editStatus: '入力する',
+const initialState: SubmissionState = {
+  summary: {
+    id: 0,
+    year: 0,
+    month: 0,
+    shiftStatus: ShiftStatus.UNKNOWN,
+    submissionStatus: SubmissionStatus.UNKNOWN,
+    openAt: '',
+    endAt: '',
+    createdAt: '',
+    updatedAt: '',
   },
-  {
-    title: '2月',
-    endDate: '20230225',
-    submissionStatus: '提出済み',
-    editStatus: '編集する',
-  },
-]
+  summaries: [],
+  shifts: [],
+  // mock
+  submissions: [
+    {
+      title: '1月',
+      endDate: '20210125',
+      submissionStatus: '未提出',
+      editStatus: '入力する',
+    },
+    {
+      title: '2月',
+      endDate: '20230225',
+      submissionStatus: '提出済み',
+      editStatus: '編集する',
+    },
+  ],
+}
 
 @Module({
   name: 'submission',
@@ -22,9 +49,71 @@ const initialState: Submission[] = [
   namespaced: true,
 })
 export default class SubmissionModule extends VuexModule {
-  private submission: Submission[] = initialState
+  private summary: SubmissionState['summary'] = initialState.summary
+  private summaries: SubmissionState['summaries'] = initialState.summaries
+  private shifts: SubmissionState['shifts'] = initialState.shifts
+  private submissions: SubmissionState['submissions'] = initialState.submissions
+
+  public get getSummary(): TeacherShiftSummary {
+    return this.summary
+  }
+
+  public get getSummaries(): TeacherShiftSummary[] {
+    return this.summaries
+  }
+
+  public get getShifts(): TeacherShiftDetail[] {
+    return this.shifts
+  }
 
   public get getSubmissions(): Submission[] {
-    return this.submission
+    return this.submissions
+  }
+
+  @Mutation
+  private setSummaries({ summaries }: { summaries: TeacherShiftSummary[] }): void {
+    this.summaries = summaries
+  }
+
+  @Mutation
+  private setShifts({ summary, shifts }: { summary: TeacherShiftSummary; shifts: TeacherShiftDetail[] }): void {
+    this.summary = summary
+    this.shifts = shifts
+  }
+
+  @Action({ rawError: true })
+  public async listTeacherSubmissions({ teacherId }: { teacherId: string }): Promise<void> {
+    await $axios
+      .$get(`/v1/teachers/${teacherId}/submissions`)
+      .then((res: TeacherSubmissionsResponse) => {
+        const summaries: TeacherShiftSummary[] = res.summaries.map((data: SummaryResponse): TeacherShiftSummary => {
+          return { ...data }
+        })
+        this.setSummaries({ summaries })
+      })
+      .catch((err: AxiosError) => {
+        const res: ErrorResponse = { ...err.response?.data }
+        throw new ApiError(res.status, res.message, res)
+      })
+  }
+
+  @Action({ rawError: true })
+  public async listTeacherShifts({ teacherId, shiftId }: { teacherId: string; shiftId: number }): Promise<void> {
+    await $axios
+      .$get(`/v1/teachers/${teacherId}/submissions/${shiftId}`)
+      .then((res: TeacherShiftsResponse) => {
+        const summary: TeacherShiftSummary = { ...res.summary }
+        const shifts: TeacherShiftDetail[] = res.shifts.map((shift: ShiftDetailResponse): TeacherShiftDetail => {
+          const lessons: TeacherShiftDetailLesson[] = shift.lessons.map((lesson: LessonResponse): TeacherShiftDetailLesson => {
+            return { ...lesson }
+          })
+          return { ...shift, lessons }
+        })
+        this.setShifts({ summary, shifts })
+      })
+      .catch((err: AxiosError) => {
+        const res: ErrorResponse = { ...err.response?.data }
+        throw new ApiError(res.status, res.message, res)
+      })
   }
 }

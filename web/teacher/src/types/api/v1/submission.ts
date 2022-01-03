@@ -1,20 +1,14 @@
-import { ShiftStatus, SubmissionStatus } from './common'
-
-export type SubmissionStatusType = '未提出' | '提出済み'
-
-export interface Submission {
-  title: string
-  endDate: string
-  submissionStatus: SubmissionStatusType
-  editStatus: '入力する' | '編集する'
-}
-
+/**
+ * ---------------------------
+ * Response
+ * ---------------------------
+ */
 export interface TeacherShiftSummary {
   id: number
   year: number
   month: number
-  shiftStatus: ShiftStatus
-  submissionStatus: SubmissionStatus
+  shiftStatus: number
+  submissionStatus: number
   openAt: string
   endAt: string
   createdAt: string
@@ -34,9 +28,11 @@ export interface TeacherShiftDetail {
   lessons: TeacherShiftDetailLesson[]
 }
 
-export interface SubmissionState {
-  submissions: Submission[] // TODO: remove
-  summary: TeacherShiftSummary
+export interface TeacherSubmissionsResponse {
   summaries: TeacherShiftSummary[]
+}
+
+export interface TeacherShiftsResponse {
+  summary: TeacherShiftSummary
   shifts: TeacherShiftDetail[]
 }
