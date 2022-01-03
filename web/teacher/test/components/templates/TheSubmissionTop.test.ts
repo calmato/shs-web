@@ -111,7 +111,7 @@ describe('components/templates/TheSubmissionTop', () => {
         })
       })
 
-      describe('onClick', () => {
+      describe('onClickShow', () => {
         it('emitが実行されること', async () => {
           const summary: TeacherShiftSummary = {
             id: 1,
@@ -124,9 +124,16 @@ describe('components/templates/TheSubmissionTop', () => {
             createdAt: '2021-12-30T19:25:57+09:00',
             updatedAt: '2021-12-30T19:25:57+09:00',
           }
-          await wrapper.vm.onClick(summary)
-          expect(wrapper.emitted('click')).toBeTruthy()
-          expect(wrapper.emitted('click')[0][0]).toBe(summary)
+          await wrapper.vm.onClickShow(summary)
+          expect(wrapper.emitted('click:show')).toBeTruthy()
+          expect(wrapper.emitted('click:show')[0][0]).toBe(summary)
+        })
+      })
+
+      describe('onClickTop', () => {
+        it('emitが実行されること', async () => {
+          await wrapper.vm.onClickTop()
+          expect(wrapper.emitted('click:top')).toBeTruthy()
         })
       })
     })
