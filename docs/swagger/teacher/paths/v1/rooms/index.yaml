@@ -1,7 +1,7 @@
 get:
   summary: 教室数取得
   tags:
-  - Room
+  - Other
   security:
   - BearerAuth: []
   responses:
@@ -20,7 +20,7 @@ get:
 patch:
   summary: 教室数更新
   tags:
-  - Room
+  - Other
   security:
   - BearerAuth: []
   requestBody:
