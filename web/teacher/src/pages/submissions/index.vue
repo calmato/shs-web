@@ -1,5 +1,5 @@
 <template>
-  <the-submission-top :summaries="summaries" @click="handleClick" />
+  <the-submission-top :summaries="summaries" @click:show="handleClickShow" @click:top="handleClickTop" />
 </template>
 
 <script lang="ts">
@@ -36,13 +36,18 @@ export default defineComponent({
         })
     }
 
-    const handleClick = (summary: TeacherShiftSummary): void => {
+    const handleClickShow = (summary: TeacherShiftSummary): void => {
       router.push(`/submissions/${summary.id}`)
+    }
+
+    const handleClickTop = (): void => {
+      router.push('/')
     }
 
     return {
       summaries,
-      handleClick,
+      handleClickShow,
+      handleClickTop,
     }
   },
 })
