@@ -114,7 +114,7 @@ func run() error {
 	port := flag.String("db-port", "3306", "target mysql port")
 	username := flag.String("db-username", "root", "target mysql username")
 	password := flag.String("db-password", "12345678", "target mysql password")
-	isDelete := flag.Bool("is-delete", true, "if true, delete the existing record")
+	isDelete := flag.Bool("is-delete", false, "if true, delete the existing record")
 	flag.Parse()
 
 	/**
