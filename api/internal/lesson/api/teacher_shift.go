@@ -71,6 +71,11 @@ func (s *lessonService) UpsertTeacherShifts(
 		_, err = s.user.GetTeacher(ectx, in)
 		return
 	})
+	var summary *entity.ShiftSummary
+	eg.Go(func() (err error) {
+		summary, err = s.db.ShiftSummary.Get(ectx, req.ShiftSummaryId)
+		return
+	})
 	eg.Go(func() error {
 		shifts, err := s.db.Shift.MultiGet(ectx, req.ShiftIds, "id", "shift_summary_id")
 		if err != nil {
@@ -84,6 +89,10 @@ func (s *lessonService) UpsertTeacherShifts(
 	})
 	if err := eg.Wait(); err != nil {
 		return nil, gRPCError(err)
+	}
+
+	if !summary.IsSubmit() {
+		return nil, status.Error(codes.FailedPrecondition, "api: outside of shift submission")
 	}
 
 	submission := entity.NewTeacherSubmission(req.TeacherId, req.ShiftSummaryId, req.Decided)
