@@ -20,7 +20,7 @@ describe('store/shift', () => {
   })
 
   describe('getters', () => {
-    it('getSummaries', () => {
+    it('getSummary', () => {
       expect(ShiftStore.getSummary).toEqual({
         id: 0,
         year: 0,

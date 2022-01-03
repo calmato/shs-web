@@ -1,13 +1,14 @@
 import Vue from 'vue'
 import Vuex, { Store } from 'vuex'
 import { createLocalVue } from '@vue/test-utils'
-import { CommonStore, UserStore, initialiseStores, LessonStore, AuthStore, ShiftStore } from '~/store'
+import { CommonStore, UserStore, initialiseStores, LessonStore, AuthStore, ShiftStore, SubmissionStore } from '~/store'
 import AuthModule from '~/store/auth'
 import CommonModule from '~/store/common'
 import LessonModule from '~/store/lesson'
 import ShiftModule from '~/store/shift'
 import UserModule from '~/store/user'
 import response from '~~/test/helpers/api-mock'
+import SubmissionModule from '~/store/submission'
 
 const localVue: Vue.VueConstructor<Vue> = createLocalVue()
 localVue.use(Vuex)
@@ -18,6 +19,7 @@ const store = new Store({
     common: CommonModule,
     lesson: LessonModule,
     shift: ShiftModule,
+    submission: SubmissionModule,
     user: UserModule,
   },
 })
@@ -31,6 +33,7 @@ function refresh(): void {
   CommonStore.factory()
   LessonStore.factory()
   ShiftStore.factory()
+  SubmissionStore.factory()
   UserStore.factory()
 }
 

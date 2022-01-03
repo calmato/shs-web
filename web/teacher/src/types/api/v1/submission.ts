@@ -1,11 +1,14 @@
-import { ShiftStatus, SubmissionStatus } from './common'
-
+/**
+ * ---------------------------
+ * Response
+ * ---------------------------
+ */
 export interface TeacherShiftSummary {
   id: number
   year: number
   month: number
-  shiftStatus: ShiftStatus
-  submissionStatus: SubmissionStatus
+  shiftStatus: number
+  submissionStatus: number
   openAt: string
   endAt: string
   createdAt: string
@@ -25,8 +28,11 @@ export interface TeacherShiftDetail {
   lessons: TeacherShiftDetailLesson[]
 }
 
-export interface SubmissionState {
-  summary: TeacherShiftSummary
+export interface TeacherSubmissionsResponse {
   summaries: TeacherShiftSummary[]
+}
+
+export interface TeacherShiftsResponse {
+  summary: TeacherShiftSummary
   shifts: TeacherShiftDetail[]
 }
