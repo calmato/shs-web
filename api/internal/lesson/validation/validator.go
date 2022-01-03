@@ -19,6 +19,7 @@ type RequestValidation interface {
 	ListShifts(req *lesson.ListShiftsRequest) error
 	CreateShifts(req *lesson.CreateShiftsRequest) error
 	ListTeacherSubmissionsByShiftSummaryIDs(req *lesson.ListTeacherSubmissionsByShiftSummaryIDsRequest) error
+	ListTeacherShifts(req *lesson.ListTeacherShiftsRequest) error
 	UpsertTeacherShifts(req *lesson.UpsertTeacherShiftsRequest) error
 }
 

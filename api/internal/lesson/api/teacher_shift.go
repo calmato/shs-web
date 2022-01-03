@@ -29,6 +29,35 @@ func (s *lessonService) ListTeacherSubmissionsByShiftSummaryIDs(
 	return res, nil
 }
 
+func (s *lessonService) ListTeacherShifts(
+	ctx context.Context, req *lesson.ListTeacherShiftsRequest,
+) (*lesson.ListTeacherShiftsResponse, error) {
+	if err := s.validator.ListTeacherShifts(req); err != nil {
+		return nil, gRPCError(err)
+	}
+
+	eg, ectx := errgroup.WithContext(ctx)
+	var submission *entity.TeacherSubmission
+	eg.Go(func() (err error) {
+		submission, err = s.db.TeacherSubmission.Get(ectx, req.TeacherId, req.ShiftSummaryId)
+		return
+	})
+	var shifts entity.TeacherShifts
+	eg.Go(func() (err error) {
+		shifts, err = s.db.TeacherShift.ListByShiftSummaryID(ectx, req.TeacherId, req.ShiftSummaryId)
+		return
+	})
+	if err := eg.Wait(); err != nil {
+		return nil, gRPCError(err)
+	}
+
+	res := &lesson.ListTeacherShiftsResponse{
+		Submission: submission.Proto(),
+		Shifts:     shifts.Proto(),
+	}
+	return res, nil
+}
+
 func (s *lessonService) UpsertTeacherShifts(
 	ctx context.Context, req *lesson.UpsertTeacherShiftsRequest,
 ) (*lesson.UpsertTeacherShiftsResponse, error) {

@@ -60,6 +60,51 @@ func TestListTeacherSubmissionsByShiftSummaryIDs(t *testing.T) {
 	}
 }
 
+func TestListTeacherShifts(t *testing.T) {
+	t.Parallel()
+	validator := NewRequestValidation()
+
+	tests := []struct {
+		name  string
+		req   *lesson.ListTeacherShiftsRequest
+		isErr bool
+	}{
+		{
+			name: "success",
+			req: &lesson.ListTeacherShiftsRequest{
+				TeacherId:      "teacherid",
+				ShiftSummaryId: 1,
+			},
+			isErr: false,
+		},
+		{
+			name: "TeacherId is min_len",
+			req: &lesson.ListTeacherShiftsRequest{
+				TeacherId:      "",
+				ShiftSummaryId: 1,
+			},
+			isErr: true,
+		},
+		{
+			name: "ShiftSummaryId is gt",
+			req: &lesson.ListTeacherShiftsRequest{
+				TeacherId:      "teacherid",
+				ShiftSummaryId: 0,
+			},
+			isErr: true,
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			err := validator.ListTeacherShifts(tt.req)
+			assert.Equal(t, tt.isErr, err != nil, err)
+		})
+	}
+}
+
 func TestUpsertTeacherShifts(t *testing.T) {
 	t.Parallel()
 	validator := NewRequestValidation()
