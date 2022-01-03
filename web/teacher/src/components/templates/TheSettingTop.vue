@@ -54,7 +54,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, PropType, SetupContext, useRouter } from '@nuxtjs/composition-api'
+import { computed, defineComponent, PropType, SetupContext } from '@nuxtjs/composition-api'
 import TheSubjectSelectFormItem from '~/components/molecules/TheSubjectSelectFormItem.vue'
 import { Menu, UserProps } from '~/types/props/setting'
 import { Subject } from '~/types/store'
@@ -111,14 +111,12 @@ export default defineComponent({
   },
 
   setup(props, { emit }: SetupContext) {
-    const router = useRouter()
-
     const onClick = (item: Menu): void => {
       emit('click', item)
     }
 
     const handleBackButton = (): void => {
-      router.back()
+      emit('onClickBackButton')
     }
 
     const elementarySchoolSubjectsFormData = computed({
