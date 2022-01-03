@@ -41,7 +41,7 @@ ps:
 start-web:
 	docker-compose up teacher_web
 
-start-api:
+start-api: proto
 	docker-compose up teacher_gateway user_api classroom_api lesson_api mysql
 
 start-swagger:
