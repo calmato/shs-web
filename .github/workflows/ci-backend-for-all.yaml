@@ -63,7 +63,7 @@ jobs:
         retry=60
 
         count=1
-        until [ mysqladmin ping -h${DB_HOST} -P${DB_PORT} -u${DB_USERNAME} -p${DB_PASSWORD} ]; do
+        until mysqladmin ping -h${DB_HOST} -P${DB_PORT} -u${DB_USERNAME} -p${DB_PASSWORD}; do
           echo 'mysql is unavailable - sleeping'
           sleep 3
           if [ $(expr $retry - $count) -le 0 ]; then
@@ -80,7 +80,7 @@ jobs:
         retry=30
 
         count=1
-        until [ curl ${FIREBASE_AUTH_EMULATOR_HOST} ]; do
+        until curl ${FIREBASE_AUTH_EMULATOR_HOST}; do
           echo 'firebase authentication is unavailable - sleeping'
           sleep 3
           if [ $(expr $retry - $count) -le 0 ]; then
@@ -92,7 +92,7 @@ jobs:
         echo 'firebase authentication is up - executing command'
 
         count=1
-        until [ curl ${FIRESTORE_EMULATOR_HOST} ]; do
+        until curl ${FIRESTORE_EMULATOR_HOST}; do
           echo 'firestore is unavailable - sleeping'
           sleep 3
           if [ $(expr $retry - $count) -le 0 ]; then
