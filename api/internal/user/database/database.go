@@ -46,6 +46,7 @@ func NewDatabase(params *Params) *Database {
  */
 type Student interface {
 	Get(ctx context.Context, id string, fields ...string) (*entity.Student, error)
+	Create(ctx context.Context, s *entity.Student) error
 }
 
 type Teacher interface {

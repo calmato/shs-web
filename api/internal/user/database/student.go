@@ -46,3 +46,26 @@ func (s *student) Get(ctx context.Context, id string, fields ...string) (*entity
 	}
 	return student, nil
 }
+
+func (s *student) Create(ctx context.Context, student *entity.Student) error {
+	student.CreatedAt = s.now()
+	student.UpdatedAt = s.now()
+
+	_, err := s.auth.CreateUser(ctx, student.ID, student.Mail, student.Password)
+	if err != nil {
+		return dbError(err)
+	}
+
+	tx, err := s.db.Begin()
+	if err != nil {
+		return dbError(err)
+	}
+	defer s.db.Close(tx)
+
+	err = tx.Table(studentTable).Create(&student).Error
+	if err != nil {
+		tx.Rollback()
+		return dbError(err)
+	}
+	return dbError(tx.Commit().Error)
+}

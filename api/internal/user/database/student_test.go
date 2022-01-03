@@ -2,6 +2,7 @@ package database
 
 import (
 	"context"
+	"strings"
 	"testing"
 	"time"
 
@@ -86,6 +87,89 @@ func TestStudent_Get(t *testing.T) {
 	}
 }
 
+func TestStudent_Create(t *testing.T) {
+	m, err := newMock()
+	require.NoError(t, err)
+
+	type args struct {
+		student *entity.Student
+	}
+	type want struct {
+		isErr bool
+	}
+	tests := []struct {
+		name  string
+		setup func(ctx context.Context, t *testing.T, m *mocks)
+		args  args
+		want  want
+	}{
+		{
+			name:  "success",
+			setup: func(ctx context.Context, t *testing.T, m *mocks) {},
+			args: args{
+				student: &entity.Student{
+					ID:            idmock,
+					LastName:      "浜田",
+					FirstName:     "直志",
+					LastNameKana:  "はまだ",
+					FirstNameKana: "ただし",
+					Mail:          "student-test001@calmato.jp",
+					Password:      "12345678",
+					BirthYear:     2005,
+				},
+			},
+			want: want{
+				isErr: false,
+			},
+		},
+		{
+			name:  "failed to create in firebase authentication",
+			setup: func(ctx context.Context, t *testing.T, m *mocks) {},
+			args: args{
+				student: &entity.Student{
+					ID:       idmock,
+					Mail:     "student-test001@calmato.jp",
+					Password: "",
+				},
+			},
+			want: want{
+				isErr: true,
+			},
+		},
+		{
+			name:  "failed to create in mysql",
+			setup: func(ctx context.Context, t *testing.T, m *mocks) {},
+			args: args{
+				student: &entity.Student{
+					ID:        idmock,
+					Mail:      "student-test001@calmato.jp",
+					Password:  "12345678",
+					LastName:  strings.Repeat("x", 17),
+					FirstName: strings.Repeat("x", 17),
+				},
+			},
+			want: want{
+				isErr: true,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			ctx, cancel := context.WithCancel(context.Background())
+			defer cancel()
+
+			_ = m.authDelete(ctx, idmock)
+			_ = m.dbDelete(ctx, studentTable)
+			tt.setup(ctx, t, m)
+
+			db := NewStudent(m.db, m.auth)
+			err := db.Create(ctx, tt.args.student)
+			assert.Equal(t, tt.want.isErr, err != nil, err)
+		})
+	}
+}
+
 func testStudent(id string, mail string, now time.Time) *entity.Student {
 	return &entity.Student{
 		ID:            id,
@@ -94,7 +178,7 @@ func testStudent(id string, mail string, now time.Time) *entity.Student {
 		LastNameKana:  "はまだ",
 		FirstNameKana: "ただし",
 		Mail:          mail,
-		BirthYear:     2021,
+		BirthYear:     2005,
 		CreatedAt:     now,
 		UpdatedAt:     now,
 	}
