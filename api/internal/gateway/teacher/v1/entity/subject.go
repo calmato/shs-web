@@ -12,12 +12,12 @@ import (
 var errInvalidSchoolType = errors.New("entity: invalid school type")
 
 type Subject struct {
-	ID         int64      `json:"id"`        // 授業科目ID
-	Name       string     `json:"name"`      // 授業科目名
-	Color      string     `json:"color"`     // 表示色 (#rrggbb)
-	SchoolType SchoolType `json:"shoolType"` // 校種
-	CreatedAt  time.Time  `json:"createdAt"` // 登録日時
-	UpdatedAt  time.Time  `json:"updatedAt"` // 更新日時
+	ID         int64      `json:"id"`         // 授業科目ID
+	Name       string     `json:"name"`       // 授業科目名
+	Color      string     `json:"color"`      // 表示色 (#rrggbb)
+	SchoolType SchoolType `json:"schoolType"` // 校種
+	CreatedAt  time.Time  `json:"createdAt"`  // 登録日時
+	UpdatedAt  time.Time  `json:"updatedAt"`  // 更新日時
 }
 
 type Subjects []*Subject

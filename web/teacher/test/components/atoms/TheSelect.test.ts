@@ -67,6 +67,28 @@ describe('components/atoms/TheSelect', () => {
         })
       })
 
+      describe('chips', () => {
+        it('初期値', () => {
+          expect(wrapper.props().chips).toEqual(false)
+        })
+
+        it('値が代入されること', async () => {
+          await wrapper.setProps({ chips: { chips: true } })
+          expect(wrapper.props().chips).toEqual({ chips: true })
+        })
+      })
+
+      describe('appendOuterIcon', () => {
+        it('初期値', () => {
+          expect(wrapper.props().appendOuterIcon).toBeUndefined()
+        })
+
+        it('値が代入されること', async () => {
+          await wrapper.setProps({ appendOuterIcon: 'mdi-map' })
+          expect(wrapper.props().appendOuterIcon).toBe('mdi-map')
+        })
+      })
+
       describe('items', () => {
         it('初期値', () => {
           expect(wrapper.props().items).toEqual([])
@@ -83,9 +105,14 @@ describe('components/atoms/TheSelect', () => {
           expect(wrapper.props().value).toBeUndefined()
         })
 
-        it('値が代入されること', async () => {
+        it('値が代入されること（文字列型）', async () => {
           await wrapper.setProps({ value: 'test' })
           expect(wrapper.props().value).toBe('test')
+        })
+
+        it('値が代入されること（数値型）', async () => {
+          await wrapper.setProps({ value: 1 })
+          expect(wrapper.props().value).toBe(1)
         })
       })
     })

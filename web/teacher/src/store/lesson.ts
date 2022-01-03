@@ -1,4 +1,7 @@
 import { Module, VuexModule, Mutation, Action } from 'vuex-module-decorators'
+import { $axios } from '~/plugins/axios'
+import { ErrorResponse } from '~/types/api/exception'
+import { ApiError } from '~/types/exception'
 import { Lesson, LessonState, SchoolType, Subject, SubjectMap } from '~/types/store'
 
 const initialState: LessonState = {
@@ -81,5 +84,20 @@ export default class LessonModule extends VuexModule {
   public factory(): void {
     this.setSubjects(initialState.subjects)
     this.setLessons(initialState.lessons)
+  }
+
+  @Action({ rawError: true })
+  public async getAllSubjects(): Promise<void> {
+    try {
+      const res: { subjects: Subject[] } = await $axios.$get('/v1/subjects')
+      this.setSubjects(res.subjects)
+      return
+    } catch (err) {
+      if ($axios.isAxiosError(err)) {
+        const res: ErrorResponse = { ...err.response?.data }
+        throw new ApiError(res.status, res.message, res)
+      }
+      throw new Error('internal server error')
+    }
   }
 }

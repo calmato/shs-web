@@ -6,8 +6,8 @@ import { app } from '~/plugins/firebase'
 import { ErrorResponse } from '~/types/api/exception'
 import { AuthResponse } from '~/types/api/v1'
 import { ApiError } from '~/types/exception'
-import { SignInForm } from '~/types/form'
-import { Auth, AuthState, Role, SchoolType, Subject } from '~/types/store'
+import { SignInForm, SubjectUpdateForm } from '~/types/form'
+import { Auth, AuthState, Role, SchoolType } from '~/types/store'
 
 const initialState: AuthState = {
   uid: '',
@@ -21,7 +21,11 @@ const initialState: AuthState = {
     firstNameKana: '',
     mail: '',
     role: Role.TEACHER,
-    subjects: new Map<SchoolType, Subject[]>(),
+    subjects: {
+      [SchoolType.ELEMENTARY_SCHOOL]: [],
+      [SchoolType.JUNIOR_HIGH_SCHOOL]: [],
+      [SchoolType.HIGH_SCHOOL]: [],
+    },
   },
 }
 
@@ -122,6 +126,19 @@ export default class AuthModule extends VuexModule {
         const res: ErrorResponse = { ...err.response?.data }
         throw new ApiError(res.status, res.message, res)
       })
+  }
+
+  @Action({ rawError: true })
+  public async updateOwnSubjects(formData: SubjectUpdateForm): Promise<void> {
+    try {
+      await $axios.$patch('/v1/me/subjects', formData)
+    } catch (err) {
+      if ($axios.isAxiosError(err)) {
+        const res: ErrorResponse = { ...err.response?.data }
+        throw new ApiError(res.status, res.message, res)
+      }
+      throw new Error('internal server error')
+    }
   }
 
   @Action({ rawError: true })

@@ -1,5 +1,21 @@
 <template>
   <v-container class="px-0">
+    <v-btn text class="px-0 mb-4" @click="handleBackButton">
+      <v-icon>mdi-chevron-left</v-icon>
+      戻る
+    </v-btn>
+    <the-subject-select-form-item
+      :elementary-school-subjects-form-value.sync="elementarySchoolSubjectsFormData"
+      :junior-high-school-subjects-form-value.sync="juniorHighSchoolSubjectsFormData"
+      :high-school-subjects-form-value.sync="highSchoolSubjectsFormData"
+      :user="user"
+      :elementary-school-subjects="elementarySchoolSubjects"
+      :junior-high-school-subjects="juniorHighSchoolSubjects"
+      :high-school-subjects="highSchoolSubjects"
+      @handleElementarySchoolSubjectsChange="handleElementarySchoolSubjectsChange"
+      @handleJuniorHighSchoolSubjectsChange="handleJuniorHighSchoolSubjectsChange"
+      @handleHighSchoolSubjectsChange="handleHighSchoolSubjectsChange"
+    />
     <v-row class="py-4">
       <v-col cols="12">
         <div class="text-subtitle-1">ユーザー設定</div>
@@ -38,10 +54,16 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, SetupContext } from '@nuxtjs/composition-api'
-import { Menu } from '~/types/props/setting'
+import { computed, defineComponent, PropType, SetupContext } from '@nuxtjs/composition-api'
+import TheSubjectSelectFormItem from '~/components/molecules/TheSubjectSelectFormItem.vue'
+import { Menu, UserProps } from '~/types/props/setting'
+import { Subject } from '~/types/store'
 
 export default defineComponent({
+  components: {
+    TheSubjectSelectFormItem,
+  },
+
   props: {
     userItems: {
       type: Array as PropType<Menu[]>,
@@ -51,15 +73,87 @@ export default defineComponent({
       type: Array as PropType<Menu[]>,
       default: () => [],
     },
+    user: {
+      type: Object as PropType<UserProps>,
+      default: () => ({
+        lastName: '',
+        firstName: '',
+        lastNameKana: '',
+        firstNameKana: '',
+      }),
+    },
+
+    elementarySchoolSubjects: {
+      type: Array as PropType<Subject[]>,
+      default: () => [],
+    },
+    juniorHighSchoolSubjects: {
+      type: Array as PropType<Subject[]>,
+      default: () => [],
+    },
+    highSchoolSubjects: {
+      type: Array as PropType<Subject[]>,
+      default: () => [],
+    },
+
+    elementarySchoolSubjectsFormValue: {
+      type: Array as PropType<number[]>,
+      default: () => [],
+    },
+    juniorHighSchoolSubjectsFormValue: {
+      type: Array as PropType<number[]>,
+      default: () => [],
+    },
+    highSchoolSubjectsFormValue: {
+      type: Array as PropType<number[]>,
+      default: () => [],
+    },
   },
 
-  setup(_, { emit }: SetupContext) {
+  setup(props, { emit }: SetupContext) {
     const onClick = (item: Menu): void => {
       emit('click', item)
     }
 
+    const handleBackButton = (): void => {
+      emit('onClickBackButton')
+    }
+
+    const elementarySchoolSubjectsFormData = computed({
+      get: () => props.elementarySchoolSubjectsFormValue,
+      set: (val: object) => emit('update:elementarySchoolSubjectsFormValue', val),
+    })
+
+    const juniorHighSchoolSubjectsFormData = computed({
+      get: () => props.juniorHighSchoolSubjectsFormValue,
+      set: (val: object) => emit('update:juniorHighSchoolSubjectsFormValue', val),
+    })
+    const highSchoolSubjectsFormData = computed({
+      get: () => props.highSchoolSubjectsFormValue,
+      set: (val: object) => emit('update:highSchoolSubjectsFormValue', val),
+    })
+
+    const handleElementarySchoolSubjectsChange = (val: number[]) => {
+      emit('handleElementarySchoolSubjectsChange', val)
+    }
+
+    const handleJuniorHighSchoolSubjectsChange = (val: number[]) => {
+      emit('handleJuniorHighSchoolSubjectsChange', val)
+    }
+
+    const handleHighSchoolSubjectsChange = (val: number[]) => {
+      emit('handleHighSchoolSubjectsChange', val)
+    }
+
     return {
       onClick,
+      handleBackButton,
+      elementarySchoolSubjectsFormData,
+      juniorHighSchoolSubjectsFormData,
+      highSchoolSubjectsFormData,
+      handleElementarySchoolSubjectsChange,
+      handleJuniorHighSchoolSubjectsChange,
+      handleHighSchoolSubjectsChange,
     }
   },
 })

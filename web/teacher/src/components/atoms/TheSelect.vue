@@ -8,6 +8,8 @@
       :success="valid"
       :autofocus="autofocus"
       :outlined="outlined"
+      :chips="chips"
+      :append-outer-icon="appendOuterIcon"
     />
   </validation-provider>
 </template>
@@ -37,6 +39,11 @@ export default defineComponent({
       required: false,
       default: false,
     },
+    chips: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
     rules: {
       type: Object,
       required: false,
@@ -48,9 +55,14 @@ export default defineComponent({
       default: () => [],
     },
     value: {
-      type: [String, Number],
       required: false,
       default: undefined,
+      type: [String, Number],
+    },
+    appendOuterIcon: {
+      required: false,
+      default: undefined,
+      type: String,
     },
   },
 

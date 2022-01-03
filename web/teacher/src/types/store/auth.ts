@@ -9,7 +9,9 @@ export interface Auth {
   firstNameKana: string
   mail: string
   role: Role
-  subjects: Map<SchoolType, Subject[]>
+  subjects: {
+    [key in SchoolType.ELEMENTARY_SCHOOL | SchoolType.JUNIOR_HIGH_SCHOOL | SchoolType.HIGH_SCHOOL]: Subject[]
+  }
 }
 
 export interface AuthState {
