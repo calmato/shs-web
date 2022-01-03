@@ -97,6 +97,89 @@ func TestTeacherSubmission_ListByShiftSummaryIDs(t *testing.T) {
 	}
 }
 
+func TestTeacherSubmission_Get(t *testing.T) {
+	m, err := newMock()
+	require.NoError(t, err)
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	_ = m.dbDelete(ctx, teacherSubmissionTable, shiftSummaryTable)
+
+	now := jst.Date(2021, 12, 10, 12, 0, 0, 0)
+
+	const teacherID = "teacherid"
+
+	summary := testShiftSummary(1, 202202, jst.Date(2022, 1, 1, 0, 0, 0, 0), jst.Date(2022, 1, 15, 0, 0, 0, 0), now)
+	err = m.db.DB.Create(&summary).Error
+	require.NoError(t, err)
+
+	submission := testTeacherSubmission(teacherID, 1, true, now)
+	err = m.db.DB.Create(&submission).Error
+	require.NoError(t, err)
+
+	type args struct {
+		teacherID string
+		summaryID int64
+	}
+	type want struct {
+		submission *entity.TeacherSubmission
+		isErr      bool
+	}
+	tests := []struct {
+		name  string
+		setup func(ctx context.Context, t *testing.T, m *mocks)
+		args  args
+		want  want
+	}{
+		{
+			name:  "success",
+			setup: func(ctx context.Context, t *testing.T, m *mocks) {},
+			args: args{
+				teacherID: teacherID,
+				summaryID: 1,
+			},
+			want: want{
+				submission: submission,
+				isErr:      false,
+			},
+		},
+		{
+			name:  "not found",
+			setup: func(ctx context.Context, t *testing.T, m *mocks) {},
+			args: args{
+				teacherID: teacherID,
+				summaryID: 0,
+			},
+			want: want{
+				submission: nil,
+				isErr:      true,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			ctx, cancel := context.WithCancel(context.Background())
+			defer cancel()
+
+			tt.setup(ctx, t, m)
+
+			db := NewTeacherSubmission(m.db)
+			actual, err := db.Get(ctx, tt.args.teacherID, tt.args.summaryID)
+			if tt.want.isErr {
+				assert.Error(t, err)
+			} else {
+				require.NoError(t, err)
+				tt.want.submission.CreatedAt = actual.CreatedAt
+				tt.want.submission.UpdatedAt = actual.UpdatedAt
+				assert.Equal(t, tt.want.submission, actual)
+			}
+		})
+	}
+}
+
 func testTeacherSubmission(teacherID string, summaryID int64, decided bool, now time.Time) *entity.TeacherSubmission {
 	return &entity.TeacherSubmission{
 		TeacherID:      teacherID,

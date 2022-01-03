@@ -42,3 +42,19 @@ func (s *teacherSubmission) ListByShiftSummaryIDs(
 	err := stmt.Find(&submissions).Error
 	return submissions, dbError(err)
 }
+
+func (s *teacherSubmission) Get(
+	ctx context.Context, teacherID string, summaryID int64, fields ...string,
+) (*entity.TeacherSubmission, error) {
+	var submission *entity.TeacherSubmission
+	if len(fields) == 0 {
+		fields = teacherSubmissionFields
+	}
+
+	stmt := s.db.DB.Table(teacherSubmissionTable).Select(fields).
+		Where("teacher_id = ?", teacherID).
+		Where("shift_summary_id = ?", summaryID)
+
+	err := stmt.First(&submission).Error
+	return submission, dbError(err)
+}

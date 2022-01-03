@@ -14,9 +14,9 @@ import (
 
 const teacherShiftTable = "teacher_shifts"
 
-// var teacherShiftFields = []string{
-// 	"teacher_id", "shift_id", "shift_summary_id", "created_at", "updated_at",
-// }
+var teacherShiftFields = []string{
+	"teacher_id", "shift_id", "shift_summary_id", "created_at", "updated_at",
+}
 
 type teacherShift struct {
 	db  *database.Client
@@ -28,6 +28,22 @@ func NewTeacherShift(db *database.Client) TeacherShift {
 		db:  db,
 		now: jst.Now,
 	}
+}
+
+func (s *teacherShift) ListByShiftSummaryID(
+	ctx context.Context, teacherID string, summaryID int64, fields ...string,
+) (entity.TeacherShifts, error) {
+	var shifts entity.TeacherShifts
+	if len(fields) == 0 {
+		fields = teacherShiftFields
+	}
+
+	stmt := s.db.DB.Table(teacherShiftTable).Select(fields).
+		Where("teacher_id = ?", teacherID).
+		Where("shift_summary_id = ?", summaryID)
+
+	err := stmt.Find(&shifts).Error
+	return shifts, dbError(err)
 }
 
 func (s *teacherShift) Replace(
