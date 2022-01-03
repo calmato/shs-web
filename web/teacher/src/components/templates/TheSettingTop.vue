@@ -13,7 +13,7 @@
       :junior-high-school-subjects="juniorHighSchoolSubjects"
       :high-school-subjects="highSchoolSubjects"
       @handleElementarySchoolSubjectsChange="handleElementarySchoolSubjectsChange"
-      @handJuniorHighSchoolSubjectsChange="handJuniorHighSchoolSubjectsChange"
+      @handleJuniorHighSchoolSubjectsChange="handleJuniorHighSchoolSubjectsChange"
       @handleHighSchoolSubjectsChange="handleHighSchoolSubjectsChange"
     />
     <v-row class="py-4">
@@ -146,8 +146,8 @@ export default defineComponent({
       emit('handleElementarySchoolSubjectsChange', val)
     }
 
-    const handJuniorHighSchoolSubjectsChange = (val: number[]) => {
-      emit('handJuniorHighSchoolSubjectsChange', val)
+    const handleJuniorHighSchoolSubjectsChange = (val: number[]) => {
+      emit('handleJuniorHighSchoolSubjectsChange', val)
     }
 
     const handleHighSchoolSubjectsChange = (val: number[]) => {
@@ -161,7 +161,7 @@ export default defineComponent({
       juniorHighSchoolSubjectsFormData,
       highSchoolSubjectsFormData,
       handleElementarySchoolSubjectsChange,
-      handJuniorHighSchoolSubjectsChange,
+      handleJuniorHighSchoolSubjectsChange,
       handleHighSchoolSubjectsChange,
     }
   },

@@ -32,7 +32,7 @@
       item-text="name"
       item-value="id"
       :items="juniorHighSchoolSubjects"
-      @change="handJuniorHighSchoolSubjectsChange"
+      @change="handleJuniorHighSchoolSubjectsChange"
     >
       <template #selection="{ item }">
         <v-chip label :color="item.color">{{ item.name }}</v-chip>
@@ -125,8 +125,8 @@ export default defineComponent({
       emit('handleElementarySchoolSubjectsChange', val)
     }
 
-    const handJuniorHighSchoolSubjectsChange = (val: number[]) => {
-      emit('handJuniorHighSchoolSubjectsChange', val)
+    const handleJuniorHighSchoolSubjectsChange = (val: number[]) => {
+      emit('handleJuniorHighSchoolSubjectsChange', val)
     }
 
     const handleHighSchoolSubjectsChange = (val: number[]) => {
@@ -138,7 +138,7 @@ export default defineComponent({
       juniorHighSchoolSubjectsFormData,
       highSchoolSubjectsFormData,
       handleElementarySchoolSubjectsChange,
-      handJuniorHighSchoolSubjectsChange,
+      handleJuniorHighSchoolSubjectsChange,
       handleHighSchoolSubjectsChange,
     }
   },

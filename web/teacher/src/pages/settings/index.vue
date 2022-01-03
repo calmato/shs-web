@@ -11,7 +11,7 @@
     :junior-high-school-subjects-form-value.sync="juniorHighSchoolSubjectForm.subjectIDs"
     :high-school-subjects-form-value.sync="highSchoolSubjectForm.subjectIDs"
     @handleElementarySchoolSubjectsChange="handleElementarySchoolSubjectsChange"
-    @handJuniorHighSchoolSubjectsChange="handJuniorHighSchoolSubjectsChange"
+    @handleJuniorHighSchoolSubjectsChange="handleJuniorHighSchoolSubjectsChange"
     @handleHighSchoolSubjectsChange="handleHighSchoolSubjectsChange"
     @click="handleClick"
   />
@@ -90,7 +90,7 @@ export default defineComponent({
       AuthStore.updateOwnSubjects(elementarySchoolSubjectForm)
     }
 
-    const handJuniorHighSchoolSubjectsChange = (_val: number[]) => {
+    const handleJuniorHighSchoolSubjectsChange = (_val: number[]) => {
       AuthStore.updateOwnSubjects(juniorHighSchoolSubjectForm)
     }
 
@@ -135,7 +135,7 @@ export default defineComponent({
       juniorHighSchoolSubjectForm,
       highSchoolSubjectForm,
       handleElementarySchoolSubjectsChange,
-      handJuniorHighSchoolSubjectsChange,
+      handleJuniorHighSchoolSubjectsChange,
       handleHighSchoolSubjectsChange,
     }
   },
