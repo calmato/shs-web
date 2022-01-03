@@ -109,6 +109,12 @@ jobs:
     - name: Make cache directory
       run: mkdir -p ~/go/pkg/mod
 
+    - name: Setup
+      run: make setup
+
+    - name: Protoc
+      run: make protoc
+
     - name: Restore cache
       uses: actions/cache@v2
       with:
@@ -116,12 +122,6 @@ jobs:
         key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
         restore-keys: |
           ${{ runner.os }}-go-
-
-    - name: Setup
-      run: make setup
-
-    - name: Protoc
-      run: make protoc
 
     - name: Download modules
       if: steps.cache.outputs.cache-hit != 'true'
