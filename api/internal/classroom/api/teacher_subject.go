@@ -87,18 +87,17 @@ func (s *classroomService) UpsertTeacherSubject(
 	eg.Go(func() (err error) {
 		in := &user.GetTeacherRequest{Id: req.TeacherId}
 		_, err = s.user.GetTeacher(ectx, in)
-		return err
+		return
 	})
-	var subjects entity.Subjects
-	eg.Go(func() (err error) {
-		subjects, err = s.db.Subject.MultiGet(ectx, req.SubjectIds)
+	eg.Go(func() error {
+		subjects, err := s.db.Subject.MultiGet(ectx, req.SubjectIds)
 		if err != nil {
-			return
+			return err
 		}
 		if len(subjects) != len(req.SubjectIds) {
-			err = status.Error(codes.InvalidArgument, "api: subject ids length is unmatch")
+			return status.Error(codes.InvalidArgument, "api: subject ids length is unmatch")
 		}
-		return
+		return nil
 	})
 	if err := eg.Wait(); err != nil {
 		return nil, gRPCError(err)

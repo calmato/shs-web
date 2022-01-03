@@ -19,6 +19,7 @@ type Config struct {
 	DBPassword       string `envconfig:"DB_PASSWORD" default:""`
 	DBDatabase       string `envconfig:"DB_DATABASE" default:"classrooms"`
 	GRPCInsecure     bool   `envconfig:"GRPC_INSECURE" default:"true"`
+	UserServiceURL   string `envconfig:"USER_SERVICE_URL" default:""`
 }
 
 func NewConfig() (*Config, error) {
