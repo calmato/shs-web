@@ -3,7 +3,7 @@
     <v-main>
       <v-row column align-center>
         <v-col class="d-flex flex-column text-center px-8">
-          <v-img :src="getErrorImagePath()" />
+          <v-img :src="getErrorImagePath()" contain max-height="400" />
           <h2 class="my-4">{{ getErrorMessage() }}</h2>
           <v-btn @click="handleClick">ホームへ戻る</v-btn>
         </v-col>
