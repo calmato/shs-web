@@ -129,9 +129,29 @@ func TestUpdateSchedules(t *testing.T) {
 			},
 			req: &request.UpdateSchedulesRequest{
 				Schedules: []*entity.ScheduleToUpdate{
-					{Weekday: time.Sunday, IsClosed: false},
-					{Weekday: time.Monday, IsClosed: true},
-					{Weekday: time.Tuesday, IsClosed: false},
+					{
+						Weekday:  time.Sunday,
+						IsClosed: false,
+						Lessons: entity.ScheduleLessons{
+							{StartTime: "1530", EndTime: "1700"},
+							{StartTime: "1700", EndTime: "1830"},
+							{StartTime: "1830", EndTime: "2000"},
+							{StartTime: "2000", EndTime: "2130"},
+						},
+					},
+					{
+						Weekday:  time.Monday,
+						IsClosed: true,
+					},
+					{
+						Weekday:  time.Tuesday,
+						IsClosed: false,
+						Lessons: entity.ScheduleLessons{
+							{StartTime: "1700", EndTime: "1830"},
+							{StartTime: "1830", EndTime: "2000"},
+							{StartTime: "2000", EndTime: "2130"},
+						},
+					},
 				},
 			},
 			expect: &testResponse{
@@ -146,9 +166,29 @@ func TestUpdateSchedules(t *testing.T) {
 			},
 			req: &request.UpdateSchedulesRequest{
 				Schedules: []*entity.ScheduleToUpdate{
-					{Weekday: time.Sunday, IsClosed: false},
-					{Weekday: time.Monday, IsClosed: true},
-					{Weekday: time.Tuesday, IsClosed: false},
+					{
+						Weekday:  time.Sunday,
+						IsClosed: false,
+						Lessons: entity.ScheduleLessons{
+							{StartTime: "1530", EndTime: "1700"},
+							{StartTime: "1700", EndTime: "1830"},
+							{StartTime: "1830", EndTime: "2000"},
+							{StartTime: "2000", EndTime: "2130"},
+						},
+					},
+					{
+						Weekday:  time.Monday,
+						IsClosed: true,
+					},
+					{
+						Weekday:  time.Tuesday,
+						IsClosed: false,
+						Lessons: entity.ScheduleLessons{
+							{StartTime: "1700", EndTime: "1830"},
+							{StartTime: "1830", EndTime: "2000"},
+							{StartTime: "2000", EndTime: "2130"},
+						},
+					},
 				},
 			},
 			expect: &testResponse{

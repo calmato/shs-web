@@ -115,6 +115,11 @@ func TestScheduleToUpdate(t *testing.T) {
 			schedule: &ScheduleToUpdate{
 				Weekday:  time.Monday,
 				IsClosed: true,
+				Lessons: ScheduleLessons{
+					{StartTime: "1700", EndTime: "1830"},
+					{StartTime: "1830", EndTime: "2000"},
+					{StartTime: "2000", EndTime: "2130"},
+				},
 			},
 			expect: &classroom.ScheduleToUpdate{
 				Weekday:  int32(time.Monday),
@@ -126,6 +131,11 @@ func TestScheduleToUpdate(t *testing.T) {
 			schedule: &ScheduleToUpdate{
 				Weekday:  time.Monday,
 				IsClosed: false,
+				Lessons: ScheduleLessons{
+					{StartTime: "1700", EndTime: "1830"},
+					{StartTime: "1830", EndTime: "2000"},
+					{StartTime: "2000", EndTime: "2130"},
+				},
 			},
 			expect: &classroom.ScheduleToUpdate{
 				Weekday:  int32(time.Monday),
@@ -142,6 +152,12 @@ func TestScheduleToUpdate(t *testing.T) {
 			schedule: &ScheduleToUpdate{
 				Weekday:  time.Sunday,
 				IsClosed: false,
+				Lessons: ScheduleLessons{
+					{StartTime: "1530", EndTime: "1700"},
+					{StartTime: "1700", EndTime: "1830"},
+					{StartTime: "1830", EndTime: "2000"},
+					{StartTime: "2000", EndTime: "2130"},
+				},
 			},
 			expect: &classroom.ScheduleToUpdate{
 				Weekday:  int32(time.Sunday),
@@ -178,14 +194,30 @@ func TestSchedulesToUpdate(t *testing.T) {
 				{
 					Weekday:  time.Sunday,
 					IsClosed: false,
+					Lessons: ScheduleLessons{
+						{StartTime: "1530", EndTime: "1700"},
+						{StartTime: "1700", EndTime: "1830"},
+						{StartTime: "1830", EndTime: "2000"},
+						{StartTime: "2000", EndTime: "2130"},
+					},
 				},
 				{
 					Weekday:  time.Monday,
 					IsClosed: false,
+					Lessons: ScheduleLessons{
+						{StartTime: "1700", EndTime: "1830"},
+						{StartTime: "1830", EndTime: "2000"},
+						{StartTime: "2000", EndTime: "2130"},
+					},
 				},
 				{
 					Weekday:  time.Tuesday,
 					IsClosed: true,
+					Lessons: ScheduleLessons{
+						{StartTime: "1700", EndTime: "1830"},
+						{StartTime: "1830", EndTime: "2000"},
+						{StartTime: "2000", EndTime: "2130"},
+					},
 				},
 			},
 			expect: []*classroom.ScheduleToUpdate{
