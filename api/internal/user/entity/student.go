@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/calmato/shs-web/api/pkg/jst"
+	"github.com/calmato/shs-web/api/pkg/uuid"
 	"github.com/calmato/shs-web/api/proto/user"
 	"gorm.io/gorm"
 )
@@ -39,6 +40,7 @@ func NewStudent(
 	lastName, firstName, lastNameKana, firstNameKana, mail, password string,
 	schoolType SchoolType, grade int64, now time.Time,
 ) *Student {
+	uid := uuid.Base58Encode(uuid.New())
 	year := int64(jst.FiscalYear(now))
 	age := int64(0)
 	switch schoolType {
@@ -53,6 +55,7 @@ func NewStudent(
 	}
 	birthYear := year - age
 	return &Student{
+		ID:            uid,
 		LastName:      lastName,
 		FirstName:     firstName,
 		LastNameKana:  lastNameKana,

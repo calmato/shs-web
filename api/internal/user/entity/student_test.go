@@ -6,6 +6,7 @@ import (
 
 	"github.com/calmato/shs-web/api/pkg/jst"
 	"github.com/calmato/shs-web/api/proto/user"
+
 	"github.com/stretchr/testify/assert"
 )
 
@@ -37,6 +38,7 @@ func TestStudent(t *testing.T) {
 			schoolType:    SchoolTypeUnknown,
 			grade:         0,
 			expect: &Student{
+				ID:            "ThisIsTestIdForStudent",
 				LastName:      "浜田",
 				FirstName:     "直志",
 				LastNameKana:  "はまだ",
@@ -60,6 +62,7 @@ func TestStudent(t *testing.T) {
 			schoolType:    SchoolTypeElementarySchool,
 			grade:         1,
 			expect: &Student{
+				ID:            "ThisIsTestIdForStudent",
 				LastName:      "浜田",
 				FirstName:     "直志",
 				LastNameKana:  "はまだ",
@@ -83,6 +86,7 @@ func TestStudent(t *testing.T) {
 			schoolType:    SchoolTypeJuniorHighSchool,
 			grade:         1,
 			expect: &Student{
+				ID:            "ThisIsTestIdForStudent",
 				LastName:      "浜田",
 				FirstName:     "直志",
 				LastNameKana:  "はまだ",
@@ -106,6 +110,7 @@ func TestStudent(t *testing.T) {
 			schoolType:    SchoolTypeHighSchool,
 			grade:         1,
 			expect: &Student{
+				ID:            "ThisIsTestIdForStudent",
 				LastName:      "浜田",
 				FirstName:     "直志",
 				LastNameKana:  "はまだ",
@@ -126,6 +131,7 @@ func TestStudent(t *testing.T) {
 			actual := NewStudent(
 				tt.lastName, tt.firstName, tt.lastNameKana, tt.firstNameKana,
 				tt.mail, tt.password, tt.schoolType, tt.grade, tt.now)
+			actual.ID = "ThisIsTestIdForStudent"
 			assert.Equal(t, tt.expect, actual)
 		})
 	}
