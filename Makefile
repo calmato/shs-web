@@ -42,10 +42,10 @@ start-web:
 	docker-compose up teacher_web
 
 start-api: proto
-	docker-compose up teacher_gateway user_api classroom_api lesson_api mysql
+	docker-compose up teacher_gateway student_gateway user_api classroom_api lesson_api mysql
 
 start-swagger:
-	docker-compose up swagger_generator swagger_teacher
+	docker-compose up swagger_generator swagger_teacher swagger_student
 
 start-test:
 	docker-compose up mysql_test firebase_test
