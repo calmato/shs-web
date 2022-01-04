@@ -46,7 +46,7 @@ func TestStudent(t *testing.T) {
 				Mail:          "student-test002@calmato.jp",
 				BirthYear:     2021,
 				Password:      "12345678",
-				Schooltype:    SchoolTypeUnknown,
+				SchoolType:    SchoolTypeUnknown,
 				Grade:         0,
 			},
 		},
@@ -70,7 +70,7 @@ func TestStudent(t *testing.T) {
 				Mail:          "student-test002@calmato.jp",
 				BirthYear:     2014,
 				Password:      "12345678",
-				Schooltype:    SchoolTypeElementarySchool,
+				SchoolType:    SchoolTypeElementarySchool,
 				Grade:         1,
 			},
 		},
@@ -94,7 +94,7 @@ func TestStudent(t *testing.T) {
 				Mail:          "student-test002@calmato.jp",
 				BirthYear:     2008,
 				Password:      "12345678",
-				Schooltype:    SchoolTypeJuniorHighSchool,
+				SchoolType:    SchoolTypeJuniorHighSchool,
 				Grade:         1,
 			},
 		},
@@ -118,7 +118,7 @@ func TestStudent(t *testing.T) {
 				Mail:          "student-test002@calmato.jp",
 				BirthYear:     2005,
 				Password:      "12345678",
-				Schooltype:    SchoolTypeHighSchool,
+				SchoolType:    SchoolTypeHighSchool,
 				Grade:         1,
 			},
 		},
@@ -222,7 +222,7 @@ func TestStudent_Fill(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 			tt.student.Fill(tt.now)
-			assert.Equal(t, tt.expectSchool, tt.student.Schooltype)
+			assert.Equal(t, tt.expectSchool, tt.student.SchoolType)
 			assert.Equal(t, tt.expectGrade, tt.student.Grade)
 		})
 	}
@@ -248,7 +248,7 @@ func TestStudent_Proto(t *testing.T) {
 				FirstNameKana: "ただし",
 				Mail:          "student-test001@calmato.jp",
 				BirthYear:     2005,
-				Schooltype:    SchoolTypeHighSchool,
+				SchoolType:    SchoolTypeHighSchool,
 				Grade:         1,
 				CreatedAt:     now,
 				UpdatedAt:     now,
@@ -299,7 +299,7 @@ func TestStudents_Fill(t *testing.T) {
 					FirstNameKana: "ただし",
 					Mail:          "student-test001@calmato.jp",
 					BirthYear:     2005,
-					Schooltype:    SchoolTypeJuniorHighSchool,
+					SchoolType:    SchoolTypeJuniorHighSchool,
 					Grade:         2,
 					CreatedAt:     now,
 					UpdatedAt:     now,
@@ -314,7 +314,7 @@ func TestStudents_Fill(t *testing.T) {
 					FirstNameKana: "ただし",
 					Mail:          "student-test001@calmato.jp",
 					BirthYear:     2005,
-					Schooltype:    SchoolTypeHighSchool,
+					SchoolType:    SchoolTypeHighSchool,
 					Grade:         1,
 					CreatedAt:     now,
 					UpdatedAt:     now,
@@ -352,7 +352,7 @@ func TestStudents_Proto(t *testing.T) {
 					FirstNameKana: "ただし",
 					Mail:          "student-test001@calmato.jp",
 					BirthYear:     2005,
-					Schooltype:    SchoolTypeHighSchool,
+					SchoolType:    SchoolTypeHighSchool,
 					Grade:         1,
 					CreatedAt:     now,
 					UpdatedAt:     now,

@@ -26,7 +26,7 @@ type Student struct {
 	FirstNameKana string         `gorm:""`
 	Mail          string         `gorm:""`
 	BirthYear     int64          `gorm:""`
-	Schooltype    SchoolType     `gorm:"-"`
+	SchoolType    SchoolType     `gorm:"-"`
 	Grade         int64          `gorm:"-"`
 	Password      string         `gorm:"-"`
 	CreatedAt     time.Time      `gorm:"<-:create"`
@@ -62,7 +62,7 @@ func NewStudent(
 		FirstNameKana: firstNameKana,
 		Mail:          mail,
 		BirthYear:     birthYear,
-		Schooltype:    schoolType,
+		SchoolType:    schoolType,
 		Grade:         grade,
 		Password:      password,
 	}
@@ -73,16 +73,16 @@ func (s *Student) Fill(now time.Time) {
 	age := year - s.BirthYear
 	switch {
 	case age >= 7 && age <= 12:
-		s.Schooltype = SchoolTypeElementarySchool
+		s.SchoolType = SchoolTypeElementarySchool
 		s.Grade = age - 6
 	case age >= 13 && age <= 15:
-		s.Schooltype = SchoolTypeJuniorHighSchool
+		s.SchoolType = SchoolTypeJuniorHighSchool
 		s.Grade = age - 12
 	case age >= 16 && age <= 18:
-		s.Schooltype = SchoolTypeHighSchool
+		s.SchoolType = SchoolTypeHighSchool
 		s.Grade = age - 15
 	default:
-		s.Schooltype = SchoolTypeUnknown
+		s.SchoolType = SchoolTypeUnknown
 		s.Grade = 0
 	}
 }
@@ -96,7 +96,7 @@ func (s *Student) Proto() *user.Student {
 		FirstNameKana: s.FirstNameKana,
 		Mail:          s.Mail,
 		BirthYear:     s.BirthYear,
-		SchoolType:    user.SchoolType(s.Schooltype),
+		SchoolType:    user.SchoolType(s.SchoolType),
 		Grade:         s.Grade,
 		CreatedAt:     s.CreatedAt.Unix(),
 		UpdatedAt:     s.CreatedAt.Unix(),
