@@ -2,6 +2,7 @@
   <v-app class="root" :style="{ background }">
     <the-snackbar :snackbar.sync="snackbar" :color="snackbarColor" :message="snackbarMessage" />
     <the-header :overlay="overlay" @click="handleClickMenu" />
+    <the-sidebar :items="items" :current="current" @click="handleClickMenuItem" />
     <v-main>
       <nuxt />
       <the-menu
@@ -20,6 +21,7 @@ import { computed, defineComponent, ref, SetupContext, watch } from '@nuxtjs/com
 import { VuetifyThemeItem } from 'vuetify/types/services/theme'
 import TheHeader from '~/components/organisms/TheHeader.vue'
 import TheMenu from '~/components/organisms/TheMenu.vue'
+import TheSidebar from '~/components/organisms/TheSidebar.vue'
 import TheSnackbar from '~/components/organisms/TheSnackbar.vue'
 import { CommonStore } from '~/store'
 import { Menu } from '~/types/props/menu'
@@ -29,9 +31,11 @@ export default defineComponent({
     TheHeader,
     TheMenu,
     TheSnackbar,
+    TheSidebar,
   },
 
   setup(_, { root }: SetupContext) {
+    const route = root.$route
     const router = root.$router
     const store = root.$store
     const vuetify = root.$vuetify
@@ -76,6 +80,7 @@ export default defineComponent({
       return color
     }
 
+    const current = ref<string>(route.path)
     const snackbar = ref<Boolean>(false)
     const overlay = ref<boolean>(false)
     const background = ref<VuetifyThemeItem>(getBackgroundColor(root.$route.path))
@@ -86,6 +91,7 @@ export default defineComponent({
     watch(
       () => root.$route,
       (): void => {
+        current.value = root.$route.path
         background.value = getBackgroundColor(root.$route.path)
       }
     )
@@ -106,12 +112,13 @@ export default defineComponent({
 
     const handleClickMenuItem = (item: Menu): void => {
       router.push(item.path)
-      handleClickMenu()
+      overlay.value = false
     }
 
     return {
       items,
       overlay,
+      current,
       background,
       snackbar,
       snackbarColor,

@@ -1,8 +1,8 @@
 <template>
-  <v-app-bar app dark color="primary" class="px-2">
+  <v-app-bar app dark clipped-left color="primary" class="px-2">
     <v-toolbar-title>SHS Web</v-toolbar-title>
     <v-spacer />
-    <v-btn icon @click="onClick">
+    <v-btn class="hidden-md-and-up" icon @click="onClick">
       <v-icon v-if="overlay">mdi-close</v-icon>
       <v-icon v-else>mdi-menu</v-icon>
     </v-btn>
@@ -17,6 +17,10 @@ export default defineComponent({
     overlay: {
       type: Boolean,
       default: false,
+    },
+    showMenu: {
+      type: Boolean,
+      default: true,
     },
   },
 
