@@ -81,17 +81,17 @@ func httpError(ctx *gin.Context, err error) {
 	ctx.Abort()
 }
 
-func badRequest(ctx *gin.Context, err error) {
-	httpError(ctx, status.Error(codes.InvalidArgument, err.Error()))
-}
+// func badRequest(ctx *gin.Context, err error) {
+// 	httpError(ctx, status.Error(codes.InvalidArgument, err.Error()))
+// }
 
 func unauthorized(ctx *gin.Context, err error) {
 	httpError(ctx, status.Error(codes.Unauthenticated, err.Error()))
 }
 
-func forbidden(ctx *gin.Context, err error) {
-	httpError(ctx, status.Error(codes.PermissionDenied, err.Error()))
-}
+// func forbidden(ctx *gin.Context, err error) {
+// 	httpError(ctx, status.Error(codes.PermissionDenied, err.Error()))
+// }
 
 /**
  * ###############################################
@@ -124,6 +124,6 @@ func setAuth(ctx *gin.Context, userID string) {
 	}
 }
 
-func getStudentID(ctx *gin.Context) string {
-	return ctx.GetHeader("userId")
-}
+// func getStudentID(ctx *gin.Context) string {
+// 	return ctx.GetHeader("userId")
+// }
