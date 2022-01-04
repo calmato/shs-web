@@ -43,6 +43,31 @@ services:
       - 18001:9090
     command: make dev SERVICE=gateway/teacher
 
+  student_gateway:
+    container_name: student_gateway
+    build:
+      context: .
+      dockerfile: ./infra/docker/api/gateway/student/Dockerfile.development
+    working_dir: /go/src/github.com/calmato/shs-web/api
+    volumes:
+      - ./api:/go/src/github.com/calmato/shs-web/api:cached
+      - ./tmp/data/go/pkg/mod:/go/pkg/mod:delegated
+      - ./tmp/logs/gateway/student:/var/log/api:delegated
+    environment:
+      - PORT=8080
+      - METRICS_PORT=9090
+      - SHUTDOWN_DELAY_SEC=0
+      - LOG_PATH=/var/log/api
+      - GCP_SERVICE_KEY_JSON=${GCP_SERVICE_KEY_JSON}
+      - GCP_STORAGE_BUCKET_NAME=${GCP_STORAGE_BUCKET_NAME}
+      - CLASSROOM_SERVICE_URL=classroom_api:8080
+      - LESSON_SERVICE_URL=lesson_api:8080
+      - USER_SERVICE_URL=user_api:8080
+    ports:
+      - 18010:8080
+      - 18011:9090
+    command: make dev SERVICE=gateway/student
+
   user_api:
     container_name: user_api
     build:
@@ -210,6 +235,20 @@ services:
       - ./tmp/data/swagger/teacher/openapi:/var/swagger:cached
     ports:
       - 9000:8080
+    environment:
+      SWAGGER_JSON: /var/swagger/openapi.yaml
+    depends_on:
+      - swagger_generator
+
+  swagger_student:
+    container_name: swagger_ui_student
+    build:
+      context: ./infra/docker/infra/swagger/student
+      dockerfile: Dockerfile
+    volumes:
+      - ./tmp/data/swagger/student/openapi:/var/swagger:cached
+    ports:
+      - 9010:8080
     environment:
       SWAGGER_JSON: /var/swagger/openapi.yaml
     depends_on:

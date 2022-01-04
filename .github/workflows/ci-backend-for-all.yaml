@@ -148,6 +148,9 @@ jobs:
     - name: Build teacher gateway
       run: make build SERVICE=gateway/teacher
 
+    - name: Build student gateway
+      run: make build SERVICE=gateway/student
+
     - name: Build user server
       run: make build SERVICE=user/server
 
