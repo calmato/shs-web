@@ -9,6 +9,59 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestStudent(t *testing.T) {
+	t.Parallel()
+	now := jst.Date(2021, 04, 01, 12, 0, 0, 0)
+	tests := []struct {
+		name          string
+		now           time.Time
+		lastName      string
+		firstName     string
+		lastNameKana  string
+		firstNameKana string
+		mail          string
+		password      string
+		schoolType    SchoolType
+		grade         int64
+		expect        *Student
+	}{
+		{
+			name:          "success",
+			now:           now,
+			lastName:      "浜田",
+			firstName:     "直志",
+			lastNameKana:  "はまだ",
+			firstNameKana: "ただし",
+			mail:          "student-test002@calmato.jp",
+			password:      "12345678",
+			schoolType:    SchoolTypeHighSchool,
+			grade:         1,
+			expect: &Student{
+				LastName:      "浜田",
+				FirstName:     "直志",
+				LastNameKana:  "はまだ",
+				FirstNameKana: "ただし",
+				Mail:          "student-test002@calmato.jp",
+				BirthYear:     2005,
+				Password:      "12345678",
+				Schooltype:    SchoolTypeHighSchool,
+				Grade:         1,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			actual := NewStudent(
+				tt.lastName, tt.firstName, tt.lastNameKana, tt.firstNameKana,
+				tt.mail, tt.password, tt.schoolType, tt.grade, tt.now)
+			assert.Equal(t, tt.expect, actual)
+		})
+	}
+}
+
 func TestStudent_Fill(t *testing.T) {
 	t.Parallel()
 	now := jst.Date(2021, 04, 01, 12, 0, 0, 0)
