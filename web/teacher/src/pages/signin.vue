@@ -14,6 +14,8 @@ export default defineComponent({
     TheSignIn,
   },
 
+  layout: 'auth',
+
   setup(_, { root }: SetupContext) {
     const store = root.$store
     const router = root.$router

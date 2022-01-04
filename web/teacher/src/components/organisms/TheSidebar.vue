@@ -23,7 +23,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType, SetupContext } from '@nuxtjs/composition-api'
-import { Menu } from '~/types/props/setting'
+import { Menu } from '~/types/props/menu'
 
 export default defineComponent({
   props: {
