@@ -116,6 +116,26 @@ func (mr *MockClassroomServiceClientMockRecorder) GetSchedule(ctx, in interface{
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetSchedule", reflect.TypeOf((*MockClassroomServiceClient)(nil).GetSchedule), varargs...)
 }
 
+// GetStudentSubject mocks base method.
+func (m *MockClassroomServiceClient) GetStudentSubject(ctx context.Context, in *classroom.GetStudentSubjectRequest, opts ...grpc.CallOption) (*classroom.GetStudentSubjectResponse, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "GetStudentSubject", varargs...)
+	ret0, _ := ret[0].(*classroom.GetStudentSubjectResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetStudentSubject indicates an expected call of GetStudentSubject.
+func (mr *MockClassroomServiceClientMockRecorder) GetStudentSubject(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetStudentSubject", reflect.TypeOf((*MockClassroomServiceClient)(nil).GetStudentSubject), varargs...)
+}
+
 // GetSubject mocks base method.
 func (m *MockClassroomServiceClient) GetSubject(ctx context.Context, in *classroom.GetSubjectRequest, opts ...grpc.CallOption) (*classroom.GetSubjectResponse, error) {
 	m.ctrl.T.Helper()
@@ -194,6 +214,26 @@ func (mr *MockClassroomServiceClientMockRecorder) ListSubjects(ctx, in interface
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{ctx, in}, opts...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListSubjects", reflect.TypeOf((*MockClassroomServiceClient)(nil).ListSubjects), varargs...)
+}
+
+// MultiGetStudentSubjects mocks base method.
+func (m *MockClassroomServiceClient) MultiGetStudentSubjects(ctx context.Context, in *classroom.MultiGetStudentSubjectsRequest, opts ...grpc.CallOption) (*classroom.MultiGetStudentSubjectsResponse, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "MultiGetStudentSubjects", varargs...)
+	ret0, _ := ret[0].(*classroom.MultiGetStudentSubjectsResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// MultiGetStudentSubjects indicates an expected call of MultiGetStudentSubjects.
+func (mr *MockClassroomServiceClientMockRecorder) MultiGetStudentSubjects(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MultiGetStudentSubjects", reflect.TypeOf((*MockClassroomServiceClient)(nil).MultiGetStudentSubjects), varargs...)
 }
 
 // MultiGetSubjects mocks base method.
@@ -294,6 +334,26 @@ func (mr *MockClassroomServiceClientMockRecorder) UpdateSubject(ctx, in interfac
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{ctx, in}, opts...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateSubject", reflect.TypeOf((*MockClassroomServiceClient)(nil).UpdateSubject), varargs...)
+}
+
+// UpsertStudentSubject mocks base method.
+func (m *MockClassroomServiceClient) UpsertStudentSubject(ctx context.Context, in *classroom.UpsertStudentSubjectRequest, opts ...grpc.CallOption) (*classroom.UpsertStudentSubjectResponse, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "UpsertStudentSubject", varargs...)
+	ret0, _ := ret[0].(*classroom.UpsertStudentSubjectResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UpsertStudentSubject indicates an expected call of UpsertStudentSubject.
+func (mr *MockClassroomServiceClientMockRecorder) UpsertStudentSubject(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpsertStudentSubject", reflect.TypeOf((*MockClassroomServiceClient)(nil).UpsertStudentSubject), varargs...)
 }
 
 // UpsertTeacherSubject mocks base method.
@@ -399,6 +459,21 @@ func (mr *MockClassroomServiceServerMockRecorder) GetSchedule(arg0, arg1 interfa
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetSchedule", reflect.TypeOf((*MockClassroomServiceServer)(nil).GetSchedule), arg0, arg1)
 }
 
+// GetStudentSubject mocks base method.
+func (m *MockClassroomServiceServer) GetStudentSubject(arg0 context.Context, arg1 *classroom.GetStudentSubjectRequest) (*classroom.GetStudentSubjectResponse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetStudentSubject", arg0, arg1)
+	ret0, _ := ret[0].(*classroom.GetStudentSubjectResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetStudentSubject indicates an expected call of GetStudentSubject.
+func (mr *MockClassroomServiceServerMockRecorder) GetStudentSubject(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetStudentSubject", reflect.TypeOf((*MockClassroomServiceServer)(nil).GetStudentSubject), arg0, arg1)
+}
+
 // GetSubject mocks base method.
 func (m *MockClassroomServiceServer) GetSubject(arg0 context.Context, arg1 *classroom.GetSubjectRequest) (*classroom.GetSubjectResponse, error) {
 	m.ctrl.T.Helper()
@@ -457,6 +532,21 @@ func (m *MockClassroomServiceServer) ListSubjects(arg0 context.Context, arg1 *cl
 func (mr *MockClassroomServiceServerMockRecorder) ListSubjects(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListSubjects", reflect.TypeOf((*MockClassroomServiceServer)(nil).ListSubjects), arg0, arg1)
+}
+
+// MultiGetStudentSubjects mocks base method.
+func (m *MockClassroomServiceServer) MultiGetStudentSubjects(arg0 context.Context, arg1 *classroom.MultiGetStudentSubjectsRequest) (*classroom.MultiGetStudentSubjectsResponse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "MultiGetStudentSubjects", arg0, arg1)
+	ret0, _ := ret[0].(*classroom.MultiGetStudentSubjectsResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// MultiGetStudentSubjects indicates an expected call of MultiGetStudentSubjects.
+func (mr *MockClassroomServiceServerMockRecorder) MultiGetStudentSubjects(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MultiGetStudentSubjects", reflect.TypeOf((*MockClassroomServiceServer)(nil).MultiGetStudentSubjects), arg0, arg1)
 }
 
 // MultiGetSubjects mocks base method.
@@ -532,6 +622,21 @@ func (m *MockClassroomServiceServer) UpdateSubject(arg0 context.Context, arg1 *c
 func (mr *MockClassroomServiceServerMockRecorder) UpdateSubject(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateSubject", reflect.TypeOf((*MockClassroomServiceServer)(nil).UpdateSubject), arg0, arg1)
+}
+
+// UpsertStudentSubject mocks base method.
+func (m *MockClassroomServiceServer) UpsertStudentSubject(arg0 context.Context, arg1 *classroom.UpsertStudentSubjectRequest) (*classroom.UpsertStudentSubjectResponse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpsertStudentSubject", arg0, arg1)
+	ret0, _ := ret[0].(*classroom.UpsertStudentSubjectResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UpsertStudentSubject indicates an expected call of UpsertStudentSubject.
+func (mr *MockClassroomServiceServerMockRecorder) UpsertStudentSubject(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpsertStudentSubject", reflect.TypeOf((*MockClassroomServiceServer)(nil).UpsertStudentSubject), arg0, arg1)
 }
 
 // UpsertTeacherSubject mocks base method.
