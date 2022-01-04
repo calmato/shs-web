@@ -211,6 +211,63 @@ func (mr *MockTeacherSubjectMockRecorder) Replace(ctx, schoolType, subjects inte
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Replace", reflect.TypeOf((*MockTeacherSubject)(nil).Replace), ctx, schoolType, subjects)
 }
 
+// MockStudentSubject is a mock of StudentSubject interface.
+type MockStudentSubject struct {
+	ctrl     *gomock.Controller
+	recorder *MockStudentSubjectMockRecorder
+}
+
+// MockStudentSubjectMockRecorder is the mock recorder for MockStudentSubject.
+type MockStudentSubjectMockRecorder struct {
+	mock *MockStudentSubject
+}
+
+// NewMockStudentSubject creates a new mock instance.
+func NewMockStudentSubject(ctrl *gomock.Controller) *MockStudentSubject {
+	mock := &MockStudentSubject{ctrl: ctrl}
+	mock.recorder = &MockStudentSubjectMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockStudentSubject) EXPECT() *MockStudentSubjectMockRecorder {
+	return m.recorder
+}
+
+// ListByStudentIDs mocks base method.
+func (m *MockStudentSubject) ListByStudentIDs(ctx context.Context, studentIDs []string, fields ...string) (entity.StudentSubjects, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, studentIDs}
+	for _, a := range fields {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "ListByStudentIDs", varargs...)
+	ret0, _ := ret[0].(entity.StudentSubjects)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListByStudentIDs indicates an expected call of ListByStudentIDs.
+func (mr *MockStudentSubjectMockRecorder) ListByStudentIDs(ctx, studentIDs interface{}, fields ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, studentIDs}, fields...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListByStudentIDs", reflect.TypeOf((*MockStudentSubject)(nil).ListByStudentIDs), varargs...)
+}
+
+// Replace mocks base method.
+func (m *MockStudentSubject) Replace(ctx context.Context, schoolType entity.SchoolType, subjects entity.StudentSubjects) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Replace", ctx, schoolType, subjects)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Replace indicates an expected call of Replace.
+func (mr *MockStudentSubjectMockRecorder) Replace(ctx, schoolType, subjects interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Replace", reflect.TypeOf((*MockStudentSubject)(nil).Replace), ctx, schoolType, subjects)
+}
+
 // MockSchedule is a mock of Schedule interface.
 type MockSchedule struct {
 	ctrl     *gomock.Controller

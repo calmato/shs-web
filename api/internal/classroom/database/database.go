@@ -31,6 +31,7 @@ type Params struct {
 type Database struct {
 	Subject        Subject
 	TeacherSubject TeacherSubject
+	StudentSubject StudentSubject
 	Schedule       Schedule
 	Room           Room
 }
@@ -39,6 +40,7 @@ func NewDatabase(params *Params) *Database {
 	return &Database{
 		Subject:        NewSubject(params.Database),
 		TeacherSubject: NewTeacherSubject(params.Database),
+		StudentSubject: NewStudentSubject(params.Database),
 		Schedule:       NewSchedule(params.Database),
 		Room:           NewRoom(params.Database),
 	}
@@ -60,6 +62,11 @@ type Subject interface {
 type TeacherSubject interface {
 	ListByTeacherIDs(ctx context.Context, teacherIDs []string, fields ...string) (entity.TeacherSubjects, error)
 	Replace(ctx context.Context, schoolType entity.SchoolType, subjects entity.TeacherSubjects) error
+}
+
+type StudentSubject interface {
+	ListByStudentIDs(ctx context.Context, studentIDs []string, fields ...string) (entity.StudentSubjects, error)
+	Replace(ctx context.Context, schoolType entity.SchoolType, subjects entity.StudentSubjects) error
 }
 
 type Schedule interface {
