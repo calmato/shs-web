@@ -23,7 +23,7 @@
 
     <v-row v-else>
       <v-col class="d-flex flex-column text-center px-8">
-        <v-img src="/submission.png" />
+        <v-img src="/submission.png" contain max-height="400" />
         <h2 class="my-4">現在募集中のシフトは<br />ありません</h2>
         <v-btn @click="onClickTop">トップへ戻る</v-btn>
       </v-col>
