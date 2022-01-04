@@ -13,6 +13,7 @@ build:
 
 install:
 	docker-compose run --rm teacher_web yarn
+	docker-compose run --rm student_web yarn
 	docker-compose run --rm swagger_generator yarn
 
 start:
@@ -39,7 +40,7 @@ ps:
 .PHONY: start-api start-swagger start-test
 
 start-web:
-	docker-compose up teacher_web
+	docker-compose up teacher_web student_web
 
 start-api: proto
 	docker-compose up teacher_gateway student_gateway user_api classroom_api lesson_api mysql

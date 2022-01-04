@@ -18,6 +18,23 @@ services:
       - FIREBASE_MESSAGING_SENDER_ID=${FIREBASE_MESSAGING_SENDER_ID}
     command: yarn dev -H 0.0.0.0 -p 3000
 
+  student_web:
+    container_name: student_web
+    build:
+      context: ./infra/docker/web/student
+      dockerfile: Dockerfile.development
+    working_dir: /var/web
+    volumes:
+      - ./web/student:/var/web:cached
+    ports:
+      - 3010:3000
+    environment:
+      - API_URL=${STUDENT_API_URL}
+      - FIREBASE_API_KEY=${FIREBASE_API_KEY}
+      - FIREBASE_PROJECT_ID=${FIREBASE_PROJECT_ID}
+      - FIREBASE_MESSAGING_SENDER_ID=${FIREBASE_MESSAGING_SENDER_ID}
+    command: yarn dev -H 0.0.0.0 -p 3000
+
   teacher_gateway:
     container_name: teacher_gateway
     build:
