@@ -162,6 +162,13 @@ func run() error {
 			return err
 		}
 
+		// 開発用生徒の登録
+		err = app.upsertDeveloper(tx, adminID)
+		if err != nil {
+			tx.Rollback()
+			return err
+		}
+
 		// 講師の登録
 		err = app.upsertTeachers(tx, teacherSize)
 		if err != nil {
@@ -271,6 +278,22 @@ func (a *app) upsertAdmin(tx *gorm.DB, uid string) error {
 		UpdatedAt:     now,
 	}
 	return tx.Clauses(clause.OnConflict{UpdateAll: true}).Create(&teacher).Error
+}
+
+func (a *app) upsertDeveloper(tx *gorm.DB, uid string) error {
+	now := jst.Now()
+	student := &uentity.Student{
+		ID:            uid,
+		LastName:      "開発用",
+		FirstName:     "生徒",
+		LastNameKana:  "かいはつよう",
+		FirstNameKana: "せいと",
+		Mail:          "admin@calmato.jp",
+		BirthYear:     1996,
+		CreatedAt:     now,
+		UpdatedAt:     now,
+	}
+	return tx.Clauses(clause.OnConflict{UpdateAll: true}).Create(&student).Error
 }
 
 func (a *app) upsertTeachers(tx *gorm.DB, size int) error {

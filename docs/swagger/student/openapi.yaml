@@ -1,4 +1,4 @@
-Aopenapi: 3.0.3
+openapi: 3.0.3
 info:
   title: SHS Web
   description: 生徒・保護者用API
@@ -6,8 +6,23 @@ info:
 servers:
 - url: http://localhost:18010
   description: 開発環境
+tags:
+- name: Auth
+  description: 認証関連
+paths:
+  # Auth
+  /v1/me:
+    $ref: './paths/v1/me/index.yaml'
 components:
   securitySchemes:
     BearerAuth:
       type: http
       scheme: bearer
+  schemas:
+    # Common
+    errorResponse:
+      $ref: './components/schemas/common.yaml#/errorResponse'
+    # Request
+    # Response
+    v1AuthResponse:
+      $ref: './components/schemas/v1/auth.response.yaml#/authResponse'

@@ -2,8 +2,8 @@
 
 TEACHER_INPUT_DIR := 'teacher'
 TEACHER_OUTPUT_DIR := '../../tmp/data/swagger/teacher'
-STUDENT_INPUT_DIR := 'teacher'
-TEACHER_OUTPUT_DIR := '../../tmp/data/swagger/student'
+STUDENT_INPUT_DIR := 'student'
+STUDENT_OUTPUT_DIR := '../../tmp/data/swagger/student'
 
 build: build-teacher build-student
 

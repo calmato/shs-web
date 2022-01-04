@@ -66,7 +66,9 @@ func NewAPIV1Handler(params *Params) APIV1Handler {
  * routes
  * ###############################################
  */
-func (h *apiV1Handler) AuthRoutes(rg *gin.RouterGroup) {}
+func (h *apiV1Handler) AuthRoutes(rg *gin.RouterGroup) {
+	rg.GET("/v1/me", h.GetAuth)
+}
 
 func (h *apiV1Handler) NoAuthRoutes(rg *gin.RouterGroup) {}
 
@@ -124,6 +126,6 @@ func setAuth(ctx *gin.Context, userID string) {
 	}
 }
 
-// func getStudentID(ctx *gin.Context) string {
-// 	return ctx.GetHeader("userId")
-// }
+func getStudentID(ctx *gin.Context) string {
+	return ctx.GetHeader("userId")
+}
