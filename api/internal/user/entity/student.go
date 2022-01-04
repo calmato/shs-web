@@ -36,7 +36,8 @@ type Student struct {
 type Students []*Student
 
 func NewStudent(
-	lastName, firstName, lastNameKana, firstNameKana, mail, password string, schoolType SchoolType, grade int64, now time.Time,
+	lastName, firstName, lastNameKana, firstNameKana, mail, password string,
+	schoolType SchoolType, grade int64, now time.Time,
 ) *Student {
 	year := int64(jst.FiscalYear(now))
 	age := int64(0)
