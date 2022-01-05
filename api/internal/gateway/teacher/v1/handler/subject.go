@@ -127,15 +127,14 @@ func (h *apiV1Handler) DeleteSubject(ctx *gin.Context) {
 
 func (h *apiV1Handler) getTeacherSubject(
 	ctx context.Context, teacherID string,
-) (*gentity.TeacherSubject, gentity.Subjects, error) {
+) (gentity.Subjects, error) {
 	in := &classroom.GetTeacherSubjectRequest{
 		TeacherId: teacherID,
 	}
 	out, err := h.classroom.GetTeacherSubject(ctx, in)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
-	teacherSubject := gentity.NewTeacherSubject(out.TeacherSubject)
 	subjects := gentity.NewSubjects(out.Subjects)
-	return teacherSubject, subjects, nil
+	return subjects, nil
 }

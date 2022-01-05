@@ -27,7 +27,7 @@ func (h *apiV1Handler) GetAuth(ctx *gin.Context) {
 	})
 	var subjects gentity.Subjects
 	eg.Go(func() (err error) {
-		_, subjects, err = h.getTeacherSubject(ectx, teacherID)
+		subjects, err = h.getTeacherSubject(ectx, teacherID)
 		return
 	})
 	if err := eg.Wait(); err != nil {
