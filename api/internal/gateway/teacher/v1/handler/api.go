@@ -87,8 +87,10 @@ func (h *apiV1Handler) AuthRoutes(rg *gin.RouterGroup) {
 
 func (h *apiV1Handler) AdminRoutes(rg *gin.RouterGroup) {
 	rg.POST("/v1/teachers", h.CreateTeacher)
+	rg.DELETE("/v1/teachers/:teacherId", h.DeleteTeacher)
 	rg.PATCH("/v1/teachers/:teacherId/mail", h.UpdateTeacherMail)
 	rg.PATCH("/v1/teachers/:teacherId/password", h.UpdateTeacherPassword)
+	rg.PATCH("/v1/teachers/:teacherId/role", h.UpdateTeacherRole)
 	rg.POST("/v1/subjects", h.CreateSubject)
 	rg.PATCH("/v1/subjects/:subjectId", h.UpdateSubject)
 	rg.DELETE("/v1/subjects/:subjectId", h.DeleteSubject)

@@ -74,7 +74,7 @@ func (h *apiV1Handler) CreateTeacher(ctx *gin.Context) {
 		badRequest(ctx, err)
 		return
 	}
-	role, err := entity.Role(req.Role).UserRole()
+	role, err := req.Role.UserRole()
 	if err != nil {
 		badRequest(ctx, err)
 		return
@@ -142,6 +142,50 @@ func (h *apiV1Handler) UpdateTeacherPassword(ctx *gin.Context) {
 		PasswordConfirmation: req.PasswordConfirmation,
 	}
 	_, err := h.user.UpdateTeacherPassword(c, in)
+	if err != nil {
+		httpError(ctx, err)
+		return
+	}
+
+	ctx.JSON(http.StatusNoContent, gin.H{})
+}
+
+func (h *apiV1Handler) UpdateTeacherRole(ctx *gin.Context) {
+	c := util.SetMetadata(ctx)
+
+	teacherID := ctx.Param("teacherId")
+	req := &request.UpdateTeacherRoleRequest{}
+	if err := ctx.BindJSON(req); err != nil {
+		badRequest(ctx, err)
+		return
+	}
+	role, err := req.Role.UserRole()
+	if err != nil {
+		badRequest(ctx, err)
+		return
+	}
+
+	in := &user.UpdateTeacherRoleRequest{
+		Id:   teacherID,
+		Role: role,
+	}
+	_, err = h.user.UpdateTeacherRole(c, in)
+	if err != nil {
+		httpError(ctx, err)
+		return
+	}
+
+	ctx.JSON(http.StatusNoContent, gin.H{})
+}
+
+func (h *apiV1Handler) DeleteTeacher(ctx *gin.Context) {
+	c := util.SetMetadata(ctx)
+
+	teacherID := ctx.Param("teacherId")
+	in := &user.DeleteTeacherRequest{
+		Id: teacherID,
+	}
+	_, err := h.user.DeleteTeacher(c, in)
 	if err != nil {
 		httpError(ctx, err)
 		return

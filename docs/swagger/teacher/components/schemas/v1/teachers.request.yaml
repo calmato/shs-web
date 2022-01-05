@@ -19,7 +19,7 @@ createTeacherRequest:
     role:
       type: integer
       format: int32
-      description: 権限 (0:不明, 1:講師, 2:管理者)
+      description: 権限 (1:講師, 2:管理者)
     password:
       type: string
       description: パスワード
@@ -55,3 +55,12 @@ updateTeacherPasswordRequest:
   example:
     password: '12345678'
     passwordConfirmation: '12345678'
+updateTeacherRoleRequest:
+  type: object
+  properties:
+    role:
+      type: integer
+      format: int32
+      description: 権限 (1:講師, 2:管理者)
+  example:
+    role: 2
