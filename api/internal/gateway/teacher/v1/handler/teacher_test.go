@@ -10,6 +10,7 @@ import (
 	"github.com/calmato/shs-web/api/internal/gateway/teacher/v1/request"
 	"github.com/calmato/shs-web/api/internal/gateway/teacher/v1/response"
 	"github.com/calmato/shs-web/api/pkg/jst"
+	"github.com/calmato/shs-web/api/proto/classroom"
 	"github.com/calmato/shs-web/api/proto/user"
 	"github.com/golang/mock/gomock"
 )
@@ -118,6 +119,16 @@ func TestGetTeacher(t *testing.T) {
 		CreatedAt:     now.Unix(),
 		UpdatedAt:     now.Unix(),
 	}
+	subjects := []*classroom.Subject{
+		{
+			Id:         1,
+			Name:       "国語",
+			Color:      "#F8BBD0",
+			SchoolType: classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL,
+			CreatedAt:  now.Unix(),
+			UpdatedAt:  now.Unix(),
+		},
+	}
 	tests := []struct {
 		name      string
 		setup     func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller)
@@ -127,9 +138,12 @@ func TestGetTeacher(t *testing.T) {
 		{
 			name: "success",
 			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
-				in := &user.GetTeacherRequest{Id: idmock}
-				out := &user.GetTeacherResponse{Teacher: teacher}
-				mocks.user.EXPECT().GetTeacher(gomock.Any(), in).Return(out, nil)
+				teacherIn := &user.GetTeacherRequest{Id: idmock}
+				teacherOut := &user.GetTeacherResponse{Teacher: teacher}
+				subjectsIn := &classroom.GetTeacherSubjectRequest{TeacherId: idmock}
+				subjectsOut := &classroom.GetTeacherSubjectResponse{Subjects: subjects}
+				mocks.user.EXPECT().GetTeacher(gomock.Any(), teacherIn).Return(teacherOut, nil)
+				mocks.classroom.EXPECT().GetTeacherSubject(gomock.Any(), subjectsIn).Return(subjectsOut, nil)
 			},
 			teacherID: idmock,
 			expect: &testResponse{
@@ -146,14 +160,45 @@ func TestGetTeacher(t *testing.T) {
 						CreatedAt:     now,
 						UpdatedAt:     now,
 					},
+					Subjects: map[entity.SchoolType]entity.Subjects{
+						entity.SchoolTypeElementarySchool: {},
+						entity.SchoolTypeJuniorHighSchool: {},
+						entity.SchoolTypeHighSchool: {
+							{
+								ID:         1,
+								Name:       "国語",
+								Color:      "#F8BBD0",
+								SchoolType: entity.SchoolTypeHighSchool,
+								CreatedAt:  now,
+								UpdatedAt:  now,
+							},
+						},
+					},
 				},
 			},
 		},
 		{
 			name: "failed to get teacher",
 			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
-				in := &user.GetTeacherRequest{Id: idmock}
-				mocks.user.EXPECT().GetTeacher(gomock.Any(), in).Return(nil, errmock)
+				teacherIn := &user.GetTeacherRequest{Id: idmock}
+				subjectsIn := &classroom.GetTeacherSubjectRequest{TeacherId: idmock}
+				subjectsOut := &classroom.GetTeacherSubjectResponse{Subjects: subjects}
+				mocks.user.EXPECT().GetTeacher(gomock.Any(), teacherIn).Return(nil, errmock)
+				mocks.classroom.EXPECT().GetTeacherSubject(gomock.Any(), subjectsIn).Return(subjectsOut, nil)
+			},
+			teacherID: idmock,
+			expect: &testResponse{
+				code: http.StatusInternalServerError,
+			},
+		},
+		{
+			name: "failed to get teacher subject",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
+				teacherIn := &user.GetTeacherRequest{Id: idmock}
+				teacherOut := &user.GetTeacherResponse{Teacher: teacher}
+				subjectsIn := &classroom.GetTeacherSubjectRequest{TeacherId: idmock}
+				mocks.user.EXPECT().GetTeacher(gomock.Any(), teacherIn).Return(teacherOut, nil)
+				mocks.classroom.EXPECT().GetTeacherSubject(gomock.Any(), subjectsIn).Return(nil, errmock)
 			},
 			teacherID: idmock,
 			expect: &testResponse{
@@ -232,6 +277,11 @@ func TestCreateTeacher(t *testing.T) {
 						Role:          entity.RoleTeacher,
 						CreatedAt:     now,
 						UpdatedAt:     now,
+					},
+					Subjects: map[entity.SchoolType]entity.Subjects{
+						entity.SchoolTypeElementarySchool: {},
+						entity.SchoolTypeJuniorHighSchool: {},
+						entity.SchoolTypeHighSchool:       {},
 					},
 				},
 			},
@@ -468,6 +518,79 @@ func TestUpdateTeacherRole(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 			path := fmt.Sprintf("/v1/teachers/%s/role", tt.teacherID)
+			req := newHTTPRequest(t, http.MethodPatch, path, tt.req)
+			testHTTP(t, tt.setup, tt.expect, req)
+		})
+	}
+}
+
+func TestUpdateTeacherSubject(t *testing.T) {
+	t.Parallel()
+	tests := []struct {
+		name      string
+		setup     func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller)
+		teacherID string
+		req       *request.UpdateTeacherSubjectRequest
+		expect    *testResponse
+	}{
+		{
+			name: "success",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
+				in := &classroom.UpsertTeacherSubjectRequest{
+					TeacherId:  idmock,
+					SubjectIds: []int64{1},
+					SchoolType: classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL,
+				}
+				out := &classroom.UpsertTeacherSubjectResponse{}
+				mocks.classroom.EXPECT().UpsertTeacherSubject(gomock.Any(), in).Return(out, nil)
+			},
+			teacherID: idmock,
+			req: &request.UpdateTeacherSubjectRequest{
+				SchoolType: entity.SchoolTypeHighSchool,
+				SubjectIDs: []int64{1},
+			},
+			expect: &testResponse{
+				code: http.StatusNoContent,
+			},
+		},
+		{
+			name:      "failed to invalid school type",
+			setup:     func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {},
+			teacherID: idmock,
+			req: &request.UpdateTeacherSubjectRequest{
+				SchoolType: entity.SchoolTypeUnknown,
+				SubjectIDs: []int64{1},
+			},
+			expect: &testResponse{
+				code: http.StatusBadRequest,
+			},
+		},
+		{
+			name: "failed to upsert teacher subject",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
+				in := &classroom.UpsertTeacherSubjectRequest{
+					TeacherId:  idmock,
+					SubjectIds: []int64{1},
+					SchoolType: classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL,
+				}
+				mocks.classroom.EXPECT().UpsertTeacherSubject(gomock.Any(), in).Return(nil, errmock)
+			},
+			teacherID: idmock,
+			req: &request.UpdateTeacherSubjectRequest{
+				SchoolType: entity.SchoolTypeHighSchool,
+				SubjectIDs: []int64{1},
+			},
+			expect: &testResponse{
+				code: http.StatusInternalServerError,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			path := fmt.Sprintf("/v1/teachers/%s/subjects", tt.teacherID)
 			req := newHTTPRequest(t, http.MethodPatch, path, tt.req)
 			testHTTP(t, tt.setup, tt.expect, req)
 		})

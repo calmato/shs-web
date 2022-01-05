@@ -48,7 +48,7 @@ func (h *apiV1Handler) CreateSubject(ctx *gin.Context) {
 		badRequest(ctx, err)
 		return
 	}
-	schoolType, err := entity.SchoolType(req.SchoolType).ClassroomSchoolType()
+	schoolType, err := req.SchoolType.ClassroomSchoolType()
 	if err != nil {
 		badRequest(ctx, err)
 		return
@@ -85,7 +85,7 @@ func (h *apiV1Handler) UpdateSubject(ctx *gin.Context) {
 		badRequest(ctx, err)
 		return
 	}
-	schoolType, err := entity.SchoolType(req.SchoolType).ClassroomSchoolType()
+	schoolType, err := req.SchoolType.ClassroomSchoolType()
 	if err != nil {
 		badRequest(ctx, err)
 		return

@@ -52,7 +52,7 @@ func (h *apiV1Handler) UpdateMySubjects(ctx *gin.Context) {
 		badRequest(ctx, err)
 		return
 	}
-	schoolType, err := entity.SchoolType(req.SchoolType).ClassroomSchoolType()
+	schoolType, err := req.SchoolType.ClassroomSchoolType()
 	if err != nil {
 		badRequest(ctx, err)
 		return
