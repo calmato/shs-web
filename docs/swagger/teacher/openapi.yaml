@@ -40,6 +40,8 @@ paths:
     $ref: './paths/v1/teachers/_teacherId/mail.yaml'
   /v1/teachers/{teacherId}/password:
     $ref: './paths/v1/teachers/_teacherId/password.yaml'
+  /v1/teachers/{teacherId}/role:
+    $ref: './paths/v1/teachers/_teacherId/role.yaml'
   # Students
   # Subjects
   /v1/subjects:
@@ -86,6 +88,8 @@ components:
       $ref: './components/schemas/v1/teachers.request.yaml#/updateTeacherMailRequest'
     v1UpdateTeacherPasswordRequest:
       $ref: './components/schemas/v1/teachers.request.yaml#/updateTeacherPasswordRequest'
+    v1UpdateTeacherRoleRequest:
+      $ref: './components/schemas/v1/teachers.request.yaml#/updateTeacherRoleRequest'
     v1CreateSubjectRequest:
       $ref: './components/schemas/v1/subjects.request.yaml#/createSubjectRequest'
     v1UpdateSubjectRequest:

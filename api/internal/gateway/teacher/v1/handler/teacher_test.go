@@ -215,7 +215,7 @@ func TestCreateTeacher(t *testing.T) {
 				LastNameKana:         "なかむら",
 				FirstNameKana:        "こうだい",
 				Mail:                 "teacher-test001@calmato.jp",
-				Role:                 int32(entity.RoleTeacher),
+				Role:                 entity.RoleTeacher,
 				Password:             "12345678",
 				PasswordConfirmation: "12345678",
 			},
@@ -240,7 +240,7 @@ func TestCreateTeacher(t *testing.T) {
 			name:  "failed to invalid role",
 			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {},
 			req: &request.CreateTeacherRequest{
-				Role: int32(entity.RoleUnknown),
+				Role: entity.RoleUnknown,
 			},
 			expect: &testResponse{
 				code: http.StatusBadRequest,
@@ -267,7 +267,7 @@ func TestCreateTeacher(t *testing.T) {
 				LastNameKana:         "なかむら",
 				FirstNameKana:        "こうだい",
 				Mail:                 "teacher-test001@calmato.jp",
-				Role:                 int32(entity.RoleTeacher),
+				Role:                 entity.RoleTeacher,
 				Password:             "12345678",
 				PasswordConfirmation: "12345678",
 			},
@@ -401,6 +401,118 @@ func TestUpdateTeacherPassword(t *testing.T) {
 			t.Parallel()
 			path := fmt.Sprintf("/v1/teachers/%s/password", tt.teacherID)
 			req := newHTTPRequest(t, http.MethodPatch, path, tt.req)
+			testHTTP(t, tt.setup, tt.expect, req)
+		})
+	}
+}
+
+func TestUpdateTeacherRole(t *testing.T) {
+	t.Parallel()
+	tests := []struct {
+		name      string
+		setup     func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller)
+		teacherID string
+		req       *request.UpdateTeacherRoleRequest
+		expect    *testResponse
+	}{
+		{
+			name: "success",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
+				in := &user.UpdateTeacherRoleRequest{
+					Id:   idmock,
+					Role: user.Role_ROLE_ADMINISTRATOR,
+				}
+				out := &user.UpdateTeacherRoleResponse{}
+				mocks.user.EXPECT().UpdateTeacherRole(gomock.Any(), in).Return(out, nil)
+			},
+			teacherID: idmock,
+			req: &request.UpdateTeacherRoleRequest{
+				Role: entity.RoleAdministrator,
+			},
+			expect: &testResponse{
+				code: http.StatusNoContent,
+			},
+		},
+		{
+			name:      "invalid teacher role",
+			setup:     func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {},
+			teacherID: idmock,
+			req: &request.UpdateTeacherRoleRequest{
+				Role: entity.RoleUnknown,
+			},
+			expect: &testResponse{
+				code: http.StatusBadRequest,
+			},
+		},
+		{
+			name: "failed to update teacher role",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
+				in := &user.UpdateTeacherRoleRequest{
+					Id:   idmock,
+					Role: user.Role_ROLE_ADMINISTRATOR,
+				}
+				mocks.user.EXPECT().UpdateTeacherRole(gomock.Any(), in).Return(nil, errmock)
+			},
+			teacherID: idmock,
+			req: &request.UpdateTeacherRoleRequest{
+				Role: entity.RoleAdministrator,
+			},
+			expect: &testResponse{
+				code: http.StatusInternalServerError,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			path := fmt.Sprintf("/v1/teachers/%s/role", tt.teacherID)
+			req := newHTTPRequest(t, http.MethodPatch, path, tt.req)
+			testHTTP(t, tt.setup, tt.expect, req)
+		})
+	}
+}
+
+func TestDeleteTeacher(t *testing.T) {
+	t.Parallel()
+	tests := []struct {
+		name      string
+		setup     func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller)
+		teacherID string
+		expect    *testResponse
+	}{
+		{
+			name: "success",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
+				in := &user.DeleteTeacherRequest{Id: idmock}
+				out := &user.DeleteTeacherResponse{}
+				mocks.user.EXPECT().DeleteTeacher(gomock.Any(), in).Return(out, nil)
+			},
+			teacherID: idmock,
+			expect: &testResponse{
+				code: http.StatusNoContent,
+			},
+		},
+		{
+			name: "failed to delete teacher",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
+				in := &user.DeleteTeacherRequest{Id: idmock}
+				mocks.user.EXPECT().DeleteTeacher(gomock.Any(), in).Return(nil, errmock)
+			},
+			teacherID: idmock,
+			expect: &testResponse{
+				code: http.StatusInternalServerError,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			path := fmt.Sprintf("/v1/teachers/%s", tt.teacherID)
+			req := newHTTPRequest(t, http.MethodDelete, path, nil)
 			testHTTP(t, tt.setup, tt.expect, req)
 		})
 	}
