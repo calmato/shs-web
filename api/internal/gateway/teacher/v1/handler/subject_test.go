@@ -120,7 +120,7 @@ func TestCreateSubject(t *testing.T) {
 			req: &request.CreateSubjectRequest{
 				Name:       "国語",
 				Color:      "#f8bbd0",
-				SchoolType: int32(entity.SchoolTypeHighSchool),
+				SchoolType: entity.SchoolTypeHighSchool,
 			},
 			expect: &testResponse{
 				code: http.StatusOK,
@@ -142,7 +142,7 @@ func TestCreateSubject(t *testing.T) {
 			req: &request.CreateSubjectRequest{
 				Name:       "国語",
 				Color:      "#f8bbd0",
-				SchoolType: int32(entity.SchoolTypeUnknown),
+				SchoolType: entity.SchoolTypeUnknown,
 			},
 			expect: &testResponse{
 				code: http.StatusBadRequest,
@@ -161,7 +161,7 @@ func TestCreateSubject(t *testing.T) {
 			req: &request.CreateSubjectRequest{
 				Name:       "国語",
 				Color:      "#f8bbd0",
-				SchoolType: int32(entity.SchoolTypeHighSchool),
+				SchoolType: entity.SchoolTypeHighSchool,
 			},
 			expect: &testResponse{
 				code: http.StatusInternalServerError,
@@ -205,7 +205,7 @@ func TestUpdateSubject(t *testing.T) {
 			req: &request.UpdateSubjectRequest{
 				Name:       "国語",
 				Color:      "#f8bbd0",
-				SchoolType: int32(entity.SchoolTypeHighSchool),
+				SchoolType: entity.SchoolTypeHighSchool,
 			},
 			expect: &testResponse{
 				code: http.StatusNoContent,
@@ -218,7 +218,7 @@ func TestUpdateSubject(t *testing.T) {
 			req: &request.UpdateSubjectRequest{
 				Name:       "国語",
 				Color:      "#f8bbd0",
-				SchoolType: int32(entity.SchoolTypeUnknown),
+				SchoolType: entity.SchoolTypeUnknown,
 			},
 			expect: &testResponse{
 				code: http.StatusBadRequest,
@@ -231,7 +231,7 @@ func TestUpdateSubject(t *testing.T) {
 			req: &request.UpdateSubjectRequest{
 				Name:       "国語",
 				Color:      "#f8bbd0",
-				SchoolType: int32(entity.SchoolTypeUnknown),
+				SchoolType: entity.SchoolTypeUnknown,
 			},
 			expect: &testResponse{
 				code: http.StatusBadRequest,
@@ -252,7 +252,7 @@ func TestUpdateSubject(t *testing.T) {
 			req: &request.UpdateSubjectRequest{
 				Name:       "国語",
 				Color:      "#f8bbd0",
-				SchoolType: int32(entity.SchoolTypeHighSchool),
+				SchoolType: entity.SchoolTypeHighSchool,
 			},
 			expect: &testResponse{
 				code: http.StatusInternalServerError,

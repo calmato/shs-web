@@ -27,7 +27,7 @@ func (h *apiV1Handler) GetAuth(ctx *gin.Context) {
 	})
 	var subjects gentity.Subjects
 	eg.Go(func() (err error) {
-		_, subjects, err = h.getTeacherSubject(ectx, teacherID)
+		subjects, err = h.getTeacherSubject(ectx, teacherID)
 		return
 	})
 	if err := eg.Wait(); err != nil {
@@ -52,7 +52,7 @@ func (h *apiV1Handler) UpdateMySubjects(ctx *gin.Context) {
 		badRequest(ctx, err)
 		return
 	}
-	schoolType, err := entity.SchoolType(req.SchoolType).ClassroomSchoolType()
+	schoolType, err := req.SchoolType.ClassroomSchoolType()
 	if err != nil {
 		badRequest(ctx, err)
 		return

@@ -25,3 +25,8 @@ type UpdateTeacherPasswordRequest struct {
 type UpdateTeacherRoleRequest struct {
 	Role entity.Role `json:"role,omitempty"` // 権限
 }
+
+type UpdateTeacherSubjectRequest struct {
+	SchoolType entity.SchoolType `json:"schoolType,omitempty"` // 校種
+	SubjectIDs []int64           `json:"subjectIds,omitempty"` // 担当教科ID一覧
+}
