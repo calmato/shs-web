@@ -16,6 +16,7 @@ service UserService {
   rpc CreateTeacher(CreateTeacherRequest) returns (CreateTeacherResponse);
   rpc UpdateTeacherMail(UpdateTeacherMailRequest) returns (UpdateTeacherMailResponse);
   rpc UpdateTeacherPassword(UpdateTeacherPasswordRequest) returns (UpdateTeacherPasswordResponse);
+  rpc DeleteTeacher(DeleteTeacherRequest) returns (DeleteTeacherResponse);
   rpc GetStudent(GetStudentRequest) returns (GetStudentResponse);
   rpc CreateStudent(CreateStudentRequest) returns (CreateStudentResponse);
 }
@@ -67,6 +68,12 @@ message UpdateTeacherPasswordRequest {
 }
 
 message UpdateTeacherPasswordResponse {}
+
+message DeleteTeacherRequest {
+  string id = 1 [(validate.rules).string = { min_len: 1 }];
+}
+
+message DeleteTeacherResponse {}
 
 message GetStudentRequest {
   string id = 1 [(validate.rules).string = { min_len: 1 }];

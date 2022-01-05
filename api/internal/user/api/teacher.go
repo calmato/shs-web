@@ -134,3 +134,17 @@ func (s *userService) UpdateTeacherPassword(
 	}
 	return &user.UpdateTeacherPasswordResponse{}, nil
 }
+
+func (s *userService) DeleteTeacher(
+	ctx context.Context, req *user.DeleteTeacherRequest,
+) (*user.DeleteTeacherResponse, error) {
+	if err := s.validator.DeleteTeacher(req); err != nil {
+		return nil, gRPCError(err)
+	}
+
+	err := s.db.Teacher.Delete(ctx, req.Id)
+	if err != nil {
+		return nil, gRPCError(err)
+	}
+	return &user.DeleteTeacherResponse{}, nil
+}
