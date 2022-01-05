@@ -378,3 +378,60 @@ func TestUpdateTeacherPassword(t *testing.T) {
 		}))
 	}
 }
+
+func TestDeleteTeacher(t *testing.T) {
+	t.Parallel()
+
+	req := &user.DeleteTeacherRequest{
+		Id: "kSByoE6FetnPs5Byk3a9Zx",
+	}
+
+	tests := []struct {
+		name   string
+		setup  func(ctx context.Context, t *testing.T, mocks *mocks)
+		req    *user.DeleteTeacherRequest
+		expect *testResponse
+	}{
+		{
+			name: "success",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				mocks.validator.EXPECT().DeleteTeacher(req).Return(nil)
+				mocks.db.Teacher.EXPECT().Delete(ctx, "kSByoE6FetnPs5Byk3a9Zx").Return(nil)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.OK,
+				body: &user.DeleteTeacherResponse{},
+			},
+		},
+		{
+			name: "invalid argument",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				req := &user.DeleteTeacherRequest{}
+				mocks.validator.EXPECT().DeleteTeacher(req).Return(validation.ErrRequestValidation)
+			},
+			req: &user.DeleteTeacherRequest{},
+			expect: &testResponse{
+				code: codes.InvalidArgument,
+			},
+		},
+		{
+			name: "failed to delete teacher",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				mocks.validator.EXPECT().DeleteTeacher(req).Return(nil)
+				mocks.db.Teacher.EXPECT().Delete(ctx, "kSByoE6FetnPs5Byk3a9Zx").Return(errmock)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.Internal,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, testGRPC(tt.setup, tt.expect, func(ctx context.Context, service *userService) (proto.Message, error) {
+			return service.DeleteTeacher(ctx, tt.req)
+		}))
+	}
+}

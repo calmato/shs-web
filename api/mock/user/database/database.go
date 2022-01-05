@@ -122,6 +122,20 @@ func (mr *MockTeacherMockRecorder) Create(ctx, t interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockTeacher)(nil).Create), ctx, t)
 }
 
+// Delete mocks base method.
+func (m *MockTeacher) Delete(ctx context.Context, teacherID string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Delete", ctx, teacherID)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Delete indicates an expected call of Delete.
+func (mr *MockTeacherMockRecorder) Delete(ctx, teacherID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockTeacher)(nil).Delete), ctx, teacherID)
+}
+
 // Get mocks base method.
 func (m *MockTeacher) Get(ctx context.Context, id string, fields ...string) (*entity.Teacher, error) {
 	m.ctrl.T.Helper()

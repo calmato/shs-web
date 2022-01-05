@@ -76,6 +76,26 @@ func (mr *MockUserServiceClientMockRecorder) CreateTeacher(ctx, in interface{}, 
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateTeacher", reflect.TypeOf((*MockUserServiceClient)(nil).CreateTeacher), varargs...)
 }
 
+// DeleteTeacher mocks base method.
+func (m *MockUserServiceClient) DeleteTeacher(ctx context.Context, in *user.DeleteTeacherRequest, opts ...grpc.CallOption) (*user.DeleteTeacherResponse, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "DeleteTeacher", varargs...)
+	ret0, _ := ret[0].(*user.DeleteTeacherResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// DeleteTeacher indicates an expected call of DeleteTeacher.
+func (mr *MockUserServiceClientMockRecorder) DeleteTeacher(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteTeacher", reflect.TypeOf((*MockUserServiceClient)(nil).DeleteTeacher), varargs...)
+}
+
 // GetStudent mocks base method.
 func (m *MockUserServiceClient) GetStudent(ctx context.Context, in *user.GetStudentRequest, opts ...grpc.CallOption) (*user.GetStudentResponse, error) {
 	m.ctrl.T.Helper()
@@ -227,6 +247,21 @@ func (m *MockUserServiceServer) CreateTeacher(arg0 context.Context, arg1 *user.C
 func (mr *MockUserServiceServerMockRecorder) CreateTeacher(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateTeacher", reflect.TypeOf((*MockUserServiceServer)(nil).CreateTeacher), arg0, arg1)
+}
+
+// DeleteTeacher mocks base method.
+func (m *MockUserServiceServer) DeleteTeacher(arg0 context.Context, arg1 *user.DeleteTeacherRequest) (*user.DeleteTeacherResponse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteTeacher", arg0, arg1)
+	ret0, _ := ret[0].(*user.DeleteTeacherResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// DeleteTeacher indicates an expected call of DeleteTeacher.
+func (mr *MockUserServiceServerMockRecorder) DeleteTeacher(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteTeacher", reflect.TypeOf((*MockUserServiceServer)(nil).DeleteTeacher), arg0, arg1)
 }
 
 // GetStudent mocks base method.
