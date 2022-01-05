@@ -119,6 +119,26 @@ func (t *teacher) UpdatePassword(ctx context.Context, teacherID string, password
 	return dbError(err)
 }
 
+func (t *teacher) UpdateRole(ctx context.Context, teacherID string, role entity.Role) error {
+	tx, err := t.db.Begin()
+	if err != nil {
+		return dbError(err)
+	}
+	defer t.db.Close(tx)
+
+	params := map[string]interface{}{
+		"role":       int32(role),
+		"updated_at": t.now(),
+	}
+
+	err = tx.Table(teacherTable).Where("id = ?", teacherID).Updates(params).Error
+	if err != nil {
+		tx.Rollback()
+		return dbError(err)
+	}
+	return dbError(tx.Commit().Error)
+}
+
 func (t *teacher) Delete(ctx context.Context, teacherID string) error {
 	now := t.now()
 	uid := uuid.Base58Encode(uuid.New())

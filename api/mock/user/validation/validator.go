@@ -131,3 +131,17 @@ func (mr *MockRequestValidationMockRecorder) UpdateTeacherPassword(req interface
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateTeacherPassword", reflect.TypeOf((*MockRequestValidation)(nil).UpdateTeacherPassword), req)
 }
+
+// UpdateTeacherRole mocks base method.
+func (m *MockRequestValidation) UpdateTeacherRole(req *user.UpdateTeacherRoleRequest) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateTeacherRole", req)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateTeacherRole indicates an expected call of UpdateTeacherRole.
+func (mr *MockRequestValidationMockRecorder) UpdateTeacherRole(req interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateTeacherRole", reflect.TypeOf((*MockRequestValidation)(nil).UpdateTeacherRole), req)
+}
