@@ -34,7 +34,7 @@ func TestListTeachers(t *testing.T) {
 			LastNameKana:  "なかむら",
 			FirstNameKana: "こうだい",
 			Mail:          "teacher-test001@calmato.jp",
-			Role:          int32(user.Role_ROLE_TEACHER),
+			Role:          entity.RoleTeacher,
 			CreatedAt:     now,
 			UpdatedAt:     now,
 		},
@@ -133,7 +133,7 @@ func TestGetTeacher(t *testing.T) {
 		LastNameKana:  "なかむら",
 		FirstNameKana: "こうだい",
 		Mail:          "teacher-test001@calmato.jp",
-		Role:          int32(user.Role_ROLE_TEACHER),
+		Role:          entity.RoleTeacher,
 		CreatedAt:     now,
 		UpdatedAt:     now,
 	}
@@ -237,6 +237,19 @@ func TestCreateTeacher(t *testing.T) {
 				mocks.validator.EXPECT().CreateTeacher(req).Return(validation.ErrRequestValidation)
 			},
 			req: &user.CreateTeacherRequest{},
+			expect: &testResponse{
+				code: codes.InvalidArgument,
+			},
+		},
+		{
+			name: "failed to invalid role",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				req := &user.CreateTeacherRequest{Role: user.Role(-1)}
+				mocks.validator.EXPECT().CreateTeacher(req).Return(nil)
+			},
+			req: &user.CreateTeacherRequest{
+				Role: user.Role(-1),
+			},
 			expect: &testResponse{
 				code: codes.InvalidArgument,
 			},
@@ -375,6 +388,64 @@ func TestUpdateTeacherPassword(t *testing.T) {
 		tt := tt
 		t.Run(tt.name, testGRPC(tt.setup, tt.expect, func(ctx context.Context, service *userService) (proto.Message, error) {
 			return service.UpdateTeacherPassword(ctx, tt.req)
+		}))
+	}
+}
+
+func TestUpdateTeacherRole(t *testing.T) {
+	t.Parallel()
+
+	req := &user.UpdateTeacherRoleRequest{
+		Id:   "kSByoE6FetnPs5Byk3a9Zx",
+		Role: user.Role_ROLE_ADMINISTRATOR,
+	}
+
+	tests := []struct {
+		name   string
+		setup  func(ctx context.Context, t *testing.T, mocks *mocks)
+		req    *user.UpdateTeacherRoleRequest
+		expect *testResponse
+	}{
+		{
+			name: "success",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				mocks.validator.EXPECT().UpdateTeacherRole(req).Return(nil)
+				mocks.db.Teacher.EXPECT().UpdateRole(ctx, "kSByoE6FetnPs5Byk3a9Zx", entity.RoleAdministrator).Return(nil)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.OK,
+				body: &user.UpdateTeacherRoleResponse{},
+			},
+		},
+		{
+			name: "invalid argument",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				req := &user.UpdateTeacherRoleRequest{}
+				mocks.validator.EXPECT().UpdateTeacherRole(req).Return(validation.ErrRequestValidation)
+			},
+			req: &user.UpdateTeacherRoleRequest{},
+			expect: &testResponse{
+				code: codes.InvalidArgument,
+			},
+		},
+		{
+			name: "failed to update teacher role",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				mocks.validator.EXPECT().UpdateTeacherRole(req).Return(nil)
+				mocks.db.Teacher.EXPECT().UpdateRole(ctx, "kSByoE6FetnPs5Byk3a9Zx", entity.RoleAdministrator).Return(errmock)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.Internal,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, testGRPC(tt.setup, tt.expect, func(ctx context.Context, service *userService) (proto.Message, error) {
+			return service.UpdateTeacherRole(ctx, tt.req)
 		}))
 	}
 }
