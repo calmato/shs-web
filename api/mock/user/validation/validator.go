@@ -34,6 +34,20 @@ func (m *MockRequestValidation) EXPECT() *MockRequestValidationMockRecorder {
 	return m.recorder
 }
 
+// CreateStudent mocks base method.
+func (m *MockRequestValidation) CreateStudent(req *user.CreateStudentRequest) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateStudent", req)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// CreateStudent indicates an expected call of CreateStudent.
+func (mr *MockRequestValidationMockRecorder) CreateStudent(req interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateStudent", reflect.TypeOf((*MockRequestValidation)(nil).CreateStudent), req)
+}
+
 // CreateTeacher mocks base method.
 func (m *MockRequestValidation) CreateTeacher(req *user.CreateTeacherRequest) error {
 	m.ctrl.T.Helper()
