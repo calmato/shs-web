@@ -6,7 +6,6 @@ import (
 
 	"github.com/calmato/shs-web/api/pkg/jst"
 	"github.com/calmato/shs-web/api/proto/user"
-
 	"github.com/stretchr/testify/assert"
 )
 
