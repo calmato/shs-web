@@ -1,12 +1,8 @@
-import { SchoolType } from './common'
+import { BaseSubject } from '../api/v1'
+import { SchoolType } from '.'
 
-export interface Subject {
-  id: number
-  name: string
-  color: string
+export interface Subject extends BaseSubject {
   schoolType: SchoolType
-  createdAt: string
-  updatedAt: string
 }
 
 export interface Lesson {

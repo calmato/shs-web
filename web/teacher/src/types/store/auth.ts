@@ -1,5 +1,5 @@
-import { Subject } from './lesson'
 import { Role, SchoolType } from './common'
+import { Subject } from './lesson'
 
 export interface Auth {
   id: string
@@ -10,7 +10,7 @@ export interface Auth {
   mail: string
   role: Role
   subjects: {
-    [key in SchoolType.ELEMENTARY_SCHOOL | SchoolType.JUNIOR_HIGH_SCHOOL | SchoolType.HIGH_SCHOOL]: Subject[]
+    [key in Exclude<SchoolType, 'その他'>]: Subject[]
   }
 }
 

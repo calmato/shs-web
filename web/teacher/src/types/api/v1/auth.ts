@@ -1,13 +1,4 @@
-import { SchoolType } from '~/types/store'
-
-interface Subject {
-  id: number
-  name: string
-  color: string
-  schoolType: number
-  createdAt: string
-  updatedAt: string
-}
+import { SubjectResponse } from '~/types/api/v1'
 
 export interface AuthResponse {
   id: string
@@ -18,6 +9,6 @@ export interface AuthResponse {
   mail: string
   role: number
   subjects: {
-    [key in SchoolType.ELEMENTARY_SCHOOL | SchoolType.JUNIOR_HIGH_SCHOOL | SchoolType.HIGH_SCHOOL]: Subject[]
+    [key in 1 | 2 | 3]: SubjectResponse[]
   }
 }
