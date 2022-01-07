@@ -2,7 +2,7 @@ import { Module, VuexModule, Mutation, Action } from 'vuex-module-decorators'
 import { $axios } from '~/plugins/axios'
 import { ErrorResponse } from '~/types/api/exception'
 import { ApiError } from '~/types/exception'
-import { Lesson, LessonState, SchoolType, Subject, SubjectMap } from '~/types/store'
+import { Lesson, LessonState, SchoolType, Subject, SubjectMap, SubjectsMap } from '~/types/store'
 
 const initialState: LessonState = {
   subjects: [
@@ -62,6 +62,18 @@ export default class LessonModule extends VuexModule {
     const subjects: SubjectMap = {}
     this.subjects.forEach((subject: Subject) => {
       subjects[subject.id] = subject
+    })
+    return subjects
+  }
+
+  public get getSubjectsMap(): SubjectsMap {
+    const subjects: SubjectsMap = {
+      [SchoolType.ELEMENTARY_SCHOOL]: [],
+      [SchoolType.JUNIOR_HIGH_SCHOOL]: [],
+      [SchoolType.HIGH_SCHOOL]: [],
+    }
+    this.subjects.forEach((subject: Subject) => {
+      subjects[subject.schoolType].push(subject)
     })
     return subjects
   }

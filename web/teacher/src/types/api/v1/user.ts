@@ -14,6 +14,15 @@ export interface CreateTeacherRequest {
   role: number
 }
 
+export interface UpdateTeacherSubjectsRequest {
+  schoolType: number
+  subjectIds: number[]
+}
+
+export interface UpdateTeacherRoleRequest {
+  role: number
+}
+
 /**
  * ---------------------------
  * Response
@@ -31,6 +40,15 @@ export interface Teacher {
   updatedAt: string
 }
 
+interface Subject {
+  id: number
+  name: string
+  color: string
+  schoolType: number
+  createdAt: string
+  updatedAt: string
+}
+
 export interface TeacherResponse {
   id: string
   lastName: string
@@ -41,6 +59,7 @@ export interface TeacherResponse {
   role: number
   createdAt: string
   updatedAt: string
+  subjects: { [key: number]: Subject[] }
 }
 
 export interface TeachersResponse {

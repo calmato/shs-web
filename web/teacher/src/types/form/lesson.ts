@@ -5,5 +5,5 @@ import { SchoolType } from '~/types/store'
 // ---------------------------
 export interface SubjectUpdateForm {
   schoolType: SchoolType
-  subjectIDs: number[]
+  subjectIds: number[]
 }
