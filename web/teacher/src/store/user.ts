@@ -180,7 +180,13 @@ export default class UserModule extends VuexModule {
   }
 
   @Action({ rawError: true })
-  public async updateTeacherSubjects({ teacherId, form }: { teacherId: string; form: TeacherEditSubjectForm }): Promise<void> {
+  public async updateTeacherSubjects({
+    teacherId,
+    form,
+  }: {
+    teacherId: string
+    form: TeacherEditSubjectForm
+  }): Promise<void> {
     const req: UpdateTeacherSubjectsRequest = {
       schoolType: form.params.schoolType,
       subjectIds: form.params.subjectIds,
