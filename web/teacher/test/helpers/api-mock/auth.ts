@@ -1,15 +1,15 @@
 import { AuthResponse } from '~/types/api/v1'
-import { Role, SchoolType } from '~/types/store'
+import { Role } from '~/types/store'
 
 const subjects: AuthResponse['subjects'] = {
-  [SchoolType.ELEMENTARY_SCHOOL]: [],
-  [SchoolType.JUNIOR_HIGH_SCHOOL]: [],
-  [SchoolType.HIGH_SCHOOL]: [
+  '1': [],
+  '2': [],
+  '3': [
     {
       id: 1,
       name: '国語',
       color: '#F8BBD0',
-      schoolType: SchoolType.HIGH_SCHOOL,
+      schoolType: 3,
       createdAt: '2021-12-02T18:30:00+09:00',
       updatedAt: '2021-12-02T18:30:00+09:00',
     },

@@ -2,7 +2,7 @@ import { Module, VuexModule, Mutation, Action } from 'vuex-module-decorators'
 import { $axios } from '~/plugins/axios'
 import { ErrorResponse } from '~/types/api/exception'
 import { ApiError } from '~/types/exception'
-import { Lesson, LessonState, SchoolType, Subject, SubjectMap } from '~/types/store'
+import { Lesson, LessonState, Subject, SubjectMap } from '~/types/store'
 
 const initialState: LessonState = {
   subjects: [
@@ -10,7 +10,7 @@ const initialState: LessonState = {
       id: 1,
       name: '国語',
       color: '#F8BBD0',
-      schoolType: SchoolType.ELEMENTARY_SCHOOL,
+      schoolType: '小学校',
       createdAt: '',
       updatedAt: '',
     },
@@ -18,7 +18,7 @@ const initialState: LessonState = {
       id: 2,
       name: '数学',
       color: '#BBDEFB',
-      schoolType: SchoolType.JUNIOR_HIGH_SCHOOL,
+      schoolType: '中学校',
       createdAt: '',
       updatedAt: '',
     },
@@ -26,7 +26,7 @@ const initialState: LessonState = {
       id: 3,
       name: '英語',
       color: '#FEE6C9',
-      schoolType: SchoolType.HIGH_SCHOOL,
+      schoolType: '高校',
       createdAt: '',
       updatedAt: '',
     },

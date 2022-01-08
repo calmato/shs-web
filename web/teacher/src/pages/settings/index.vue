@@ -24,7 +24,7 @@ import TheSettingTop from '~/components/templates/TheSettingTop.vue'
 import { AuthStore } from '~/store'
 import { SubjectUpdateForm } from '~/types/form'
 import { Menu } from '~/types/props/setting'
-import { Auth, SchoolType, Subject } from '~/types/store'
+import { Auth, SchoolTypeArray, Subject } from '~/types/store'
 
 export default defineComponent({
   components: {
@@ -57,26 +57,30 @@ export default defineComponent({
     ]
 
     const elementarySchoolSubjectForm = reactive<SubjectUpdateForm>({
-      schoolType: SchoolType.ELEMENTARY_SCHOOL,
+      schoolType: 1,
       subjectIDs: [],
     })
 
     const juniorHighSchoolSubjectForm = reactive<SubjectUpdateForm>({
-      schoolType: SchoolType.JUNIOR_HIGH_SCHOOL,
+      schoolType: 2,
       subjectIDs: [],
     })
 
     const highSchoolSubjectForm = reactive<SubjectUpdateForm>({
-      schoolType: SchoolType.HIGH_SCHOOL,
+      schoolType: 3,
       subjectIDs: [],
     })
 
     const auth = computed<Auth>(() => store.getters['auth/getAuth'])
 
     const subjects = computed<Subject[]>(() => store.getters['lesson/getSubjects'])
-    const elementarySchoolSubjects = computed<Subject[]>(() => subjects.value.filter((item) => item.schoolType === 1))
-    const juniorHighSchoolSubjects = computed<Subject[]>(() => subjects.value.filter((item) => item.schoolType === 2))
-    const highSchoolSubjects = computed<Subject[]>(() => subjects.value.filter((item) => item.schoolType === 3))
+    const elementarySchoolSubjects = computed<Subject[]>(() =>
+      subjects.value.filter((item) => item.schoolType === '小学校')
+    )
+    const juniorHighSchoolSubjects = computed<Subject[]>(() =>
+      subjects.value.filter((item) => item.schoolType === '中学校')
+    )
+    const highSchoolSubjects = computed<Subject[]>(() => subjects.value.filter((item) => item.schoolType === '高校'))
 
     const handleClick = (item: Menu): void => {
       if (item.path === '/signout') {
@@ -105,24 +109,20 @@ export default defineComponent({
 
     onMounted(() => {
       const defaultSubjects = auth.value.subjects
-      Object.keys(defaultSubjects).forEach((schoolTypeString: string) => {
-        const schoolType = Number(schoolTypeString) as
-          | SchoolType.ELEMENTARY_SCHOOL
-          | SchoolType.JUNIOR_HIGH_SCHOOL
-          | SchoolType.HIGH_SCHOOL
-        const _v = [1, 2, 3].includes(schoolType) ? defaultSubjects[schoolType] : undefined
-        const value = typeof _v !== 'undefined' ? _v.map((item) => item.id) : []
+      SchoolTypeArray.forEach((schoolType) => {
+        if (schoolType === 'その他') {
+          return
+        }
+        const values: number[] = defaultSubjects[schoolType].map((itme) => itme.id)
         switch (schoolType) {
-          case SchoolType.ELEMENTARY_SCHOOL:
-            elementarySchoolSubjectForm.subjectIDs = value
+          case '小学校':
+            elementarySchoolSubjectForm.subjectIDs = values
             break
-          case SchoolType.JUNIOR_HIGH_SCHOOL:
-            juniorHighSchoolSubjectForm.subjectIDs = value
+          case '中学校':
+            juniorHighSchoolSubjectForm.subjectIDs = values
             break
-          case SchoolType.HIGH_SCHOOL:
-            highSchoolSubjectForm.subjectIDs = value
-            break
-          default:
+          case '高校':
+            highSchoolSubjectForm.subjectIDs = values
             break
         }
       })

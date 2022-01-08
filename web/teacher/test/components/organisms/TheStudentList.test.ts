@@ -65,37 +65,37 @@ describe('components/organisms/TheStudentList', () => {
     describe('methods', () => {
       describe('getSchoolType', () => {
         it('type is elementary school', () => {
-          expect(wrapper.vm.getSchoolType(SchoolType.ELEMENTARY_SCHOOL)).toBe('小学校')
+          expect(wrapper.vm.getSchoolType(1)).toBe('小学校')
         })
 
         it('type is junior high school', () => {
-          expect(wrapper.vm.getSchoolType(SchoolType.JUNIOR_HIGH_SCHOOL)).toBe('中学校')
+          expect(wrapper.vm.getSchoolType(2)).toBe('中学校')
         })
 
         it('type is high school', () => {
-          expect(wrapper.vm.getSchoolType(SchoolType.HIGH_SCHOOL)).toBe('高等学校')
+          expect(wrapper.vm.getSchoolType(3)).toBe('高校')
         })
 
         it('invalid type', () => {
-          expect(wrapper.vm.getSchoolType(SchoolType.UNKNOWN)).toBe('')
+          expect(wrapper.vm.getSchoolType(0)).toBe('その他')
         })
       })
 
       describe('getSchoolTypeColor', () => {
         it('type is elementary school', () => {
-          expect(wrapper.vm.getSchoolTypeColor(SchoolType.ELEMENTARY_SCHOOL)).toBe('primary')
+          expect(wrapper.vm.getSchoolTypeColor(1)).toBe('primary')
         })
 
         it('type is junior high school', () => {
-          expect(wrapper.vm.getSchoolTypeColor(SchoolType.JUNIOR_HIGH_SCHOOL)).toBe('secondary')
+          expect(wrapper.vm.getSchoolTypeColor(2)).toBe('secondary')
         })
 
         it('type is high school', () => {
-          expect(wrapper.vm.getSchoolTypeColor(SchoolType.HIGH_SCHOOL)).toBe('info')
+          expect(wrapper.vm.getSchoolTypeColor(3)).toBe('info')
         })
 
         it('invalid type', () => {
-          expect(wrapper.vm.getSchoolTypeColor(SchoolType.UNKNOWN)).toBe('')
+          expect(wrapper.vm.getSchoolTypeColor(0)).toBe('')
         })
       })
 
