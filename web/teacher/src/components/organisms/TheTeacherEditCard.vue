@@ -19,6 +19,7 @@
             :label="editTeacherRoleForm.options.role.label"
             :value.sync="editTeacherRoleForm.params.role"
             :items="roleItems"
+            :disabled="!isAdmin"
             @blur="onSubmitRole"
           />
         </v-col>
@@ -27,11 +28,12 @@
             :label="editTeacherElementarySchoolForm.options.subjectIds.label"
             :value.sync="editTeacherElementarySchoolForm.params.subjectIds"
             :items="getElementarySchoolSubjects()"
+            :append-outer-icon="isAdmin ? `mdi-lead-pencil` : undefined"
+            :disabled="!isAdmin"
             item-text="name"
             item-value="id"
             chips
             multiple
-            append-outer-icon="mdi-lead-pencil"
             @blur="onSubmitElementarySchool"
           >
             <template #default="{ item }">
@@ -44,11 +46,12 @@
             :label="editTeacherJuniorHighSchoolForm.options.subjectIds.label"
             :value.sync="editTeacherJuniorHighSchoolForm.params.subjectIds"
             :items="getJuniorHighSchoolSubjects()"
+            :disabled="!isAdmin"
+            :append-outer-icon="isAdmin ? `mdi-lead-pencil` : undefined"
             item-text="name"
             item-value="id"
             chips
             multiple
-            append-outer-icon="mdi-lead-pencil"
             @blur="onSubmitJuniorHighSchool"
           >
             <template #default="{ item }">
@@ -61,11 +64,12 @@
             :label="editTeacherHighSchoolForm.options.subjectIds.label"
             :value.sync="editTeacherHighSchoolForm.params.subjectIds"
             :items="getHighSchoolSubjects()"
+            :disabled="!isAdmin"
+            :append-outer-icon="isAdmin ? `mdi-lead-pencil` : undefined"
             item-text="name"
             item-value="id"
             chips
             multiple
-            append-outer-icon="mdi-lead-pencil"
             @blur="onSubmitHighSchool"
           >
             <template #default="{ item }">
@@ -109,6 +113,10 @@ export default defineComponent({
   },
 
   props: {
+    isAdmin: {
+      type: Boolean,
+      default: false,
+    },
     teacher: {
       type: Object as PropType<Teacher>,
       default: () => ({

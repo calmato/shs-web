@@ -57,6 +57,10 @@ describe('store/auth', () => {
         },
       })
     })
+
+    it('getRole', () => {
+      expect(AuthStore.getRole).toBe(Role.TEACHER)
+    })
   })
 
   describe('actions', () => {

@@ -56,6 +56,10 @@ export default class AuthModule extends VuexModule {
     return this.auth
   }
 
+  public get getRole(): Role {
+    return this.auth?.role || Role.TEACHER
+  }
+
   @Mutation
   private setToken(token: string): void {
     this.token = token

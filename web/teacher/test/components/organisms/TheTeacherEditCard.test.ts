@@ -25,6 +25,17 @@ describe('components/organisms/TheTeacherEditCard', () => {
 
   describe('script', () => {
     describe('props', () => {
+      describe('isAdmin', () => {
+        it('初期値', () => {
+          expect(wrapper.props().isAdmin).toBeFalsy()
+        })
+
+        it('値が代入されること', async () => {
+          await wrapper.setProps({ isAdmin: true })
+          expect(wrapper.props().isAdmin).toBeTruthy()
+        })
+      })
+
       describe('teacher', () => {
         it('初期値', () => {
           expect(wrapper.props().teacher).toEqual({

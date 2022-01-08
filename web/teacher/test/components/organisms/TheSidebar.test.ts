@@ -41,6 +41,7 @@ describe('components/organisms/TheSidebar', () => {
               name: 'テスト',
               icon: 'mdi-home',
               path: '/test',
+              filter: 'all',
             },
           ]
           await wrapper.setProps({ items })
@@ -52,7 +53,7 @@ describe('components/organisms/TheSidebar', () => {
     describe('methods', () => {
       describe('onClick', () => {
         it('emitted', async () => {
-          const item: Menu = { name: 'テスト', icon: 'mdi-home', path: '/test' }
+          const item: Menu = { name: 'テスト', icon: 'mdi-home', path: '/test', filter: 'all' }
           await wrapper.vm.onClick(item)
           expect(wrapper.emitted('click')).toBeTruthy()
           expect(wrapper.emitted('click')[0][0]).toBe(item)

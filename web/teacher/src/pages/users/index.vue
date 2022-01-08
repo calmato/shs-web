@@ -1,6 +1,7 @@
 <template>
   <the-user-top
     :loading="loading"
+    :is-admin="isAdmin"
     :subjects="subjects"
     :students="students"
     :teacher="teacher"
@@ -38,7 +39,7 @@ import {
   TeacherEditSubjectForJuniorHighSchoolOptions,
   TeacherEditSubjectForElementarySchoolOptions,
 } from '~/types/form'
-import { PromiseState, SchoolType, Student, Subject, SubjectsMap, Teacher } from '~/types/store'
+import { PromiseState, Role, SchoolType, Student, Subject, SubjectsMap, Teacher } from '~/types/store'
 
 export default defineComponent({
   components: {
@@ -74,6 +75,7 @@ export default defineComponent({
     })
 
     const loading = computed<boolean>(() => store.getters['common/getPromiseState'] === PromiseState.LOADING)
+    const isAdmin = computed<boolean>(() => store.getters['auth/getRole'] === Role.ADMINISTRATOR)
     const subjects = computed<SubjectsMap>(() => store.getters['lesson/getSubjectsMap'])
     const students = computed<Student[]>(() => store.getters['user/getStudents'])
     const teacher = computed<Teacher>(() => store.getters['user/getTeacher'])
@@ -203,6 +205,7 @@ export default defineComponent({
 
     return {
       loading,
+      isAdmin,
       subjects,
       students,
       teacher,
