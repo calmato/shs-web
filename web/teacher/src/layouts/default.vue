@@ -2,13 +2,13 @@
   <v-app class="root" :style="{ background }">
     <the-snackbar :snackbar.sync="snackbar" :color="snackbarColor" :message="snackbarMessage" />
     <the-header :overlay="overlay" @click="handleClickMenu" />
-    <the-sidebar :items="items" :current="current" @click="handleClickMenuItem" />
+    <the-sidebar :items="getMenuItems()" :current="current" @click="handleClickMenuItem" />
     <v-main>
       <nuxt />
       <the-menu
         :overlay="overlay"
         :absolute="true"
-        :items="items"
+        :items="getMenuItems()"
         @click:item="handleClickMenuItem"
         @click:close="handleClickMenu"
       />
@@ -25,6 +25,7 @@ import TheSidebar from '~/components/organisms/TheSidebar.vue'
 import TheSnackbar from '~/components/organisms/TheSnackbar.vue'
 import { CommonStore } from '~/store'
 import { Menu } from '~/types/props/menu'
+import { Role } from '~/types/store'
 
 export default defineComponent({
   components: {
@@ -46,26 +47,31 @@ export default defineComponent({
         name: 'トップ',
         icon: 'mdi-home',
         path: '/',
+        filter: 'all',
       },
       {
         name: 'シフト希望',
         icon: 'mdi-note-edit-outline',
         path: '/submissions',
+        filter: 'all',
       },
       {
         name: 'シフト作成',
         icon: 'mdi-chart-box-plus-outline',
         path: '/shifts',
+        filter: [Role.ADMINISTRATOR],
       },
       {
         name: 'ユーザ一覧',
         icon: 'mdi-format-list-bulleted',
         path: '/users',
+        filter: 'all',
       },
       {
         name: '設定',
         icon: 'mdi-cogs',
         path: '/settings',
+        filter: 'all',
       },
     ]
 
@@ -85,6 +91,7 @@ export default defineComponent({
     const overlay = ref<boolean>(false)
     const background = ref<VuetifyThemeItem>(getBackgroundColor(root.$route.path))
 
+    const role = computed<Role>(() => store.getters['auth/getRole'])
     const snackbarColor = computed(() => store.getters['common/getSnackbarColor'])
     const snackbarMessage = computed(() => store.getters['common/getSnackbarMessage'])
 
@@ -106,6 +113,17 @@ export default defineComponent({
       }
     })
 
+    const getMenuItems = (): Menu[] => {
+      const menu = items.filter((item: Menu) => {
+        if (item.filter === 'all') {
+          return true
+        }
+
+        return item.filter.includes(role.value)
+      })
+      return menu
+    }
+
     const handleClickMenu = (): void => {
       overlay.value = !overlay.value
     }
@@ -116,13 +134,13 @@ export default defineComponent({
     }
 
     return {
-      items,
       overlay,
       current,
       background,
       snackbar,
       snackbarColor,
       snackbarMessage,
+      getMenuItems,
       handleClickMenu,
       handleClickMenuItem,
     }

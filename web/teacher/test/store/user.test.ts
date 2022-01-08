@@ -444,5 +444,32 @@ describe('store/user', () => {
         })
       })
     })
+
+    describe('deleteTeacher', () => {
+      describe('success', () => {
+        beforeEach(() => {
+          setSafetyMode(true)
+        })
+
+        it('return resolve', async () => {
+          await expect(UserStore.deleteTeacher({ teacherId: '000000000000000000001' })).resolves.toBeUndefined()
+        })
+      })
+
+      describe('failure', () => {
+        beforeEach(() => {
+          setSafetyMode(false)
+        })
+
+        it('return reject', async () => {
+          const err = new ApiError(400, 'api error', {
+            status: 400,
+            message: 'api error',
+            details: 'some error',
+          } as ErrorResponse)
+          await expect(UserStore.deleteTeacher({ teacherId: '000000000000000000001' })).rejects.toThrow(err)
+        })
+      })
+    })
   })
 })

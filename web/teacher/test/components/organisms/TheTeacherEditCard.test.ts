@@ -25,6 +25,39 @@ describe('components/organisms/TheTeacherEditCard', () => {
 
   describe('script', () => {
     describe('props', () => {
+      describe('loading', () => {
+        it('初期値', () => {
+          expect(wrapper.props().loading).toBeFalsy()
+        })
+
+        it('値が代入されること', async () => {
+          await wrapper.setProps({ loading: true })
+          expect(wrapper.props().loading).toBeTruthy()
+        })
+      })
+
+      describe('isAdmin', () => {
+        it('初期値', () => {
+          expect(wrapper.props().isAdmin).toBeFalsy()
+        })
+
+        it('値が代入されること', async () => {
+          await wrapper.setProps({ isAdmin: true })
+          expect(wrapper.props().isAdmin).toBeTruthy()
+        })
+      })
+
+      describe('deleteDialog', () => {
+        it('初期値', () => {
+          expect(wrapper.props().deleteDialog).toBeFalsy()
+        })
+
+        it('値が代入されること', async () => {
+          await wrapper.setProps({ deleteDialog: true })
+          expect(wrapper.props().deleteDialog).toBeTruthy()
+        })
+      })
+
       describe('teacher', () => {
         it('初期値', () => {
           expect(wrapper.props().teacher).toEqual({
@@ -352,6 +385,27 @@ describe('components/organisms/TheTeacherEditCard', () => {
         it('emitted', async () => {
           await wrapper.vm.onClose()
           expect(wrapper.emitted('click:close')).toBeTruthy()
+        })
+      })
+
+      describe('onDelete', () => {
+        it('emitted', async () => {
+          await wrapper.vm.onDelete()
+          expect(wrapper.emitted('click:delete')).toBeTruthy()
+        })
+      })
+
+      describe('onDeleteAccept', () => {
+        it('emitted', async () => {
+          await wrapper.vm.onDeleteAccept()
+          expect(wrapper.emitted('click:delete-accept')).toBeTruthy()
+        })
+      })
+
+      describe('onDeleteCancel', () => {
+        it('emitted', async () => {
+          await wrapper.vm.onDeleteCancel()
+          expect(wrapper.emitted('click:delete-cancel')).toBeTruthy()
         })
       })
 

@@ -156,3 +156,7 @@ export const updateTeacherSubjects: { [key: string]: {} } = {
 export const updateTeacherRole: { [key: string]: {} } = {
   '/v1/teachers/000000000000000000001/role': {},
 }
+
+export const deleteTeacher: { [key: string]: {} } = {
+  '/v1/teachers/000000000000000000001': {},
+}

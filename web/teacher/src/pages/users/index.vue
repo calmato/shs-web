@@ -1,10 +1,11 @@
 <template>
   <the-user-top
     :loading="loading"
+    :is-admin="isAdmin"
     :subjects="subjects"
     :students="students"
     :teacher="teacher"
-    :teacher-dialog="teacherDialog"
+    :teacher-edit-dialog="teacherDialog"
     :teachers="teachers"
     :teachers-total="teachersTotal"
     :teachers-page.sync="teachersPage"
@@ -19,6 +20,7 @@
     @submit:teacher-junior-high-school="handleSubmitTeacherJuniorHighSchool"
     @submit:teacher-high-school="handleSubmitTeacherHighSchool"
     @submit:teacher-role="handleSubmitTeacherRole"
+    @submit:teacher-delete="handleSubmitDeleteTeacher"
   />
 </template>
 
@@ -38,7 +40,7 @@ import {
   TeacherEditSubjectForJuniorHighSchoolOptions,
   TeacherEditSubjectForElementarySchoolOptions,
 } from '~/types/form'
-import { PromiseState, Student, Subject, SubjectsMap, Teacher } from '~/types/store'
+import { PromiseState, Role, Student, Subject, SubjectsMap, Teacher } from '~/types/store'
 
 export default defineComponent({
   components: {
@@ -74,6 +76,7 @@ export default defineComponent({
     })
 
     const loading = computed<boolean>(() => store.getters['common/getPromiseState'] === PromiseState.LOADING)
+    const isAdmin = computed<boolean>(() => store.getters['auth/getRole'] === Role.ADMINISTRATOR)
     const subjects = computed<SubjectsMap>(() => store.getters['lesson/getSubjectsMap'])
     const students = computed<Student[]>(() => store.getters['user/getStudents'])
     const teacher = computed<Teacher>(() => store.getters['user/getTeacher'])
@@ -197,12 +200,30 @@ export default defineComponent({
         })
     }
 
+    const handleSubmitDeleteTeacher = async (): Promise<void> => {
+      CommonStore.startConnection()
+
+      const teacherId: string = teacher.value.id
+
+      await UserStore.deleteTeacher({ teacherId })
+        .then(() => {
+          teacherDialog.value = false
+        })
+        .catch((err: Error) => {
+          console.log('feiled to delete teacher', err)
+        })
+        .finally(() => {
+          CommonStore.endConnection()
+        })
+    }
+
     const handleCloseTeacherDialog = (): void => {
       teacherDialog.value = false
     }
 
     return {
       loading,
+      isAdmin,
       subjects,
       students,
       teacher,
@@ -221,6 +242,7 @@ export default defineComponent({
       handleSubmitTeacherJuniorHighSchool,
       handleSubmitTeacherHighSchool,
       handleSubmitTeacherRole,
+      handleSubmitDeleteTeacher,
       handleCloseTeacherDialog,
     }
   },

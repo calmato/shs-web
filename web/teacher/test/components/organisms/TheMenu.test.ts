@@ -35,6 +35,7 @@ describe('components/organisms/TheMenu', () => {
               name: 'テスト',
               icon: 'mdi-home',
               path: '/test',
+              filter: 'all',
             },
           ]
           await wrapper.setProps({ items })
@@ -57,7 +58,7 @@ describe('components/organisms/TheMenu', () => {
     describe('methods', () => {
       describe('onClickItem', () => {
         it('emitted', async () => {
-          const item: Menu = { name: 'テスト', icon: 'mdi-home', path: '/test' }
+          const item: Menu = { name: 'テスト', icon: 'mdi-home', path: '/test', filter: 'all' }
           await wrapper.vm.onClickItem(item)
           expect(wrapper.emitted('click:item')).toBeTruthy()
           expect(wrapper.emitted('click:item')[0][0]).toBe(item)

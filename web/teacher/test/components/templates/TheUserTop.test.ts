@@ -36,6 +36,17 @@ describe('components/templates/TheUserTop', () => {
         })
       })
 
+      describe('isAdmin', () => {
+        it('初期値', () => {
+          expect(wrapper.props().isAdmin).toBeFalsy()
+        })
+
+        it('値が代入されること', async () => {
+          await wrapper.setProps({ isAdmin: true })
+          expect(wrapper.props().isAdmin).toBeTruthy()
+        })
+      })
+
       describe('subjects', () => {
         it('初期値', () => {
           expect(wrapper.props().subjects).toEqual({
@@ -180,14 +191,14 @@ describe('components/templates/TheUserTop', () => {
         })
       })
 
-      describe('teacherDialog', () => {
+      describe('teacherEditDialog', () => {
         it('初期値', () => {
-          expect(wrapper.props().teacherDialog).toBeFalsy()
+          expect(wrapper.props().teacherEditDialog).toBeFalsy()
         })
 
         it('値が代入されること', async () => {
-          await wrapper.setProps({ teacherDialog: true })
-          expect(wrapper.props().teacherDialog).toBeTruthy()
+          await wrapper.setProps({ teacherEditDialog: true })
+          expect(wrapper.props().teacherEditDialog).toBeTruthy()
         })
       })
 
@@ -350,6 +361,10 @@ describe('components/templates/TheUserTop', () => {
       it('selector', () => {
         expect(wrapper.vm.selector).toBe('teachers')
       })
+
+      it('teacherDeleteDialog', () => {
+        expect(wrapper.vm.teacherDeleteDialog).toBeFalsy()
+      })
     })
 
     describe('methods', () => {
@@ -387,10 +402,41 @@ describe('components/templates/TheUserTop', () => {
         })
       })
 
+      describe('onClickDeleteTeacher', () => {
+        it('changing teacherDeleteDialog', async () => {
+          await wrapper.vm.onClickDeleteTeacher()
+          expect(wrapper.vm.teacherDeleteDialog).toBeTruthy()
+        })
+      })
+
+      describe('onClickDeleteTeacherAccept', () => {
+        it('emitted', async () => {
+          await wrapper.vm.onClickDeleteTeacherAccept()
+          expect(wrapper.emitted('submit:teacher-delete')).toBeTruthy()
+        })
+
+        it('changing teacherDeleteDialog', async () => {
+          await wrapper.vm.onClickDeleteTeacherAccept()
+          expect(wrapper.vm.teacherDeleteDialog).toBeFalsy()
+        })
+      })
+
+      describe('onClickDeleteTeacherCancel', () => {
+        it('changing teacherDeleteDialog', async () => {
+          await wrapper.vm.onClickDeleteTeacherCancel()
+          expect(wrapper.vm.teacherDeleteDialog).toBeFalsy()
+        })
+      })
+
       describe('onCloseTeacherDialog', () => {
         it('emitが実行されること', async () => {
           await wrapper.vm.onCloseTeacherDialog()
           expect(wrapper.emitted('click:close-teacher')).toBeTruthy()
+        })
+
+        it('changing teacherDeleteDialog', async () => {
+          await wrapper.vm.onCloseTeacherDialog()
+          expect(wrapper.vm.teacherDeleteDialog).toBeFalsy()
         })
       })
 
