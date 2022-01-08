@@ -2,7 +2,18 @@ import { shallowMount } from '@vue/test-utils'
 import * as Options from '~~/test/helpers/component-helper'
 import TheUserTop from '~/components/templates/TheUserTop.vue'
 import { Role, SchoolType, Student, SubjectsMap, Teacher } from '~/types/store'
-import { TeacherEditRoleForm, TeacherEditRoleOptions, TeacherEditRoleParams, TeacherEditSubjectForElementarySchoolOptions, TeacherEditSubjectForElementarySchoolParams, TeacherEditSubjectForHighSchoolOptions, TeacherEditSubjectForHighSchoolParams, TeacherEditSubjectForJuniorHighSchoolOptions, TeacherEditSubjectForJuniorHighSchoolParams, TeacherEditSubjectForm } from '~/types/form'
+import {
+  TeacherEditRoleForm,
+  TeacherEditRoleOptions,
+  TeacherEditRoleParams,
+  TeacherEditSubjectForElementarySchoolOptions,
+  TeacherEditSubjectForElementarySchoolParams,
+  TeacherEditSubjectForHighSchoolOptions,
+  TeacherEditSubjectForHighSchoolParams,
+  TeacherEditSubjectForJuniorHighSchoolOptions,
+  TeacherEditSubjectForJuniorHighSchoolParams,
+  TeacherEditSubjectForm,
+} from '~/types/form'
 
 describe('components/templates/TheUserTop', () => {
   let wrapper: any
@@ -146,20 +157,20 @@ describe('components/templates/TheUserTop', () => {
         })
 
         it('値が代入されること', async () => {
-          const teacher: Teacher =             {
-              id: '000000000000000000001',
-              name: '中村 太郎',
-              nameKana: 'なかむら たろう',
-              lastName: '中村',
-              firstName: '太郎',
-              lastNameKana: 'なかむら',
-              firstNameKana: 'たろう',
-              mail: 'teacher-001@calmato.jp',
-              role: 0,
-              subjects: {},
-              createdAt: '',
-              updatedAt: '',
-            }
+          const teacher: Teacher = {
+            id: '000000000000000000001',
+            name: '中村 太郎',
+            nameKana: 'なかむら たろう',
+            lastName: '中村',
+            firstName: '太郎',
+            lastNameKana: 'なかむら',
+            firstNameKana: 'たろう',
+            mail: 'teacher-001@calmato.jp',
+            role: 0,
+            subjects: {},
+            createdAt: '',
+            updatedAt: '',
+          }
           await wrapper.setProps({ teacher })
           expect(wrapper.props().teacher).toBe(teacher)
         })

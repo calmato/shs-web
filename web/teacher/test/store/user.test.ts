@@ -2,7 +2,14 @@ import { setup, refresh, setSafetyMode } from '~~/test/helpers/store-helper'
 import { UserStore } from '~/store'
 import { ApiError } from '~/types/exception'
 import { ErrorResponse } from '~/types/api/exception'
-import { TeacherEditRoleForm, TeacherEditRoleOptions, TeacherEditSubjectForHighSchoolOptions, TeacherEditSubjectForm, TeacherNewForm, TeacherNewOptions } from '~/types/form'
+import {
+  TeacherEditRoleForm,
+  TeacherEditRoleOptions,
+  TeacherEditSubjectForHighSchoolOptions,
+  TeacherEditSubjectForm,
+  TeacherNewForm,
+  TeacherNewOptions,
+} from '~/types/form'
 import { Role, SchoolType } from '~/types/store'
 
 describe('store/user', () => {
@@ -203,51 +210,51 @@ describe('store/user', () => {
 
         it('changing state', async () => {
           await UserStore.showTeacher({ teacherId: '000000000000000000001' })
-          expect(UserStore.getTeacher).toEqual( {
-              id: '000000000000000000001',
-              name: '中村 太郎',
-              nameKana: 'なかむら たろう',
-              lastName: '中村',
-              firstName: '太郎',
-              lastNameKana: 'なかむら',
-              firstNameKana: 'たろう',
-              mail: 'teacher-001@calmato.jp',
-              role: 1,
-              subjects: {
-                [SchoolType.ELEMENTARY_SCHOOL]: [
-                  {
-                    id: 1,
-                    name: '国語',
-                    color: '#F8BBD0',
-                    schoolType: SchoolType.ELEMENTARY_SCHOOL,
-                    createdAt: '',
-                    updatedAt: '',
-                  },
-                ],
-                [SchoolType.JUNIOR_HIGH_SCHOOL]: [
-                  {
-                    id: 2,
-                    name: '数学',
-                    color: '#BBDEFB',
-                    schoolType: SchoolType.JUNIOR_HIGH_SCHOOL,
-                    createdAt: '',
-                    updatedAt: '',
-                  },
-                ],
-                [SchoolType.HIGH_SCHOOL]: [
-                  {
-                    id: 3,
-                    name: '英語',
-                    color: '#FEE6C9',
-                    schoolType: SchoolType.HIGH_SCHOOL,
-                    createdAt: '',
-                    updatedAt: '',
-                  },
-                ],
-              },
-              createdAt: '2021-12-02T18:30:00+09:00',
-              updatedAt: '2021-12-02T18:30:00+09:00',
-            })
+          expect(UserStore.getTeacher).toEqual({
+            id: '000000000000000000001',
+            name: '中村 太郎',
+            nameKana: 'なかむら たろう',
+            lastName: '中村',
+            firstName: '太郎',
+            lastNameKana: 'なかむら',
+            firstNameKana: 'たろう',
+            mail: 'teacher-001@calmato.jp',
+            role: 1,
+            subjects: {
+              [SchoolType.ELEMENTARY_SCHOOL]: [
+                {
+                  id: 1,
+                  name: '国語',
+                  color: '#F8BBD0',
+                  schoolType: SchoolType.ELEMENTARY_SCHOOL,
+                  createdAt: '',
+                  updatedAt: '',
+                },
+              ],
+              [SchoolType.JUNIOR_HIGH_SCHOOL]: [
+                {
+                  id: 2,
+                  name: '数学',
+                  color: '#BBDEFB',
+                  schoolType: SchoolType.JUNIOR_HIGH_SCHOOL,
+                  createdAt: '',
+                  updatedAt: '',
+                },
+              ],
+              [SchoolType.HIGH_SCHOOL]: [
+                {
+                  id: 3,
+                  name: '英語',
+                  color: '#FEE6C9',
+                  schoolType: SchoolType.HIGH_SCHOOL,
+                  createdAt: '',
+                  updatedAt: '',
+                },
+              ],
+            },
+            createdAt: '2021-12-02T18:30:00+09:00',
+            updatedAt: '2021-12-02T18:30:00+09:00',
+          })
         })
       })
 
@@ -377,7 +384,9 @@ describe('store/user', () => {
         })
 
         it('return resolve', async () => {
-          await expect(UserStore.updateTeacherSubjects({ teacherId: '000000000000000000001', form })).resolves.toBeUndefined()
+          await expect(
+            UserStore.updateTeacherSubjects({ teacherId: '000000000000000000001', form })
+          ).resolves.toBeUndefined()
         })
       })
 
@@ -392,7 +401,9 @@ describe('store/user', () => {
             message: 'api error',
             details: 'some error',
           } as ErrorResponse)
-          await expect(UserStore.updateTeacherSubjects({ teacherId: '000000000000000000001', form })).rejects.toThrow(err)
+          await expect(UserStore.updateTeacherSubjects({ teacherId: '000000000000000000001', form })).rejects.toThrow(
+            err
+          )
         })
       })
     })
@@ -412,7 +423,9 @@ describe('store/user', () => {
         })
 
         it('return resolve', async () => {
-          await expect(UserStore.updateTeacherRole({ teacherId: '000000000000000000001', form })).resolves.toBeUndefined()
+          await expect(
+            UserStore.updateTeacherRole({ teacherId: '000000000000000000001', form })
+          ).resolves.toBeUndefined()
         })
       })
 

@@ -1,8 +1,19 @@
 import { mount } from '@vue/test-utils'
 import * as Options from '~~/test/helpers/component-helper'
 import TheTeacherEditCard from '~/components/organisms/TheTeacherEditCard.vue'
-import { Role, SchoolType, Subject, SubjectsMap, Teacher } from '~/types/store'
-import { TeacherEditRoleForm, TeacherEditRoleOptions, TeacherEditRoleParams, TeacherEditSubjectForElementarySchoolOptions, TeacherEditSubjectForElementarySchoolParams, TeacherEditSubjectForHighSchoolOptions, TeacherEditSubjectForHighSchoolParams, TeacherEditSubjectForJuniorHighSchoolOptions, TeacherEditSubjectForJuniorHighSchoolParams, TeacherEditSubjectForm } from '~/types/form'
+import { Role, SchoolType, SubjectsMap, Teacher } from '~/types/store'
+import {
+  TeacherEditRoleForm,
+  TeacherEditRoleOptions,
+  TeacherEditRoleParams,
+  TeacherEditSubjectForElementarySchoolOptions,
+  TeacherEditSubjectForElementarySchoolParams,
+  TeacherEditSubjectForHighSchoolOptions,
+  TeacherEditSubjectForHighSchoolParams,
+  TeacherEditSubjectForJuniorHighSchoolOptions,
+  TeacherEditSubjectForJuniorHighSchoolParams,
+  TeacherEditSubjectForm,
+} from '~/types/form'
 
 describe('components/organisms/TheTeacherEditCard', () => {
   let wrapper: any
