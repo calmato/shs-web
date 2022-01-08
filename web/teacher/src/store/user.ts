@@ -124,6 +124,18 @@ export default class UserModule extends VuexModule {
     this.teachersTotal += 1
   }
 
+  @Mutation
+  private removeTeacher({ teacherId }: { teacherId: string }): void {
+    const index: number = this.teachers.findIndex((val: Teacher) => {
+      return val.id === teacherId
+    })
+    if (index === -1) {
+      return
+    }
+    this.teachers.splice(index, 1)
+    this.teachersTotal -= 1
+  }
+
   @Action({})
   public factory(): void {
     this.setStudents(initialState.students)
@@ -210,6 +222,19 @@ export default class UserModule extends VuexModule {
       const res: ErrorResponse = { ...err.response?.data }
       throw new ApiError(res.status, res.message, res)
     })
+  }
+
+  @Action({ rawError: true })
+  public async deleteTeacher({ teacherId }: { teacherId: string }): Promise<void> {
+    await $axios
+      .$delete(`/v1/teachers/${teacherId}`)
+      .then(() => {
+        this.removeTeacher({ teacherId })
+      })
+      .catch((err: AxiosError) => {
+        const res: ErrorResponse = { ...err.response?.data }
+        throw new ApiError(res.status, res.message, res)
+      })
   }
 }
 

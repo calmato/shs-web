@@ -5,7 +5,7 @@
     :subjects="subjects"
     :students="students"
     :teacher="teacher"
-    :teacher-dialog="teacherDialog"
+    :teacher-edit-dialog="teacherDialog"
     :teachers="teachers"
     :teachers-total="teachersTotal"
     :teachers-page.sync="teachersPage"
@@ -20,6 +20,7 @@
     @submit:teacher-junior-high-school="handleSubmitTeacherJuniorHighSchool"
     @submit:teacher-high-school="handleSubmitTeacherHighSchool"
     @submit:teacher-role="handleSubmitTeacherRole"
+    @submit:teacher-delete="handleSubmitDeleteTeacher"
   />
 </template>
 
@@ -199,6 +200,23 @@ export default defineComponent({
         })
     }
 
+    const handleSubmitDeleteTeacher = async (): Promise<void> => {
+      CommonStore.startConnection()
+
+      const teacherId: string = teacher.value.id
+
+      await UserStore.deleteTeacher({ teacherId })
+        .then(() => {
+          teacherDialog.value = false
+        })
+        .catch((err: Error) => {
+          console.log('feiled to delete teacher', err)
+        })
+        .finally(() => {
+          CommonStore.endConnection()
+        })
+    }
+
     const handleCloseTeacherDialog = (): void => {
       teacherDialog.value = false
     }
@@ -224,6 +242,7 @@ export default defineComponent({
       handleSubmitTeacherJuniorHighSchool,
       handleSubmitTeacherHighSchool,
       handleSubmitTeacherRole,
+      handleSubmitDeleteTeacher,
       handleCloseTeacherDialog,
     }
   },
