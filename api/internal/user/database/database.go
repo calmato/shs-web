@@ -45,6 +45,7 @@ func NewDatabase(params *Params) *Database {
  * interface
  */
 type Student interface {
+	List(ctx context.Context, p *ListStudentsParams, fields ...string) (entity.Students, error)
 	Get(ctx context.Context, id string, fields ...string) (*entity.Student, error)
 	Create(ctx context.Context, s *entity.Student) error
 }
@@ -64,6 +65,11 @@ type Teacher interface {
  * params
  */
 type ListTeachersParams struct {
+	Limit  int
+	Offset int
+}
+
+type ListStudentsParams struct {
 	Limit  int
 	Offset int
 }

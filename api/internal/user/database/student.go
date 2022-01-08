@@ -31,6 +31,24 @@ func NewStudent(db *database.Client, auth authentication.Client) Student {
 	}
 }
 
+func (s *student) List(ctx context.Context, params *ListStudentsParams, fields ...string) (entity.Students, error) {
+	var students entity.Students
+	if len(fields) == 0 {
+		fields = studentFields
+	}
+
+	stmt := s.db.DB.Table(studentTable).Select(fields)
+	if params.Limit > 0 {
+		stmt.Limit(params.Limit)
+	}
+	if params.Offset > 0 {
+		stmt.Offset((params.Offset))
+	}
+
+	err := stmt.Find(&students).Error
+	return students, dbError(err)
+}
+
 func (s *student) Get(ctx context.Context, id string, fields ...string) (*entity.Student, error) {
 	var student *entity.Student
 	if len(fields) == 0 {
