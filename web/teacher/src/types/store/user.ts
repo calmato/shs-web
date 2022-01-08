@@ -9,7 +9,7 @@ export interface Student {
   lastNameKana: string
   firstNameKana: string
   mail: string
-  type: SchoolType
+  type: 0 | 1 | 2 | 3
   grade: number
   createdAt: string
   updatedAt: string
