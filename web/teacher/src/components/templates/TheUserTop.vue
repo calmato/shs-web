@@ -9,16 +9,21 @@
     <v-tabs-items v-model="selector">
       <v-tab-item value="tab-teachers">
         <v-row>
-          <v-dialog :value.sync="teacherDialog" width="600px" scrollable @click:outside="onCloseTeacherDialog">
+          <v-dialog :value.sync="teacherEditDialog" width="600px" scrollable @click:outside="onCloseTeacherDialog">
             <the-teacher-edit-card
               :is-admin="isAdmin"
               :subjects="subjects"
               :teacher="teacher"
+              :loading="loading"
+              :delete-dialog="teacherDeleteDialog"
               :edit-teacher-elementary-school-form="editTeacherElementarySchoolForm"
               :edit-teacher-junior-high-school-form="editTeacherJuniorHighSchoolForm"
               :edit-teacher-high-school-form="editTeacherHighSchoolForm"
               :edit-teacher-role-form="editTeacherRoleForm"
               @click:close="onCloseTeacherDialog"
+              @click:delete="onClickDeleteTeacher"
+              @click:delete-accept="onClickDeleteTeacherAccept"
+              @click:delete-cancel="onClickDeleteTeacherCancel"
               @submit:elementary-school="onSubmitTeacherElementarySchool"
               @submit:junior-high-school="onSubmitTeacherJuniorHighSchool"
               @submit:high-school="onSubmitTeacherHighSchool"
@@ -112,7 +117,7 @@ export default defineComponent({
         updatedAt: '',
       }),
     },
-    teacherDialog: {
+    teacherEditDialog: {
       type: Boolean,
       default: false,
     },
@@ -169,6 +174,7 @@ export default defineComponent({
     ]
 
     const selector = ref<string>('teachers')
+    const teacherDeleteDialog = ref<boolean>(false)
 
     const onClickNew = (actor: string): void => {
       emit('click:new', actor)
@@ -178,8 +184,22 @@ export default defineComponent({
       emit('click:show-teacher', teacher)
     }
 
+    const onClickDeleteTeacher = (): void => {
+      teacherDeleteDialog.value = true
+    }
+
+    const onClickDeleteTeacherAccept = (): void => {
+      emit('submit:teacher-delete')
+      teacherDeleteDialog.value = false
+    }
+
+    const onClickDeleteTeacherCancel = (): void => {
+      teacherDeleteDialog.value = false
+    }
+
     const onCloseTeacherDialog = (): void => {
       emit('click:close-teacher')
+      teacherDeleteDialog.value = false
     }
 
     const onSubmitTeacherElementarySchool = (): void => {
@@ -201,9 +221,13 @@ export default defineComponent({
     return {
       actors,
       selector,
+      teacherDeleteDialog,
       onClickNew,
       onClickShowTeacher,
       onCloseTeacherDialog,
+      onClickDeleteTeacher,
+      onClickDeleteTeacherAccept,
+      onClickDeleteTeacherCancel,
       onSubmitTeacherElementarySchool,
       onSubmitTeacherJuniorHighSchool,
       onSubmitTeacherHighSchool,

@@ -3,7 +3,11 @@
     <v-toolbar color="primary" dark>講師詳細</v-toolbar>
 
     <v-card-text>
-      <v-row class="py-8">
+      <v-row v-if="deleteDialog" class="py-8">
+        <h2>本当に削除しますか</h2>
+      </v-row>
+
+      <v-row v-else class="py-8">
         <v-col cols="12">
           <h3 class="mb-2">講師名</h3>
           <span>{{ getTeacherName() }}</span>
@@ -80,8 +84,14 @@
       </v-row>
     </v-card-text>
 
-    <v-card-actions>
+    <v-card-actions v-if="deleteDialog">
       <v-spacer />
+      <v-btn @click="onDeleteCancel">キャンセル</v-btn>
+      <v-btn color="error" :disabled="loading" @click="onDeleteAccept">削除する</v-btn>
+    </v-card-actions>
+    <v-card-actions v-else>
+      <v-spacer />
+      <v-btn v-show="isAdmin" color="error" @click="onDelete">削除する</v-btn>
       <v-btn color="secondary" @click="onClose">閉じる</v-btn>
     </v-card-actions>
   </v-card>
@@ -113,7 +123,15 @@ export default defineComponent({
   },
 
   props: {
+    loading: {
+      type: Boolean,
+      default: false,
+    },
     isAdmin: {
+      type: Boolean,
+      default: false,
+    },
+    deleteDialog: {
       type: Boolean,
       default: false,
     },
@@ -196,6 +214,18 @@ export default defineComponent({
       emit('click:close')
     }
 
+    const onDelete = (): void => {
+      emit('click:delete')
+    }
+
+    const onDeleteAccept = (): void => {
+      emit('click:delete-accept')
+    }
+
+    const onDeleteCancel = (): void => {
+      emit('click:delete-cancel')
+    }
+
     const onSubmitRole = (): void => {
       emit('submit:role')
     }
@@ -219,6 +249,9 @@ export default defineComponent({
       getJuniorHighSchoolSubjects,
       getHighSchoolSubjects,
       onClose,
+      onDelete,
+      onDeleteAccept,
+      onDeleteCancel,
       onSubmitRole,
       onSubmitElementarySchool,
       onSubmitJuniorHighSchool,

@@ -38,6 +38,7 @@ export default {
   put: {},
   delete: {
     ...ShiftStore.deleteShifts,
+    ...UserStore.deleteTeacher,
   },
   error: err,
 }
