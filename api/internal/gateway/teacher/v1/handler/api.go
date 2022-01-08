@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"sync"
 	"time"
 
@@ -174,6 +175,7 @@ func (h *apiV1Handler) Authorization() gin.HandlerFunc {
 		}
 
 		if !teacher.AdminRole() {
+			err := fmt.Errorf("handler: permission denied")
 			forbidden(ctx, err)
 			return
 		}
