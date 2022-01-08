@@ -1,11 +1,18 @@
 import { Module, VuexModule, Mutation, Action } from 'vuex-module-decorators'
 import { AxiosError } from 'axios'
 import { $axios } from '~/plugins/axios'
-import { TeachersResponse, Teacher as TeacherResponse, CreateTeacherRequest } from '~/types/api/v1'
-import { Student, StudentMap, Teacher, TeacherMap, UserState } from '~/types/store'
+import {
+  TeachersResponse,
+  Teacher as V1Teacher,
+  CreateTeacherRequest,
+  TeacherResponse,
+  UpdateTeacherSubjectsRequest,
+  UpdateTeacherRoleRequest,
+} from '~/types/api/v1'
+import { Role, SchoolType, Student, StudentMap, SubjectsMap, Teacher, TeacherMap, UserState } from '~/types/store'
 import { ErrorResponse } from '~/types/api/exception'
 import { ApiError } from '~/types/exception'
-import { TeacherNewForm } from '~/types/form'
+import { TeacherEditRoleForm, TeacherEditSubjectForm, TeacherNewForm } from '~/types/form'
 
 const initialState: UserState = {
   students: [
@@ -24,6 +31,18 @@ const initialState: UserState = {
       updatedAt: '',
     },
   ],
+  teacher: {
+    id: '',
+    lastName: '',
+    firstName: '',
+    lastNameKana: '',
+    firstNameKana: '',
+    mail: '',
+    role: Role.TEACHER,
+    subjects: initializeSubjects(),
+    createdAt: '',
+    updatedAt: '',
+  },
   teachers: [],
   teachersTotal: 0,
 }
@@ -35,6 +54,7 @@ const initialState: UserState = {
 })
 export default class UserModule extends VuexModule {
   private students: UserState['students'] = initialState.students
+  private teacher: UserState['teacher'] = initialState.teacher
   private teachers: UserState['teachers'] = initialState.teachers
   private teachersTotal: UserState['teachersTotal'] = initialState.teachersTotal
 
@@ -48,6 +68,10 @@ export default class UserModule extends VuexModule {
       students[student.id] = student
     })
     return students
+  }
+
+  public get getTeacher(): Teacher {
+    return this.teacher
   }
 
   public get getTeachers(): Teacher[] {
@@ -73,6 +97,13 @@ export default class UserModule extends VuexModule {
       const nameKana = getName(student.lastNameKana, student.firstNameKana)
       return { ...student, name, nameKana }
     })
+  }
+
+  @Mutation
+  private setTeacher(teacher: Teacher): void {
+    const name = getName(teacher.lastName, teacher.firstName)
+    const nameKana = getName(teacher.lastNameKana, teacher.firstNameKana)
+    this.teacher = { ...teacher, name, nameKana }
   }
 
   @Mutation
@@ -109,10 +140,24 @@ export default class UserModule extends VuexModule {
     await $axios
       .$get('/v1/teachers' + query)
       .then((res: TeachersResponse) => {
-        const teachers: Teacher[] = res.teachers.map((data: TeacherResponse): Teacher => {
-          return { ...data }
+        const teachers: Teacher[] = res.teachers.map((data: V1Teacher): Teacher => {
+          const subjects = initializeSubjects()
+          return { ...data, subjects }
         })
         this.setTeachers({ teachers, total: res.total })
+      })
+      .catch((err: AxiosError) => {
+        const res: ErrorResponse = { ...err.response?.data }
+        throw new ApiError(res.status, res.message, res)
+      })
+  }
+
+  @Action({ rawError: true })
+  public async showTeacher({ teacherId }: { teacherId: string }): Promise<void> {
+    await $axios
+      .$get(`/v1/teachers/${teacherId}`)
+      .then((res: TeacherResponse) => {
+        this.setTeacher({ ...res })
       })
       .catch((err: AxiosError) => {
         const res: ErrorResponse = { ...err.response?.data }
@@ -127,12 +172,52 @@ export default class UserModule extends VuexModule {
     await $axios
       .$post('/v1/teachers', req)
       .then((res: TeacherResponse) => {
-        this.addTeacher(res)
+        const subjects = res.subjects || initializeSubjects()
+        this.addTeacher({ ...res, subjects })
       })
       .catch((err: AxiosError) => {
         const res: ErrorResponse = { ...err.response?.data }
         throw new ApiError(res.status, res.message, res)
       })
+  }
+
+  @Action({ rawError: true })
+  public async updateTeacherSubjects({
+    teacherId,
+    form,
+  }: {
+    teacherId: string
+    form: TeacherEditSubjectForm
+  }): Promise<void> {
+    const req: UpdateTeacherSubjectsRequest = {
+      schoolType: form.params.schoolType,
+      subjectIds: form.params.subjectIds,
+    }
+
+    await $axios.$patch(`/v1/teachers/${teacherId}/subjects`, req).catch((err: AxiosError) => {
+      const res: ErrorResponse = { ...err.response?.data }
+      throw new ApiError(res.status, res.message, res)
+    })
+  }
+
+  @Action({ rawError: true })
+  public async updateTeacherRole({ teacherId, form }: { teacherId: string; form: TeacherEditRoleForm }): Promise<void> {
+    const req: UpdateTeacherRoleRequest = {
+      role: form.params.role,
+    }
+
+    await $axios.$patch(`/v1/teachers/${teacherId}/role`, req).catch((err: AxiosError) => {
+      const res: ErrorResponse = { ...err.response?.data }
+      throw new ApiError(res.status, res.message, res)
+    })
+  }
+}
+
+function initializeSubjects(): SubjectsMap {
+  return {
+    [SchoolType.ELEMENTARY_SCHOOL]: [],
+    [SchoolType.JUNIOR_HIGH_SCHOOL]: [],
+    [SchoolType.HIGH_SCHOOL]: [],
   }
 }
 

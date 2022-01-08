@@ -30,6 +30,7 @@ describe('components/organisms/TheTeacherList', () => {
               firstNameKana: 'たろう',
               mail: 'teacher-001@calmato.jp',
               role: 0,
+              subjects: {},
               createdAt: '',
               updatedAt: '',
             },
@@ -126,6 +127,28 @@ describe('components/organisms/TheTeacherList', () => {
 
         it('invalid type', () => {
           expect(wrapper.vm.getRoleColor(-1)).toBe('')
+        })
+      })
+
+      describe('onClick', () => {
+        it('emitted', async () => {
+          const teacher: Teacher = {
+            id: '000000000000000000001',
+            name: '中村 太郎',
+            nameKana: 'なかむら たろう',
+            lastName: '中村',
+            firstName: '太郎',
+            lastNameKana: 'なかむら',
+            firstNameKana: 'たろう',
+            mail: 'teacher-001@calmato.jp',
+            role: 0,
+            subjects: {},
+            createdAt: '',
+            updatedAt: '',
+          }
+          await wrapper.vm.onClick(teacher)
+          expect(wrapper.emitted('click')).toBeTruthy()
+          expect(wrapper.emitted('click')[0][0]).toBe(teacher)
         })
       })
     })

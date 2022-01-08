@@ -1,36 +1,12 @@
 import { Module, VuexModule, Mutation, Action } from 'vuex-module-decorators'
 import { $axios } from '~/plugins/axios'
 import { ErrorResponse } from '~/types/api/exception'
+import { SubjectsResponse, Subject as v1Subject } from '~/types/api/v1'
 import { ApiError } from '~/types/exception'
-import { Lesson, LessonState, SchoolType, Subject, SubjectMap } from '~/types/store'
+import { Lesson, LessonState, SchoolType, Subject, SubjectMap, SubjectsMap } from '~/types/store'
 
 const initialState: LessonState = {
-  subjects: [
-    {
-      id: 1,
-      name: '国語',
-      color: '#F8BBD0',
-      schoolType: SchoolType.ELEMENTARY_SCHOOL,
-      createdAt: '',
-      updatedAt: '',
-    },
-    {
-      id: 2,
-      name: '数学',
-      color: '#BBDEFB',
-      schoolType: SchoolType.JUNIOR_HIGH_SCHOOL,
-      createdAt: '',
-      updatedAt: '',
-    },
-    {
-      id: 3,
-      name: '英語',
-      color: '#FEE6C9',
-      schoolType: SchoolType.HIGH_SCHOOL,
-      createdAt: '',
-      updatedAt: '',
-    },
-  ],
+  subjects: [],
   lessons: [
     {
       id: 1,
@@ -66,6 +42,18 @@ export default class LessonModule extends VuexModule {
     return subjects
   }
 
+  public get getSubjectsMap(): SubjectsMap {
+    const subjects: SubjectsMap = {
+      [SchoolType.ELEMENTARY_SCHOOL]: [],
+      [SchoolType.JUNIOR_HIGH_SCHOOL]: [],
+      [SchoolType.HIGH_SCHOOL]: [],
+    }
+    this.subjects.forEach((subject: Subject) => {
+      subjects[subject.schoolType].push(subject)
+    })
+    return subjects
+  }
+
   public get getLessons(): Lesson[] {
     return this.lessons
   }
@@ -89,8 +77,11 @@ export default class LessonModule extends VuexModule {
   @Action({ rawError: true })
   public async getAllSubjects(): Promise<void> {
     try {
-      const res: { subjects: Subject[] } = await $axios.$get('/v1/subjects')
-      this.setSubjects(res.subjects)
+      const res: SubjectsResponse = await $axios.$get('/v1/subjects')
+      const subjects: Subject[] = res.subjects?.map((subject: v1Subject): Subject => {
+        return { ...subject }
+      })
+      this.setSubjects(subjects)
       return
     } catch (err) {
       if ($axios.isAxiosError(err)) {

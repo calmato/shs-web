@@ -7,9 +7,9 @@
     :elementary-school-subjects="elementarySchoolSubjects"
     :junior-high-school-subjects="juniorHighSchoolSubjects"
     :high-school-subjects="highSchoolSubjects"
-    :elementary-school-subjects-form-value.sync="elementarySchoolSubjectForm.subjectIDs"
-    :junior-high-school-subjects-form-value.sync="juniorHighSchoolSubjectForm.subjectIDs"
-    :high-school-subjects-form-value.sync="highSchoolSubjectForm.subjectIDs"
+    :elementary-school-subjects-form-value.sync="elementarySchoolSubjectForm.subjectIds"
+    :junior-high-school-subjects-form-value.sync="juniorHighSchoolSubjectForm.subjectIds"
+    :high-school-subjects-form-value.sync="highSchoolSubjectForm.subjectIds"
     @handleElementarySchoolSubjectsChange="handleElementarySchoolSubjectsChange"
     @handleJuniorHighSchoolSubjectsChange="handleJuniorHighSchoolSubjectsChange"
     @handleHighSchoolSubjectsChange="handleHighSchoolSubjectsChange"
@@ -58,17 +58,17 @@ export default defineComponent({
 
     const elementarySchoolSubjectForm = reactive<SubjectUpdateForm>({
       schoolType: SchoolType.ELEMENTARY_SCHOOL,
-      subjectIDs: [],
+      subjectIds: [],
     })
 
     const juniorHighSchoolSubjectForm = reactive<SubjectUpdateForm>({
       schoolType: SchoolType.JUNIOR_HIGH_SCHOOL,
-      subjectIDs: [],
+      subjectIds: [],
     })
 
     const highSchoolSubjectForm = reactive<SubjectUpdateForm>({
       schoolType: SchoolType.HIGH_SCHOOL,
-      subjectIDs: [],
+      subjectIds: [],
     })
 
     const auth = computed<Auth>(() => store.getters['auth/getAuth'])
@@ -114,13 +114,13 @@ export default defineComponent({
         const value = typeof _v !== 'undefined' ? _v.map((item) => item.id) : []
         switch (schoolType) {
           case SchoolType.ELEMENTARY_SCHOOL:
-            elementarySchoolSubjectForm.subjectIDs = value
+            elementarySchoolSubjectForm.subjectIds = value
             break
           case SchoolType.JUNIOR_HIGH_SCHOOL:
-            juniorHighSchoolSubjectForm.subjectIDs = value
+            juniorHighSchoolSubjectForm.subjectIds = value
             break
           case SchoolType.HIGH_SCHOOL:
-            highSchoolSubjectForm.subjectIDs = value
+            highSchoolSubjectForm.subjectIds = value
             break
           default:
             break

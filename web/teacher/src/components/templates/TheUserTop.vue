@@ -9,6 +9,21 @@
     <v-tabs-items v-model="selector">
       <v-tab-item value="tab-teachers">
         <v-row>
+          <v-dialog :value.sync="teacherDialog" width="600px" scrollable @click:outside="onCloseTeacherDialog">
+            <the-teacher-edit-card
+              :subjects="subjects"
+              :teacher="teacher"
+              :edit-teacher-elementary-school-form="editTeacherElementarySchoolForm"
+              :edit-teacher-junior-high-school-form="editTeacherJuniorHighSchoolForm"
+              :edit-teacher-high-school-form="editTeacherHighSchoolForm"
+              :edit-teacher-role-form="editTeacherRoleForm"
+              @click:close="onCloseTeacherDialog"
+              @submit:elementary-school="onSubmitTeacherElementarySchool"
+              @submit:junior-high-school="onSubmitTeacherJuniorHighSchool"
+              @submit:high-school="onSubmitTeacherHighSchool"
+              @submit:role="onSubmitTeacherRole"
+            />
+          </v-dialog>
           <v-col class="d-flex flex-column align-end px-8">
             <v-btn color="primary" @click="onClickNew('teachers')">新規登録</v-btn>
           </v-col>
@@ -21,6 +36,7 @@
               :items-per-page="teachersItemsPerPage"
               @update:page="$emit('update:teachers-page', $event)"
               @update:items-per-page="$emit('update:teachers-items-per-page', $event)"
+              @click="onClickShowTeacher"
             />
           </v-col>
         </v-row>
@@ -36,13 +52,27 @@
 import { defineComponent, PropType, ref, SetupContext } from '@nuxtjs/composition-api'
 import TheStudentList from '~/components/organisms/TheStudentList.vue'
 import TheTeacherList from '~/components/organisms/TheTeacherList.vue'
+import TheTeacherEditCard from '~/components/organisms/TheTeacherEditCard.vue'
+import {
+  TeacherEditSubjectForm,
+  TeacherEditSubjectForElementarySchoolParams,
+  TeacherEditSubjectForHighSchoolParams,
+  TeacherEditSubjectForJuniorHighSchoolParams,
+  TeacherEditRoleForm,
+  TeacherEditRoleParams,
+  TeacherEditRoleOptions,
+  TeacherEditSubjectForElementarySchoolOptions,
+  TeacherEditSubjectForJuniorHighSchoolOptions,
+  TeacherEditSubjectForHighSchoolOptions,
+} from '~/types/form'
 import { Actor } from '~/types/props/user'
-import { Student, Teacher } from '~/types/store'
+import { Role, SchoolType, Student, SubjectsMap, Teacher } from '~/types/store'
 
 export default defineComponent({
   components: {
     TheStudentList,
     TheTeacherList,
+    TheTeacherEditCard,
   },
 
   props: {
@@ -50,9 +80,36 @@ export default defineComponent({
       type: Boolean,
       default: false,
     },
+    subjects: {
+      type: Object as PropType<SubjectsMap>,
+      default: () => ({
+        [SchoolType.ELEMENTARY_SCHOOL]: [],
+        [SchoolType.JUNIOR_HIGH_SCHOOL]: [],
+        [SchoolType.HIGH_SCHOOL]: [],
+      }),
+    },
     students: {
       type: Array as PropType<Student[]>,
       default: () => [],
+    },
+    teacher: {
+      type: Object as PropType<Teacher>,
+      default: () => ({
+        id: '',
+        lastName: '',
+        firstName: '',
+        lastNameKana: '',
+        firstNameKana: '',
+        mail: '',
+        role: Role.TEACHER,
+        subjects: {},
+        createdAt: '',
+        updatedAt: '',
+      }),
+    },
+    teacherDialog: {
+      type: Boolean,
+      default: false,
     },
     teachers: {
       type: Array as PropType<Teacher[]>,
@@ -70,6 +127,34 @@ export default defineComponent({
       type: Number,
       default: 10,
     },
+    editTeacherElementarySchoolForm: {
+      type: Object as PropType<TeacherEditSubjectForm>,
+      default: () => ({
+        params: TeacherEditSubjectForElementarySchoolParams,
+        options: TeacherEditSubjectForElementarySchoolOptions,
+      }),
+    },
+    editTeacherJuniorHighSchoolForm: {
+      type: Object as PropType<TeacherEditSubjectForm>,
+      default: () => ({
+        params: TeacherEditSubjectForJuniorHighSchoolParams,
+        options: TeacherEditSubjectForJuniorHighSchoolOptions,
+      }),
+    },
+    editTeacherHighSchoolForm: {
+      type: Object as PropType<TeacherEditSubjectForm>,
+      default: () => ({
+        params: TeacherEditSubjectForHighSchoolParams,
+        options: TeacherEditSubjectForHighSchoolOptions,
+      }),
+    },
+    editTeacherRoleForm: {
+      type: Object as PropType<TeacherEditRoleForm>,
+      default: () => ({
+        params: TeacherEditRoleParams,
+        options: TeacherEditRoleOptions,
+      }),
+    },
   },
 
   setup(_, { emit }: SetupContext) {
@@ -84,10 +169,40 @@ export default defineComponent({
       emit('click:new', actor)
     }
 
+    const onClickShowTeacher = (teacher: Teacher): void => {
+      emit('click:show-teacher', teacher)
+    }
+
+    const onCloseTeacherDialog = (): void => {
+      emit('click:close-teacher')
+    }
+
+    const onSubmitTeacherElementarySchool = (): void => {
+      emit('submit:teacher-elementary-school')
+    }
+
+    const onSubmitTeacherJuniorHighSchool = (): void => {
+      emit('submit:teacher-junior-high-school')
+    }
+
+    const onSubmitTeacherHighSchool = (): void => {
+      emit('submit:teacher-high-school')
+    }
+
+    const onSubmitTeacherRole = (): void => {
+      emit('submit:teacher-role')
+    }
+
     return {
       actors,
       selector,
       onClickNew,
+      onClickShowTeacher,
+      onCloseTeacherDialog,
+      onSubmitTeacherElementarySchool,
+      onSubmitTeacherJuniorHighSchool,
+      onSubmitTeacherHighSchool,
+      onSubmitTeacherRole,
     }
   },
 })

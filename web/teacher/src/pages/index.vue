@@ -45,6 +45,7 @@ export default defineComponent({
           firstNameKana: 'たろう',
           mail: 'teacher-001@calmato.jp',
           role: 0,
+          subjects: {},
           createdAt: '',
           updatedAt: '',
         },

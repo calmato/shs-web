@@ -1,4 +1,5 @@
 import * as AuthStore from './auth'
+import * as LessonStore from './lesson'
 import * as ShiftStore from './shift'
 import * as SubmissionStore from './submission'
 import * as UserStore from './user'
@@ -17,11 +18,13 @@ const err: { response: { data: ErrorResponse } } = {
 export default {
   get: {
     ...AuthStore.showAuth,
+    ...LessonStore.listSubjects,
     ...ShiftStore.listShiftSummaries,
     ...ShiftStore.listShiftDetails,
     ...SubmissionStore.listTeacherSubmissions,
     ...SubmissionStore.listTeacherShifts,
     ...UserStore.listTeachers,
+    ...UserStore.showTeacher,
   },
   post: {
     ...ShiftStore.createShifts,
@@ -29,6 +32,8 @@ export default {
   },
   patch: {
     ...ShiftStore.updateShiftSummarySchedule,
+    ...UserStore.updateTeacherSubjects,
+    ...UserStore.updateTeacherRole,
   },
   put: {},
   delete: {

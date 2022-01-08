@@ -15,7 +15,9 @@
       :append-outer-icon="appendOuterIcon"
       @blur="onBlur"
     >
-      <slot />
+      <template #selection="{ item }">
+        <slot :item="item" />
+      </template>
     </v-select>
   </validation-provider>
 </template>

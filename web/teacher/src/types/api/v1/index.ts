@@ -1,4 +1,5 @@
 export * from './auth'
+export * from './lesson'
 export * from './shift'
 export * from './submission'
 export * from './user'

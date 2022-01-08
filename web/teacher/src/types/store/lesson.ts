@@ -28,3 +28,7 @@ export interface LessonState {
 export interface SubjectMap {
   [key: number]: Subject
 }
+
+export interface SubjectsMap {
+  [key: number]: Subject[]
+}
