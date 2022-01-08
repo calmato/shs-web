@@ -1,7 +1,7 @@
 import { mount } from '@vue/test-utils'
 import * as Options from '~~/test/helpers/component-helper'
 import TheStudentList from '~/components/organisms/TheStudentList.vue'
-import { SchoolType, Student } from '~/types/store'
+import { Student } from '~/types/store'
 
 describe('components/organisms/TheStudentList', () => {
   let wrapper: any

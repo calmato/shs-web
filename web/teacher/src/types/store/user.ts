@@ -1,4 +1,4 @@
-import { SchoolType, Role } from './common'
+import { Role } from './common'
 
 export interface Student {
   id: string
