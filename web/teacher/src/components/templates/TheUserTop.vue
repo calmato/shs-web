@@ -11,6 +11,7 @@
         <v-row>
           <v-dialog :value.sync="teacherDialog" width="600px" scrollable @click:outside="onCloseTeacherDialog">
             <the-teacher-edit-card
+              :is-admin="isAdmin"
               :subjects="subjects"
               :teacher="teacher"
               :edit-teacher-elementary-school-form="editTeacherElementarySchoolForm"
@@ -25,7 +26,7 @@
             />
           </v-dialog>
           <v-col class="d-flex flex-column align-end px-8">
-            <v-btn color="primary" @click="onClickNew('teachers')">新規登録</v-btn>
+            <v-btn v-show="isAdmin" color="primary" @click="onClickNew('teachers')">新規登録</v-btn>
           </v-col>
           <v-col cols="12">
             <the-teacher-list
@@ -77,6 +78,10 @@ export default defineComponent({
 
   props: {
     loading: {
+      type: Boolean,
+      default: false,
+    },
+    isAdmin: {
       type: Boolean,
       default: false,
     },

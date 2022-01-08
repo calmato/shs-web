@@ -36,6 +36,17 @@ describe('components/templates/TheUserTop', () => {
         })
       })
 
+      describe('isAdmin', () => {
+        it('初期値', () => {
+          expect(wrapper.props().isAdmin).toBeFalsy()
+        })
+
+        it('値が代入されること', async () => {
+          await wrapper.setProps({ isAdmin: true })
+          expect(wrapper.props().isAdmin).toBeTruthy()
+        })
+      })
+
       describe('subjects', () => {
         it('初期値', () => {
           expect(wrapper.props().subjects).toEqual({

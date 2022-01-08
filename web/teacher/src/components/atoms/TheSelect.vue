@@ -9,6 +9,7 @@
       :error-messages="errors"
       :success="isSuccess(valid)"
       :autofocus="autofocus"
+      :disabled="disabled"
       :outlined="outlined"
       :multiple="multiple"
       :chips="chips"
@@ -39,6 +40,11 @@ export default defineComponent({
       type: String,
       required: false,
       default: '',
+    },
+    disabled: {
+      type: Boolean,
+      required: false,
+      default: false,
     },
     outlined: {
       type: Boolean,
