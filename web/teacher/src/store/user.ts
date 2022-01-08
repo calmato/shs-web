@@ -101,7 +101,9 @@ export default class UserModule extends VuexModule {
 
   @Mutation
   private setTeacher(teacher: Teacher): void {
-    this.teacher = teacher
+    const name = getName(teacher.lastName, teacher.firstName)
+    const nameKana = getName(teacher.lastNameKana, teacher.firstNameKana)
+    this.teacher = { ...teacher, name, nameKana }
   }
 
   @Mutation
@@ -169,8 +171,8 @@ export default class UserModule extends VuexModule {
 
     await $axios
       .$post('/v1/teachers', req)
-      .then((res: V1Teacher) => {
-        const subjects = initializeSubjects()
+      .then((res: TeacherResponse) => {
+        const subjects = res.subjects || initializeSubjects()
         this.addTeacher({ ...res, subjects })
       })
       .catch((err: AxiosError) => {

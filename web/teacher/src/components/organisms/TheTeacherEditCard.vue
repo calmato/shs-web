@@ -119,11 +119,7 @@ export default defineComponent({
         firstNameKana: '',
         mail: '',
         role: Role.TEACHER,
-        subjects: {
-          [SchoolType.ELEMENTARY_SCHOOL]: [],
-          [SchoolType.JUNIOR_HIGH_SCHOOL]: [],
-          [SchoolType.HIGH_SCHOOL]: [],
-        },
+        subjects: {},
         createdAt: '',
         updatedAt: '',
       }),
@@ -173,9 +169,7 @@ export default defineComponent({
     ]
 
     const getTeacherName = (): string => {
-      const name: string = `${props.teacher.lastName} ${props.teacher.firstName}`
-      const nameKana: string = `${props.teacher.lastNameKana} ${props.teacher.firstNameKana}`
-      return `${name} (${nameKana})`
+      return `${props.teacher.name} (${props.teacher.nameKana})`
     }
 
     const getElementarySchoolSubjects = (): Subject[] => {

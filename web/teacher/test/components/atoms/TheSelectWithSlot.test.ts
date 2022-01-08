@@ -1,11 +1,11 @@
 import { shallowMount } from '@vue/test-utils'
 import * as Options from '~~/test/helpers/component-helper'
-import TheSelect from '~/components/atoms/TheSelect.vue'
+import TheSelectWithSlot from '~/components/atoms/TheSelectWithSlot.vue'
 
-describe('components/atoms/TheSelect', () => {
+describe('components/atoms/TheSelectWithSlot', () => {
   let wrapper: any
   beforeEach(() => {
-    wrapper = shallowMount(TheSelect, {
+    wrapper = shallowMount(TheSelectWithSlot, {
       ...Options,
     })
   })

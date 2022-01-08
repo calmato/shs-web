@@ -10,7 +10,7 @@
       <v-tab-item value="tab-teachers">
         <v-row>
           <v-dialog :value.sync="teacherDialog" width="600px" scrollable @click:outside="onCloseTeacherDialog">
-            <the-teacher-show-card
+            <the-teacher-edit-card
               :subjects="subjects"
               :teacher="teacher"
               :edit-teacher-elementary-school-form="editTeacherElementarySchoolForm"
@@ -52,7 +52,7 @@
 import { defineComponent, PropType, ref, SetupContext } from '@nuxtjs/composition-api'
 import TheStudentList from '~/components/organisms/TheStudentList.vue'
 import TheTeacherList from '~/components/organisms/TheTeacherList.vue'
-import TheTeacherShowCard from '~/components/organisms/TheTeacherShowCard.vue'
+import TheTeacherEditCard from '~/components/organisms/TheTeacherEditCard.vue'
 import {
   TeacherEditSubjectForm,
   TeacherEditSubjectForElementarySchoolParams,
@@ -72,7 +72,7 @@ export default defineComponent({
   components: {
     TheStudentList,
     TheTeacherList,
-    TheTeacherShowCard,
+    TheTeacherEditCard,
   },
 
   props: {
@@ -102,11 +102,7 @@ export default defineComponent({
         firstNameKana: '',
         mail: '',
         role: Role.TEACHER,
-        subjects: {
-          [SchoolType.ELEMENTARY_SCHOOL]: [],
-          [SchoolType.JUNIOR_HIGH_SCHOOL]: [],
-          [SchoolType.HIGH_SCHOOL]: [],
-        },
+        subjects: {},
         createdAt: '',
         updatedAt: '',
       }),
