@@ -2,7 +2,15 @@ import { setup, refresh, setSafetyMode } from '~~/test/helpers/store-helper'
 import { UserStore } from '~/store'
 import { ApiError } from '~/types/exception'
 import { ErrorResponse } from '~/types/api/exception'
-import { TeacherNewForm, TeacherNewOptions } from '~/types/form'
+import {
+  TeacherEditRoleForm,
+  TeacherEditRoleOptions,
+  TeacherEditSubjectForHighSchoolOptions,
+  TeacherEditSubjectForm,
+  TeacherNewForm,
+  TeacherNewOptions,
+} from '~/types/form'
+import { Role } from '~/types/store'
 
 describe('store/user', () => {
   beforeEach(() => {
@@ -52,6 +60,25 @@ describe('store/user', () => {
       })
     })
 
+    it('getTeacher', () => {
+      expect(UserStore.getTeacher).toEqual({
+        id: '',
+        lastName: '',
+        firstName: '',
+        lastNameKana: '',
+        firstNameKana: '',
+        mail: '',
+        role: Role.TEACHER,
+        subjects: {
+          小学校: [],
+          中学校: [],
+          高校: [],
+        },
+        createdAt: '',
+        updatedAt: '',
+      })
+    })
+
     it('getTeachers', () => {
       expect(UserStore.getTeachers).toEqual([])
     })
@@ -85,6 +112,11 @@ describe('store/user', () => {
               firstNameKana: 'たろう',
               mail: 'teacher-001@calmato.jp',
               role: 1,
+              subjects: {
+                小学校: [],
+                中学校: [],
+                高校: [],
+              },
               createdAt: '2021-12-02T18:30:00+09:00',
               updatedAt: '2021-12-02T18:30:00+09:00',
             },
@@ -98,6 +130,11 @@ describe('store/user', () => {
               firstNameKana: 'さちこ',
               mail: 'teacher-002@calmato.jp',
               role: 1,
+              subjects: {
+                小学校: [],
+                中学校: [],
+                高校: [],
+              },
               createdAt: '2021-12-02T18:30:00+09:00',
               updatedAt: '2021-12-02T18:30:00+09:00',
             },
@@ -111,6 +148,11 @@ describe('store/user', () => {
               firstNameKana: 'こたろう',
               mail: 'teacher-003@calmato.jp',
               role: 2,
+              subjects: {
+                小学校: [],
+                中学校: [],
+                高校: [],
+              },
               createdAt: '2021-12-02T18:30:00+09:00',
               updatedAt: '2021-12-02T18:30:00+09:00',
             },
@@ -131,6 +173,11 @@ describe('store/user', () => {
               firstNameKana: 'こたろう',
               mail: 'teacher-003@calmato.jp',
               role: 2,
+              subjects: {
+                小学校: [],
+                中学校: [],
+                高校: [],
+              },
               createdAt: '2021-12-02T18:30:00+09:00',
               updatedAt: '2021-12-02T18:30:00+09:00',
             },
@@ -151,6 +198,78 @@ describe('store/user', () => {
             details: 'some error',
           } as ErrorResponse)
           await expect(UserStore.listTeachers({ limit: 0, offset: 0 })).rejects.toThrow(err)
+        })
+      })
+    })
+
+    describe('showTeacher', () => {
+      describe('success', () => {
+        beforeEach(() => {
+          setSafetyMode(true)
+        })
+
+        it('changing state', async () => {
+          await UserStore.showTeacher({ teacherId: '000000000000000000001' })
+          expect(UserStore.getTeacher).toEqual({
+            id: '000000000000000000001',
+            name: '中村 太郎',
+            nameKana: 'なかむら たろう',
+            lastName: '中村',
+            firstName: '太郎',
+            lastNameKana: 'なかむら',
+            firstNameKana: 'たろう',
+            mail: 'teacher-001@calmato.jp',
+            role: 1,
+            subjects: {
+              小学校: [
+                {
+                  id: 1,
+                  name: '国語',
+                  color: '#F8BBD0',
+                  schoolType: '小学校',
+                  createdAt: '',
+                  updatedAt: '',
+                },
+              ],
+              中学校: [
+                {
+                  id: 2,
+                  name: '数学',
+                  color: '#BBDEFB',
+                  schoolType: '中学校',
+                  createdAt: '',
+                  updatedAt: '',
+                },
+              ],
+              高校: [
+                {
+                  id: 3,
+                  name: '英語',
+                  color: '#FEE6C9',
+                  schoolType: '高校',
+                  createdAt: '',
+                  updatedAt: '',
+                },
+              ],
+            },
+            createdAt: '2021-12-02T18:30:00+09:00',
+            updatedAt: '2021-12-02T18:30:00+09:00',
+          })
+        })
+      })
+
+      describe('failure', () => {
+        beforeEach(() => {
+          setSafetyMode(false)
+        })
+
+        it('return reject', async () => {
+          const err = new ApiError(400, 'api error', {
+            status: 400,
+            message: 'api error',
+            details: 'some error',
+          } as ErrorResponse)
+          await expect(UserStore.showTeacher({ teacherId: '000000000000000000001' })).rejects.toThrow(err)
         })
       })
     })
@@ -191,10 +310,43 @@ describe('store/user', () => {
               firstNameKana: 'たろう',
               mail: 'teacher-001@calmato.jp',
               role: 1,
+              subjects: {
+                小学校: [
+                  {
+                    id: 1,
+                    name: '国語',
+                    color: '#F8BBD0',
+                    schoolType: '小学校',
+                    createdAt: '',
+                    updatedAt: '',
+                  },
+                ],
+                中学校: [
+                  {
+                    id: 2,
+                    name: '数学',
+                    color: '#BBDEFB',
+                    schoolType: '中学校',
+                    createdAt: '',
+                    updatedAt: '',
+                  },
+                ],
+                高校: [
+                  {
+                    id: 3,
+                    name: '英語',
+                    color: '#FEE6C9',
+                    schoolType: '高校',
+                    createdAt: '',
+                    updatedAt: '',
+                  },
+                ],
+              },
               createdAt: '2021-12-02T18:30:00+09:00',
               updatedAt: '2021-12-02T18:30:00+09:00',
             },
           ])
+          expect(UserStore.getTeachersTotal).toBe(1)
         })
       })
 
@@ -210,6 +362,85 @@ describe('store/user', () => {
             details: 'some error',
           } as ErrorResponse)
           await expect(UserStore.createTeacher({ form })).rejects.toThrow(err)
+        })
+      })
+    })
+
+    describe('updateTeacherSubjects', () => {
+      let form: TeacherEditSubjectForm
+      beforeEach(() => {
+        form = {
+          params: {
+            schoolType: 3,
+            subjectIds: [1, 2],
+          },
+          options: TeacherEditSubjectForHighSchoolOptions,
+        }
+      })
+
+      describe('success', () => {
+        beforeEach(() => {
+          setSafetyMode(true)
+        })
+
+        it('return resolve', async () => {
+          await expect(
+            UserStore.updateTeacherSubjects({ teacherId: '000000000000000000001', form })
+          ).resolves.toBeUndefined()
+        })
+      })
+
+      describe('failure', () => {
+        beforeEach(() => {
+          setSafetyMode(false)
+        })
+
+        it('return reject', async () => {
+          const err = new ApiError(400, 'api error', {
+            status: 400,
+            message: 'api error',
+            details: 'some error',
+          } as ErrorResponse)
+          await expect(UserStore.updateTeacherSubjects({ teacherId: '000000000000000000001', form })).rejects.toThrow(
+            err
+          )
+        })
+      })
+    })
+
+    describe('updateTeacherRole', () => {
+      let form: TeacherEditRoleForm
+      beforeEach(() => {
+        form = {
+          params: { role: Role.ADMINISTRATOR },
+          options: TeacherEditRoleOptions,
+        }
+      })
+
+      describe('success', () => {
+        beforeEach(() => {
+          setSafetyMode(true)
+        })
+
+        it('return resolve', async () => {
+          await expect(
+            UserStore.updateTeacherRole({ teacherId: '000000000000000000001', form })
+          ).resolves.toBeUndefined()
+        })
+      })
+
+      describe('failure', () => {
+        beforeEach(() => {
+          setSafetyMode(false)
+        })
+
+        it('return reject', async () => {
+          const err = new ApiError(400, 'api error', {
+            status: 400,
+            message: 'api error',
+            details: 'some error',
+          } as ErrorResponse)
+          await expect(UserStore.updateTeacherRole({ teacherId: '000000000000000000001', form })).rejects.toThrow(err)
         })
       })
     })

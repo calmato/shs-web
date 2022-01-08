@@ -8,7 +8,6 @@ import (
 
 	"github.com/calmato/shs-web/api/internal/user/entity"
 	"github.com/calmato/shs-web/api/pkg/jst"
-	"github.com/calmato/shs-web/api/proto/user"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -389,6 +388,132 @@ func TestTeacher_UpdatePassword(t *testing.T) {
 	}
 }
 
+func TestTeacher_UpdateRole(t *testing.T) {
+	m, err := newMock()
+	require.NoError(t, err)
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	_ = m.dbDelete(ctx, teacherTable)
+
+	now := jst.Now()
+	teacher := testTeacher(idmock, "teacher01@calmato.jp", now)
+
+	type args struct {
+		teacherID string
+		role      entity.Role
+	}
+	type want struct {
+		isErr bool
+	}
+	tests := []struct {
+		name  string
+		setup func(ctx context.Context, t *testing.T, m *mocks)
+		args  args
+		want  want
+	}{
+		{
+			name: "success",
+			setup: func(ctx context.Context, t *testing.T, m *mocks) {
+				err = m.db.DB.Create(&teacher).Error
+				require.NoError(t, err)
+			},
+			args: args{
+				teacherID: idmock,
+				role:      entity.RoleAdministrator,
+			},
+			want: want{
+				isErr: false,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			ctx, cancel := context.WithCancel(context.Background())
+			defer cancel()
+
+			_ = m.dbDelete(ctx, teacherTable)
+			tt.setup(ctx, t, m)
+
+			db := NewTeacher(m.db, m.auth)
+			err := db.UpdateRole(ctx, tt.args.teacherID, tt.args.role)
+			assert.Equal(t, tt.want.isErr, err != nil, err)
+		})
+	}
+}
+
+func TestTeacher_Delete(t *testing.T) {
+	m, err := newMock()
+	require.NoError(t, err)
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	_ = m.dbDelete(ctx, teacherTable)
+
+	now := jst.Now()
+	teacher := testTeacher(idmock, "teacher01@calmato.jp", now)
+
+	type args struct {
+		teacherID string
+	}
+	type want struct {
+		isErr bool
+	}
+	tests := []struct {
+		name  string
+		setup func(ctx context.Context, t *testing.T, m *mocks)
+		args  args
+		want  want
+	}{
+		{
+			name: "success",
+			setup: func(ctx context.Context, t *testing.T, m *mocks) {
+				_, err := m.auth.CreateUser(ctx, idmock, "teacher01@calmato.jp", "12345678")
+				require.NoError(t, err)
+				err = m.db.DB.Create(&teacher).Error
+				require.NoError(t, err)
+			},
+			args: args{
+				teacherID: idmock,
+			},
+			want: want{
+				isErr: false,
+			},
+		},
+		{
+			name: "failed to delete",
+			setup: func(ctx context.Context, t *testing.T, m *mocks) {
+				_, err := m.auth.CreateUser(ctx, idmock, "teacher01@calmato.jp", "12345678")
+				require.NoError(t, err)
+				err = m.db.DB.Create(&teacher).Error
+				require.NoError(t, err)
+			},
+			args: args{
+				teacherID: "",
+			},
+			want: want{
+				isErr: true,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			ctx, cancel := context.WithCancel(context.Background())
+			defer cancel()
+
+			_ = m.authDelete(ctx, idmock)
+			_ = m.dbDelete(ctx, teacherTable)
+			tt.setup(ctx, t, m)
+
+			db := NewTeacher(m.db, m.auth)
+			err := db.Delete(ctx, tt.args.teacherID)
+			assert.Equal(t, tt.want.isErr, err != nil, err)
+		})
+	}
+}
+
 func TestTeacher_Count(t *testing.T) {
 	m, err := newMock()
 	require.NoError(t, err)
@@ -453,7 +578,7 @@ func testTeacher(id string, mail string, now time.Time) *entity.Teacher {
 		LastNameKana:  "なかむら",
 		FirstNameKana: "こうだい",
 		Mail:          mail,
-		Role:          int32(user.Role_ROLE_TEACHER),
+		Role:          entity.RoleTeacher,
 		CreatedAt:     now,
 		UpdatedAt:     now,
 	}

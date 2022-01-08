@@ -48,7 +48,7 @@ func (h *apiV1Handler) CreateSubject(ctx *gin.Context) {
 		badRequest(ctx, err)
 		return
 	}
-	schoolType, err := entity.SchoolType(req.SchoolType).ClassroomSchoolType()
+	schoolType, err := req.SchoolType.ClassroomSchoolType()
 	if err != nil {
 		badRequest(ctx, err)
 		return
@@ -85,7 +85,7 @@ func (h *apiV1Handler) UpdateSubject(ctx *gin.Context) {
 		badRequest(ctx, err)
 		return
 	}
-	schoolType, err := entity.SchoolType(req.SchoolType).ClassroomSchoolType()
+	schoolType, err := req.SchoolType.ClassroomSchoolType()
 	if err != nil {
 		badRequest(ctx, err)
 		return
@@ -127,15 +127,14 @@ func (h *apiV1Handler) DeleteSubject(ctx *gin.Context) {
 
 func (h *apiV1Handler) getTeacherSubject(
 	ctx context.Context, teacherID string,
-) (*gentity.TeacherSubject, gentity.Subjects, error) {
+) (gentity.Subjects, error) {
 	in := &classroom.GetTeacherSubjectRequest{
 		TeacherId: teacherID,
 	}
 	out, err := h.classroom.GetTeacherSubject(ctx, in)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
-	teacherSubject := gentity.NewTeacherSubject(out.TeacherSubject)
 	subjects := gentity.NewSubjects(out.Subjects)
-	return teacherSubject, subjects, nil
+	return subjects, nil
 }

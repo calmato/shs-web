@@ -60,3 +60,21 @@ func (v *requestValidation) UpdateTeacherPassword(req *user.UpdateTeacherPasswor
 
 	return nil
 }
+
+func (v *requestValidation) UpdateTeacherRole(req *user.UpdateTeacherRoleRequest) error {
+	if err := req.Validate(); err != nil {
+		validate := err.(user.UpdateTeacherRoleRequestValidationError)
+		return validationError(validate.Error())
+	}
+
+	return nil
+}
+
+func (v *requestValidation) DeleteTeacher(req *user.DeleteTeacherRequest) error {
+	if err := req.Validate(); err != nil {
+		validate := err.(user.DeleteTeacherRequestValidationError)
+		return validationError(validate.Error())
+	}
+
+	return nil
+}

@@ -7,21 +7,6 @@ import (
 	"github.com/calmato/shs-web/api/proto/classroom"
 )
 
-var (
-	// TODO: コマ設定の変更機能はまだ不要とのことなので固定で
-	weekdayLessons = ScheduleLessons{
-		{StartTime: "1700", EndTime: "1830"},
-		{StartTime: "1830", EndTime: "2000"},
-		{StartTime: "2000", EndTime: "2130"},
-	}
-	holidayLessons = ScheduleLessons{
-		{StartTime: "1530", EndTime: "1700"},
-		{StartTime: "1700", EndTime: "1830"},
-		{StartTime: "1830", EndTime: "2000"},
-		{StartTime: "2000", EndTime: "2130"},
-	}
-)
-
 type Schedule struct {
 	Weekday  time.Weekday    `json:"weekday"`
 	IsClosed bool            `json:"isClosed"`
@@ -38,8 +23,9 @@ type ScheduleLesson struct {
 type ScheduleLessons []*ScheduleLesson
 
 type ScheduleToUpdate struct {
-	Weekday  time.Weekday `json:"weekday,omitempty"`
-	IsClosed bool         `json:"isClosed,omitempty"`
+	Weekday  time.Weekday    `json:"weekday,omitempty"`
+	IsClosed bool            `json:"isClosed,omitempty"`
+	Lessons  ScheduleLessons `json:"lessons,omitempty"`
 }
 
 func NewSchedule(schedule *entity.Schedule) *Schedule {
@@ -59,23 +45,11 @@ func NewSchedules(schedules entity.Schedules) Schedules {
 }
 
 func NewScheduleToUpdate(req *ScheduleToUpdate) *classroom.ScheduleToUpdate {
-	s := &classroom.ScheduleToUpdate{
+	return &classroom.ScheduleToUpdate{
 		Weekday:  int32(req.Weekday),
 		IsClosed: req.IsClosed,
+		Lessons:  newScheduleLessonsToUpdate(req.Lessons, req.IsClosed),
 	}
-	if s.IsClosed {
-		return s
-	}
-	if isHoliday(req.Weekday) {
-		s.Lessons = newScheduleLessonsToUpdate(holidayLessons)
-	} else {
-		s.Lessons = newScheduleLessonsToUpdate(weekdayLessons)
-	}
-	return s
-}
-
-func isHoliday(weekday time.Weekday) bool {
-	return weekday == time.Sunday || weekday == time.Saturday
 }
 
 func NewSchedulesToUpdate(req []*ScheduleToUpdate) []*classroom.ScheduleToUpdate {
@@ -108,7 +82,10 @@ func newScheduleLessonToUpdate(lesson *ScheduleLesson) *classroom.ScheduleToUpda
 	}
 }
 
-func newScheduleLessonsToUpdate(lessons ScheduleLessons) []*classroom.ScheduleToUpdate_Lesson {
+func newScheduleLessonsToUpdate(lessons ScheduleLessons, isClosed bool) []*classroom.ScheduleToUpdate_Lesson {
+	if isClosed {
+		return nil
+	}
 	ls := make([]*classroom.ScheduleToUpdate_Lesson, len(lessons))
 	for i := range lessons {
 		ls[i] = newScheduleLessonToUpdate(lessons[i])

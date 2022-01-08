@@ -19,7 +19,7 @@ createTeacherRequest:
     role:
       type: integer
       format: int32
-      description: 権限 (0:不明, 1:講師, 2:管理者)
+      description: 権限 (1:講師, 2:管理者)
     password:
       type: string
       description: パスワード
@@ -55,3 +55,31 @@ updateTeacherPasswordRequest:
   example:
     password: '12345678'
     passwordConfirmation: '12345678'
+updateTeacherRoleRequest:
+  type: object
+  properties:
+    role:
+      type: integer
+      format: int32
+      description: 権限 (1:講師, 2:管理者)
+  example:
+    role: 2
+updateTeacherSubjectsRequest:
+  type: object
+  properties:
+    schoolType:
+      type: integer
+      format: int32
+      description: 校種 (1:小学校, 2:中学校, 3:高等学校)
+    subjectIds:
+      type: array
+      description: 担当授業科目一覧
+      items:
+        type: integer
+        format: int64
+        description: 授業科目ID
+  example:
+    schoolType: 1
+    subjectIds:
+    - 1
+    - 2

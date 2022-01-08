@@ -34,6 +34,20 @@ func (m *MockRequestValidation) EXPECT() *MockRequestValidationMockRecorder {
 	return m.recorder
 }
 
+// CreateStudent mocks base method.
+func (m *MockRequestValidation) CreateStudent(req *user.CreateStudentRequest) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateStudent", req)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// CreateStudent indicates an expected call of CreateStudent.
+func (mr *MockRequestValidationMockRecorder) CreateStudent(req interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateStudent", reflect.TypeOf((*MockRequestValidation)(nil).CreateStudent), req)
+}
+
 // CreateTeacher mocks base method.
 func (m *MockRequestValidation) CreateTeacher(req *user.CreateTeacherRequest) error {
 	m.ctrl.T.Helper()
@@ -46,6 +60,20 @@ func (m *MockRequestValidation) CreateTeacher(req *user.CreateTeacherRequest) er
 func (mr *MockRequestValidationMockRecorder) CreateTeacher(req interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateTeacher", reflect.TypeOf((*MockRequestValidation)(nil).CreateTeacher), req)
+}
+
+// DeleteTeacher mocks base method.
+func (m *MockRequestValidation) DeleteTeacher(req *user.DeleteTeacherRequest) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteTeacher", req)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeleteTeacher indicates an expected call of DeleteTeacher.
+func (mr *MockRequestValidationMockRecorder) DeleteTeacher(req interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteTeacher", reflect.TypeOf((*MockRequestValidation)(nil).DeleteTeacher), req)
 }
 
 // GetStudent mocks base method.
@@ -116,4 +144,18 @@ func (m *MockRequestValidation) UpdateTeacherPassword(req *user.UpdateTeacherPas
 func (mr *MockRequestValidationMockRecorder) UpdateTeacherPassword(req interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateTeacherPassword", reflect.TypeOf((*MockRequestValidation)(nil).UpdateTeacherPassword), req)
+}
+
+// UpdateTeacherRole mocks base method.
+func (m *MockRequestValidation) UpdateTeacherRole(req *user.UpdateTeacherRoleRequest) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateTeacherRole", req)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateTeacherRole indicates an expected call of UpdateTeacherRole.
+func (mr *MockRequestValidationMockRecorder) UpdateTeacherRole(req interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateTeacherRole", reflect.TypeOf((*MockRequestValidation)(nil).UpdateTeacherRole), req)
 }

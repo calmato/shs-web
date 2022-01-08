@@ -1,10 +1,20 @@
 package entity
 
 import (
+	"errors"
 	"time"
 
 	"github.com/calmato/shs-web/api/proto/user"
 	"gorm.io/gorm"
+)
+
+var errInvalidRole = errors.New("entity: invalid role")
+
+type Role int32
+
+const (
+	RoleTeacher       Role = 0
+	RoleAdministrator Role = 1
 )
 
 type Teacher struct {
@@ -14,7 +24,7 @@ type Teacher struct {
 	LastNameKana  string         `gorm:""`
 	FirstNameKana string         `gorm:""`
 	Mail          string         `gorm:""`
-	Role          int32          `gorm:""`
+	Role          Role           `gorm:""`
 	Password      string         `gorm:"-"`
 	CreatedAt     time.Time      `gorm:"<-:create"`
 	UpdatedAt     time.Time      `gorm:""`
@@ -43,4 +53,15 @@ func (ts Teachers) Proto() []*user.Teacher {
 		teachers[i] = ts[i].Proto()
 	}
 	return teachers
+}
+
+func NewRole(role user.Role) (Role, error) {
+	switch role {
+	case user.Role_ROLE_TEACHER:
+		return RoleTeacher, nil
+	case user.Role_ROLE_ADMINISTRATOR:
+		return RoleAdministrator, nil
+	default:
+		return RoleTeacher, errInvalidRole
+	}
 }

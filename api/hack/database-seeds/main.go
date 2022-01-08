@@ -13,7 +13,6 @@ import (
 	"github.com/calmato/shs-web/api/pkg/database"
 	"github.com/calmato/shs-web/api/pkg/jst"
 	"github.com/calmato/shs-web/api/pkg/uuid"
-	"github.com/calmato/shs-web/api/proto/user"
 	"golang.org/x/sync/errgroup"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
@@ -273,7 +272,7 @@ func (a *app) upsertAdmin(tx *gorm.DB, uid string) error {
 		LastNameKana:  "かいはつよう",
 		FirstNameKana: "かんりしゃ",
 		Mail:          "admin@calmato.jp",
-		Role:          int32(user.Role_ROLE_ADMINISTRATOR),
+		Role:          uentity.RoleAdministrator,
 		CreatedAt:     now,
 		UpdatedAt:     now,
 	}
@@ -308,7 +307,7 @@ func (a *app) upsertTeachers(tx *gorm.DB, size int) error {
 			LastNameKana:  "かいはつよう",
 			FirstNameKana: fmt.Sprintf("こうし%03d", i),
 			Mail:          fmt.Sprintf("teacher%03d@calmato.jp", i),
-			Role:          int32(user.Role_ROLE_TEACHER),
+			Role:          uentity.RoleTeacher,
 			CreatedAt:     now,
 			UpdatedAt:     now,
 		}

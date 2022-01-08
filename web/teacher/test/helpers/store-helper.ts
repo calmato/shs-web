@@ -53,6 +53,7 @@ jest.mock('~/plugins/axios', () => ({
     // $put: (key: string) => (isSafetyMode ? Promise.resolve(response['put'][key]) : Promise.reject(response['error'])),
     $delete: (key: string) =>
       isSafetyMode ? Promise.resolve(response['delete'][key]) : Promise.reject(response['error']),
+    isAxiosError: (_: Error) => true,
   },
 }))
 

@@ -55,6 +55,8 @@ type Teacher interface {
 	Create(ctx context.Context, t *entity.Teacher) error
 	UpdateMail(ctx context.Context, teacherID string, mail string) error
 	UpdatePassword(ctx context.Context, teacherID string, password string) error
+	UpdateRole(ctx context.Context, teacherID string, role entity.Role) error
+	Delete(ctx context.Context, teacherID string) error
 	Count(ctx context.Context) (int64, error)
 }
 

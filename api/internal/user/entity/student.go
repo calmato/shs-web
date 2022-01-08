@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/calmato/shs-web/api/pkg/jst"
+	"github.com/calmato/shs-web/api/pkg/uuid"
 	"github.com/calmato/shs-web/api/proto/user"
 	"gorm.io/gorm"
 )
@@ -25,7 +26,7 @@ type Student struct {
 	FirstNameKana string         `gorm:""`
 	Mail          string         `gorm:""`
 	BirthYear     int64          `gorm:""`
-	Schooltype    SchoolType     `gorm:"-"`
+	SchoolType    SchoolType     `gorm:"-"`
 	Grade         int64          `gorm:"-"`
 	Password      string         `gorm:"-"`
 	CreatedAt     time.Time      `gorm:"<-:create"`
@@ -35,21 +36,53 @@ type Student struct {
 
 type Students []*Student
 
+func NewStudent(
+	lastName, firstName, lastNameKana, firstNameKana, mail, password string,
+	schoolType SchoolType, grade int64, now time.Time,
+) *Student {
+	uid := uuid.Base58Encode(uuid.New())
+	year := int64(jst.FiscalYear(now))
+	age := int64(0)
+	switch schoolType {
+	case SchoolTypeElementarySchool:
+		age = grade + 6
+	case SchoolTypeJuniorHighSchool:
+		age = grade + 12
+	case SchoolTypeHighSchool:
+		age = grade + 15
+	default:
+		age = 0
+	}
+	birthYear := year - age
+	return &Student{
+		ID:            uid,
+		LastName:      lastName,
+		FirstName:     firstName,
+		LastNameKana:  lastNameKana,
+		FirstNameKana: firstNameKana,
+		Mail:          mail,
+		BirthYear:     birthYear,
+		SchoolType:    schoolType,
+		Grade:         grade,
+		Password:      password,
+	}
+}
+
 func (s *Student) Fill(now time.Time) {
 	year := int64(jst.FiscalYear(now))
 	age := year - s.BirthYear
 	switch {
 	case age >= 7 && age <= 12:
-		s.Schooltype = SchoolTypeElementarySchool
+		s.SchoolType = SchoolTypeElementarySchool
 		s.Grade = age - 6
 	case age >= 13 && age <= 15:
-		s.Schooltype = SchoolTypeJuniorHighSchool
+		s.SchoolType = SchoolTypeJuniorHighSchool
 		s.Grade = age - 12
 	case age >= 16 && age <= 18:
-		s.Schooltype = SchoolTypeHighSchool
+		s.SchoolType = SchoolTypeHighSchool
 		s.Grade = age - 15
 	default:
-		s.Schooltype = SchoolTypeUnknown
+		s.SchoolType = SchoolTypeUnknown
 		s.Grade = 0
 	}
 }
@@ -63,7 +96,7 @@ func (s *Student) Proto() *user.Student {
 		FirstNameKana: s.FirstNameKana,
 		Mail:          s.Mail,
 		BirthYear:     s.BirthYear,
-		SchoolType:    user.SchoolType(s.Schooltype),
+		SchoolType:    user.SchoolType(s.SchoolType),
 		Grade:         s.Grade,
 		CreatedAt:     s.CreatedAt.Unix(),
 		UpdatedAt:     s.CreatedAt.Unix(),

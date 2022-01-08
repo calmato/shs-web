@@ -24,3 +24,7 @@ export interface LessonState {
 export interface SubjectMap {
   [key: number]: Subject
 }
+
+export type SubjectsMap = {
+  [key in Exclude<SchoolType, 'その他'>]: Subject[]
+}

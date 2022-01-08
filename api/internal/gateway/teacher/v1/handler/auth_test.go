@@ -145,7 +145,7 @@ func TestUpdateMySubjects(t *testing.T) {
 				mocks.classroom.EXPECT().UpsertTeacherSubject(gomock.Any(), in).Return(out, nil)
 			},
 			req: &request.UpdateMySubjectRequest{
-				SchoolType: int32(classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL),
+				SchoolType: entity.SchoolTypeHighSchool,
 				SubjectIDs: []int64{1},
 			},
 			expect: &testResponse{
@@ -156,7 +156,7 @@ func TestUpdateMySubjects(t *testing.T) {
 			name:  "failed to invalid school type",
 			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {},
 			req: &request.UpdateMySubjectRequest{
-				SchoolType: int32(classroom.SchoolType_SCHOOL_TYPE_UNKNOWN),
+				SchoolType: entity.SchoolTypeUnknown,
 				SubjectIDs: []int64{1},
 			},
 			expect: &testResponse{
@@ -174,7 +174,7 @@ func TestUpdateMySubjects(t *testing.T) {
 				mocks.classroom.EXPECT().UpsertTeacherSubject(gomock.Any(), in).Return(nil, errmock)
 			},
 			req: &request.UpdateMySubjectRequest{
-				SchoolType: int32(classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL),
+				SchoolType: entity.SchoolTypeHighSchool,
 				SubjectIDs: []int64{1},
 			},
 			expect: &testResponse{

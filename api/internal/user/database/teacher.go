@@ -8,6 +8,7 @@ import (
 	"github.com/calmato/shs-web/api/pkg/database"
 	"github.com/calmato/shs-web/api/pkg/firebase/authentication"
 	"github.com/calmato/shs-web/api/pkg/jst"
+	"github.com/calmato/shs-web/api/pkg/uuid"
 )
 
 const teacherTable = "teachers"
@@ -116,6 +117,55 @@ func (t *teacher) UpdateMail(ctx context.Context, teacherID string, mail string)
 func (t *teacher) UpdatePassword(ctx context.Context, teacherID string, password string) error {
 	_, err := t.auth.UpdatePassword(ctx, teacherID, password)
 	return dbError(err)
+}
+
+func (t *teacher) UpdateRole(ctx context.Context, teacherID string, role entity.Role) error {
+	tx, err := t.db.Begin()
+	if err != nil {
+		return dbError(err)
+	}
+	defer t.db.Close(tx)
+
+	params := map[string]interface{}{
+		"role":       int32(role),
+		"updated_at": t.now(),
+	}
+
+	err = tx.Table(teacherTable).Where("id = ?", teacherID).Updates(params).Error
+	if err != nil {
+		tx.Rollback()
+		return dbError(err)
+	}
+	return dbError(tx.Commit().Error)
+}
+
+func (t *teacher) Delete(ctx context.Context, teacherID string) error {
+	now := t.now()
+	uid := uuid.Base58Encode(uuid.New())
+
+	err := t.auth.DeleteUser(ctx, teacherID)
+	if err != nil {
+		return dbError(err)
+	}
+
+	tx, err := t.db.Begin()
+	if err != nil {
+		return dbError(err)
+	}
+	defer t.db.Close(tx)
+
+	params := map[string]interface{}{
+		"mail":       uid,
+		"updated_at": now,
+		"deleted_at": now,
+	}
+
+	err = tx.Table(teacherTable).Where("id = ?", teacherID).Updates(params).Error
+	if err != nil {
+		tx.Rollback()
+		return dbError(err)
+	}
+	return dbError(tx.Commit().Error)
 }
 
 func (t *teacher) Count(ctx context.Context) (int64, error) {

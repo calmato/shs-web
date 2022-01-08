@@ -10,8 +10,10 @@ import (
 	"github.com/calmato/shs-web/api/internal/gateway/teacher/v1/request"
 	"github.com/calmato/shs-web/api/internal/gateway/teacher/v1/response"
 	"github.com/calmato/shs-web/api/internal/gateway/util"
+	"github.com/calmato/shs-web/api/proto/classroom"
 	"github.com/calmato/shs-web/api/proto/user"
 	"github.com/gin-gonic/gin"
+	"golang.org/x/sync/errgroup"
 )
 
 func (h *apiV1Handler) ListTeachers(ctx *gin.Context) {
@@ -54,14 +56,26 @@ func (h *apiV1Handler) GetTeacher(ctx *gin.Context) {
 	c := util.SetMetadata(ctx)
 
 	teacherID := ctx.Param("teacherId")
-	teacher, err := h.getTeacher(c, teacherID)
-	if err != nil {
+
+	eg, ectx := errgroup.WithContext(c)
+	var teacher *gentity.Teacher
+	eg.Go(func() (err error) {
+		teacher, err = h.getTeacher(c, teacherID)
+		return
+	})
+	var subjects gentity.Subjects
+	eg.Go(func() (err error) {
+		subjects, err = h.getTeacherSubject(ectx, teacherID)
+		return
+	})
+	if err := eg.Wait(); err != nil {
 		httpError(ctx, err)
 		return
 	}
 
 	res := &response.TeacherResponse{
-		Teacher: entity.NewTeacher(teacher),
+		Teacher:  entity.NewTeacher(teacher),
+		Subjects: entity.NewSubjects(subjects).GroupBySchoolType(),
 	}
 	ctx.JSON(http.StatusOK, res)
 }
@@ -74,7 +88,7 @@ func (h *apiV1Handler) CreateTeacher(ctx *gin.Context) {
 		badRequest(ctx, err)
 		return
 	}
-	role, err := entity.Role(req.Role).UserRole()
+	role, err := req.Role.UserRole()
 	if err != nil {
 		badRequest(ctx, err)
 		return
@@ -98,7 +112,8 @@ func (h *apiV1Handler) CreateTeacher(ctx *gin.Context) {
 	teacher := gentity.NewTeacher(out.Teacher)
 
 	res := &response.TeacherResponse{
-		Teacher: entity.NewTeacher(teacher),
+		Teacher:  entity.NewTeacher(teacher),
+		Subjects: entity.NewSubjects(nil).GroupBySchoolType(),
 	}
 	ctx.JSON(http.StatusOK, res)
 }
@@ -142,6 +157,81 @@ func (h *apiV1Handler) UpdateTeacherPassword(ctx *gin.Context) {
 		PasswordConfirmation: req.PasswordConfirmation,
 	}
 	_, err := h.user.UpdateTeacherPassword(c, in)
+	if err != nil {
+		httpError(ctx, err)
+		return
+	}
+
+	ctx.JSON(http.StatusNoContent, gin.H{})
+}
+
+func (h *apiV1Handler) UpdateTeacherRole(ctx *gin.Context) {
+	c := util.SetMetadata(ctx)
+
+	teacherID := ctx.Param("teacherId")
+	req := &request.UpdateTeacherRoleRequest{}
+	if err := ctx.BindJSON(req); err != nil {
+		badRequest(ctx, err)
+		return
+	}
+
+	role, err := req.Role.UserRole()
+	if err != nil {
+		badRequest(ctx, err)
+		return
+	}
+
+	in := &user.UpdateTeacherRoleRequest{
+		Id:   teacherID,
+		Role: role,
+	}
+	_, err = h.user.UpdateTeacherRole(c, in)
+	if err != nil {
+		httpError(ctx, err)
+		return
+	}
+
+	ctx.JSON(http.StatusNoContent, gin.H{})
+}
+
+func (h *apiV1Handler) UpdateTeacherSubject(ctx *gin.Context) {
+	c := util.SetMetadata(ctx)
+
+	teacherID := ctx.Param("teacherId")
+
+	req := &request.UpdateTeacherSubjectRequest{}
+	if err := ctx.BindJSON(req); err != nil {
+		badRequest(ctx, err)
+		return
+	}
+	schoolType, err := req.SchoolType.ClassroomSchoolType()
+	if err != nil {
+		badRequest(ctx, err)
+		return
+	}
+
+	in := &classroom.UpsertTeacherSubjectRequest{
+		TeacherId:  teacherID,
+		SubjectIds: req.SubjectIDs,
+		SchoolType: schoolType,
+	}
+	_, err = h.classroom.UpsertTeacherSubject(c, in)
+	if err != nil {
+		httpError(ctx, err)
+		return
+	}
+
+	ctx.JSON(http.StatusNoContent, gin.H{})
+}
+
+func (h *apiV1Handler) DeleteTeacher(ctx *gin.Context) {
+	c := util.SetMetadata(ctx)
+
+	teacherID := ctx.Param("teacherId")
+	in := &user.DeleteTeacherRequest{
+		Id: teacherID,
+	}
+	_, err := h.user.DeleteTeacher(c, in)
 	if err != nil {
 		httpError(ctx, err)
 		return

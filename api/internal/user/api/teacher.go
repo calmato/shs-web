@@ -9,6 +9,8 @@ import (
 	"github.com/calmato/shs-web/api/pkg/uuid"
 	"github.com/calmato/shs-web/api/proto/user"
 	"golang.org/x/sync/errgroup"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 func (s *userService) ListTeachers(
@@ -83,6 +85,10 @@ func (s *userService) CreateTeacher(
 	if err := s.validator.CreateTeacher(req); err != nil {
 		return nil, gRPCError(err)
 	}
+	role, err := entity.NewRole(req.Role)
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, "api: invalid role")
+	}
 
 	uid := uuid.Base58Encode(uuid.New())
 	teacher := &entity.Teacher{
@@ -92,11 +98,11 @@ func (s *userService) CreateTeacher(
 		LastNameKana:  req.LastNameKana,
 		FirstNameKana: req.FirstNameKana,
 		Mail:          req.Mail,
-		Role:          int32(req.Role),
+		Role:          role,
 		Password:      req.Password,
 	}
 
-	err := s.db.Teacher.Create(ctx, teacher)
+	err = s.db.Teacher.Create(ctx, teacher)
 	if err != nil {
 		return nil, gRPCError(err)
 	}
@@ -133,4 +139,36 @@ func (s *userService) UpdateTeacherPassword(
 		return nil, gRPCError(err)
 	}
 	return &user.UpdateTeacherPasswordResponse{}, nil
+}
+
+func (s *userService) UpdateTeacherRole(
+	ctx context.Context, req *user.UpdateTeacherRoleRequest,
+) (*user.UpdateTeacherRoleResponse, error) {
+	if err := s.validator.UpdateTeacherRole(req); err != nil {
+		return nil, gRPCError(err)
+	}
+	role, err := entity.NewRole(req.Role)
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, "api: invalid role")
+	}
+
+	err = s.db.Teacher.UpdateRole(ctx, req.Id, role)
+	if err != nil {
+		return nil, gRPCError(err)
+	}
+	return &user.UpdateTeacherRoleResponse{}, nil
+}
+
+func (s *userService) DeleteTeacher(
+	ctx context.Context, req *user.DeleteTeacherRequest,
+) (*user.DeleteTeacherResponse, error) {
+	if err := s.validator.DeleteTeacher(req); err != nil {
+		return nil, gRPCError(err)
+	}
+
+	err := s.db.Teacher.Delete(ctx, req.Id)
+	if err != nil {
+		return nil, gRPCError(err)
+	}
+	return &user.DeleteTeacherResponse{}, nil
 }

@@ -101,3 +101,42 @@ func TestTeachers_Proto(t *testing.T) {
 		})
 	}
 }
+
+func TestRole(t *testing.T) {
+	t.Parallel()
+	tests := []struct {
+		name   string
+		role   user.Role
+		expect Role
+		isErr  bool
+	}{
+		{
+			name:   "success teacher role",
+			role:   user.Role_ROLE_TEACHER,
+			expect: RoleTeacher,
+			isErr:  false,
+		},
+		{
+			name:   "success administrator role",
+			role:   user.Role_ROLE_ADMINISTRATOR,
+			expect: RoleAdministrator,
+			isErr:  false,
+		},
+		{
+			name:   "success invalid role",
+			role:   user.Role(-1),
+			expect: RoleTeacher,
+			isErr:  true,
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			actual, err := NewRole(tt.role)
+			assert.Equal(t, tt.isErr, err != nil, err)
+			assert.Equal(t, tt.expect, actual)
+		})
+	}
+}

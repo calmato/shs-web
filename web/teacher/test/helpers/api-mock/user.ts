@@ -57,6 +57,52 @@ export const listTeachers: { [key: string]: TeachersResponse } = {
   },
 }
 
+export const showTeacher: { [key: string]: TeacherResponse } = {
+  '/v1/teachers/000000000000000000001': {
+    id: '000000000000000000001',
+    lastName: '中村',
+    firstName: '太郎',
+    lastNameKana: 'なかむら',
+    firstNameKana: 'たろう',
+    mail: 'teacher-001@calmato.jp',
+    role: 1,
+    subjects: {
+      1: [
+        {
+          id: 1,
+          name: '国語',
+          color: '#F8BBD0',
+          schoolType: 1,
+          createdAt: '',
+          updatedAt: '',
+        },
+      ],
+      2: [
+        {
+          id: 2,
+          name: '数学',
+          color: '#BBDEFB',
+          schoolType: 2,
+          createdAt: '',
+          updatedAt: '',
+        },
+      ],
+      3: [
+        {
+          id: 3,
+          name: '英語',
+          color: '#FEE6C9',
+          schoolType: 3,
+          createdAt: '',
+          updatedAt: '',
+        },
+      ],
+    },
+    createdAt: '2021-12-02T18:30:00+09:00',
+    updatedAt: '2021-12-02T18:30:00+09:00',
+  },
+}
+
 export const createTeacher: { [key: string]: TeacherResponse } = {
   '/v1/teachers': {
     id: '000000000000000000001',
@@ -66,7 +112,47 @@ export const createTeacher: { [key: string]: TeacherResponse } = {
     firstNameKana: 'たろう',
     mail: 'teacher-001@calmato.jp',
     role: 1,
+    subjects: {
+      1: [
+        {
+          id: 1,
+          name: '国語',
+          color: '#F8BBD0',
+          schoolType: 1,
+          createdAt: '',
+          updatedAt: '',
+        },
+      ],
+      2: [
+        {
+          id: 2,
+          name: '数学',
+          color: '#BBDEFB',
+          schoolType: 2,
+          createdAt: '',
+          updatedAt: '',
+        },
+      ],
+      3: [
+        {
+          id: 3,
+          name: '英語',
+          color: '#FEE6C9',
+          schoolType: 3,
+          createdAt: '',
+          updatedAt: '',
+        },
+      ],
+    },
     createdAt: '2021-12-02T18:30:00+09:00',
     updatedAt: '2021-12-02T18:30:00+09:00',
   },
+}
+
+export const updateTeacherSubjects: { [key: string]: {} } = {
+  '/v1/teachers/000000000000000000001/subjects': {},
+}
+
+export const updateTeacherRole: { [key: string]: {} } = {
+  '/v1/teachers/000000000000000000001/role': {},
 }

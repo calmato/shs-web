@@ -10,6 +10,7 @@
     :server-items-length="total"
     @update:page="$emit('update:page', $event)"
     @update:items-per-page="$emit('update:items-per-page', $event)"
+    @click:row="onClick"
   >
     <template #[`item.role`]="{ item }">
       <v-chip :color="getRoleColor(item.role)" dark>
@@ -20,7 +21,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from '@nuxtjs/composition-api'
+import { defineComponent, PropType, SetupContext } from '@nuxtjs/composition-api'
 import { TableFooter, TableHeader } from '~/types/props/user'
 import { Role, Teacher } from '~/types/store'
 
@@ -48,7 +49,7 @@ export default defineComponent({
     },
   },
 
-  setup() {
+  setup(_, { emit }: SetupContext) {
     const headers: TableHeader[] = [
       { text: '講師名', value: 'name', sortable: false },
       { text: '役職', value: 'role', sortable: false },
@@ -80,11 +81,16 @@ export default defineComponent({
       }
     }
 
+    const onClick = (teacher: Teacher): void => {
+      emit('click', teacher)
+    }
+
     return {
       headers,
       footer,
       getRole,
       getRoleColor,
+      onClick,
     }
   },
 })

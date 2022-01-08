@@ -25,3 +25,28 @@ get:
         application/json:
           schema:
             $ref: './../../../../openapi.yaml#/components/schemas/errorResponse'
+delete:
+  summary: 講師削除
+  tags:
+  - Teacher
+  security:
+  - BearerAuth: []
+  parameters:
+  - in: path
+    name: teacherId
+    required: true
+    schema:
+      type: string
+    description: 講師ID
+    example: kSByoE6FetnPs5Byk3a9Zx
+  responses:
+    204:
+      description: A successful response.
+      content:
+        application/json: {}
+    default:
+      description: An unexpected error response.
+      content:
+        application/json:
+          schema:
+            $ref: './../../../../openapi.yaml#/components/schemas/errorResponse'

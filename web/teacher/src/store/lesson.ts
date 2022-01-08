@@ -1,6 +1,8 @@
 import { Module, VuexModule, Mutation, Action } from 'vuex-module-decorators'
+import { subjectResponse2Subject } from '~/lib'
 import { $axios } from '~/plugins/axios'
 import { ErrorResponse } from '~/types/api/exception'
+import { SubjectsResponse, Subject as v1Subject } from '~/types/api/v1'
 import { ApiError } from '~/types/exception'
 import { Lesson, LessonState, Subject, SubjectMap } from '~/types/store'
 
@@ -89,8 +91,11 @@ export default class LessonModule extends VuexModule {
   @Action({ rawError: true })
   public async getAllSubjects(): Promise<void> {
     try {
-      const res: { subjects: Subject[] } = await $axios.$get('/v1/subjects')
-      this.setSubjects(res.subjects)
+      const res: SubjectsResponse = await $axios.$get('/v1/subjects')
+      const subjects: Subject[] = res.subjects?.map((subject: v1Subject): Subject => {
+        return subjectResponse2Subject(subject)
+      })
+      this.setSubjects(subjects)
       return
     } catch (err) {
       if ($axios.isAxiosError(err)) {

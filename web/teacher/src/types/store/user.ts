@@ -1,4 +1,5 @@
 import { Role } from './common'
+import { SubjectsMap } from './lesson'
 
 export interface Student {
   id: string
@@ -25,12 +26,14 @@ export interface Teacher {
   firstNameKana: string
   mail: string
   role: Role
+  subjects: SubjectsMap
   createdAt: string
   updatedAt: string
 }
 
 export interface UserState {
   students: Student[]
+  teacher: Teacher
   teachers: Teacher[]
   teachersTotal: number
 }

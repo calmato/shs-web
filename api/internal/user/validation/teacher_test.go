@@ -525,3 +525,83 @@ func TestUpdateTeacherPassword(t *testing.T) {
 		})
 	}
 }
+
+func TestUpdateTeacherRole(t *testing.T) {
+	t.Parallel()
+	validator := NewRequestValidation()
+
+	tests := []struct {
+		name  string
+		req   *user.UpdateTeacherRoleRequest
+		isErr bool
+	}{
+		{
+			name: "success",
+			req: &user.UpdateTeacherRoleRequest{
+				Id:   "cvcTyJFfgoDQrqC1KDHbRe",
+				Role: user.Role_ROLE_TEACHER,
+			},
+			isErr: false,
+		},
+		{
+			name: "Id is min_len",
+			req: &user.UpdateTeacherRoleRequest{
+				Id:   "",
+				Role: user.Role_ROLE_TEACHER,
+			},
+			isErr: true,
+		},
+		{
+			name: "Role is defined_only",
+			req: &user.UpdateTeacherRoleRequest{
+				Id:   "cvcTyJFfgoDQrqC1KDHbRe",
+				Role: user.Role(-1),
+			},
+			isErr: true,
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			err := validator.UpdateTeacherRole(tt.req)
+			assert.Equal(t, tt.isErr, err != nil, err)
+		})
+	}
+}
+
+func TestDeleteTeacher(t *testing.T) {
+	t.Parallel()
+	validator := NewRequestValidation()
+
+	tests := []struct {
+		name  string
+		req   *user.DeleteTeacherRequest
+		isErr bool
+	}{
+		{
+			name: "success",
+			req: &user.DeleteTeacherRequest{
+				Id: "cvcTyJFfgoDQrqC1KDHbRe",
+			},
+			isErr: false,
+		},
+		{
+			name: "Id is min_len",
+			req: &user.DeleteTeacherRequest{
+				Id: "",
+			},
+			isErr: true,
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			err := validator.DeleteTeacher(tt.req)
+			assert.Equal(t, tt.isErr, err != nil, err)
+		})
+	}
+}
