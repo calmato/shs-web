@@ -400,7 +400,7 @@ describe('components/templates/TheUserTop', () => {
       describe('onClickDeleteTeacherAccept', () => {
         it('emitted', async () => {
           await wrapper.vm.onClickDeleteTeacherAccept()
-          expect(wrapper.emitted('submit:teacher-delete')).toBeFalsy()
+          expect(wrapper.emitted('submit:teacher-delete')).toBeTruthy()
         })
 
         it('changing teacherDeleteDialog', async () => {
@@ -411,7 +411,7 @@ describe('components/templates/TheUserTop', () => {
 
       describe('onClickDeleteTeacherCancel', () => {
         it('changing teacherDeleteDialog', async () => {
-          await wrapper.vm.onClickDeleteTeacher()
+          await wrapper.vm.onClickDeleteTeacherCancel()
           expect(wrapper.vm.teacherDeleteDialog).toBeFalsy()
         })
       })

@@ -385,7 +385,7 @@ describe('components/organisms/TheTeacherEditCard', () => {
 
       describe('onDeleteAccept', () => {
         it('emitted', async () => {
-          await wrapper.vm.onDelete()
+          await wrapper.vm.onDeleteAccept()
           expect(wrapper.emitted('click:delete-accept')).toBeTruthy()
         })
       })
