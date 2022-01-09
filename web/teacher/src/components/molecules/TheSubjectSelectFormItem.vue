@@ -17,7 +17,7 @@
       item-text="name"
       item-value="id"
       :items="elementarySchoolSubjects"
-      @change="handleElementarySchoolSubjectsChange"
+      @blur="handleElementarySchoolSubjectsBlur"
     >
       <template #selection="{ item }">
         <v-chip label :color="item.color">{{ item.name }}</v-chip>
@@ -32,7 +32,7 @@
       item-text="name"
       item-value="id"
       :items="juniorHighSchoolSubjects"
-      @change="handleJuniorHighSchoolSubjectsChange"
+      @blur="handleJuniorHighSchoolSubjectsBlur"
     >
       <template #selection="{ item }">
         <v-chip label :color="item.color">{{ item.name }}</v-chip>
@@ -47,7 +47,7 @@
       item-text="name"
       item-value="id"
       :items="highSchoolSubjects"
-      @change="handleHighSchoolSubjectsChange"
+      @blur="handleHighSchoolSubjectsBlur"
     >
       <template #selection="{ item }">
         <v-chip label :color="item.color">{{ item.name }}</v-chip>
@@ -115,25 +115,25 @@ export default defineComponent({
       set: (val: object) => emit('update:highSchoolSubjectsFormValue', val),
     })
 
-    const handleElementarySchoolSubjectsChange = (val: number[]) => {
-      emit('handleElementarySchoolSubjectsChange', val)
+    const handleElementarySchoolSubjectsBlur = () => {
+      emit('handleElementarySchoolSubjectsBlur', props.elementarySchoolSubjectsFormValue)
     }
 
-    const handleJuniorHighSchoolSubjectsChange = (val: number[]) => {
-      emit('handleJuniorHighSchoolSubjectsChange', val)
+    const handleJuniorHighSchoolSubjectsBlur = () => {
+      emit('handleJuniorHighSchoolSubjectsBlur', props.juniorHighSchoolSubjectsFormValue)
     }
 
-    const handleHighSchoolSubjectsChange = (val: number[]) => {
-      emit('handleHighSchoolSubjectsChange', val)
+    const handleHighSchoolSubjectsBlur = () => {
+      emit('handleHighSchoolSubjectsBlur', props.highSchoolSubjectsFormValue)
     }
 
     return {
       elementarySchoolSubjectsFormData,
       juniorHighSchoolSubjectsFormData,
       highSchoolSubjectsFormData,
-      handleElementarySchoolSubjectsChange,
-      handleJuniorHighSchoolSubjectsChange,
-      handleHighSchoolSubjectsChange,
+      handleElementarySchoolSubjectsBlur,
+      handleJuniorHighSchoolSubjectsBlur,
+      handleHighSchoolSubjectsBlur,
     }
   },
 })

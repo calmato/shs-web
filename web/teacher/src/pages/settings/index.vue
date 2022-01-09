@@ -10,9 +10,9 @@
     :elementary-school-subjects-form-value.sync="elementarySchoolSubjectForm.subjectIDs"
     :junior-high-school-subjects-form-value.sync="juniorHighSchoolSubjectForm.subjectIDs"
     :high-school-subjects-form-value.sync="highSchoolSubjectForm.subjectIDs"
-    @handleElementarySchoolSubjectsChange="handleElementarySchoolSubjectsChange"
-    @handleJuniorHighSchoolSubjectsChange="handleJuniorHighSchoolSubjectsChange"
-    @handleHighSchoolSubjectsChange="handleHighSchoolSubjectsChange"
+    @handleElementarySchoolSubjectsBlur="handleElementarySchoolSubjectsBlur"
+    @handleJuniorHighSchoolSubjectsBlur="handleJuniorHighSchoolSubjectsBlur"
+    @handleHighSchoolSubjectsBlur="handleHighSchoolSubjectsBlur"
     @click="handleClick"
     @onClickBackButton="handleBackButton"
   />
@@ -95,15 +95,15 @@ export default defineComponent({
       router.back()
     }
 
-    const handleElementarySchoolSubjectsChange = (_val: number[]) => {
+    const handleElementarySchoolSubjectsBlur = (_val: number[]) => {
       AuthStore.updateOwnSubjects(elementarySchoolSubjectForm)
     }
 
-    const handleJuniorHighSchoolSubjectsChange = (_val: number[]) => {
+    const handleJuniorHighSchoolSubjectsBlur = (_val: number[]) => {
       AuthStore.updateOwnSubjects(juniorHighSchoolSubjectForm)
     }
 
-    const handleHighSchoolSubjectsChange = (_val: number[]) => {
+    const handleHighSchoolSubjectsBlur = (_val: number[]) => {
       AuthStore.updateOwnSubjects(highSchoolSubjectForm)
     }
 
@@ -140,9 +140,9 @@ export default defineComponent({
       elementarySchoolSubjectForm,
       juniorHighSchoolSubjectForm,
       highSchoolSubjectForm,
-      handleElementarySchoolSubjectsChange,
-      handleJuniorHighSchoolSubjectsChange,
-      handleHighSchoolSubjectsChange,
+      handleElementarySchoolSubjectsBlur,
+      handleJuniorHighSchoolSubjectsBlur,
+      handleHighSchoolSubjectsBlur,
     }
   },
 })
