@@ -15,6 +15,7 @@
 
 <script lang="ts">
 import { defineComponent } from '@vue/composition-api'
+import { PropType } from '@nuxtjs/composition-api'
 import TheSubmissionList from '../organisms/TheSubmissionList.vue'
 import { SubmissionEditState } from '~/types/props/submission'
 
