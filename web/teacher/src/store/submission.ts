@@ -70,6 +70,22 @@ const initialEditState: SubmissionEditState = {
         },
       ],
     },
+    {
+      date: '20220204',
+      isClosed: false,
+      lessons: [
+        {
+          id: 6,
+          startTime: '1700',
+          endTime: '1830',
+        },
+        {
+          id: 7,
+          startTime: '1830',
+          endTime: '2000',
+        },
+      ],
+    },
   ],
 }
 
