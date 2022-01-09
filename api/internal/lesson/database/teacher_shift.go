@@ -31,7 +31,7 @@ func NewTeacherShift(db *database.Client) TeacherShift {
 }
 
 func (s *teacherShift) ListByShiftSummaryID(
-	ctx context.Context, teacherID string, summaryID int64, fields ...string,
+	ctx context.Context, teacherIDs []string, summaryID int64, fields ...string,
 ) (entity.TeacherShifts, error) {
 	var shifts entity.TeacherShifts
 	if len(fields) == 0 {
@@ -39,7 +39,7 @@ func (s *teacherShift) ListByShiftSummaryID(
 	}
 
 	stmt := s.db.DB.Table(teacherShiftTable).Select(fields).
-		Where("teacher_id = ?", teacherID).
+		Where("teacher_id IN (?)", teacherIDs).
 		Where("shift_summary_id = ?", summaryID)
 
 	err := stmt.Find(&shifts).Error

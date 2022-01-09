@@ -98,11 +98,11 @@ func (h *apiV1Handler) ListTeacherShifts(ctx *gin.Context) {
 	var submission *gentity.TeacherSubmission
 	var teacherShifts gentity.TeacherShifts
 	eg.Go(func() error {
-		in := &lesson.ListTeacherShiftsRequest{
+		in := &lesson.GetTeacherShiftsRequest{
 			TeacherId:      teacherID,
 			ShiftSummaryId: shiftSummaryID,
 		}
-		out, err := h.lesson.ListTeacherShifts(ectx, in)
+		out, err := h.lesson.GetTeacherShifts(ectx, in)
 		if err != nil {
 			return err
 		}

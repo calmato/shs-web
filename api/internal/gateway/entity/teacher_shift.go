@@ -29,3 +29,14 @@ func (ss TeacherShifts) MapByShiftID() map[int64]*TeacherShift {
 	}
 	return res
 }
+
+func (ss TeacherShifts) GroupByTeacherID() map[string]TeacherShifts {
+	res := make(map[string]TeacherShifts, 0)
+	for _, s := range ss {
+		if _, ok := res[s.TeacherId]; !ok {
+			res[s.TeacherId] = make(TeacherShifts, 0)
+		}
+		res[s.TeacherId] = append(res[s.TeacherId], s)
+	}
+	return res
+}

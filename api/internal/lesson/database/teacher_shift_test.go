@@ -48,8 +48,8 @@ func TestTeacherShift_ListByShiftSummaryID(t *testing.T) {
 	require.NoError(t, err)
 
 	type args struct {
-		teacherID string
-		summaryID int64
+		teacherIDs []string
+		summaryID  int64
 	}
 	type want struct {
 		shifts entity.TeacherShifts
@@ -65,8 +65,8 @@ func TestTeacherShift_ListByShiftSummaryID(t *testing.T) {
 			name:  "success",
 			setup: func(ctx context.Context, t *testing.T, m *mocks) {},
 			args: args{
-				teacherID: teacherID,
-				summaryID: 1,
+				teacherIDs: []string{teacherID},
+				summaryID:  1,
 			},
 			want: want{
 				shifts: teacherShifts,
@@ -85,7 +85,7 @@ func TestTeacherShift_ListByShiftSummaryID(t *testing.T) {
 			tt.setup(ctx, t, m)
 
 			db := NewTeacherShift(m.db)
-			actual, err := db.ListByShiftSummaryID(ctx, tt.args.teacherID, tt.args.summaryID)
+			actual, err := db.ListByShiftSummaryID(ctx, tt.args.teacherIDs, tt.args.summaryID)
 			assert.Equal(t, tt.want.isErr, err != nil, err)
 			assert.Len(t, actual, len(tt.want.shifts))
 			for i, shift := range tt.want.shifts {

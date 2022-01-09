@@ -83,7 +83,7 @@ func TestListTeacherSubmissions(t *testing.T) {
 				body: &response.TeacherSubmissionsResponse{
 					Summaries: entity.TeacherSubmissions{
 						{
-							ID:               1,
+							ShiftSummaryID:   1,
 							Year:             2022,
 							Month:            2,
 							ShiftStatus:      entity.ShiftStatusAccepting,
@@ -94,7 +94,7 @@ func TestListTeacherSubmissions(t *testing.T) {
 							UpdatedAt:        now,
 						},
 						{
-							ID:               2,
+							ShiftSummaryID:   2,
 							Year:             2022,
 							Month:            3,
 							ShiftStatus:      entity.ShiftStatusWaiting,
@@ -269,17 +269,17 @@ func TestListTeacherShifts(t *testing.T) {
 				summaryOut := &lesson.GetShiftSummaryResponse{Summary: summary}
 				shiftsIn := &lesson.ListShiftsRequest{ShiftSummaryId: 1}
 				shiftsOut := &lesson.ListShiftsResponse{Shifts: shifts}
-				teacherIn := &lesson.ListTeacherShiftsRequest{
+				teacherIn := &lesson.GetTeacherShiftsRequest{
 					TeacherId:      idmock,
 					ShiftSummaryId: 1,
 				}
-				teacherOut := &lesson.ListTeacherShiftsResponse{
+				teacherOut := &lesson.GetTeacherShiftsResponse{
 					Submission: submission,
 					Shifts:     teacherShifts,
 				}
 				mocks.lesson.EXPECT().GetShiftSummary(gomock.Any(), summaryIn).Return(summaryOut, nil)
 				mocks.lesson.EXPECT().ListShifts(gomock.Any(), shiftsIn).Return(shiftsOut, nil)
-				mocks.lesson.EXPECT().ListTeacherShifts(gomock.Any(), teacherIn).Return(teacherOut, nil)
+				mocks.lesson.EXPECT().GetTeacherShifts(gomock.Any(), teacherIn).Return(teacherOut, nil)
 			},
 			teacherID: idmock,
 			summaryID: "1",
@@ -287,7 +287,7 @@ func TestListTeacherShifts(t *testing.T) {
 				code: http.StatusOK,
 				body: &response.TeacherShiftsResponse{
 					Summary: &entity.TeacherSubmission{
-						ID:               1,
+						ShiftSummaryID:   1,
 						Year:             2022,
 						Month:            2,
 						ShiftStatus:      entity.ShiftStatusAccepting,
@@ -369,17 +369,17 @@ func TestListTeacherShifts(t *testing.T) {
 				summaryIn := &lesson.GetShiftSummaryRequest{Id: 1}
 				shiftsIn := &lesson.ListShiftsRequest{ShiftSummaryId: 1}
 				shiftsOut := &lesson.ListShiftsResponse{Shifts: shifts}
-				teacherIn := &lesson.ListTeacherShiftsRequest{
+				teacherIn := &lesson.GetTeacherShiftsRequest{
 					TeacherId:      idmock,
 					ShiftSummaryId: 1,
 				}
-				teacherOut := &lesson.ListTeacherShiftsResponse{
+				teacherOut := &lesson.GetTeacherShiftsResponse{
 					Submission: submission,
 					Shifts:     teacherShifts,
 				}
 				mocks.lesson.EXPECT().GetShiftSummary(gomock.Any(), summaryIn).Return(nil, errmock)
 				mocks.lesson.EXPECT().ListShifts(gomock.Any(), shiftsIn).Return(shiftsOut, nil)
-				mocks.lesson.EXPECT().ListTeacherShifts(gomock.Any(), teacherIn).Return(teacherOut, nil)
+				mocks.lesson.EXPECT().GetTeacherShifts(gomock.Any(), teacherIn).Return(teacherOut, nil)
 			},
 			teacherID: idmock,
 			summaryID: "1",
@@ -393,17 +393,17 @@ func TestListTeacherShifts(t *testing.T) {
 				summaryIn := &lesson.GetShiftSummaryRequest{Id: 1}
 				summaryOut := &lesson.GetShiftSummaryResponse{Summary: summary}
 				shiftsIn := &lesson.ListShiftsRequest{ShiftSummaryId: 1}
-				teacherIn := &lesson.ListTeacherShiftsRequest{
+				teacherIn := &lesson.GetTeacherShiftsRequest{
 					TeacherId:      idmock,
 					ShiftSummaryId: 1,
 				}
-				teacherOut := &lesson.ListTeacherShiftsResponse{
+				teacherOut := &lesson.GetTeacherShiftsResponse{
 					Submission: submission,
 					Shifts:     teacherShifts,
 				}
 				mocks.lesson.EXPECT().GetShiftSummary(gomock.Any(), summaryIn).Return(summaryOut, nil)
 				mocks.lesson.EXPECT().ListShifts(gomock.Any(), shiftsIn).Return(nil, errmock)
-				mocks.lesson.EXPECT().ListTeacherShifts(gomock.Any(), teacherIn).Return(teacherOut, nil)
+				mocks.lesson.EXPECT().GetTeacherShifts(gomock.Any(), teacherIn).Return(teacherOut, nil)
 			},
 			teacherID: idmock,
 			summaryID: "1",
@@ -418,13 +418,13 @@ func TestListTeacherShifts(t *testing.T) {
 				summaryOut := &lesson.GetShiftSummaryResponse{Summary: summary}
 				shiftsIn := &lesson.ListShiftsRequest{ShiftSummaryId: 1}
 				shiftsOut := &lesson.ListShiftsResponse{Shifts: shifts}
-				teacherIn := &lesson.ListTeacherShiftsRequest{
+				teacherIn := &lesson.GetTeacherShiftsRequest{
 					TeacherId:      idmock,
 					ShiftSummaryId: 1,
 				}
 				mocks.lesson.EXPECT().GetShiftSummary(gomock.Any(), summaryIn).Return(summaryOut, nil)
 				mocks.lesson.EXPECT().ListShifts(gomock.Any(), shiftsIn).Return(shiftsOut, nil)
-				mocks.lesson.EXPECT().ListTeacherShifts(gomock.Any(), teacherIn).Return(nil, errmock)
+				mocks.lesson.EXPECT().GetTeacherShifts(gomock.Any(), teacherIn).Return(nil, errmock)
 			},
 			teacherID: idmock,
 			summaryID: "1",
@@ -441,17 +441,17 @@ func TestListTeacherShifts(t *testing.T) {
 				shiftsOut := &lesson.ListShiftsResponse{
 					Shifts: []*lesson.Shift{{Date: "20220200"}},
 				}
-				teacherIn := &lesson.ListTeacherShiftsRequest{
+				teacherIn := &lesson.GetTeacherShiftsRequest{
 					TeacherId:      idmock,
 					ShiftSummaryId: 1,
 				}
-				teacherOut := &lesson.ListTeacherShiftsResponse{
+				teacherOut := &lesson.GetTeacherShiftsResponse{
 					Submission: submission,
 					Shifts:     teacherShifts,
 				}
 				mocks.lesson.EXPECT().GetShiftSummary(gomock.Any(), summaryIn).Return(summaryOut, nil)
 				mocks.lesson.EXPECT().ListShifts(gomock.Any(), shiftsIn).Return(shiftsOut, nil)
-				mocks.lesson.EXPECT().ListTeacherShifts(gomock.Any(), teacherIn).Return(teacherOut, nil)
+				mocks.lesson.EXPECT().GetTeacherShifts(gomock.Any(), teacherIn).Return(teacherOut, nil)
 			},
 			teacherID: idmock,
 			summaryID: "1",
@@ -575,7 +575,7 @@ func TestUpsertTeacherShifts(t *testing.T) {
 				code: http.StatusOK,
 				body: &response.TeacherShiftsResponse{
 					Summary: &entity.TeacherSubmission{
-						ID:               1,
+						ShiftSummaryID:   1,
 						Year:             2022,
 						Month:            2,
 						ShiftStatus:      entity.ShiftStatusAccepting,

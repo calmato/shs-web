@@ -69,7 +69,7 @@ type TeacherSubmission interface {
 
 type TeacherShift interface {
 	ListByShiftSummaryID(
-		ctx context.Context, teacherID string, summaryID int64, fields ...string,
+		ctx context.Context, teacherIDs []string, summaryID int64, fields ...string,
 	) (entity.TeacherShifts, error)
 	Replace(ctx context.Context, submission *entity.TeacherSubmission, shifts entity.TeacherShifts) error
 }

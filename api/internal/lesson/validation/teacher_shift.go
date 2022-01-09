@@ -22,6 +22,15 @@ func (v *requestValidation) ListTeacherShifts(req *lesson.ListTeacherShiftsReque
 	return nil
 }
 
+func (v *requestValidation) GetTeacherShifts(req *lesson.GetTeacherShiftsRequest) error {
+	if err := req.Validate(); err != nil {
+		validate := err.(lesson.GetTeacherShiftsRequestValidationError)
+		return validationError(validate.Error())
+	}
+
+	return nil
+}
+
 func (v *requestValidation) UpsertTeacherShifts(req *lesson.UpsertTeacherShiftsRequest) error {
 	if err := req.Validate(); err != nil {
 		validate := err.(lesson.UpsertTeacherShiftsRequestValidationError)

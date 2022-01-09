@@ -118,6 +118,48 @@ shiftsResponse:
                   type: string
                   format: 'HHMM'
                   description: 授業終了時間
+    teachers:
+      type: array
+      description: 講師サマリ一覧
+      items:
+        type: object
+        properties:
+          teacher:
+            type: object
+            description: 講師詳細
+            properties:
+              id:
+                type: string
+                description: 講師ID
+              lastName:
+                type: string
+                description: 姓
+              firstName:
+                type: string
+                description: 名
+              lastNameKana:
+                type: string
+                description: 姓(かな)
+              firstNameKana:
+                type: string
+                description: 名(かな)
+              mail:
+                type: string
+                description: メールアドレス
+              role:
+                type: integer
+                format: int32
+                description: 権限 (0:不明, 1:講師, 2:管理者)
+              createdAt:
+                type: string
+                description: 登録日時
+              updatedAt:
+                type: string
+                description: 更新日時
+          lessonTotal:
+            type: integer
+            format: int64
+            description: 担当授業数
   example:
     summary:
       year: 2022
@@ -149,6 +191,29 @@ shiftsResponse:
       - id: 4
         startTime: '1830'
         endTime: '2000'
+    teachers:
+    - teacher:
+        id: 'kSByoE6FetnPs5Byk3a9Zx'
+        lastName: '中村'
+        firstName: '広大'
+        lastNameKana: 'なかむら'
+        firstNamaKana: 'こうだい'
+        mail: 'teacher-test01@calmato.jp'
+        role: 1
+        createdAt: '2021-12-12T12:12:30.100Z'
+        updatedAt: '2021-12-12T12:12:30.100Z'
+      lessonTotal: 3
+    - teacher:
+        id: 'kSByoE6FetnPs5Byk3a9Zx'
+        lastName: '山田'
+        firstName: 'タダシ'
+        lastNameKana: 'やまだ'
+        firstNamaKana: 'ただし'
+        mail: 'teacher-test02@calmato.jp'
+        role: 2
+        createdAt: '2021-12-12T12:12:30.100Z'
+        updatedAt: '2021-12-12T12:12:30.100Z'
+      lessonTotal: 2
 teacherSubmissionsResponse:
   type: object
   properties:

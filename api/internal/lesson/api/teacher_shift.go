@@ -38,6 +38,24 @@ func (s *lessonService) ListTeacherShifts(
 		return nil, gRPCError(err)
 	}
 
+	shifts, err := s.db.TeacherShift.ListByShiftSummaryID(ctx, req.TeacherIds, req.ShiftSummaryId)
+	if err != nil {
+		return nil, gRPCError(err)
+	}
+
+	res := &lesson.ListTeacherShiftsResponse{
+		Shifts: shifts.Proto(),
+	}
+	return res, nil
+}
+
+func (s *lessonService) GetTeacherShifts(
+	ctx context.Context, req *lesson.GetTeacherShiftsRequest,
+) (*lesson.GetTeacherShiftsResponse, error) {
+	if err := s.validator.GetTeacherShifts(req); err != nil {
+		return nil, gRPCError(err)
+	}
+
 	eg, ectx := errgroup.WithContext(ctx)
 	var submission *entity.TeacherSubmission
 	eg.Go(func() (err error) {
@@ -46,14 +64,14 @@ func (s *lessonService) ListTeacherShifts(
 	})
 	var shifts entity.TeacherShifts
 	eg.Go(func() (err error) {
-		shifts, err = s.db.TeacherShift.ListByShiftSummaryID(ectx, req.TeacherId, req.ShiftSummaryId)
+		shifts, err = s.db.TeacherShift.ListByShiftSummaryID(ectx, []string{req.TeacherId}, req.ShiftSummaryId)
 		return
 	})
 	if err := eg.Wait(); err != nil && !errors.Is(err, database.ErrNotFound) {
 		return nil, gRPCError(err)
 	}
 
-	res := &lesson.ListTeacherShiftsResponse{
+	res := &lesson.GetTeacherShiftsResponse{
 		Submission: submission.Proto(),
 		Shifts:     shifts.Proto(),
 	}

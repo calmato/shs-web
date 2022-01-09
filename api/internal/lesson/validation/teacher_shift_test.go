@@ -72,15 +72,23 @@ func TestListTeacherShifts(t *testing.T) {
 		{
 			name: "success",
 			req: &lesson.ListTeacherShiftsRequest{
-				TeacherId:      "teacherid",
+				TeacherIds:     []string{"teacherid"},
 				ShiftSummaryId: 1,
 			},
 			isErr: false,
 		},
 		{
-			name: "TeacherId is min_len",
+			name: "TeacherIds is unique",
 			req: &lesson.ListTeacherShiftsRequest{
-				TeacherId:      "",
+				TeacherIds:     []string{"teacherid", "teacherid"},
+				ShiftSummaryId: 1,
+			},
+			isErr: true,
+		},
+		{
+			name: "TeacherIds is items.min_len",
+			req: &lesson.ListTeacherShiftsRequest{
+				TeacherIds:     []string{""},
 				ShiftSummaryId: 1,
 			},
 			isErr: true,
@@ -88,7 +96,7 @@ func TestListTeacherShifts(t *testing.T) {
 		{
 			name: "ShiftSummaryId is gt",
 			req: &lesson.ListTeacherShiftsRequest{
-				TeacherId:      "teacherid",
+				TeacherIds:     []string{"teacherid"},
 				ShiftSummaryId: 0,
 			},
 			isErr: true,
@@ -100,6 +108,51 @@ func TestListTeacherShifts(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 			err := validator.ListTeacherShifts(tt.req)
+			assert.Equal(t, tt.isErr, err != nil, err)
+		})
+	}
+}
+
+func TestGetTeacherShifts(t *testing.T) {
+	t.Parallel()
+	validator := NewRequestValidation()
+
+	tests := []struct {
+		name  string
+		req   *lesson.GetTeacherShiftsRequest
+		isErr bool
+	}{
+		{
+			name: "success",
+			req: &lesson.GetTeacherShiftsRequest{
+				TeacherId:      "teacherid",
+				ShiftSummaryId: 1,
+			},
+			isErr: false,
+		},
+		{
+			name: "TeacherId is min_len",
+			req: &lesson.GetTeacherShiftsRequest{
+				TeacherId:      "",
+				ShiftSummaryId: 1,
+			},
+			isErr: true,
+		},
+		{
+			name: "ShiftSummaryId is gt",
+			req: &lesson.GetTeacherShiftsRequest{
+				TeacherId:      "teacherid",
+				ShiftSummaryId: 0,
+			},
+			isErr: true,
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			err := validator.GetTeacherShifts(tt.req)
 			assert.Equal(t, tt.isErr, err != nil, err)
 		})
 	}
