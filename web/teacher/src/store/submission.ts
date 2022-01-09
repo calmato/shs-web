@@ -42,6 +42,11 @@ const initialEditState: SubmissionEditState = {
           startTime: '1830',
           endTime: '2000',
         },
+        {
+          id: 3,
+          startTime: '2000',
+          endTime: '2130',
+        },
       ],
     },
     {
@@ -54,12 +59,12 @@ const initialEditState: SubmissionEditState = {
       isClosed: false,
       lessons: [
         {
-          id: 3,
+          id: 4,
           startTime: '1700',
           endTime: '1830',
         },
         {
-          id: 4,
+          id: 5,
           startTime: '1830',
           endTime: '2000',
         },
