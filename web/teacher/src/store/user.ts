@@ -9,10 +9,11 @@ import {
   UpdateTeacherSubjectsRequest,
   UpdateTeacherRoleRequest,
 } from '~/types/api/v1'
-import { Role, SchoolType, Student, StudentMap, SubjectsMap, Teacher, TeacherMap, UserState } from '~/types/store'
+import { Role, Student, StudentMap, SubjectsMap, Teacher, TeacherMap, UserState } from '~/types/store'
 import { ErrorResponse } from '~/types/api/exception'
 import { ApiError } from '~/types/exception'
 import { TeacherEditRoleForm, TeacherEditSubjectForm, TeacherNewForm } from '~/types/form'
+import { subjectResponse2Subject } from '~/lib'
 
 const initialState: UserState = {
   students: [
@@ -169,7 +170,12 @@ export default class UserModule extends VuexModule {
     await $axios
       .$get(`/v1/teachers/${teacherId}`)
       .then((res: TeacherResponse) => {
-        this.setTeacher({ ...res })
+        const subjects: SubjectsMap = {
+          小学校: res.subjects[1].map((i) => subjectResponse2Subject(i)),
+          中学校: res.subjects[2].map((i) => subjectResponse2Subject(i)),
+          高校: res.subjects[3].map((i) => subjectResponse2Subject(i)),
+        }
+        this.setTeacher({ ...res, subjects })
       })
       .catch((err: AxiosError) => {
         const res: ErrorResponse = { ...err.response?.data }
@@ -184,7 +190,13 @@ export default class UserModule extends VuexModule {
     await $axios
       .$post('/v1/teachers', req)
       .then((res: TeacherResponse) => {
-        const subjects = res.subjects || initializeSubjects()
+        const subjects = res.subjects
+          ? {
+              小学校: res.subjects[1].map((i) => subjectResponse2Subject(i)),
+              中学校: res.subjects[2].map((i) => subjectResponse2Subject(i)),
+              高校: res.subjects[3].map((i) => subjectResponse2Subject(i)),
+            }
+          : initializeSubjects()
         this.addTeacher({ ...res, subjects })
       })
       .catch((err: AxiosError) => {
@@ -240,9 +252,9 @@ export default class UserModule extends VuexModule {
 
 function initializeSubjects(): SubjectsMap {
   return {
-    [SchoolType.ELEMENTARY_SCHOOL]: [],
-    [SchoolType.JUNIOR_HIGH_SCHOOL]: [],
-    [SchoolType.HIGH_SCHOOL]: [],
+    小学校: [],
+    中学校: [],
+    高校: [],
   }
 }
 

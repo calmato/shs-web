@@ -1,6 +1,5 @@
 import { setup, refresh, setSafetyMode } from '~~/test/helpers/store-helper'
 import { LessonStore } from '~/store'
-import { SchoolType } from '~/types/store'
 import { ErrorResponse } from '~/types/api/exception'
 import { ApiError } from '~/types/exception'
 
@@ -15,18 +14,60 @@ describe('store/lesson', () => {
 
   describe('getters', () => {
     it('getSubjcets', () => {
-      expect(LessonStore.getSubjects).toEqual([])
+      expect(LessonStore.getSubjects).toEqual([
+        {
+          id: 1,
+          name: '国語',
+          color: '#F8BBD0',
+          schoolType: '小学校',
+          createdAt: '',
+          updatedAt: '',
+        },
+        {
+          id: 2,
+          name: '数学',
+          color: '#BBDEFB',
+          schoolType: '中学校',
+          createdAt: '',
+          updatedAt: '',
+        },
+        {
+          id: 3,
+          name: '英語',
+          color: '#FEE6C9',
+          schoolType: '高校',
+          createdAt: '',
+          updatedAt: '',
+        },
+      ])
     })
 
     it('getSubjectMap', () => {
-      expect(LessonStore.getSubjectMap).toEqual({})
-    })
-
-    it('getSubjectsMap', () => {
-      expect(LessonStore.getSubjectsMap).toEqual({
-        [SchoolType.ELEMENTARY_SCHOOL]: [],
-        [SchoolType.JUNIOR_HIGH_SCHOOL]: [],
-        [SchoolType.HIGH_SCHOOL]: [],
+      expect(LessonStore.getSubjectMap).toEqual({
+        1: {
+          id: 1,
+          name: '国語',
+          color: '#F8BBD0',
+          schoolType: '小学校',
+          createdAt: '',
+          updatedAt: '',
+        },
+        2: {
+          id: 2,
+          name: '数学',
+          color: '#BBDEFB',
+          schoolType: '中学校',
+          createdAt: '',
+          updatedAt: '',
+        },
+        3: {
+          id: 3,
+          name: '英語',
+          color: '#FEE6C9',
+          schoolType: '高校',
+          createdAt: '',
+          updatedAt: '',
+        },
       })
     })
 
@@ -64,7 +105,7 @@ describe('store/lesson', () => {
               id: 1,
               name: '国語',
               color: '#F8BBD0',
-              schoolType: SchoolType.ELEMENTARY_SCHOOL,
+              schoolType: '小学校',
               createdAt: '',
               updatedAt: '',
             },
@@ -72,7 +113,7 @@ describe('store/lesson', () => {
               id: 2,
               name: '数学',
               color: '#BBDEFB',
-              schoolType: SchoolType.JUNIOR_HIGH_SCHOOL,
+              schoolType: '中学校',
               createdAt: '',
               updatedAt: '',
             },
@@ -80,7 +121,7 @@ describe('store/lesson', () => {
               id: 3,
               name: '英語',
               color: '#FEE6C9',
-              schoolType: SchoolType.HIGH_SCHOOL,
+              schoolType: '高校',
               createdAt: '',
               updatedAt: '',
             },

@@ -1,7 +1,7 @@
 import { mount } from '@vue/test-utils'
 import * as Options from '~~/test/helpers/component-helper'
 import TheTeacherEditCard from '~/components/organisms/TheTeacherEditCard.vue'
-import { Role, SchoolType, SubjectsMap, Teacher } from '~/types/store'
+import { Role, SubjectsMap, Teacher } from '~/types/store'
 import {
   TeacherEditRoleForm,
   TeacherEditRoleOptions,
@@ -85,7 +85,11 @@ describe('components/organisms/TheTeacherEditCard', () => {
             firstNameKana: 'たろう',
             mail: 'teacher-001@calmato.jp',
             role: 0,
-            subjects: {},
+            subjects: {
+              小学校: [],
+              中学校: [],
+              高校: [],
+            },
             createdAt: '',
             updatedAt: '',
           }
@@ -97,14 +101,18 @@ describe('components/organisms/TheTeacherEditCard', () => {
       describe('subjects', () => {
         it('初期値', () => {
           expect(wrapper.props().subjects).toEqual({
-            [SchoolType.ELEMENTARY_SCHOOL]: [],
-            [SchoolType.JUNIOR_HIGH_SCHOOL]: [],
-            [SchoolType.HIGH_SCHOOL]: [],
+            小学校: [],
+            中学校: [],
+            高校: [],
           })
         })
 
         it('値が代入されること', async () => {
-          const subjects: SubjectsMap = {}
+          const subjects: SubjectsMap = {
+            小学校: [],
+            中学校: [],
+            高校: [],
+          }
           await wrapper.setProps({ subjects })
           expect(wrapper.props().subjects).toBe(subjects)
         })
@@ -121,7 +129,7 @@ describe('components/organisms/TheTeacherEditCard', () => {
         it('値が代入されること', async () => {
           const form: TeacherEditSubjectForm = {
             params: {
-              schoolType: SchoolType.ELEMENTARY_SCHOOL,
+              schoolType: 1,
               subjectIds: [1, 2],
             },
             options: TeacherEditSubjectForElementarySchoolOptions,
@@ -142,7 +150,7 @@ describe('components/organisms/TheTeacherEditCard', () => {
         it('値が代入されること', async () => {
           const form: TeacherEditSubjectForm = {
             params: {
-              schoolType: SchoolType.JUNIOR_HIGH_SCHOOL,
+              schoolType: 2,
               subjectIds: [1, 2],
             },
             options: TeacherEditSubjectForJuniorHighSchoolOptions,
@@ -163,7 +171,7 @@ describe('components/organisms/TheTeacherEditCard', () => {
         it('値が代入されること', async () => {
           const form: TeacherEditSubjectForm = {
             params: {
-              schoolType: SchoolType.HIGH_SCHOOL,
+              schoolType: 3,
               subjectIds: [1, 2],
             },
             options: TeacherEditSubjectForHighSchoolOptions,
@@ -216,7 +224,11 @@ describe('components/organisms/TheTeacherEditCard', () => {
             firstNameKana: 'たろう',
             mail: 'teacher-001@calmato.jp',
             role: 0,
-            subjects: {},
+            subjects: {
+              小学校: [],
+              中学校: [],
+              高校: [],
+            },
             createdAt: '',
             updatedAt: '',
           }
@@ -228,32 +240,32 @@ describe('components/organisms/TheTeacherEditCard', () => {
       describe('getElementarySchoolSubjects', () => {
         it('return', async () => {
           const subjects: SubjectsMap = {
-            [SchoolType.ELEMENTARY_SCHOOL]: [
+            小学校: [
               {
                 id: 1,
                 name: '国語',
                 color: '#F8BBD0',
-                schoolType: SchoolType.ELEMENTARY_SCHOOL,
+                schoolType: '小学校',
                 createdAt: '',
                 updatedAt: '',
               },
             ],
-            [SchoolType.JUNIOR_HIGH_SCHOOL]: [
+            中学校: [
               {
                 id: 2,
                 name: '数学',
                 color: '#BBDEFB',
-                schoolType: SchoolType.JUNIOR_HIGH_SCHOOL,
+                schoolType: '中学校',
                 createdAt: '',
                 updatedAt: '',
               },
             ],
-            [SchoolType.HIGH_SCHOOL]: [
+            高校: [
               {
                 id: 3,
                 name: '英語',
                 color: '#FEE6C9',
-                schoolType: SchoolType.HIGH_SCHOOL,
+                schoolType: '高校',
                 createdAt: '',
                 updatedAt: '',
               },
@@ -265,7 +277,7 @@ describe('components/organisms/TheTeacherEditCard', () => {
               id: 1,
               name: '国語',
               color: '#F8BBD0',
-              schoolType: SchoolType.ELEMENTARY_SCHOOL,
+              schoolType: '小学校',
               createdAt: '',
               updatedAt: '',
             },
@@ -276,32 +288,32 @@ describe('components/organisms/TheTeacherEditCard', () => {
       describe('getJuniorHighSchoolSubjects', () => {
         it('return', async () => {
           const subjects: SubjectsMap = {
-            [SchoolType.ELEMENTARY_SCHOOL]: [
+            小学校: [
               {
                 id: 1,
                 name: '国語',
                 color: '#F8BBD0',
-                schoolType: SchoolType.ELEMENTARY_SCHOOL,
+                schoolType: '小学校',
                 createdAt: '',
                 updatedAt: '',
               },
             ],
-            [SchoolType.JUNIOR_HIGH_SCHOOL]: [
+            中学校: [
               {
                 id: 2,
                 name: '数学',
                 color: '#BBDEFB',
-                schoolType: SchoolType.JUNIOR_HIGH_SCHOOL,
+                schoolType: '中学校',
                 createdAt: '',
                 updatedAt: '',
               },
             ],
-            [SchoolType.HIGH_SCHOOL]: [
+            高校: [
               {
                 id: 3,
                 name: '英語',
                 color: '#FEE6C9',
-                schoolType: SchoolType.HIGH_SCHOOL,
+                schoolType: '高校',
                 createdAt: '',
                 updatedAt: '',
               },
@@ -313,7 +325,7 @@ describe('components/organisms/TheTeacherEditCard', () => {
               id: 2,
               name: '数学',
               color: '#BBDEFB',
-              schoolType: SchoolType.JUNIOR_HIGH_SCHOOL,
+              schoolType: '中学校',
               createdAt: '',
               updatedAt: '',
             },
@@ -324,32 +336,32 @@ describe('components/organisms/TheTeacherEditCard', () => {
       describe('getHighSchoolSubjects', () => {
         it('return', async () => {
           const subjects: SubjectsMap = {
-            [SchoolType.ELEMENTARY_SCHOOL]: [
+            小学校: [
               {
                 id: 1,
                 name: '国語',
                 color: '#F8BBD0',
-                schoolType: SchoolType.ELEMENTARY_SCHOOL,
+                schoolType: '小学校',
                 createdAt: '',
                 updatedAt: '',
               },
             ],
-            [SchoolType.JUNIOR_HIGH_SCHOOL]: [
+            中学校: [
               {
                 id: 2,
                 name: '数学',
                 color: '#BBDEFB',
-                schoolType: SchoolType.JUNIOR_HIGH_SCHOOL,
+                schoolType: '中学校',
                 createdAt: '',
                 updatedAt: '',
               },
             ],
-            [SchoolType.HIGH_SCHOOL]: [
+            高校: [
               {
                 id: 3,
                 name: '英語',
                 color: '#FEE6C9',
-                schoolType: SchoolType.HIGH_SCHOOL,
+                schoolType: '高校',
                 createdAt: '',
                 updatedAt: '',
               },
@@ -361,7 +373,7 @@ describe('components/organisms/TheTeacherEditCard', () => {
               id: 3,
               name: '英語',
               color: '#FEE6C9',
-              schoolType: SchoolType.HIGH_SCHOOL,
+              schoolType: '高校',
               createdAt: '',
               updatedAt: '',
             },

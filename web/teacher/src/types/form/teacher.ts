@@ -1,4 +1,3 @@
-import { SchoolType } from '../store'
 import { IHidden, ISelect, ITextField } from './util'
 
 /**
@@ -18,7 +17,7 @@ export interface ITeacherNewParams {
 }
 
 export interface ITeacherEditSubjectParams {
-  schoolType: SchoolType
+  schoolType: 1 | 2 | 3
   subjectIds: number[]
 }
 
@@ -88,17 +87,17 @@ export const TeacherNewParams: ITeacherNewParams = {
 }
 
 export const TeacherEditSubjectForElementarySchoolParams: ITeacherEditSubjectParams = {
-  schoolType: SchoolType.ELEMENTARY_SCHOOL,
+  schoolType: 1,
   subjectIds: [],
 }
 
 export const TeacherEditSubjectForJuniorHighSchoolParams: ITeacherEditSubjectParams = {
-  schoolType: SchoolType.JUNIOR_HIGH_SCHOOL,
+  schoolType: 2,
   subjectIds: [],
 }
 
 export const TeacherEditSubjectForHighSchoolParams: ITeacherEditSubjectParams = {
-  schoolType: SchoolType.HIGH_SCHOOL,
+  schoolType: 3,
   subjectIds: [],
 }
 

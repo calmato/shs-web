@@ -1,5 +1,4 @@
 import { TeacherResponse, TeachersResponse } from '~/types/api/v1'
-import { SchoolType } from '~/types/store'
 
 export const listTeachers: { [key: string]: TeachersResponse } = {
   '/v1/teachers': {
@@ -68,32 +67,32 @@ export const showTeacher: { [key: string]: TeacherResponse } = {
     mail: 'teacher-001@calmato.jp',
     role: 1,
     subjects: {
-      [SchoolType.ELEMENTARY_SCHOOL]: [
+      1: [
         {
           id: 1,
           name: '国語',
           color: '#F8BBD0',
-          schoolType: SchoolType.ELEMENTARY_SCHOOL,
+          schoolType: 1,
           createdAt: '',
           updatedAt: '',
         },
       ],
-      [SchoolType.JUNIOR_HIGH_SCHOOL]: [
+      2: [
         {
           id: 2,
           name: '数学',
           color: '#BBDEFB',
-          schoolType: SchoolType.JUNIOR_HIGH_SCHOOL,
+          schoolType: 2,
           createdAt: '',
           updatedAt: '',
         },
       ],
-      [SchoolType.HIGH_SCHOOL]: [
+      3: [
         {
           id: 3,
           name: '英語',
           color: '#FEE6C9',
-          schoolType: SchoolType.HIGH_SCHOOL,
+          schoolType: 3,
           createdAt: '',
           updatedAt: '',
         },
@@ -114,32 +113,32 @@ export const createTeacher: { [key: string]: TeacherResponse } = {
     mail: 'teacher-001@calmato.jp',
     role: 1,
     subjects: {
-      [SchoolType.ELEMENTARY_SCHOOL]: [
+      1: [
         {
           id: 1,
           name: '国語',
           color: '#F8BBD0',
-          schoolType: SchoolType.ELEMENTARY_SCHOOL,
+          schoolType: 1,
           createdAt: '',
           updatedAt: '',
         },
       ],
-      [SchoolType.JUNIOR_HIGH_SCHOOL]: [
+      2: [
         {
           id: 2,
           name: '数学',
           color: '#BBDEFB',
-          schoolType: SchoolType.JUNIOR_HIGH_SCHOOL,
+          schoolType: 2,
           createdAt: '',
           updatedAt: '',
         },
       ],
-      [SchoolType.HIGH_SCHOOL]: [
+      3: [
         {
           id: 3,
           name: '英語',
           color: '#FEE6C9',
-          schoolType: SchoolType.HIGH_SCHOOL,
+          schoolType: 3,
           createdAt: '',
           updatedAt: '',
         },

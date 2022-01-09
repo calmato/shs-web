@@ -1,7 +1,7 @@
 import { shallowMount } from '@vue/test-utils'
 import * as Options from '~~/test/helpers/component-helper'
 import TheUserTop from '~/components/templates/TheUserTop.vue'
-import { Role, SchoolType, Student, SubjectsMap, Teacher } from '~/types/store'
+import { Role, Student, SubjectsMap, Teacher } from '~/types/store'
 import {
   TeacherEditRoleForm,
   TeacherEditRoleOptions,
@@ -50,39 +50,39 @@ describe('components/templates/TheUserTop', () => {
       describe('subjects', () => {
         it('初期値', () => {
           expect(wrapper.props().subjects).toEqual({
-            [SchoolType.ELEMENTARY_SCHOOL]: [],
-            [SchoolType.JUNIOR_HIGH_SCHOOL]: [],
-            [SchoolType.HIGH_SCHOOL]: [],
+            小学校: [],
+            中学校: [],
+            高校: [],
           })
         })
         it('値が代入されること', async () => {
           const subjects: SubjectsMap = {
-            [SchoolType.ELEMENTARY_SCHOOL]: [
+            小学校: [
               {
                 id: 1,
                 name: '国語',
                 color: '#F8BBD0',
-                schoolType: SchoolType.ELEMENTARY_SCHOOL,
+                schoolType: '小学校',
                 createdAt: '',
                 updatedAt: '',
               },
             ],
-            [SchoolType.JUNIOR_HIGH_SCHOOL]: [
+            中学校: [
               {
                 id: 2,
                 name: '数学',
                 color: '#BBDEFB',
-                schoolType: SchoolType.JUNIOR_HIGH_SCHOOL,
+                schoolType: '中学校',
                 createdAt: '',
                 updatedAt: '',
               },
             ],
-            [SchoolType.HIGH_SCHOOL]: [
+            高校: [
               {
                 id: 3,
                 name: '英語',
                 color: '#FEE6C9',
-                schoolType: SchoolType.HIGH_SCHOOL,
+                schoolType: '高校',
                 createdAt: '',
                 updatedAt: '',
               },
@@ -90,32 +90,32 @@ describe('components/templates/TheUserTop', () => {
           }
           await wrapper.setProps({ subjects })
           expect(wrapper.props().subjects).toEqual({
-            [SchoolType.ELEMENTARY_SCHOOL]: [
+            小学校: [
               {
                 id: 1,
                 name: '国語',
                 color: '#F8BBD0',
-                schoolType: SchoolType.ELEMENTARY_SCHOOL,
+                schoolType: '小学校',
                 createdAt: '',
                 updatedAt: '',
               },
             ],
-            [SchoolType.JUNIOR_HIGH_SCHOOL]: [
+            中学校: [
               {
                 id: 2,
                 name: '数学',
                 color: '#BBDEFB',
-                schoolType: SchoolType.JUNIOR_HIGH_SCHOOL,
+                schoolType: '中学校',
                 createdAt: '',
                 updatedAt: '',
               },
             ],
-            [SchoolType.HIGH_SCHOOL]: [
+            高校: [
               {
                 id: 3,
                 name: '英語',
                 color: '#FEE6C9',
-                schoolType: SchoolType.HIGH_SCHOOL,
+                schoolType: '高校',
                 createdAt: '',
                 updatedAt: '',
               },
@@ -178,7 +178,11 @@ describe('components/templates/TheUserTop', () => {
             firstNameKana: 'たろう',
             mail: 'teacher-001@calmato.jp',
             role: 0,
-            subjects: {},
+            subjects: {
+              小学校: [],
+              中学校: [],
+              高校: [],
+            },
             createdAt: '',
             updatedAt: '',
           }
@@ -215,7 +219,11 @@ describe('components/templates/TheUserTop', () => {
               firstNameKana: 'たろう',
               mail: 'teacher-001@calmato.jp',
               role: 0,
-              subjects: {},
+              subjects: {
+                小学校: [],
+                中学校: [],
+                高校: [],
+              },
               createdAt: '',
               updatedAt: '',
             },
@@ -269,7 +277,7 @@ describe('components/templates/TheUserTop', () => {
         it('値が代入されること', async () => {
           const form: TeacherEditSubjectForm = {
             params: {
-              schoolType: SchoolType.ELEMENTARY_SCHOOL,
+              schoolType: 1,
               subjectIds: [1, 2],
             },
             options: TeacherEditSubjectForElementarySchoolOptions,
@@ -290,7 +298,7 @@ describe('components/templates/TheUserTop', () => {
         it('値が代入されること', async () => {
           const form: TeacherEditSubjectForm = {
             params: {
-              schoolType: SchoolType.JUNIOR_HIGH_SCHOOL,
+              schoolType: 2,
               subjectIds: [1, 2],
             },
             options: TeacherEditSubjectForJuniorHighSchoolOptions,
@@ -311,7 +319,7 @@ describe('components/templates/TheUserTop', () => {
         it('値が代入されること', async () => {
           const form: TeacherEditSubjectForm = {
             params: {
-              schoolType: SchoolType.HIGH_SCHOOL,
+              schoolType: 3,
               subjectIds: [1, 2],
             },
             options: TeacherEditSubjectForHighSchoolOptions,
@@ -380,7 +388,11 @@ describe('components/templates/TheUserTop', () => {
             firstNameKana: 'たろう',
             mail: 'teacher-001@calmato.jp',
             role: 0,
-            subjects: {},
+            subjects: {
+              小学校: [],
+              中学校: [],
+              高校: [],
+            },
             createdAt: '',
             updatedAt: '',
           }

@@ -1,12 +1,38 @@
 import { Module, VuexModule, Mutation, Action } from 'vuex-module-decorators'
+import { subjectResponse2Subject } from '~/lib'
 import { $axios } from '~/plugins/axios'
 import { ErrorResponse } from '~/types/api/exception'
 import { SubjectsResponse, Subject as v1Subject } from '~/types/api/v1'
 import { ApiError } from '~/types/exception'
-import { Lesson, LessonState, SchoolType, Subject, SubjectMap, SubjectsMap } from '~/types/store'
+import { Lesson, LessonState, Subject, SubjectMap } from '~/types/store'
 
 const initialState: LessonState = {
-  subjects: [],
+  subjects: [
+    {
+      id: 1,
+      name: '国語',
+      color: '#F8BBD0',
+      schoolType: '小学校',
+      createdAt: '',
+      updatedAt: '',
+    },
+    {
+      id: 2,
+      name: '数学',
+      color: '#BBDEFB',
+      schoolType: '中学校',
+      createdAt: '',
+      updatedAt: '',
+    },
+    {
+      id: 3,
+      name: '英語',
+      color: '#FEE6C9',
+      schoolType: '高校',
+      createdAt: '',
+      updatedAt: '',
+    },
+  ],
   lessons: [
     {
       id: 1,
@@ -42,18 +68,6 @@ export default class LessonModule extends VuexModule {
     return subjects
   }
 
-  public get getSubjectsMap(): SubjectsMap {
-    const subjects: SubjectsMap = {
-      [SchoolType.ELEMENTARY_SCHOOL]: [],
-      [SchoolType.JUNIOR_HIGH_SCHOOL]: [],
-      [SchoolType.HIGH_SCHOOL]: [],
-    }
-    this.subjects.forEach((subject: Subject) => {
-      subjects[subject.schoolType].push(subject)
-    })
-    return subjects
-  }
-
   public get getLessons(): Lesson[] {
     return this.lessons
   }
@@ -79,7 +93,7 @@ export default class LessonModule extends VuexModule {
     try {
       const res: SubjectsResponse = await $axios.$get('/v1/subjects')
       const subjects: Subject[] = res.subjects?.map((subject: v1Subject): Subject => {
-        return { ...subject }
+        return subjectResponse2Subject(subject)
       })
       this.setSubjects(subjects)
       return

@@ -72,7 +72,7 @@ import {
   TeacherEditSubjectForHighSchoolOptions,
 } from '~/types/form'
 import { Actor } from '~/types/props/user'
-import { Role, SchoolType, Student, SubjectsMap, Teacher } from '~/types/store'
+import { Role, Student, SubjectsMap, Teacher } from '~/types/store'
 
 export default defineComponent({
   components: {
@@ -93,9 +93,9 @@ export default defineComponent({
     subjects: {
       type: Object as PropType<SubjectsMap>,
       default: () => ({
-        [SchoolType.ELEMENTARY_SCHOOL]: [],
-        [SchoolType.JUNIOR_HIGH_SCHOOL]: [],
-        [SchoolType.HIGH_SCHOOL]: [],
+        小学校: [],
+        中学校: [],
+        高校: [],
       }),
     },
     students: {

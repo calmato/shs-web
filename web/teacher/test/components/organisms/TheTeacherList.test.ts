@@ -30,7 +30,11 @@ describe('components/organisms/TheTeacherList', () => {
               firstNameKana: 'たろう',
               mail: 'teacher-001@calmato.jp',
               role: 0,
-              subjects: {},
+              subjects: {
+                小学校: [],
+                中学校: [],
+                高校: [],
+              },
               createdAt: '',
               updatedAt: '',
             },
@@ -142,7 +146,11 @@ describe('components/organisms/TheTeacherList', () => {
             firstNameKana: 'たろう',
             mail: 'teacher-001@calmato.jp',
             role: 0,
-            subjects: {},
+            subjects: {
+              小学校: [],
+              中学校: [],
+              高校: [],
+            },
             createdAt: '',
             updatedAt: '',
           }

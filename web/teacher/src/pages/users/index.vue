@@ -40,7 +40,7 @@ import {
   TeacherEditSubjectForJuniorHighSchoolOptions,
   TeacherEditSubjectForElementarySchoolOptions,
 } from '~/types/form'
-import { PromiseState, Role, SchoolType, Student, Subject, SubjectsMap, Teacher } from '~/types/store'
+import { PromiseState, Role, Student, Subject, SubjectsMap, Teacher } from '~/types/store'
 
 export default defineComponent({
   components: {
@@ -130,9 +130,9 @@ export default defineComponent({
         .then(() => {
           const teacher: Teacher = store.getters['user/getTeacher']
           const subjects: SubjectsMap = teacher.subjects
-          editTeacherElementarySchoolForm.params.subjectIds = getSubjectIds(subjects[SchoolType.ELEMENTARY_SCHOOL])
-          editTeacherJuniorHighSchoolForm.params.subjectIds = getSubjectIds(subjects[SchoolType.JUNIOR_HIGH_SCHOOL])
-          editTeacherHighSchoolForm.params.subjectIds = getSubjectIds(subjects[SchoolType.HIGH_SCHOOL])
+          editTeacherElementarySchoolForm.params.subjectIds = getSubjectIds(subjects['小学校'])
+          editTeacherJuniorHighSchoolForm.params.subjectIds = getSubjectIds(subjects['中学校'])
+          editTeacherHighSchoolForm.params.subjectIds = getSubjectIds(subjects['高校'])
           editTeacherRoleForm.params.role = teacher.role
           teacherDialog.value = true
         })

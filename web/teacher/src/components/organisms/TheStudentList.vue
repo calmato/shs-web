@@ -11,6 +11,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from '@nuxtjs/composition-api'
+import { schoolTypeNum2schoolTypeString } from '~/lib'
 import { TableHeader } from '~/types/props/user'
 import { SchoolType, Student } from '~/types/store'
 
@@ -33,27 +34,18 @@ export default defineComponent({
       { text: '学年', value: 'grade', sortable: false },
     ]
 
-    const getSchoolType = (typ: SchoolType): string => {
-      switch (typ) {
-        case SchoolType.ELEMENTARY_SCHOOL:
-          return '小学校'
-        case SchoolType.JUNIOR_HIGH_SCHOOL:
-          return '中学校'
-        case SchoolType.HIGH_SCHOOL:
-          return '高等学校'
-        default:
-          return ''
-      }
-    }
+    const getSchoolType = schoolTypeNum2schoolTypeString
 
-    const getSchoolTypeColor = (typ: SchoolType): string => {
-      switch (typ) {
-        case SchoolType.ELEMENTARY_SCHOOL:
+    const getSchoolTypeColor = (type: number): string => {
+      const schoolType: SchoolType = schoolTypeNum2schoolTypeString(type)
+      switch (schoolType) {
+        case '小学校':
           return 'primary'
-        case SchoolType.JUNIOR_HIGH_SCHOOL:
+        case '中学校':
           return 'secondary'
-        case SchoolType.HIGH_SCHOOL:
+        case '高校':
           return 'info'
+        case 'その他':
         default:
           return ''
       }

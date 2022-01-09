@@ -1,9 +1,7 @@
-import { SchoolType } from '~/types/store'
-
 // ---------------------------
 // interface - form
 // ---------------------------
 export interface SubjectUpdateForm {
-  schoolType: SchoolType
-  subjectIds: number[]
+  schoolType: 1 | 2 | 3
+  subjectIDs: number[]
 }

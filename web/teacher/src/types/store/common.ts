@@ -12,12 +12,8 @@ export enum Role {
 }
 
 // SchoolType 校種
-export enum SchoolType {
-  UNKNOWN = 0, // 不明
-  ELEMENTARY_SCHOOL = 1, // 小学校
-  JUNIOR_HIGH_SCHOOL = 2, // 中学校
-  HIGH_SCHOOL = 3, // 高等学校
-}
+export const SchoolTypeArray = ['小学校', '中学校', '高校', 'その他'] as const
+export type SchoolType = typeof SchoolTypeArray[number]
 
 // ShiftStatus シフト募集状況
 export enum ShiftStatus {

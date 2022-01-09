@@ -10,7 +10,7 @@ import {
   TeacherNewForm,
   TeacherNewOptions,
 } from '~/types/form'
-import { Role, SchoolType } from '~/types/store'
+import { Role } from '~/types/store'
 
 describe('store/user', () => {
   beforeEach(() => {
@@ -70,9 +70,9 @@ describe('store/user', () => {
         mail: '',
         role: Role.TEACHER,
         subjects: {
-          [SchoolType.ELEMENTARY_SCHOOL]: [],
-          [SchoolType.JUNIOR_HIGH_SCHOOL]: [],
-          [SchoolType.HIGH_SCHOOL]: [],
+          小学校: [],
+          中学校: [],
+          高校: [],
         },
         createdAt: '',
         updatedAt: '',
@@ -113,9 +113,9 @@ describe('store/user', () => {
               mail: 'teacher-001@calmato.jp',
               role: 1,
               subjects: {
-                [SchoolType.ELEMENTARY_SCHOOL]: [],
-                [SchoolType.JUNIOR_HIGH_SCHOOL]: [],
-                [SchoolType.HIGH_SCHOOL]: [],
+                小学校: [],
+                中学校: [],
+                高校: [],
               },
               createdAt: '2021-12-02T18:30:00+09:00',
               updatedAt: '2021-12-02T18:30:00+09:00',
@@ -131,9 +131,9 @@ describe('store/user', () => {
               mail: 'teacher-002@calmato.jp',
               role: 1,
               subjects: {
-                [SchoolType.ELEMENTARY_SCHOOL]: [],
-                [SchoolType.JUNIOR_HIGH_SCHOOL]: [],
-                [SchoolType.HIGH_SCHOOL]: [],
+                小学校: [],
+                中学校: [],
+                高校: [],
               },
               createdAt: '2021-12-02T18:30:00+09:00',
               updatedAt: '2021-12-02T18:30:00+09:00',
@@ -149,9 +149,9 @@ describe('store/user', () => {
               mail: 'teacher-003@calmato.jp',
               role: 2,
               subjects: {
-                [SchoolType.ELEMENTARY_SCHOOL]: [],
-                [SchoolType.JUNIOR_HIGH_SCHOOL]: [],
-                [SchoolType.HIGH_SCHOOL]: [],
+                小学校: [],
+                中学校: [],
+                高校: [],
               },
               createdAt: '2021-12-02T18:30:00+09:00',
               updatedAt: '2021-12-02T18:30:00+09:00',
@@ -174,9 +174,9 @@ describe('store/user', () => {
               mail: 'teacher-003@calmato.jp',
               role: 2,
               subjects: {
-                [SchoolType.ELEMENTARY_SCHOOL]: [],
-                [SchoolType.JUNIOR_HIGH_SCHOOL]: [],
-                [SchoolType.HIGH_SCHOOL]: [],
+                小学校: [],
+                中学校: [],
+                高校: [],
               },
               createdAt: '2021-12-02T18:30:00+09:00',
               updatedAt: '2021-12-02T18:30:00+09:00',
@@ -221,32 +221,32 @@ describe('store/user', () => {
             mail: 'teacher-001@calmato.jp',
             role: 1,
             subjects: {
-              [SchoolType.ELEMENTARY_SCHOOL]: [
+              小学校: [
                 {
                   id: 1,
                   name: '国語',
                   color: '#F8BBD0',
-                  schoolType: SchoolType.ELEMENTARY_SCHOOL,
+                  schoolType: '小学校',
                   createdAt: '',
                   updatedAt: '',
                 },
               ],
-              [SchoolType.JUNIOR_HIGH_SCHOOL]: [
+              中学校: [
                 {
                   id: 2,
                   name: '数学',
                   color: '#BBDEFB',
-                  schoolType: SchoolType.JUNIOR_HIGH_SCHOOL,
+                  schoolType: '中学校',
                   createdAt: '',
                   updatedAt: '',
                 },
               ],
-              [SchoolType.HIGH_SCHOOL]: [
+              高校: [
                 {
                   id: 3,
                   name: '英語',
                   color: '#FEE6C9',
-                  schoolType: SchoolType.HIGH_SCHOOL,
+                  schoolType: '高校',
                   createdAt: '',
                   updatedAt: '',
                 },
@@ -311,32 +311,32 @@ describe('store/user', () => {
               mail: 'teacher-001@calmato.jp',
               role: 1,
               subjects: {
-                [SchoolType.ELEMENTARY_SCHOOL]: [
+                小学校: [
                   {
                     id: 1,
                     name: '国語',
                     color: '#F8BBD0',
-                    schoolType: SchoolType.ELEMENTARY_SCHOOL,
+                    schoolType: '小学校',
                     createdAt: '',
                     updatedAt: '',
                   },
                 ],
-                [SchoolType.JUNIOR_HIGH_SCHOOL]: [
+                中学校: [
                   {
                     id: 2,
                     name: '数学',
                     color: '#BBDEFB',
-                    schoolType: SchoolType.JUNIOR_HIGH_SCHOOL,
+                    schoolType: '中学校',
                     createdAt: '',
                     updatedAt: '',
                   },
                 ],
-                [SchoolType.HIGH_SCHOOL]: [
+                高校: [
                   {
                     id: 3,
                     name: '英語',
                     color: '#FEE6C9',
-                    schoolType: SchoolType.HIGH_SCHOOL,
+                    schoolType: '高校',
                     createdAt: '',
                     updatedAt: '',
                   },
@@ -371,7 +371,7 @@ describe('store/user', () => {
       beforeEach(() => {
         form = {
           params: {
-            schoolType: SchoolType.HIGH_SCHOOL,
+            schoolType: 3,
             subjectIds: [1, 2],
           },
           options: TeacherEditSubjectForHighSchoolOptions,

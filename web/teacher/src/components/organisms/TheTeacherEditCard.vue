@@ -114,7 +114,7 @@ import {
   TeacherEditSubjectForHighSchoolOptions,
 } from '~/types/form'
 import { RoleItem } from '~/types/props/teacher'
-import { Role, SchoolType, Subject, SubjectsMap, Teacher } from '~/types/store'
+import { Role, Subject, SubjectsMap, Teacher } from '~/types/store'
 
 export default defineComponent({
   components: {
@@ -153,9 +153,9 @@ export default defineComponent({
     subjects: {
       type: Object as PropType<SubjectsMap>,
       default: () => ({
-        [SchoolType.ELEMENTARY_SCHOOL]: [],
-        [SchoolType.JUNIOR_HIGH_SCHOOL]: [],
-        [SchoolType.HIGH_SCHOOL]: [],
+        小学校: [],
+        中学校: [],
+        高校: [],
       }),
     },
     editTeacherElementarySchoolForm: {
@@ -199,15 +199,15 @@ export default defineComponent({
     }
 
     const getElementarySchoolSubjects = (): Subject[] => {
-      return props.subjects[SchoolType.ELEMENTARY_SCHOOL]
+      return props.subjects['小学校']
     }
 
     const getJuniorHighSchoolSubjects = (): Subject[] => {
-      return props.subjects[SchoolType.JUNIOR_HIGH_SCHOOL]
+      return props.subjects['中学校']
     }
 
     const getHighSchoolSubjects = (): Subject[] => {
-      return props.subjects[SchoolType.HIGH_SCHOOL]
+      return props.subjects['高校']
     }
 
     const onClose = (): void => {
