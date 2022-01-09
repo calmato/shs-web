@@ -25,3 +25,11 @@ func NewTeachers(teachers []*user.Teacher) Teachers {
 	}
 	return ts
 }
+
+func (ts Teachers) IDs() []string {
+	ids := make([]string, len(ts))
+	for i := range ts {
+		ids[i] = ts[i].Id
+	}
+	return ids
+}

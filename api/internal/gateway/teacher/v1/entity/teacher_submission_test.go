@@ -6,6 +6,7 @@ import (
 	"github.com/calmato/shs-web/api/internal/gateway/entity"
 	"github.com/calmato/shs-web/api/pkg/jst"
 	"github.com/calmato/shs-web/api/proto/lesson"
+	"github.com/calmato/shs-web/api/proto/user"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -41,7 +42,7 @@ func TestTeacherSubmission(t *testing.T) {
 				},
 			},
 			expect: &TeacherSubmission{
-				ID:               1,
+				ShiftSummaryID:   1,
 				Year:             2022,
 				Month:            1,
 				ShiftStatus:      ShiftStatusAccepting,
@@ -111,7 +112,7 @@ func TestTeacherSubmissions(t *testing.T) {
 			},
 			expect: TeacherSubmissions{
 				{
-					ID:               1,
+					ShiftSummaryID:   1,
 					Year:             2022,
 					Month:            1,
 					ShiftStatus:      ShiftStatusAccepting,
@@ -122,7 +123,7 @@ func TestTeacherSubmissions(t *testing.T) {
 					UpdatedAt:        now,
 				},
 				{
-					ID:               2,
+					ShiftSummaryID:   2,
 					Year:             2022,
 					Month:            2,
 					ShiftStatus:      ShiftStatusWaiting,
@@ -141,6 +142,179 @@ func TestTeacherSubmissions(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 			assert.Equal(t, tt.expect, NewTeacherSubmissions(tt.summaries, tt.submissions))
+		})
+	}
+}
+
+func TestTeacherSubmissionDetail(t *testing.T) {
+	t.Parallel()
+	now := jst.Date(2021, 8, 2, 18, 30, 0, 0)
+	tests := []struct {
+		name    string
+		teacher *entity.Teacher
+		shifts  entity.TeacherShifts
+		expect  *TeacherSubmissionDetail
+	}{
+		{
+			name: "success",
+			teacher: &entity.Teacher{
+				Teacher: &user.Teacher{
+					Id:            "kSByoE6FetnPs5Byk3a9Zx",
+					LastName:      "中村",
+					FirstName:     "広大",
+					LastNameKana:  "なかむら",
+					FirstNameKana: "こうだい",
+					Mail:          "teacher-test001@calmato.jp",
+					Role:          user.Role_ROLE_TEACHER,
+					CreatedAt:     now.Unix(),
+					UpdatedAt:     now.Unix(),
+				},
+			},
+			shifts: entity.TeacherShifts{
+				{
+					TeacherShift: &lesson.TeacherShift{
+						TeacherId:      "kSByoE6FetnPs5Byk3a9Zx",
+						ShiftId:        1,
+						ShiftSummaryId: 1,
+						CreatedAt:      now.Unix(),
+						UpdatedAt:      now.Unix(),
+					},
+				},
+				{
+					TeacherShift: &lesson.TeacherShift{
+						TeacherId:      "kSByoE6FetnPs5Byk3a9Zx",
+						ShiftId:        3,
+						ShiftSummaryId: 1,
+						CreatedAt:      now.Unix(),
+						UpdatedAt:      now.Unix(),
+					},
+				},
+			},
+			expect: &TeacherSubmissionDetail{
+				Teacher: &Teacher{
+					ID:            "kSByoE6FetnPs5Byk3a9Zx",
+					LastName:      "中村",
+					FirstName:     "広大",
+					LastNameKana:  "なかむら",
+					FirstNameKana: "こうだい",
+					Mail:          "teacher-test001@calmato.jp",
+					Role:          RoleTeacher,
+					CreatedAt:     now,
+					UpdatedAt:     now,
+				},
+				LessonTotal: 2,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tt.expect, NewTeacherSubmissionDetail(tt.teacher, tt.shifts))
+		})
+	}
+}
+
+func TestTeacherSubmissionDetails(t *testing.T) {
+	t.Parallel()
+	now := jst.Date(2021, 8, 2, 18, 30, 0, 0)
+	tests := []struct {
+		name     string
+		teachers entity.Teachers
+		shifts   map[string]entity.TeacherShifts
+		expect   TeacherSubmissionDetails
+	}{
+		{
+			name: "success",
+			teachers: entity.Teachers{
+				{
+					Teacher: &user.Teacher{
+						Id:            "kSByoE6FetnPs5Byk3a9Zx",
+						LastName:      "中村",
+						FirstName:     "広大",
+						LastNameKana:  "なかむら",
+						FirstNameKana: "こうだい",
+						Mail:          "teacher-test001@calmato.jp",
+						Role:          user.Role_ROLE_TEACHER,
+						CreatedAt:     now.Unix(),
+						UpdatedAt:     now.Unix(),
+					},
+				},
+				{
+					Teacher: &user.Teacher{
+						Id:            "teacherid",
+						LastName:      "テスト",
+						FirstName:     "講師",
+						LastNameKana:  "てすと",
+						FirstNameKana: "こうし",
+						Mail:          "teacher-test002@calmato.jp",
+						Role:          user.Role_ROLE_ADMINISTRATOR,
+						CreatedAt:     now.Unix(),
+						UpdatedAt:     now.Unix(),
+					},
+				},
+			},
+			shifts: map[string]entity.TeacherShifts{
+				"kSByoE6FetnPs5Byk3a9Zx": {
+					{
+						TeacherShift: &lesson.TeacherShift{
+							TeacherId:      "kSByoE6FetnPs5Byk3a9Zx",
+							ShiftId:        1,
+							ShiftSummaryId: 1,
+							CreatedAt:      now.Unix(),
+							UpdatedAt:      now.Unix(),
+						},
+					},
+					{
+						TeacherShift: &lesson.TeacherShift{
+							TeacherId:      "kSByoE6FetnPs5Byk3a9Zx",
+							ShiftId:        3,
+							ShiftSummaryId: 1,
+							CreatedAt:      now.Unix(),
+							UpdatedAt:      now.Unix(),
+						},
+					},
+				},
+			},
+			expect: TeacherSubmissionDetails{
+				{
+					Teacher: &Teacher{
+						ID:            "kSByoE6FetnPs5Byk3a9Zx",
+						LastName:      "中村",
+						FirstName:     "広大",
+						LastNameKana:  "なかむら",
+						FirstNameKana: "こうだい",
+						Mail:          "teacher-test001@calmato.jp",
+						Role:          RoleTeacher,
+						CreatedAt:     now,
+						UpdatedAt:     now,
+					},
+					LessonTotal: 2,
+				},
+				{
+					Teacher: &Teacher{
+						ID:            "teacherid",
+						LastName:      "テスト",
+						FirstName:     "講師",
+						LastNameKana:  "てすと",
+						FirstNameKana: "こうし",
+						Mail:          "teacher-test002@calmato.jp",
+						Role:          RoleAdministrator,
+						CreatedAt:     now,
+						UpdatedAt:     now,
+					},
+					LessonTotal: 0,
+				},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tt.expect, NewTeacherSubmissionDetails(tt.teachers, tt.shifts))
 		})
 	}
 }

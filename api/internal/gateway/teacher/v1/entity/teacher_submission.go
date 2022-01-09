@@ -8,7 +8,7 @@ import (
 )
 
 type TeacherSubmission struct {
-	ID               int64                   `json:"id"`               // シフト募集ID
+	ShiftSummaryID   int64                   `json:"id"`               // シフト募集ID
 	Year             int32                   `json:"year"`             // 年
 	Month            int32                   `json:"month"`            // 月
 	ShiftStatus      ShiftStatus             `json:"shiftStatus"`      // シフト募集ステータス
@@ -21,6 +21,13 @@ type TeacherSubmission struct {
 
 type TeacherSubmissions []*TeacherSubmission
 
+type TeacherSubmissionDetail struct {
+	Teacher     *Teacher `json:"teacher"`     // 講師情報
+	LessonTotal int64    `json:"lessonTotal"` // 登録担当授業数
+}
+
+type TeacherSubmissionDetails []*TeacherSubmissionDetail
+
 type TeacherSubmissionStatus int32
 
 const (
@@ -31,7 +38,7 @@ const (
 
 func NewTeacherSubmission(summary *entity.ShiftSummary, submission *entity.TeacherSubmission) *TeacherSubmission {
 	return &TeacherSubmission{
-		ID:               summary.Id,
+		ShiftSummaryID:   summary.Id,
 		Year:             summary.YearMonth / 100,
 		Month:            summary.YearMonth % 100,
 		ShiftStatus:      NewShiftStatus(summary.Status),
@@ -50,6 +57,24 @@ func NewTeacherSubmissions(
 	for i, s := range summaries {
 		submission := submissions[s.Id] // null: 出勤不可
 		ss[i] = NewTeacherSubmission(s, submission)
+	}
+	return ss
+}
+
+func NewTeacherSubmissionDetail(teacher *entity.Teacher, shifts entity.TeacherShifts) *TeacherSubmissionDetail {
+	return &TeacherSubmissionDetail{
+		Teacher:     NewTeacher(teacher),
+		LessonTotal: int64(len(shifts)),
+	}
+}
+
+func NewTeacherSubmissionDetails(
+	teachers entity.Teachers, shiftsMap map[string]entity.TeacherShifts,
+) TeacherSubmissionDetails {
+	ss := make(TeacherSubmissionDetails, len(teachers))
+	for i, teacher := range teachers {
+		shifts := shiftsMap[teacher.Id]
+		ss[i] = NewTeacherSubmissionDetail(teacher, shifts)
 	}
 	return ss
 }

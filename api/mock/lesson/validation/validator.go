@@ -76,6 +76,20 @@ func (mr *MockRequestValidationMockRecorder) GetShiftSummary(req interface{}) *g
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetShiftSummary", reflect.TypeOf((*MockRequestValidation)(nil).GetShiftSummary), req)
 }
 
+// GetTeacherShifts mocks base method.
+func (m *MockRequestValidation) GetTeacherShifts(req *lesson.GetTeacherShiftsRequest) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetTeacherShifts", req)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// GetTeacherShifts indicates an expected call of GetTeacherShifts.
+func (mr *MockRequestValidationMockRecorder) GetTeacherShifts(req interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTeacherShifts", reflect.TypeOf((*MockRequestValidation)(nil).GetTeacherShifts), req)
+}
+
 // ListShiftSummaries mocks base method.
 func (m *MockRequestValidation) ListShiftSummaries(req *lesson.ListShiftSummariesRequest) error {
 	m.ctrl.T.Helper()

@@ -12,6 +12,7 @@ import (
 	"github.com/calmato/shs-web/api/internal/gateway/util"
 	"github.com/calmato/shs-web/api/pkg/jst"
 	"github.com/calmato/shs-web/api/proto/lesson"
+	"github.com/calmato/shs-web/api/proto/user"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/sync/errgroup"
 )
@@ -128,20 +129,40 @@ func (h *apiV1Handler) ListShifts(ctx *gin.Context) {
 		return
 	}
 
+	teachersIn := &user.ListTeachersRequest{
+		Limit:  0,
+		Offset: 0,
+	}
+	teachersOut, err := h.user.ListTeachers(c, teachersIn)
+	if err != nil {
+		httpError(ctx, err)
+		return
+	}
+	gteachers := gentity.NewTeachers(teachersOut.Teachers)
+
 	eg, ectx := errgroup.WithContext(c)
-	var summary *entity.ShiftSummary
-	eg.Go(func() error {
-		gsummary, err := h.getShiftSummary(ectx, shiftSummaryID)
-		if err != nil {
-			return err
-		}
-		summary = entity.NewShiftSummary(gsummary)
-		return nil
+	var gsummary *gentity.ShiftSummary
+	eg.Go(func() (err error) {
+		gsummary, err = h.getShiftSummary(ectx, shiftSummaryID)
+		return
 	})
 	var gshifts gentity.Shifts
 	eg.Go(func() (err error) {
 		gshifts, err = h.listShiftsBySummaryID(ectx, shiftSummaryID)
 		return
+	})
+	var gteacherShifts gentity.TeacherShifts
+	eg.Go(func() error {
+		in := &lesson.ListTeacherShiftsRequest{
+			TeacherIds:     gteachers.IDs(),
+			ShiftSummaryId: shiftSummaryID,
+		}
+		out, err := h.lesson.ListTeacherShifts(ectx, in)
+		if err != nil {
+			return err
+		}
+		gteacherShifts = gentity.NewTeacherShifts(out.Shifts)
+		return nil
 	})
 	if err := eg.Wait(); err != nil {
 		httpError(ctx, err)
@@ -153,9 +174,12 @@ func (h *apiV1Handler) ListShifts(ctx *gin.Context) {
 		httpError(ctx, err)
 		return
 	}
+	teacherShiftsMap := gteacherShifts.GroupByTeacherID()
+	summary := entity.NewShiftSummary(gsummary)
 	res := &response.ShiftsResponse{
-		Summary: summary,
-		Shifts:  entity.NewShiftDetailsForMonth(summary, shiftsMap),
+		Summary:  summary,
+		Shifts:   entity.NewShiftDetailsForMonth(summary, shiftsMap),
+		Teachers: entity.NewTeacherSubmissionDetails(gteachers, teacherShiftsMap),
 	}
 	ctx.JSON(http.StatusOK, res)
 }
