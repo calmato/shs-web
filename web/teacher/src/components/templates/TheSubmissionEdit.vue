@@ -5,10 +5,10 @@
     <v-container class="d-flex">
       <v-row>
         <v-col cols="3">授業日</v-col>
-        <v-col cols="7">授業希望</v-col>
+        <v-col cols="9">授業希望</v-col>
       </v-row>
     </v-container>
-    <v-divider class="mt-1" />
+    <v-divider class="mb-6" />
     <the-submission-list :items="items" />
   </v-container>
 </template>
