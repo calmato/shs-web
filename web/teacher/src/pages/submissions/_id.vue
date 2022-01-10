@@ -1,16 +1,16 @@
 <template>
-  <the-submission-edit />
+  <the-submission-detail :summary="summary" :shifts="shifts" />
 </template>
 
 <script lang="ts">
 import { computed, defineComponent, SetupContext, useAsync } from '@nuxtjs/composition-api'
-import TheSubmissionEdit from '~/components/templates/TheSubmissionEdit.vue'
+import TheSubmissionDetail from '~/components/templates/TheSubmissionDetail.vue'
 import { CommonStore, SubmissionStore } from '~/store'
 import { TeacherShiftDetail, TeacherShiftSummary } from '~/types/store'
 
 export default defineComponent({
   components: {
-    TheSubmissionEdit,
+    TheSubmissionDetail,
   },
 
   setup(_, { root }: SetupContext) {
