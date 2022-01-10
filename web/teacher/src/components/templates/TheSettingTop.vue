@@ -12,9 +12,9 @@
       :elementary-school-subjects="elementarySchoolSubjects"
       :junior-high-school-subjects="juniorHighSchoolSubjects"
       :high-school-subjects="highSchoolSubjects"
-      @handleElementarySchoolSubjectsChange="handleElementarySchoolSubjectsChange"
-      @handleJuniorHighSchoolSubjectsChange="handleJuniorHighSchoolSubjectsChange"
-      @handleHighSchoolSubjectsChange="handleHighSchoolSubjectsChange"
+      @handleElementarySchoolSubjectsBlur="handleElementarySchoolSubjectsBlur"
+      @handleJuniorHighSchoolSubjectsBlur="handleJuniorHighSchoolSubjectsBlur"
+      @handleHighSchoolSubjectsBlur="handleHighSchoolSubjectsBlur"
     />
     <v-row class="py-4">
       <v-col cols="12">
@@ -133,16 +133,16 @@ export default defineComponent({
       set: (val: object) => emit('update:highSchoolSubjectsFormValue', val),
     })
 
-    const handleElementarySchoolSubjectsChange = (val: number[]) => {
-      emit('handleElementarySchoolSubjectsChange', val)
+    const handleElementarySchoolSubjectsBlur = (val: number[]) => {
+      emit('handleElementarySchoolSubjectsBlur', val)
     }
 
-    const handleJuniorHighSchoolSubjectsChange = (val: number[]) => {
-      emit('handleJuniorHighSchoolSubjectsChange', val)
+    const handleJuniorHighSchoolSubjectsBlur = (val: number[]) => {
+      emit('handleJuniorHighSchoolSubjectsBlur', val)
     }
 
-    const handleHighSchoolSubjectsChange = (val: number[]) => {
-      emit('handleHighSchoolSubjectsChange', val)
+    const handleHighSchoolSubjectsBlur = (val: number[]) => {
+      emit('handleHighSchoolSubjectsBlur', val)
     }
 
     return {
@@ -151,9 +151,9 @@ export default defineComponent({
       elementarySchoolSubjectsFormData,
       juniorHighSchoolSubjectsFormData,
       highSchoolSubjectsFormData,
-      handleElementarySchoolSubjectsChange,
-      handleJuniorHighSchoolSubjectsChange,
-      handleHighSchoolSubjectsChange,
+      handleElementarySchoolSubjectsBlur,
+      handleJuniorHighSchoolSubjectsBlur,
+      handleHighSchoolSubjectsBlur,
     }
   },
 })
