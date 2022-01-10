@@ -12,6 +12,84 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func TestStudents_List(t *testing.T) {
+	m, err := newMock()
+	require.NoError(t, err)
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	_ = m.dbDelete(ctx, studentTable)
+
+	now := jst.Now()
+
+	students := make(entity.Students, 3)
+	students[0] = testStudent("cvcTyJFfgoDQrqC1KDHbRe", "student01@calmato.jp", now)
+	students[1] = testStudent("jx2NB7t3xodUu53LYtYTf2", "student02@calmato.jp", now)
+	students[2] = testStudent("kvnMftmwoVsCzZRKNTEZtg", "student03@calmato.jp", now)
+	err = m.db.DB.Create(&students).Error
+	require.NoError(t, err)
+
+	type args struct {
+		params *ListStudentsParams
+	}
+	type want struct {
+		students entity.Students
+		isErr    bool
+	}
+	tests := []struct {
+		name  string
+		setup func(ctx context.Context, t *testing.T, m *mocks)
+		args  args
+		want  want
+	}{
+		{
+			name:  "success",
+			setup: func(ctx context.Context, t *testing.T, m *mocks) {},
+			args: args{
+				params: &ListStudentsParams{},
+			},
+			want: want{
+				students: students,
+				isErr:    false,
+			},
+		},
+		{
+			name:  "success with limit and offset",
+			setup: func(ctx context.Context, t *testing.T, m *mocks) {},
+			args: args{
+				params: &ListStudentsParams{
+					Limit:  1,
+					Offset: 1,
+				},
+			},
+			want: want{
+				students: students[1:1],
+				isErr:    false,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			ctx, cancel := context.WithCancel(context.Background())
+			defer cancel()
+
+			tt.setup(ctx, t, m)
+
+			db := NewStudent(m.db, m.auth)
+			actual, err := db.List(ctx, tt.args.params)
+			assert.Equal(t, tt.want.isErr, err != nil, err)
+			for i, student := range tt.want.students {
+				student.CreatedAt = actual[i].CreatedAt
+				student.UpdatedAt = actual[i].UpdatedAt
+				assert.Contains(t, actual, student)
+			}
+		})
+	}
+}
+
 func TestStudent_Get(t *testing.T) {
 	m, err := newMock()
 	require.NoError(t, err)
