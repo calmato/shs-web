@@ -21,6 +21,7 @@ type RequestValidation interface {
 	UpdateTeacherPassword(req *user.UpdateTeacherPasswordRequest) error
 	UpdateTeacherRole(req *user.UpdateTeacherRoleRequest) error
 	DeleteTeacher(req *user.DeleteTeacherRequest) error
+	ListStudents(req *user.ListStudentsRequest) error
 	GetStudent(req *user.GetStudentRequest) error
 	CreateStudent(req *user.CreateStudentRequest) error
 }

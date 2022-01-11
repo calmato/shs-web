@@ -6,6 +6,15 @@ import (
 	"github.com/calmato/shs-web/api/proto/user"
 )
 
+func (v *requestValidation) ListStudents(req *user.ListStudentsRequest) error {
+	if err := req.Validate(); err != nil {
+		validate := err.(user.ListStudentsRequestValidationError)
+		return validationError(validate.Error())
+	}
+
+	return nil
+}
+
 func (v *requestValidation) GetStudent(req *user.GetStudentRequest) error {
 	if err := req.Validate(); err != nil {
 		validate := err.(user.GetStudentRequestValidationError)

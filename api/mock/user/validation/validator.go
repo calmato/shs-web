@@ -104,6 +104,20 @@ func (mr *MockRequestValidationMockRecorder) GetTeacher(req interface{}) *gomock
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTeacher", reflect.TypeOf((*MockRequestValidation)(nil).GetTeacher), req)
 }
 
+// ListStudents mocks base method.
+func (m *MockRequestValidation) ListStudents(req *user.ListStudentsRequest) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ListStudents", req)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// ListStudents indicates an expected call of ListStudents.
+func (mr *MockRequestValidationMockRecorder) ListStudents(req interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListStudents", reflect.TypeOf((*MockRequestValidation)(nil).ListStudents), req)
+}
+
 // ListTeachers mocks base method.
 func (m *MockRequestValidation) ListTeachers(req *user.ListTeachersRequest) error {
 	m.ctrl.T.Helper()
