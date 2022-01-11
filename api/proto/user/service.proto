@@ -18,7 +18,7 @@ service UserService {
   rpc UpdateTeacherPassword(UpdateTeacherPasswordRequest) returns (UpdateTeacherPasswordResponse);
   rpc UpdateTeacherRole(UpdateTeacherRoleRequest) returns (UpdateTeacherRoleResponse);
   rpc DeleteTeacher(DeleteTeacherRequest) returns (DeleteTeacherResponse);
-  rpc ListStudents(ListStudentRequest) returns (ListStudentsResponse);
+  rpc ListStudents(ListStudentsRequest) returns (ListStudentsResponse);
   rpc GetStudent(GetStudentRequest) returns (GetStudentResponse);
   rpc CreateStudent(CreateStudentRequest) returns (CreateStudentResponse);
 }
@@ -84,7 +84,7 @@ message DeleteTeacherRequest {
 
 message DeleteTeacherResponse {}
 
-message ListStudentRequest {
+message ListStudentsRequest {
   int64 limit  = 1 [(validate.rules).int64 = { gte: 0 }];
   int64 offset = 2 [(validate.rules).int64 = { gte: 0 }];
 }
