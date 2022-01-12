@@ -51,8 +51,8 @@ export default defineComponent({
         path: '#教室・科目設定',
       },
       {
-        title: 'コマ設定',
-        path: '#コマ設定',
+        title: '定休日/コマ/ブース 設定',
+        path: '/settings/classroom',
       },
     ]
 
