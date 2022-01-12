@@ -48,6 +48,7 @@ type Student interface {
 	List(ctx context.Context, p *ListStudentsParams, fields ...string) (entity.Students, error)
 	Get(ctx context.Context, id string, fields ...string) (*entity.Student, error)
 	Create(ctx context.Context, s *entity.Student) error
+	Count(ctx context.Context) (int64, error)
 }
 
 type Teacher interface {

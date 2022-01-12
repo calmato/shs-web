@@ -87,3 +87,9 @@ func (s *student) Create(ctx context.Context, student *entity.Student) error {
 	}
 	return dbError(tx.Commit().Error)
 }
+
+func (s *student) Count(ctx context.Context) (int64, error) {
+	var total int64
+	err := s.db.DB.Table(studentTable).Where("deleted_at IS NULL").Count(&total).Error
+	return total, dbError(err)
+}
