@@ -40,6 +40,14 @@ describe('store/shift', () => {
     it('getDetails', () => {
       expect(ShiftStore.getDetails).toEqual([])
     })
+
+    it('getRooms', () => {
+      expect(ShiftStore.getRooms).toBe(4)
+    })
+
+    it('getTeachers', () => {
+      expect(ShiftStore.getTeachers).toEqual([])
+    })
   })
 
   describe('actions', () => {
@@ -284,6 +292,26 @@ describe('store/shift', () => {
               date: '20210202',
               isClosed: true,
               lessons: [],
+            },
+          ])
+          expect(ShiftStore.getTeachers).toEqual([
+            {
+              id: '000000000000000000001',
+              name: '中村 太郎',
+              nameKana: 'なかむら たろう',
+              lessonTotal: 0,
+            },
+            {
+              id: '000000000000000000002',
+              name: '西山 幸子',
+              nameKana: 'にしやま さちこ',
+              lessonTotal: 2,
+            },
+            {
+              id: '000000000000000000003',
+              name: '鈴木 小太郎',
+              nameKana: 'すずき こたろう',
+              lessonTotal: 1,
             },
           ])
         })

@@ -23,8 +23,17 @@ export interface ShiftDetail {
   lessons: ShiftDetailLesson[]
 }
 
+export interface TeacherShift {
+  id: string
+  name: string
+  nameKana: string
+  lessonTotal: number
+}
+
 export interface ShiftState {
   summary: ShiftSummary
   summaries: ShiftSummary[]
   details: ShiftDetail[]
+  rooms: number
+  teachers: TeacherShift[]
 }

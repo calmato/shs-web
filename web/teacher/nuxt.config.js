@@ -77,6 +77,9 @@ export default {
           grey: colors.grey.lighten4,
         },
       },
+      options: {
+        customProperties: true,
+      },
     },
   },
 
