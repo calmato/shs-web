@@ -36,6 +36,9 @@ func (s *userService) listStudents(ctx context.Context, limit, offset int64) (en
 func (s *userService) ListStudents(
 	ctx context.Context, req *user.ListStudentsRequest,
 ) (*user.ListStudentsResponse, error) {
+	if err := s.validator.ListStudents(req); err != nil {
+		return nil, gRPCError(err)
+	}
 	students, total, err := s.listStudents(ctx, req.Limit, req.Offset)
 	if err != nil {
 		return nil, err
