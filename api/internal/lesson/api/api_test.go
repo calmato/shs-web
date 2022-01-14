@@ -39,6 +39,8 @@ type dbMocks struct {
 	Shift             *mock_database.MockShift
 	TeacherSubmission *mock_database.MockTeacherSubmission
 	TeacherShift      *mock_database.MockTeacherShift
+	StudentSubmission *mock_database.MockStudentSubmission
+	StudentShift      *mock_database.MockStudentShift
 }
 
 type testResponse struct {
@@ -68,6 +70,8 @@ func newDBMocks(ctrl *gomock.Controller) *dbMocks {
 		Shift:             mock_database.NewMockShift(ctrl),
 		TeacherSubmission: mock_database.NewMockTeacherSubmission(ctrl),
 		TeacherShift:      mock_database.NewMockTeacherShift(ctrl),
+		StudentSubmission: mock_database.NewMockStudentSubmission(ctrl),
+		StudentShift:      mock_database.NewMockStudentShift(ctrl),
 	}
 }
 
@@ -82,6 +86,8 @@ func newLessonService(mocks *mocks, opts *testOptions) *lessonService {
 			Shift:             mocks.db.Shift,
 			TeacherSubmission: mocks.db.TeacherSubmission,
 			TeacherShift:      mocks.db.TeacherShift,
+			StudentSubmission: mocks.db.StudentSubmission,
+			StudentShift:      mocks.db.StudentShift,
 		},
 		validator: mocks.validator,
 		classroom: mocks.classroom,

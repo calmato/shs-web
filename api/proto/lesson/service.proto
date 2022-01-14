@@ -11,6 +11,8 @@ import "lesson/shift.proto";
 import "lesson/shift_summary.proto";
 import "lesson/teacher_submission.proto";
 import "lesson/teacher_shift.proto";
+import "lesson/student_submission.proto";
+import "lesson/student_shift.proto";
 
 service LessonService {
   rpc ListShiftSummaries(ListShiftSummariesRequest) returns (ListShiftSummariesResponse);
@@ -23,6 +25,10 @@ service LessonService {
   rpc ListTeacherShifts(ListTeacherShiftsRequest) returns (ListTeacherShiftsResponse);
   rpc GetTeacherShifts(GetTeacherShiftsRequest) returns (GetTeacherShiftsResponse);
   rpc UpsertTeacherShifts(UpsertTeacherShiftsRequest) returns (UpsertTeacherShiftsResponse);
+  rpc ListStudentSubmissionsByShiftSummaryIDs(ListStudentSubmissionsByShiftSummaryIDsRequest) returns (ListStudentSubmissionsByShiftSummaryIDsResponse);
+  rpc ListStudentShifts(ListStudentShiftsRequest) returns (ListStudentShiftsResponse);
+  rpc GetStudentShifts(GetStudentShiftsRequest) returns (GetStudentShiftsResponse);
+  rpc UpsertStudentShifts(UpsertStudentShiftsRequest) returns (UpsertStudentShiftsResponse);
 }
 
 message ListShiftSummariesRequest {
@@ -122,4 +128,44 @@ message UpsertTeacherShiftsRequest {
 message UpsertTeacherShiftsResponse {
   TeacherSubmission     submission = 1;
   repeated TeacherShift shifts     = 2;
+}
+
+message ListStudentSubmissionsByShiftSummaryIDsRequest {
+  string         student_id        = 1 [(validate.rules).string = { min_len: 1 }];
+  repeated int64 shift_summary_ids = 2 [(validate.rules).repeated = { unique: true, items: { int64: { gt: 0 }}}];
+}
+
+message ListStudentSubmissionsByShiftSummaryIDsResponse {
+  repeated StudentSubmission submissions = 1;
+}
+
+message ListStudentShiftsRequest {
+  repeated string student_ids      = 1 [(validate.rules).repeated = { unique: true, items: { string: { min_len: 1 }}}];
+  int64           shift_summary_id = 2 [(validate.rules).int64 = { gt: 0 }];
+}
+
+message ListStudentShiftsResponse {
+  repeated StudentShift shifts = 1;
+}
+
+message GetStudentShiftsRequest {
+  string student_id       = 1 [(validate.rules).string = { min_len: 1 }];
+  int64  shift_summary_id = 2 [(validate.rules).int64 = { gt: 0 }];
+}
+
+message GetStudentShiftsResponse {
+  StudentSubmission     submission = 1;
+  repeated StudentShift shifts     = 2;
+}
+
+message UpsertStudentShiftsRequest {
+  string         student_id       = 1 [(validate.rules).string = { min_len: 1 }];
+  int64          shift_summary_id = 2 [(validate.rules).int64 = { gt: 0 }];
+  repeated int64 shift_ids        = 3 [(validate.rules).repeated = { unique: true, items: { int64: { gt: 0 }}}];
+  bool           decided          = 4;
+}
+
+message UpsertStudentShiftsResponse {
+  StudentSubmission     submission = 1;
+  repeated StudentShift shifts     = 2;
 }
