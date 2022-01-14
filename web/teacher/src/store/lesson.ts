@@ -4,35 +4,10 @@ import { $axios } from '~/plugins/axios'
 import { ErrorResponse } from '~/types/api/exception'
 import { SubjectsResponse, Subject as v1Subject } from '~/types/api/v1'
 import { ApiError } from '~/types/exception'
-import { Lesson, LessonState, Subject, SubjectMap } from '~/types/store'
+import { Lesson, LessonState, Subject, SubjectMap, SubjectsMap } from '~/types/store'
 
 const initialState: LessonState = {
-  subjects: [
-    {
-      id: 1,
-      name: '国語',
-      color: '#F8BBD0',
-      schoolType: '小学校',
-      createdAt: '',
-      updatedAt: '',
-    },
-    {
-      id: 2,
-      name: '数学',
-      color: '#BBDEFB',
-      schoolType: '中学校',
-      createdAt: '',
-      updatedAt: '',
-    },
-    {
-      id: 3,
-      name: '英語',
-      color: '#FEE6C9',
-      schoolType: '高校',
-      createdAt: '',
-      updatedAt: '',
-    },
-  ],
+  subjects: [],
   lessons: [
     {
       id: 1,
@@ -64,6 +39,21 @@ export default class LessonModule extends VuexModule {
     const subjects: SubjectMap = {}
     this.subjects.forEach((subject: Subject) => {
       subjects[subject.id] = subject
+    })
+    return subjects
+  }
+
+  public get getSubjectsMap(): SubjectsMap {
+    const subjects: SubjectsMap = {
+      小学校: [],
+      中学校: [],
+      高校: [],
+    }
+    this.subjects.forEach((subject: Subject) => {
+      if (subject.schoolType === 'その他') {
+        return
+      }
+      subjects[subject.schoolType].push(subject)
     })
     return subjects
   }
