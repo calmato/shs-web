@@ -12,7 +12,8 @@ import (
 const studentSubmissionTable = "student_submissions"
 
 var studentSubmissionFields = []string{
-	"student_id", "shift_summary_id", "decided", "created_at", "updated_at",
+	"student_id", "shift_summary_id", "decided",
+	"suggested_classes", "created_at", "updated_at",
 }
 
 type studentSubmission struct {

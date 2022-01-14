@@ -24,18 +24,20 @@ func TestListStudentSubmissionsByShiftSummaryID(t *testing.T) {
 	}
 	submissions := entity.StudentSubmissions{
 		{
-			StudentID:      "studentid",
-			ShiftSummaryID: 1,
-			Decided:        true,
-			CreatedAt:      now,
-			UpdatedAt:      now,
+			StudentID:        "studentid",
+			ShiftSummaryID:   1,
+			Decided:          true,
+			SuggestedClasses: 8,
+			CreatedAt:        now,
+			UpdatedAt:        now,
 		},
 		{
-			StudentID:      "studentid",
-			ShiftSummaryID: 2,
-			Decided:        false,
-			CreatedAt:      now,
-			UpdatedAt:      now,
+			StudentID:        "studentid",
+			ShiftSummaryID:   2,
+			Decided:          false,
+			SuggestedClasses: 8,
+			CreatedAt:        now,
+			UpdatedAt:        now,
 		},
 	}
 
@@ -57,18 +59,20 @@ func TestListStudentSubmissionsByShiftSummaryID(t *testing.T) {
 				body: &lesson.ListStudentSubmissionsByShiftSummaryIDsResponse{
 					Submissions: []*lesson.StudentSubmission{
 						{
-							StudentId:      "studentid",
-							ShiftSummaryId: 1,
-							Decided:        true,
-							CreatedAt:      now.Unix(),
-							UpdatedAt:      now.Unix(),
+							StudentId:        "studentid",
+							ShiftSummaryId:   1,
+							Decided:          true,
+							SuggestedClasses: 8,
+							CreatedAt:        now.Unix(),
+							UpdatedAt:        now.Unix(),
 						},
 						{
-							StudentId:      "studentid",
-							ShiftSummaryId: 2,
-							Decided:        false,
-							CreatedAt:      now.Unix(),
-							UpdatedAt:      now.Unix(),
+							StudentId:        "studentid",
+							ShiftSummaryId:   2,
+							Decided:          false,
+							SuggestedClasses: 8,
+							CreatedAt:        now.Unix(),
+							UpdatedAt:        now.Unix(),
 						},
 					},
 				},
@@ -198,9 +202,10 @@ func TestGetStudentShifts(t *testing.T) {
 		ShiftSummaryId: 1,
 	}
 	submission := &entity.StudentSubmission{
-		StudentID:      "studentid",
-		ShiftSummaryID: 1,
-		Decided:        true,
+		StudentID:        "studentid",
+		ShiftSummaryID:   1,
+		Decided:          true,
+		SuggestedClasses: 8,
 	}
 	shifts := entity.StudentShifts{
 		{
@@ -233,11 +238,12 @@ func TestGetStudentShifts(t *testing.T) {
 				code: codes.OK,
 				body: &lesson.GetStudentShiftsResponse{
 					Submission: &lesson.StudentSubmission{
-						StudentId:      "studentid",
-						ShiftSummaryId: 1,
-						Decided:        true,
-						CreatedAt:      time.Time{}.Unix(),
-						UpdatedAt:      time.Time{}.Unix(),
+						StudentId:        "studentid",
+						ShiftSummaryId:   1,
+						Decided:          true,
+						SuggestedClasses: 8,
+						CreatedAt:        time.Time{}.Unix(),
+						UpdatedAt:        time.Time{}.Unix(),
 					},
 					Shifts: []*lesson.StudentShift{
 						{
@@ -306,10 +312,11 @@ func TestGetStudentShifts(t *testing.T) {
 func TestUpsertStudentShifts(t *testing.T) {
 	t.Parallel()
 	req := &lesson.UpsertStudentShiftsRequest{
-		StudentId:      "studentid",
-		ShiftSummaryId: 1,
-		ShiftIds:       []int64{1, 2},
-		Decided:        true,
+		StudentId:        "studentid",
+		ShiftSummaryId:   1,
+		ShiftIds:         []int64{1, 2},
+		Decided:          true,
+		SuggestedClasses: 8,
 	}
 	student := &user.Student{Id: "studentid"}
 	summary := &entity.ShiftSummary{
@@ -321,9 +328,10 @@ func TestUpsertStudentShifts(t *testing.T) {
 		{ID: 2, ShiftSummaryID: 1},
 	}
 	studentSubmission := &entity.StudentSubmission{
-		StudentID:      "studentid",
-		ShiftSummaryID: 1,
-		Decided:        true,
+		StudentID:        "studentid",
+		ShiftSummaryID:   1,
+		Decided:          true,
+		SuggestedClasses: 8,
 	}
 	studentShifts := entity.StudentShifts{
 		{
@@ -360,11 +368,12 @@ func TestUpsertStudentShifts(t *testing.T) {
 				code: codes.OK,
 				body: &lesson.UpsertStudentShiftsResponse{
 					Submission: &lesson.StudentSubmission{
-						StudentId:      "studentid",
-						ShiftSummaryId: 1,
-						Decided:        true,
-						CreatedAt:      time.Time{}.Unix(),
-						UpdatedAt:      time.Time{}.Unix(),
+						StudentId:        "studentid",
+						ShiftSummaryId:   1,
+						Decided:          true,
+						SuggestedClasses: 8,
+						CreatedAt:        time.Time{}.Unix(),
+						UpdatedAt:        time.Time{}.Unix(),
 					},
 					Shifts: []*lesson.StudentShift{
 						{
