@@ -96,6 +96,26 @@ func (mr *MockLessonServiceClientMockRecorder) GetShiftSummary(ctx, in interface
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetShiftSummary", reflect.TypeOf((*MockLessonServiceClient)(nil).GetShiftSummary), varargs...)
 }
 
+// GetStudentShifts mocks base method.
+func (m *MockLessonServiceClient) GetStudentShifts(ctx context.Context, in *lesson.GetStudentShiftsRequest, opts ...grpc.CallOption) (*lesson.GetStudentShiftsResponse, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "GetStudentShifts", varargs...)
+	ret0, _ := ret[0].(*lesson.GetStudentShiftsResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetStudentShifts indicates an expected call of GetStudentShifts.
+func (mr *MockLessonServiceClientMockRecorder) GetStudentShifts(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetStudentShifts", reflect.TypeOf((*MockLessonServiceClient)(nil).GetStudentShifts), varargs...)
+}
+
 // GetTeacherShifts mocks base method.
 func (m *MockLessonServiceClient) GetTeacherShifts(ctx context.Context, in *lesson.GetTeacherShiftsRequest, opts ...grpc.CallOption) (*lesson.GetTeacherShiftsResponse, error) {
 	m.ctrl.T.Helper()
@@ -156,6 +176,46 @@ func (mr *MockLessonServiceClientMockRecorder) ListShifts(ctx, in interface{}, o
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListShifts", reflect.TypeOf((*MockLessonServiceClient)(nil).ListShifts), varargs...)
 }
 
+// ListStudentShifts mocks base method.
+func (m *MockLessonServiceClient) ListStudentShifts(ctx context.Context, in *lesson.ListStudentShiftsRequest, opts ...grpc.CallOption) (*lesson.ListStudentShiftsResponse, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "ListStudentShifts", varargs...)
+	ret0, _ := ret[0].(*lesson.ListStudentShiftsResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListStudentShifts indicates an expected call of ListStudentShifts.
+func (mr *MockLessonServiceClientMockRecorder) ListStudentShifts(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListStudentShifts", reflect.TypeOf((*MockLessonServiceClient)(nil).ListStudentShifts), varargs...)
+}
+
+// ListStudentSubmissionsByShiftSummaryIDs mocks base method.
+func (m *MockLessonServiceClient) ListStudentSubmissionsByShiftSummaryIDs(ctx context.Context, in *lesson.ListStudentSubmissionsByShiftSummaryIDsRequest, opts ...grpc.CallOption) (*lesson.ListStudentSubmissionsByShiftSummaryIDsResponse, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "ListStudentSubmissionsByShiftSummaryIDs", varargs...)
+	ret0, _ := ret[0].(*lesson.ListStudentSubmissionsByShiftSummaryIDsResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListStudentSubmissionsByShiftSummaryIDs indicates an expected call of ListStudentSubmissionsByShiftSummaryIDs.
+func (mr *MockLessonServiceClientMockRecorder) ListStudentSubmissionsByShiftSummaryIDs(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListStudentSubmissionsByShiftSummaryIDs", reflect.TypeOf((*MockLessonServiceClient)(nil).ListStudentSubmissionsByShiftSummaryIDs), varargs...)
+}
+
 // ListTeacherShifts mocks base method.
 func (m *MockLessonServiceClient) ListTeacherShifts(ctx context.Context, in *lesson.ListTeacherShiftsRequest, opts ...grpc.CallOption) (*lesson.ListTeacherShiftsResponse, error) {
 	m.ctrl.T.Helper()
@@ -214,6 +274,26 @@ func (mr *MockLessonServiceClientMockRecorder) UpdateShiftSummarySchedule(ctx, i
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{ctx, in}, opts...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateShiftSummarySchedule", reflect.TypeOf((*MockLessonServiceClient)(nil).UpdateShiftSummarySchedule), varargs...)
+}
+
+// UpsertStudentShifts mocks base method.
+func (m *MockLessonServiceClient) UpsertStudentShifts(ctx context.Context, in *lesson.UpsertStudentShiftsRequest, opts ...grpc.CallOption) (*lesson.UpsertStudentShiftsResponse, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "UpsertStudentShifts", varargs...)
+	ret0, _ := ret[0].(*lesson.UpsertStudentShiftsResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UpsertStudentShifts indicates an expected call of UpsertStudentShifts.
+func (mr *MockLessonServiceClientMockRecorder) UpsertStudentShifts(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpsertStudentShifts", reflect.TypeOf((*MockLessonServiceClient)(nil).UpsertStudentShifts), varargs...)
 }
 
 // UpsertTeacherShifts mocks base method.
@@ -304,6 +384,21 @@ func (mr *MockLessonServiceServerMockRecorder) GetShiftSummary(arg0, arg1 interf
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetShiftSummary", reflect.TypeOf((*MockLessonServiceServer)(nil).GetShiftSummary), arg0, arg1)
 }
 
+// GetStudentShifts mocks base method.
+func (m *MockLessonServiceServer) GetStudentShifts(arg0 context.Context, arg1 *lesson.GetStudentShiftsRequest) (*lesson.GetStudentShiftsResponse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetStudentShifts", arg0, arg1)
+	ret0, _ := ret[0].(*lesson.GetStudentShiftsResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetStudentShifts indicates an expected call of GetStudentShifts.
+func (mr *MockLessonServiceServerMockRecorder) GetStudentShifts(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetStudentShifts", reflect.TypeOf((*MockLessonServiceServer)(nil).GetStudentShifts), arg0, arg1)
+}
+
 // GetTeacherShifts mocks base method.
 func (m *MockLessonServiceServer) GetTeacherShifts(arg0 context.Context, arg1 *lesson.GetTeacherShiftsRequest) (*lesson.GetTeacherShiftsResponse, error) {
 	m.ctrl.T.Helper()
@@ -349,6 +444,36 @@ func (mr *MockLessonServiceServerMockRecorder) ListShifts(arg0, arg1 interface{}
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListShifts", reflect.TypeOf((*MockLessonServiceServer)(nil).ListShifts), arg0, arg1)
 }
 
+// ListStudentShifts mocks base method.
+func (m *MockLessonServiceServer) ListStudentShifts(arg0 context.Context, arg1 *lesson.ListStudentShiftsRequest) (*lesson.ListStudentShiftsResponse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ListStudentShifts", arg0, arg1)
+	ret0, _ := ret[0].(*lesson.ListStudentShiftsResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListStudentShifts indicates an expected call of ListStudentShifts.
+func (mr *MockLessonServiceServerMockRecorder) ListStudentShifts(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListStudentShifts", reflect.TypeOf((*MockLessonServiceServer)(nil).ListStudentShifts), arg0, arg1)
+}
+
+// ListStudentSubmissionsByShiftSummaryIDs mocks base method.
+func (m *MockLessonServiceServer) ListStudentSubmissionsByShiftSummaryIDs(arg0 context.Context, arg1 *lesson.ListStudentSubmissionsByShiftSummaryIDsRequest) (*lesson.ListStudentSubmissionsByShiftSummaryIDsResponse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ListStudentSubmissionsByShiftSummaryIDs", arg0, arg1)
+	ret0, _ := ret[0].(*lesson.ListStudentSubmissionsByShiftSummaryIDsResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListStudentSubmissionsByShiftSummaryIDs indicates an expected call of ListStudentSubmissionsByShiftSummaryIDs.
+func (mr *MockLessonServiceServerMockRecorder) ListStudentSubmissionsByShiftSummaryIDs(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListStudentSubmissionsByShiftSummaryIDs", reflect.TypeOf((*MockLessonServiceServer)(nil).ListStudentSubmissionsByShiftSummaryIDs), arg0, arg1)
+}
+
 // ListTeacherShifts mocks base method.
 func (m *MockLessonServiceServer) ListTeacherShifts(arg0 context.Context, arg1 *lesson.ListTeacherShiftsRequest) (*lesson.ListTeacherShiftsResponse, error) {
 	m.ctrl.T.Helper()
@@ -392,6 +517,21 @@ func (m *MockLessonServiceServer) UpdateShiftSummarySchedule(arg0 context.Contex
 func (mr *MockLessonServiceServerMockRecorder) UpdateShiftSummarySchedule(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateShiftSummarySchedule", reflect.TypeOf((*MockLessonServiceServer)(nil).UpdateShiftSummarySchedule), arg0, arg1)
+}
+
+// UpsertStudentShifts mocks base method.
+func (m *MockLessonServiceServer) UpsertStudentShifts(arg0 context.Context, arg1 *lesson.UpsertStudentShiftsRequest) (*lesson.UpsertStudentShiftsResponse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpsertStudentShifts", arg0, arg1)
+	ret0, _ := ret[0].(*lesson.UpsertStudentShiftsResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UpsertStudentShifts indicates an expected call of UpsertStudentShifts.
+func (mr *MockLessonServiceServerMockRecorder) UpsertStudentShifts(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpsertStudentShifts", reflect.TypeOf((*MockLessonServiceServer)(nil).UpsertStudentShifts), arg0, arg1)
 }
 
 // UpsertTeacherShifts mocks base method.
