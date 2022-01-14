@@ -7,7 +7,7 @@
           <v-row class="d-flex">
             <v-col v-if="shift.isClosed" class="red--text"> 休日 </v-col>
             <v-col v-for="lesson in shift.lessons" v-else :key="lesson.id">
-              <v-btn-toggle rounded background-color="blue" multiple>
+              <v-btn-toggle rounded color="success" multiple>
                 <v-btn>{{ getLessonDuration(lesson.startTime, lesson.endTime) }}</v-btn>
               </v-btn-toggle>
             </v-col>
@@ -15,6 +15,11 @@
         </v-col>
       </v-row>
       <v-divider />
+    </v-container>
+    <v-container>
+    <v-row class="justify-end">
+      <v-btn color="primary" class="right mt-3 mr-15" large @click="onClick()"> 保存する </v-btn>
+    </v-row>
     </v-container>
   </div>
 </template>
@@ -44,9 +49,12 @@ export default defineComponent({
       return `${startTime}~${endTime}`
     }
 
+    const onClick = (): void => {}
+
     return {
       getDay,
       getLessonDuration,
+      onClick,
     }
   },
 })
