@@ -115,7 +115,7 @@ func (s *lessonService) UpsertStudentShifts(
 		return nil, status.Error(codes.FailedPrecondition, "api: outside of shift submission")
 	}
 
-	submission := entity.NewStudentSubmission(req.StudentId, req.ShiftSummaryId, req.Decided)
+	submission := entity.NewStudentSubmission(req.StudentId, req.ShiftSummaryId, req.Decided, req.SuggestedClasses)
 	shifts := entity.NewStudentShifts(req.StudentId, req.ShiftSummaryId, req.ShiftIds)
 	err := s.db.StudentShift.Replace(ctx, submission, shifts)
 	if err != nil {

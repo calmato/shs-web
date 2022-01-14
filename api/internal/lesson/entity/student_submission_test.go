@@ -11,21 +11,24 @@ import (
 func TestStudentSubmission(t *testing.T) {
 	t.Parallel()
 	tests := []struct {
-		name      string
-		studentiD string
-		summaryID int64
-		decided   bool
-		expect    *StudentSubmission
+		name             string
+		studentiD        string
+		summaryID        int64
+		decided          bool
+		suggestedClasses int64
+		expect           *StudentSubmission
 	}{
 		{
-			name:      "success",
-			studentiD: "studentid",
-			summaryID: 1,
-			decided:   true,
+			name:             "success",
+			studentiD:        "studentid",
+			summaryID:        1,
+			decided:          true,
+			suggestedClasses: 8,
 			expect: &StudentSubmission{
-				StudentID:      "studentid",
-				ShiftSummaryID: 1,
-				Decided:        true,
+				StudentID:        "studentid",
+				ShiftSummaryID:   1,
+				Decided:          true,
+				SuggestedClasses: 8,
 			},
 		},
 	}
@@ -34,7 +37,7 @@ func TestStudentSubmission(t *testing.T) {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			actual := NewStudentSubmission(tt.studentiD, tt.summaryID, tt.decided)
+			actual := NewStudentSubmission(tt.studentiD, tt.summaryID, tt.decided, tt.suggestedClasses)
 			assert.Equal(t, tt.expect, actual)
 		})
 	}
@@ -51,18 +54,20 @@ func TestStudentSubmission_Proto(t *testing.T) {
 		{
 			name: "success",
 			submission: &StudentSubmission{
-				StudentID:      "studentid",
-				ShiftSummaryID: 1,
-				Decided:        true,
-				CreatedAt:      now,
-				UpdatedAt:      now,
+				StudentID:        "studentid",
+				ShiftSummaryID:   1,
+				Decided:          true,
+				SuggestedClasses: 8,
+				CreatedAt:        now,
+				UpdatedAt:        now,
 			},
 			expect: &lesson.StudentSubmission{
-				StudentId:      "studentid",
-				ShiftSummaryId: 1,
-				Decided:        true,
-				CreatedAt:      now.Unix(),
-				UpdatedAt:      now.Unix(),
+				StudentId:        "studentid",
+				ShiftSummaryId:   1,
+				Decided:          true,
+				SuggestedClasses: 8,
+				CreatedAt:        now.Unix(),
+				UpdatedAt:        now.Unix(),
 			},
 		},
 	}
@@ -88,20 +93,22 @@ func TestStudentSubmissions_Proto(t *testing.T) {
 			name: "success",
 			submissions: StudentSubmissions{
 				{
-					StudentID:      "studentid",
-					ShiftSummaryID: 1,
-					Decided:        true,
-					CreatedAt:      now,
-					UpdatedAt:      now,
+					StudentID:        "studentid",
+					ShiftSummaryID:   1,
+					Decided:          true,
+					SuggestedClasses: 8,
+					CreatedAt:        now,
+					UpdatedAt:        now,
 				},
 			},
 			expect: []*lesson.StudentSubmission{
 				{
-					StudentId:      "studentid",
-					ShiftSummaryId: 1,
-					Decided:        true,
-					CreatedAt:      now.Unix(),
-					UpdatedAt:      now.Unix(),
+					StudentId:        "studentid",
+					ShiftSummaryId:   1,
+					Decided:          true,
+					SuggestedClasses: 8,
+					CreatedAt:        now.Unix(),
+					UpdatedAt:        now.Unix(),
 				},
 			},
 		},

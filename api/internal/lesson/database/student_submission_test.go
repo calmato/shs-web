@@ -182,10 +182,11 @@ func TestStudentSubmission_Get(t *testing.T) {
 
 func testStudentSubmission(studentID string, summaryID int64, decided bool, now time.Time) *entity.StudentSubmission {
 	return &entity.StudentSubmission{
-		StudentID:      studentID,
-		ShiftSummaryID: summaryID,
-		Decided:        decided,
-		CreatedAt:      now,
-		UpdatedAt:      now,
+		StudentID:        studentID,
+		ShiftSummaryID:   summaryID,
+		Decided:          decided,
+		SuggestedClasses: 8,
+		CreatedAt:        now,
+		UpdatedAt:        now,
 	}
 }
