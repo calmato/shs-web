@@ -17,9 +17,9 @@
       <v-divider />
     </v-container>
     <v-container>
-    <v-row class="justify-end">
-      <v-btn color="primary" class="right mt-3 mr-15" large @click="onClick()"> 保存する </v-btn>
-    </v-row>
+      <v-row class="justify-end">
+        <v-btn color="primary" class="right mt-3 mr-15" large @click="onClick()"> 保存する </v-btn>
+      </v-row>
     </v-container>
   </div>
 </template>
