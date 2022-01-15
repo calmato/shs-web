@@ -82,6 +82,9 @@ type StudentSubmission interface {
 	ListByShiftSummaryIDs(
 		ctx context.Context, studentID string, summaryIDs []int64, fields ...string,
 	) (entity.StudentSubmissions, error)
+	ListByStudentIDs(
+		ctx context.Context, studentIDs []string, summaryID int64, fields ...string,
+	) (entity.StudentSubmissions, error)
 	Get(ctx context.Context, studentID string, summaryID int64, fields ...string) (*entity.StudentSubmission, error)
 }
 

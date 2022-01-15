@@ -31,6 +31,24 @@ func (s *lessonService) ListStudentSubmissionsByShiftSummaryIDs(
 	return res, nil
 }
 
+func (s *lessonService) ListStudentSubmissionsByStudentIDs(
+	ctx context.Context, req *lesson.ListStudentSubmissionsByStudentIDsRequest,
+) (*lesson.ListStudentSubmissionsByStudentIDsResponse, error) {
+	if err := s.validator.ListStudentSubmissionsByStudentIDs(req); err != nil {
+		return nil, gRPCError(err)
+	}
+
+	submissions, err := s.db.StudentSubmission.ListByStudentIDs(ctx, req.StudentIds, req.ShiftSummaryId)
+	if err != nil {
+		return nil, gRPCError(err)
+	}
+
+	res := &lesson.ListStudentSubmissionsByStudentIDsResponse{
+		Submissions: submissions.Proto(),
+	}
+	return res, nil
+}
+
 func (s *lessonService) ListStudentShifts(
 	ctx context.Context, req *lesson.ListStudentShiftsRequest,
 ) (*lesson.ListStudentShiftsResponse, error) {

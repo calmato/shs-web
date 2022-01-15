@@ -109,6 +109,97 @@ func TestListStudentSubmissionsByShiftSummaryID(t *testing.T) {
 	}
 }
 
+func TestListStudentSubmissionsByStudentIDs(t *testing.T) {
+	t.Parallel()
+	now := jst.Now()
+	req := &lesson.ListStudentSubmissionsByStudentIDsRequest{
+		StudentIds:     []string{"studentid"},
+		ShiftSummaryId: 1,
+	}
+	submissions := entity.StudentSubmissions{
+		{
+			StudentID:      "studentid1",
+			ShiftSummaryID: 1,
+			Decided:        true,
+			CreatedAt:      now,
+			UpdatedAt:      now,
+		},
+		{
+			StudentID:      "studentid2",
+			ShiftSummaryID: 1,
+			Decided:        false,
+			CreatedAt:      now,
+			UpdatedAt:      now,
+		},
+	}
+
+	tests := []struct {
+		name   string
+		setup  func(ctx context.Context, t *testing.T, mocks *mocks)
+		req    *lesson.ListStudentSubmissionsByStudentIDsRequest
+		expect *testResponse
+	}{
+		{
+			name: "success",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				mocks.validator.EXPECT().ListStudentSubmissionsByStudentIDs(req).Return(nil)
+				mocks.db.StudentSubmission.EXPECT().ListByStudentIDs(ctx, []string{"studentid"}, int64(1)).Return(submissions, nil)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.OK,
+				body: &lesson.ListStudentSubmissionsByStudentIDsResponse{
+					Submissions: []*lesson.StudentSubmission{
+						{
+							StudentId:      "studentid1",
+							ShiftSummaryId: 1,
+							Decided:        true,
+							CreatedAt:      now.Unix(),
+							UpdatedAt:      now.Unix(),
+						},
+						{
+							StudentId:      "studentid2",
+							ShiftSummaryId: 1,
+							Decided:        false,
+							CreatedAt:      now.Unix(),
+							UpdatedAt:      now.Unix(),
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "invalid argument",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				req := &lesson.ListStudentSubmissionsByStudentIDsRequest{}
+				mocks.validator.EXPECT().ListStudentSubmissionsByStudentIDs(req).Return(validation.ErrRequestValidation)
+			},
+			req: &lesson.ListStudentSubmissionsByStudentIDsRequest{},
+			expect: &testResponse{
+				code: codes.InvalidArgument,
+			},
+		},
+		{
+			name: "failed to list student submissions",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				mocks.validator.EXPECT().ListStudentSubmissionsByStudentIDs(req).Return(nil)
+				mocks.db.StudentSubmission.EXPECT().ListByStudentIDs(ctx, []string{"studentid"}, int64(1)).Return(nil, errmock)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.Internal,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, testGRPC(tt.setup, tt.expect, func(ctx context.Context, service *lessonService) (proto.Message, error) {
+			return service.ListStudentSubmissionsByStudentIDs(ctx, tt.req)
+		}))
+	}
+}
+
 func TestListStudentShifts(t *testing.T) {
 	t.Parallel()
 	req := &lesson.ListStudentShiftsRequest{

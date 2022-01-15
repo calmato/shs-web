@@ -380,6 +380,26 @@ func (mr *MockStudentSubmissionMockRecorder) ListByShiftSummaryIDs(ctx, studentI
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListByShiftSummaryIDs", reflect.TypeOf((*MockStudentSubmission)(nil).ListByShiftSummaryIDs), varargs...)
 }
 
+// ListByStudentIDs mocks base method.
+func (m *MockStudentSubmission) ListByStudentIDs(ctx context.Context, studentIDs []string, summaryID int64, fields ...string) (entity.StudentSubmissions, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, studentIDs, summaryID}
+	for _, a := range fields {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "ListByStudentIDs", varargs...)
+	ret0, _ := ret[0].(entity.StudentSubmissions)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListByStudentIDs indicates an expected call of ListByStudentIDs.
+func (mr *MockStudentSubmissionMockRecorder) ListByStudentIDs(ctx, studentIDs, summaryID interface{}, fields ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, studentIDs, summaryID}, fields...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListByStudentIDs", reflect.TypeOf((*MockStudentSubmission)(nil).ListByStudentIDs), varargs...)
+}
+
 // MockStudentShift is a mock of StudentShift interface.
 type MockStudentShift struct {
 	ctrl     *gomock.Controller
