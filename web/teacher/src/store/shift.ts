@@ -9,9 +9,10 @@ import {
   ShiftSummary as ShiftSummaryResponse,
   ShiftDetail as ShiftDetailResponse,
   ShiftDetailLesson as LessonResponse,
+  TeacherShift as v1Teacher,
   UpdateShiftSummaryScheduleRequest,
 } from '~/types/api/v1'
-import { ShiftDetail, ShiftStatus, ShiftState, ShiftSummary, ShiftDetailLesson } from '~/types/store'
+import { ShiftDetail, ShiftStatus, ShiftState, ShiftSummary, ShiftDetailLesson, TeacherShift } from '~/types/store'
 import { ErrorResponse } from '~/types/api/exception'
 import { ApiError } from '~/types/exception'
 import { ShiftsNewForm, ShiftSummaryEditScheduleForm } from '~/types/form'
@@ -29,6 +30,8 @@ const initialState: ShiftState = {
   },
   summaries: [],
   details: [],
+  rooms: 4,
+  teachers: [],
 }
 
 @Module({
@@ -40,6 +43,8 @@ export default class ShiftModule extends VuexModule {
   private summary: ShiftState['summary'] = initialState.summary
   private summaries: ShiftState['summaries'] = initialState.summaries
   private details: ShiftState['details'] = initialState.details
+  private teachers: ShiftState['teachers'] = initialState.teachers
+  private rooms: ShiftState['rooms'] = initialState.rooms
 
   public get getSummary(): ShiftSummary {
     return this.summary
@@ -53,15 +58,32 @@ export default class ShiftModule extends VuexModule {
     return this.details
   }
 
+  public get getRooms(): number {
+    return this.rooms
+  }
+
+  public get getTeachers(): TeacherShift[] {
+    return this.teachers
+  }
+
   @Mutation
   private setSummaries({ summaries }: { summaries: ShiftSummary[] }): void {
     this.summaries = summaries
   }
 
   @Mutation
-  private setDetails({ summary, details }: { summary: ShiftSummary; details: ShiftDetail[] }): void {
+  private setDetails({
+    summary,
+    details,
+    teachers,
+  }: {
+    summary: ShiftSummary
+    details: ShiftDetail[]
+    teachers: TeacherShift[]
+  }): void {
     this.summary = summary
     this.details = details
+    this.teachers = teachers
   }
 
   @Mutation
@@ -102,7 +124,7 @@ export default class ShiftModule extends VuexModule {
   @Action({})
   public factory(): void {
     this.setSummaries({ summaries: initialState.summaries })
-    this.setDetails({ summary: initialState.summary, details: initialState.details })
+    this.setDetails({ summary: initialState.summary, details: initialState.details, teachers: initialState.teachers })
   }
 
   @Action({ rawError: true })
@@ -183,7 +205,7 @@ export default class ShiftModule extends VuexModule {
         })
 
         this.addSummaries({ summary })
-        this.setDetails({ summary, details })
+        this.setDetails({ summary, details, teachers: [] })
       })
       .catch((err: AxiosError) => {
         const res: ErrorResponse = { ...err.response?.data }
@@ -217,14 +239,23 @@ export default class ShiftModule extends VuexModule {
           })
           return { ...shift, lessons }
         })
+        const teachers: TeacherShift[] = res.teachers.map((val: v1Teacher): TeacherShift => {
+          const name: string = getName(val.teacher.lastName, val.teacher.firstName)
+          const nameKana: string = getName(val.teacher.lastNameKana, val.teacher.firstNameKana)
+          return { id: val.teacher.id, name, nameKana, lessonTotal: val.lessonTotal }
+        })
 
-        this.setDetails({ summary, details })
+        this.setDetails({ summary, details, teachers })
       })
       .catch((err: AxiosError) => {
         const res: ErrorResponse = { ...err.response?.data }
         throw new ApiError(res.status, res.message, res)
       })
   }
+}
+
+function getName(lastName: string, firstName: string): string {
+  return `${lastName} ${firstName}`
 }
 
 function replaceDate(date: string, oldVal: string, newVal: string): string {

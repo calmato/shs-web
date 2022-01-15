@@ -32,6 +32,8 @@ type Database struct {
 	Shift             Shift
 	TeacherSubmission TeacherSubmission
 	TeacherShift      TeacherShift
+	StudentSubmission StudentSubmission
+	StudentShift      StudentShift
 }
 
 func NewDatabase(params *Params) *Database {
@@ -40,6 +42,8 @@ func NewDatabase(params *Params) *Database {
 		Shift:             NewShift(params.Database),
 		TeacherSubmission: NewTeacherSubmission(params.Database),
 		TeacherShift:      NewTeacherShift(params.Database),
+		StudentSubmission: NewStudentSubmission(params.Database),
+		StudentShift:      NewStudentShift(params.Database),
 	}
 }
 
@@ -72,6 +76,20 @@ type TeacherShift interface {
 		ctx context.Context, teacherIDs []string, summaryID int64, fields ...string,
 	) (entity.TeacherShifts, error)
 	Replace(ctx context.Context, submission *entity.TeacherSubmission, shifts entity.TeacherShifts) error
+}
+
+type StudentSubmission interface {
+	ListByShiftSummaryIDs(
+		ctx context.Context, studentID string, summaryIDs []int64, fields ...string,
+	) (entity.StudentSubmissions, error)
+	Get(ctx context.Context, studentID string, summaryID int64, fields ...string) (*entity.StudentSubmission, error)
+}
+
+type StudentShift interface {
+	ListByShiftSummaryID(
+		ctx context.Context, studentIDs []string, summaryID int64, fields ...string,
+	) (entity.StudentShifts, error)
+	Replace(ctx context.Context, submission *entity.StudentSubmission, shifts entity.StudentShifts) error
 }
 
 /**

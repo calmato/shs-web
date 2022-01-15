@@ -14,60 +14,18 @@ describe('store/lesson', () => {
 
   describe('getters', () => {
     it('getSubjcets', () => {
-      expect(LessonStore.getSubjects).toEqual([
-        {
-          id: 1,
-          name: '国語',
-          color: '#F8BBD0',
-          schoolType: '小学校',
-          createdAt: '',
-          updatedAt: '',
-        },
-        {
-          id: 2,
-          name: '数学',
-          color: '#BBDEFB',
-          schoolType: '中学校',
-          createdAt: '',
-          updatedAt: '',
-        },
-        {
-          id: 3,
-          name: '英語',
-          color: '#FEE6C9',
-          schoolType: '高校',
-          createdAt: '',
-          updatedAt: '',
-        },
-      ])
+      expect(LessonStore.getSubjects).toEqual([])
     })
 
     it('getSubjectMap', () => {
-      expect(LessonStore.getSubjectMap).toEqual({
-        1: {
-          id: 1,
-          name: '国語',
-          color: '#F8BBD0',
-          schoolType: '小学校',
-          createdAt: '',
-          updatedAt: '',
-        },
-        2: {
-          id: 2,
-          name: '数学',
-          color: '#BBDEFB',
-          schoolType: '中学校',
-          createdAt: '',
-          updatedAt: '',
-        },
-        3: {
-          id: 3,
-          name: '英語',
-          color: '#FEE6C9',
-          schoolType: '高校',
-          createdAt: '',
-          updatedAt: '',
-        },
+      expect(LessonStore.getSubjectMap).toEqual({})
+    })
+
+    it('getSubjectsMap', () => {
+      expect(LessonStore.getSubjectsMap).toEqual({
+        小学校: [],
+        中学校: [],
+        高校: [],
       })
     })
 

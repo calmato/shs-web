@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package lesson;
+
+option go_package = "github.com/calmato/shs-web/api/proto/lesson";
+
+message StudentSubmission {
+  string student_id        = 1;
+  int64  shift_summary_id  = 2;
+  bool   decided           = 3;
+  int64  suggested_classes = 4;
+  int64  created_at        = 5;
+  int64  updated_at        = 6;
+}
