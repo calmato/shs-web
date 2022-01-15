@@ -121,6 +121,7 @@ func (h *apiV1Handler) DeleteShiftSummary(ctx *gin.Context) {
 	ctx.JSON(http.StatusNoContent, gin.H{})
 }
 
+//nolint:funlen
 func (h *apiV1Handler) ListShifts(ctx *gin.Context) {
 	c := util.SetMetadata(ctx)
 
