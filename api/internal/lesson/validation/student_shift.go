@@ -13,6 +13,17 @@ func (v *requestValidation) ListStudentSubmissionsByShiftSummaryIDs(
 	return nil
 }
 
+func (v *requestValidation) ListStudentSubmissionsByStudentIDs(
+	req *lesson.ListStudentSubmissionsByStudentIDsRequest,
+) error {
+	if err := req.Validate(); err != nil {
+		validate := err.(lesson.ListStudentSubmissionsByStudentIDsRequestValidationError)
+		return validationError(validate.Error())
+	}
+
+	return nil
+}
+
 func (v *requestValidation) ListStudentShifts(req *lesson.ListStudentShiftsRequest) error {
 	if err := req.Validate(); err != nil {
 		validate := err.(lesson.ListStudentShiftsRequestValidationError)

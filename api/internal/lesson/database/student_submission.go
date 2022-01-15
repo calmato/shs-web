@@ -43,6 +43,22 @@ func (s *studentSubmission) ListByShiftSummaryIDs(
 	return submissions, dbError(err)
 }
 
+func (s *studentSubmission) ListByStudentIDs(
+	ctx context.Context, studentIDs []string, summaryID int64, fields ...string,
+) (entity.StudentSubmissions, error) {
+	var submissions entity.StudentSubmissions
+	if len(fields) == 0 {
+		fields = studentSubmissionFields
+	}
+
+	stmt := s.db.DB.Table(studentSubmissionTable).Select(fields).
+		Where("student_id IN (?)", studentIDs).
+		Where("shift_summary_id = ?", summaryID)
+
+	err := stmt.Find(&submissions).Error
+	return submissions, dbError(err)
+}
+
 func (s *studentSubmission) Get(
 	ctx context.Context, studentID string, summaryID int64, fields ...string,
 ) (*entity.StudentSubmission, error) {
