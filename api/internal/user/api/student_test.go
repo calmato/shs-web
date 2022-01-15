@@ -5,6 +5,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/calmato/shs-web/api/internal/user/database"
 	"github.com/calmato/shs-web/api/internal/user/entity"
 	"github.com/calmato/shs-web/api/internal/user/validation"
 	"github.com/calmato/shs-web/api/pkg/jst"
@@ -13,6 +14,116 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/protobuf/proto"
 )
+
+func TestListStudents(t *testing.T) {
+	t.Parallel()
+	now := jst.Now()
+
+	req := &user.ListStudentsRequest{
+		Limit:  30,
+		Offset: 0,
+	}
+
+	params := &database.ListStudentsParams{
+		Limit:  30,
+		Offset: 0,
+	}
+	students := entity.Students{
+		{
+			ID:            "kSByoE6FetnPs5Byk3a9Zx",
+			LastName:      "中村",
+			FirstName:     "広大",
+			LastNameKana:  "なかむら",
+			FirstNameKana: "こうだい",
+			Mail:          "student-test001@calmato.jp",
+			BirthYear:     2005,
+			CreatedAt:     now,
+			UpdatedAt:     now,
+			SchoolType:    entity.SchoolTypeHighSchool,
+			Grade:         1,
+		},
+	}
+
+	tests := []struct {
+		name   string
+		setup  func(ctx context.Context, t *testing.T, mocks *mocks)
+		req    *user.ListStudentsRequest
+		expect *testResponse
+	}{
+		{
+			name: "success",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				mocks.validator.EXPECT().ListStudents(req).Return(nil)
+				mocks.db.Student.EXPECT().List(gomock.Any(), params).Return(students, nil)
+				mocks.db.Student.EXPECT().Count(gomock.Any()).Return(int64(1), nil)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.OK,
+				body: &user.ListStudentsResponse{
+					Students: []*user.Student{
+						{
+							Id:            "kSByoE6FetnPs5Byk3a9Zx",
+							LastName:      "中村",
+							FirstName:     "広大",
+							LastNameKana:  "なかむら",
+							FirstNameKana: "こうだい",
+							Mail:          "student-test001@calmato.jp",
+							BirthYear:     2005,
+							CreatedAt:     now.Unix(),
+							UpdatedAt:     now.Unix(),
+							SchoolType:    3,
+							Grade:         1,
+						},
+					},
+					Total: 1,
+				},
+			},
+		},
+		{
+			name: "invalid argument",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				req := &user.ListStudentsRequest{}
+				mocks.validator.EXPECT().ListStudents(req).Return(validation.ErrRequestValidation)
+			},
+			req: &user.ListStudentsRequest{},
+			expect: &testResponse{
+				code: codes.InvalidArgument,
+			},
+		},
+		{
+			name: "failed to list students",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				mocks.validator.EXPECT().ListStudents(req).Return(nil)
+				mocks.db.Student.EXPECT().List(gomock.Any(), params).Return(nil, errmock)
+				mocks.db.Student.EXPECT().Count(gomock.Any()).Return(int64(3), nil)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.Internal,
+			},
+		},
+		{
+			name: "faild to count",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				mocks.validator.EXPECT().ListStudents(req).Return(nil)
+				mocks.db.Student.EXPECT().List(gomock.Any(), params).Return(students, nil)
+				mocks.db.Student.EXPECT().Count(gomock.Any()).Return(int64(0), errmock)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.Internal,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, testGRPC(tt.setup, tt.expect, func(ctx context.Context, service *userService) (proto.Message, error) {
+			return service.ListStudents(ctx, tt.req)
+		}))
+	}
+}
 
 func TestGetStudent(t *testing.T) {
 	t.Parallel()
