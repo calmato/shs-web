@@ -21,3 +21,11 @@ func NewStudents(students []*user.Student) Students {
 	}
 	return ss
 }
+
+func (ss Students) IDs() []string {
+	ids := make([]string, len(ss))
+	for i := range ss {
+		ids[i] = ss[i].Id
+	}
+	return ids
+}
