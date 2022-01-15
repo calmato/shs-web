@@ -36,7 +36,7 @@ func NewSubject(subject *entity.Subject) *Subject {
 		ID:         subject.Id,
 		Name:       subject.Name,
 		Color:      subject.Color,
-		SchoolType: NewSchoolType(subject.SchoolType),
+		SchoolType: NewSchoolTypeFromClassroom(subject.SchoolType),
 		CreatedAt:  jst.ParseFromUnix(subject.CreatedAt),
 		UpdatedAt:  jst.ParseFromUnix(subject.UpdatedAt),
 	}
@@ -50,7 +50,7 @@ func NewSubjects(subjects entity.Subjects) Subjects {
 	return ss
 }
 
-func NewSchoolType(schoolType classroom.SchoolType) SchoolType {
+func NewSchoolTypeFromClassroom(schoolType classroom.SchoolType) SchoolType {
 	switch schoolType {
 	case classroom.SchoolType_SCHOOL_TYPE_ELEMENTARY_SCHOOL:
 		return SchoolTypeElementarySchool

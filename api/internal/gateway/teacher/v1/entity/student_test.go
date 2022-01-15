@@ -3,6 +3,7 @@ package entity
 import (
 	"testing"
 
+	"github.com/calmato/shs-web/api/internal/gateway/entity"
 	"github.com/calmato/shs-web/api/pkg/jst"
 	"github.com/calmato/shs-web/api/proto/user"
 	"github.com/stretchr/testify/assert"
@@ -10,27 +11,15 @@ import (
 
 func TestStudent(t *testing.T) {
 	t.Parallel()
-	now := jst.Now()
+	now := jst.Date(2021, 8, 2, 18, 30, 0, 0)
 	tests := []struct {
 		name    string
-		student *user.Student
+		student *entity.Student
 		expect  *Student
 	}{
 		{
 			name: "success",
-			student: &user.Student{
-				Id:            "kSByoE6FetnPs5Byk3a9Zx",
-				LastName:      "中村",
-				FirstName:     "広大",
-				LastNameKana:  "なかむら",
-				FirstNameKana: "こうだい",
-				Mail:          "student-test001@calmato.jp",
-				SchoolType:    user.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL,
-				Grade:         3,
-				CreatedAt:     now.Unix(),
-				UpdatedAt:     now.Unix(),
-			},
-			expect: &Student{
+			student: &entity.Student{
 				Student: &user.Student{
 					Id:            "kSByoE6FetnPs5Byk3a9Zx",
 					LastName:      "中村",
@@ -43,6 +32,18 @@ func TestStudent(t *testing.T) {
 					CreatedAt:     now.Unix(),
 					UpdatedAt:     now.Unix(),
 				},
+			},
+			expect: &Student{
+				ID:            "kSByoE6FetnPs5Byk3a9Zx",
+				LastName:      "中村",
+				FirstName:     "広大",
+				LastNameKana:  "なかむら",
+				FirstNameKana: "こうだい",
+				Mail:          "student-test001@calmato.jp",
+				SchoolType:    SchoolTypeHighSchool,
+				Grade:         3,
+				CreatedAt:     now,
+				UpdatedAt:     now,
 			},
 		},
 	}
@@ -58,29 +59,15 @@ func TestStudent(t *testing.T) {
 
 func TestStudents(t *testing.T) {
 	t.Parallel()
-	now := jst.Now()
+	now := jst.Date(2021, 8, 2, 18, 30, 0, 0)
 	tests := []struct {
 		name     string
-		students []*user.Student
+		students entity.Students
 		expect   Students
 	}{
 		{
 			name: "success",
-			students: []*user.Student{
-				{
-					Id:            "kSByoE6FetnPs5Byk3a9Zx",
-					LastName:      "中村",
-					FirstName:     "広大",
-					LastNameKana:  "なかむら",
-					FirstNameKana: "こうだい",
-					Mail:          "student-test001@calmato.jp",
-					SchoolType:    user.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL,
-					Grade:         3,
-					CreatedAt:     now.Unix(),
-					UpdatedAt:     now.Unix(),
-				},
-			},
-			expect: Students{
+			students: entity.Students{
 				{
 					Student: &user.Student{
 						Id:            "kSByoE6FetnPs5Byk3a9Zx",
@@ -94,6 +81,20 @@ func TestStudents(t *testing.T) {
 						CreatedAt:     now.Unix(),
 						UpdatedAt:     now.Unix(),
 					},
+				},
+			},
+			expect: Students{
+				{
+					ID:            "kSByoE6FetnPs5Byk3a9Zx",
+					LastName:      "中村",
+					FirstName:     "広大",
+					LastNameKana:  "なかむら",
+					FirstNameKana: "こうだい",
+					Mail:          "student-test001@calmato.jp",
+					SchoolType:    SchoolTypeHighSchool,
+					Grade:         3,
+					CreatedAt:     now,
+					UpdatedAt:     now,
 				},
 			},
 		},
@@ -108,35 +109,32 @@ func TestStudents(t *testing.T) {
 	}
 }
 
-func TestStudents_IDs(t *testing.T) {
+func TestSchoolTypeFromUser(t *testing.T) {
 	t.Parallel()
-	now := jst.Now()
 	tests := []struct {
-		name     string
-		students Students
-		expect   []string
+		name       string
+		schoolType user.SchoolType
+		expect     SchoolType
 	}{
 		{
-			name: "success",
-			students: Students{
-				{
-					Student: &user.Student{
-						Id:            "kSByoE6FetnPs5Byk3a9Zx",
-						LastName:      "中村",
-						FirstName:     "広大",
-						LastNameKana:  "なかむら",
-						FirstNameKana: "こうだい",
-						Mail:          "student-test001@calmato.jp",
-						SchoolType:    user.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL,
-						Grade:         3,
-						CreatedAt:     now.Unix(),
-						UpdatedAt:     now.Unix(),
-					},
-				},
-			},
-			expect: []string{
-				"kSByoE6FetnPs5Byk3a9Zx",
-			},
+			name:       "successl elementary school",
+			schoolType: user.SchoolType_SCHOOL_TYPE_ELEMENTARY_SCHOOL,
+			expect:     SchoolTypeElementarySchool,
+		},
+		{
+			name:       "successl junior high school",
+			schoolType: user.SchoolType_SCHOOL_TYPE_JUNIOR_HIGH_SCHOOL,
+			expect:     SchoolTypeJuniorHighSchool,
+		},
+		{
+			name:       "successl high school",
+			schoolType: user.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL,
+			expect:     SchoolTypeHighSchool,
+		},
+		{
+			name:       "successl invalid school type",
+			schoolType: user.SchoolType_SCHOOL_TYPE_UNKNOWN,
+			expect:     SchoolTypeUnknown,
 		},
 	}
 
@@ -144,7 +142,7 @@ func TestStudents_IDs(t *testing.T) {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			assert.Equal(t, tt.expect, tt.students.IDs())
+			assert.Equal(t, tt.expect, NewSchoolTypeFromUser(tt.schoolType))
 		})
 	}
 }
