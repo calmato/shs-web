@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package classroom;
+
+option go_package = "github.com/calmato/shs-web/api/proto/classroom";
+
+message Room {
+  int32 id         = 1; // 教室ID
+  int64 created_at = 4; // 登録日時
+  int64 updated_at = 5; // 更新日時
+}

@@ -76,6 +76,7 @@ type Schedule interface {
 }
 
 type Room interface {
+	Get(ctx context.Context, id int32, fields ...string) (*entity.Room, error)
 	Replace(ctx context.Context, rooms entity.Rooms) error
 	Count(ctx context.Context) (int64, error)
 }

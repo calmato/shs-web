@@ -383,6 +383,26 @@ func (mr *MockRoomMockRecorder) Count(ctx interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Count", reflect.TypeOf((*MockRoom)(nil).Count), ctx)
 }
 
+// Get mocks base method.
+func (m *MockRoom) Get(ctx context.Context, id int32, fields ...string) (*entity.Room, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, id}
+	for _, a := range fields {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "Get", varargs...)
+	ret0, _ := ret[0].(*entity.Room)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Get indicates an expected call of Get.
+func (mr *MockRoomMockRecorder) Get(ctx, id interface{}, fields ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, id}, fields...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockRoom)(nil).Get), varargs...)
+}
+
 // Replace mocks base method.
 func (m *MockRoom) Replace(ctx context.Context, rooms entity.Rooms) error {
 	m.ctrl.T.Helper()

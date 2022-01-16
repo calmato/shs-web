@@ -62,6 +62,20 @@ func (mr *MockRequestValidationMockRecorder) DeleteSubject(req interface{}) *gom
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteSubject", reflect.TypeOf((*MockRequestValidation)(nil).DeleteSubject), req)
 }
 
+// GetRoom mocks base method.
+func (m *MockRequestValidation) GetRoom(req *classroom.GetRoomRequest) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetRoom", req)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// GetRoom indicates an expected call of GetRoom.
+func (mr *MockRequestValidationMockRecorder) GetRoom(req interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetRoom", reflect.TypeOf((*MockRequestValidation)(nil).GetRoom), req)
+}
+
 // GetRoomsTotal mocks base method.
 func (m *MockRequestValidation) GetRoomsTotal(req *classroom.GetRoomsTotalRequest) error {
 	m.ctrl.T.Helper()
