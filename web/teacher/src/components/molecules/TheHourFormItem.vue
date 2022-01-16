@@ -1,9 +1,9 @@
 <template>
   <div class="stack d-flex align-center">
     <p>{{ id + 1 }}.</p>
-    <v-text-field v-model="formData.startAt" type="time" label="開始時刻" step="300" min="17:00" max="21:30" />
+    <v-text-field v-model="formData.startAt" type="time" label="開始時刻" step="300" />
     <span>~</span>
-    <v-text-field v-model="formData.endAt" type="time" label="終了時刻" step="300" min="17:00" max="21:30" />
+    <v-text-field v-model="formData.endAt" type="time" label="終了時刻" step="300" />
     <v-tooltip bottom>
       <template #activator="{ on, attrs }">
         <v-btn class="suffix-btn" color="error" fab elevation="0" v-bind="attrs" v-on="on" @click="handleClick"
@@ -37,7 +37,7 @@ export default defineComponent({
   setup(props, { emit }: SetupContext) {
     const formData = computed({
       get: () => props.item,
-      set: (val) => emit('update:value', val),
+      set: (val) => emit('update:item', val),
     })
 
     const handleClick = () => {

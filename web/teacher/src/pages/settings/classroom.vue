@@ -24,8 +24,8 @@ dayjs.extend(customParseFormat)
 function showInvalidRemoveOperationMessage() {
   CommonStore.showSnackbar({ color: 'error', message: 'これ以上コマを減らすことはできません。' })
 }
-const REST_TIME = 10 // TODO 後で変えられるようにする
-const BASE_HOUR_TIME = 45 // TODO 後で変えられるようにする
+const REST_TIME = 0 // TODO 後で変えられるようにする
+const BASE_HOUR_TIME = 90 // TODO 後で変えられるようにする
 
 export default defineComponent({
   components: {
@@ -35,8 +35,8 @@ export default defineComponent({
   setup() {
     const selectedRegularHoliday = reactive<string[]>([])
     const boothRef: Ref<number> = ref<number>(1)
-    const weekdayHourForm = reactive<HourForm[]>([{ startAt: '17:00', endAt: '17:45' }])
-    const holidayHourForm = reactive<HourForm[]>([{ startAt: '17:00', endAt: '17:45' }])
+    const weekdayHourForm = reactive<HourForm[]>([{ startAt: '17:00', endAt: '18:30' }])
+    const holidayHourForm = reactive<HourForm[]>([{ startAt: '15:30', endAt: '17:00' }])
 
     const handleWeekdayHourFormAddButton = () => {
       // 一つ前のコマを基準に開始時刻と終了時刻を設定しておく
@@ -64,7 +64,7 @@ export default defineComponent({
 
     const handleHolidayHourFormAddButton = () => {
       // 一つ前のコマを基準に開始時刻と終了時刻を設定しておく
-      const lastElement = weekdayHourForm.slice(-1)[0]
+      const lastElement = holidayHourForm.slice(-1)[0]
       const baseTime = dayjs(lastElement.endAt, 'HH:mm')
       const startAt = baseTime.add(REST_TIME, 'minutes')
       const endAt = baseTime.add(BASE_HOUR_TIME, 'minutes')
