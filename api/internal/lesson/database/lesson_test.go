@@ -344,7 +344,7 @@ func TestLesson_Delete(t *testing.T) {
 	}
 }
 
-func testLesson(id, summaryID, shiftID int64, roomID int, teacherID, studentID string, now time.Time) *entity.Lesson {
+func testLesson(id, summaryID, shiftID int64, roomID int32, teacherID, studentID string, now time.Time) *entity.Lesson {
 	return &entity.Lesson{
 		ID:             id,
 		ShiftSummaryID: summaryID,

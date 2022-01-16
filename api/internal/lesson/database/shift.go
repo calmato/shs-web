@@ -54,6 +54,22 @@ func (s *shift) MultiGet(ctx context.Context, ids []int64, fields ...string) (en
 	return shifts, dbError(err)
 }
 
+func (s *shift) Get(ctx context.Context, id int64, fields ...string) (*entity.Shift, error) {
+	var shift *entity.Shift
+	if len(fields) == 0 {
+		fields = shiftFields
+	}
+
+	stmt := s.db.DB.Table(shiftTable).Select(fields).
+		Where("id = ?", id)
+
+	err := stmt.First(&shift).Error
+	if err != nil {
+		return nil, dbError(err)
+	}
+	return shift, nil
+}
+
 func (s *shift) MultipleCreate(ctx context.Context, summary *entity.ShiftSummary, shifts entity.Shifts) error {
 	now := s.now()
 
