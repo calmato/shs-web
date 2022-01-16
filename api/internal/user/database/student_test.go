@@ -248,6 +248,62 @@ func TestStudent_Create(t *testing.T) {
 	}
 }
 
+func TestStudent_Count(t *testing.T) {
+	m, err := newMock()
+	require.NoError(t, err)
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	_ = m.dbDelete(ctx, studentTable)
+
+	now := jst.Now()
+
+	Students := make(entity.Students, 3)
+	Students[0] = testStudent("cvcTyJFfgoDQrqC1KDHbRe", "student01@calmato.jp", now)
+	Students[1] = testStudent("jx2NB7t3xodUu53LYtYTf2", "student02@calmato.jp", now)
+	Students[2] = testStudent("kvnMftmwoVsCzZRKNTEZtg", "student03@calmato.jp", now)
+	err = m.db.DB.Create(&Students).Error
+	require.NoError(t, err)
+
+	type args struct{}
+	type want struct {
+		total int64
+		isErr bool
+	}
+	tests := []struct {
+		name  string
+		setup func(ctx context.Context, t *testing.T, m *mocks)
+		args  args
+		want  want
+	}{
+		{
+			name:  "success",
+			setup: func(ctx context.Context, t *testing.T, m *mocks) {},
+			args:  args{},
+			want: want{
+				total: 3,
+				isErr: false,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			ctx, cancel := context.WithCancel(context.Background())
+			defer cancel()
+
+			tt.setup(ctx, t, m)
+
+			db := NewStudent(m.db, m.auth)
+			actual, err := db.Count(ctx)
+			assert.Equal(t, tt.want.isErr, err != nil, err)
+			assert.Equal(t, tt.want.total, actual)
+		})
+	}
+}
+
 func testStudent(id string, mail string, now time.Time) *entity.Student {
 	return &entity.Student{
 		ID:            id,
