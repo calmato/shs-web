@@ -47,9 +47,7 @@ func (s *userService) ListStudents(
 		Students: students.Proto(),
 		Total:    total,
 	}
-	if err != nil {
-		return nil, gRPCError(err)
-	}
+
 	return res, nil
 }
 
