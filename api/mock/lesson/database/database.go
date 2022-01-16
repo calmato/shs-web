@@ -14,6 +14,91 @@ import (
 	gomock "github.com/golang/mock/gomock"
 )
 
+// MockLesson is a mock of Lesson interface.
+type MockLesson struct {
+	ctrl     *gomock.Controller
+	recorder *MockLessonMockRecorder
+}
+
+// MockLessonMockRecorder is the mock recorder for MockLesson.
+type MockLessonMockRecorder struct {
+	mock *MockLesson
+}
+
+// NewMockLesson creates a new mock instance.
+func NewMockLesson(ctrl *gomock.Controller) *MockLesson {
+	mock := &MockLesson{ctrl: ctrl}
+	mock.recorder = &MockLessonMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockLesson) EXPECT() *MockLessonMockRecorder {
+	return m.recorder
+}
+
+// Create mocks base method.
+func (m *MockLesson) Create(ctx context.Context, lesson *entity.Lesson) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Create", ctx, lesson)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Create indicates an expected call of Create.
+func (mr *MockLessonMockRecorder) Create(ctx, lesson interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockLesson)(nil).Create), ctx, lesson)
+}
+
+// Delete mocks base method.
+func (m *MockLesson) Delete(ctx context.Context, lessonID int64) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Delete", ctx, lessonID)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Delete indicates an expected call of Delete.
+func (mr *MockLessonMockRecorder) Delete(ctx, lessonID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockLesson)(nil).Delete), ctx, lessonID)
+}
+
+// List mocks base method.
+func (m *MockLesson) List(ctx context.Context, p *database.ListLessonsParams, fields ...string) (entity.Lessons, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, p}
+	for _, a := range fields {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "List", varargs...)
+	ret0, _ := ret[0].(entity.Lessons)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// List indicates an expected call of List.
+func (mr *MockLessonMockRecorder) List(ctx, p interface{}, fields ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, p}, fields...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "List", reflect.TypeOf((*MockLesson)(nil).List), varargs...)
+}
+
+// Update mocks base method.
+func (m *MockLesson) Update(ctx context.Context, lessonID int64, lesson *entity.Lesson) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Update", ctx, lessonID, lesson)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Update indicates an expected call of Update.
+func (mr *MockLessonMockRecorder) Update(ctx, lessonID, lesson interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Update", reflect.TypeOf((*MockLesson)(nil).Update), ctx, lessonID, lesson)
+}
+
 // MockShiftSummary is a mock of ShiftSummary interface.
 type MockShiftSummary struct {
 	ctrl     *gomock.Controller
