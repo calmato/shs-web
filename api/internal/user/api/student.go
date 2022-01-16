@@ -41,7 +41,7 @@ func (s *userService) ListStudents(
 	}
 	students, total, err := s.listStudents(ctx, req.Limit, req.Offset)
 	if err != nil {
-		return nil, err
+		return nil, gRPCError(err)
 	}
 	res := &user.ListStudentsResponse{
 		Students: students.Proto(),
