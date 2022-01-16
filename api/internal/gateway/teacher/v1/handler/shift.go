@@ -147,7 +147,7 @@ func (h *apiV1Handler) ListShifts(ctx *gin.Context) {
 	})
 	var gstudents gentity.Students
 	eg.Go(func() error {
-		in := &user.ListStudentRequest{
+		in := &user.ListStudentsRequest{
 			Limit:  0,
 			Offset: 0,
 		}

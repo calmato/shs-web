@@ -388,7 +388,7 @@ func TestListShifts(t *testing.T) {
 			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
 				teachersIn := &user.ListTeachersRequest{Limit: 0, Offset: 0}
 				teachersOut := &user.ListTeachersResponse{Teachers: teachers}
-				studentsIn := &user.ListStudentRequest{Limit: 0, Offset: 0}
+				studentsIn := &user.ListStudentsRequest{Limit: 0, Offset: 0}
 				studentsOut := &user.ListStudentsResponse{Students: students}
 				roomsIn := &classroom.GetRoomsTotalRequest{}
 				roomsOut := &classroom.GetRoomsTotalResponse{Total: 4}
@@ -521,7 +521,7 @@ func TestListShifts(t *testing.T) {
 			name: "failed to list teachers",
 			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
 				teachersIn := &user.ListTeachersRequest{Limit: 0, Offset: 0}
-				studentsIn := &user.ListStudentRequest{Limit: 0, Offset: 0}
+				studentsIn := &user.ListStudentsRequest{Limit: 0, Offset: 0}
 				studentsOut := &user.ListStudentsResponse{Students: students}
 				mocks.user.EXPECT().ListTeachers(gomock.Any(), teachersIn).Return(nil, errmock)
 				mocks.user.EXPECT().ListStudents(gomock.Any(), studentsIn).Return(studentsOut, nil)
@@ -536,7 +536,7 @@ func TestListShifts(t *testing.T) {
 			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
 				teachersIn := &user.ListTeachersRequest{Limit: 0, Offset: 0}
 				teachersOut := &user.ListTeachersResponse{Teachers: teachers}
-				studentsIn := &user.ListStudentRequest{Limit: 0, Offset: 0}
+				studentsIn := &user.ListStudentsRequest{Limit: 0, Offset: 0}
 				mocks.user.EXPECT().ListTeachers(gomock.Any(), teachersIn).Return(teachersOut, nil)
 				mocks.user.EXPECT().ListStudents(gomock.Any(), studentsIn).Return(nil, errmock)
 			},
@@ -550,7 +550,7 @@ func TestListShifts(t *testing.T) {
 			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
 				teachersIn := &user.ListTeachersRequest{Limit: 0, Offset: 0}
 				teachersOut := &user.ListTeachersResponse{Teachers: teachers}
-				studentsIn := &user.ListStudentRequest{Limit: 0, Offset: 0}
+				studentsIn := &user.ListStudentsRequest{Limit: 0, Offset: 0}
 				studentsOut := &user.ListStudentsResponse{Students: students}
 				roomsIn := &classroom.GetRoomsTotalRequest{}
 				summaryIn := &lesson.GetShiftSummaryRequest{Id: 1}
@@ -585,7 +585,7 @@ func TestListShifts(t *testing.T) {
 			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
 				teachersIn := &user.ListTeachersRequest{Limit: 0, Offset: 0}
 				teachersOut := &user.ListTeachersResponse{Teachers: teachers}
-				studentsIn := &user.ListStudentRequest{Limit: 0, Offset: 0}
+				studentsIn := &user.ListStudentsRequest{Limit: 0, Offset: 0}
 				studentsOut := &user.ListStudentsResponse{Students: students}
 				roomsIn := &classroom.GetRoomsTotalRequest{}
 				roomsOut := &classroom.GetRoomsTotalResponse{Total: 4}
@@ -620,7 +620,7 @@ func TestListShifts(t *testing.T) {
 			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
 				teachersIn := &user.ListTeachersRequest{Limit: 0, Offset: 0}
 				teachersOut := &user.ListTeachersResponse{Teachers: teachers}
-				studentsIn := &user.ListStudentRequest{Limit: 0, Offset: 0}
+				studentsIn := &user.ListStudentsRequest{Limit: 0, Offset: 0}
 				studentsOut := &user.ListStudentsResponse{Students: students}
 				roomsIn := &classroom.GetRoomsTotalRequest{}
 				roomsOut := &classroom.GetRoomsTotalResponse{Total: 4}
@@ -655,7 +655,7 @@ func TestListShifts(t *testing.T) {
 			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
 				teachersIn := &user.ListTeachersRequest{Limit: 0, Offset: 0}
 				teachersOut := &user.ListTeachersResponse{Teachers: teachers}
-				studentsIn := &user.ListStudentRequest{Limit: 0, Offset: 0}
+				studentsIn := &user.ListStudentsRequest{Limit: 0, Offset: 0}
 				studentsOut := &user.ListStudentsResponse{Students: students}
 				roomsIn := &classroom.GetRoomsTotalRequest{}
 				roomsOut := &classroom.GetRoomsTotalResponse{Total: 4}
@@ -690,7 +690,7 @@ func TestListShifts(t *testing.T) {
 			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
 				teachersIn := &user.ListTeachersRequest{Limit: 0, Offset: 0}
 				teachersOut := &user.ListTeachersResponse{Teachers: teachers}
-				studentsIn := &user.ListStudentRequest{Limit: 0, Offset: 0}
+				studentsIn := &user.ListStudentsRequest{Limit: 0, Offset: 0}
 				studentsOut := &user.ListStudentsResponse{Students: students}
 				roomsIn := &classroom.GetRoomsTotalRequest{}
 				roomsOut := &classroom.GetRoomsTotalResponse{Total: 4}
@@ -725,7 +725,7 @@ func TestListShifts(t *testing.T) {
 			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
 				teachersIn := &user.ListTeachersRequest{Limit: 0, Offset: 0}
 				teachersOut := &user.ListTeachersResponse{Teachers: teachers}
-				studentsIn := &user.ListStudentRequest{Limit: 0, Offset: 0}
+				studentsIn := &user.ListStudentsRequest{Limit: 0, Offset: 0}
 				studentsOut := &user.ListStudentsResponse{Students: students}
 				roomsIn := &classroom.GetRoomsTotalRequest{}
 				roomsOut := &classroom.GetRoomsTotalResponse{Total: 4}
@@ -760,7 +760,7 @@ func TestListShifts(t *testing.T) {
 			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
 				teachersIn := &user.ListTeachersRequest{Limit: 0, Offset: 0}
 				teachersOut := &user.ListTeachersResponse{Teachers: teachers}
-				studentsIn := &user.ListStudentRequest{Limit: 0, Offset: 0}
+				studentsIn := &user.ListStudentsRequest{Limit: 0, Offset: 0}
 				studentsOut := &user.ListStudentsResponse{Students: students}
 				roomsIn := &classroom.GetRoomsTotalRequest{}
 				roomsOut := &classroom.GetRoomsTotalResponse{Total: 4}
