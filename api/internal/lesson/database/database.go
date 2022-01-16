@@ -28,6 +28,7 @@ type Params struct {
 }
 
 type Database struct {
+	Lesson            Lesson
 	ShiftSummary      ShiftSummary
 	Shift             Shift
 	TeacherSubmission TeacherSubmission
@@ -38,6 +39,7 @@ type Database struct {
 
 func NewDatabase(params *Params) *Database {
 	return &Database{
+		Lesson:            NewLesson(params.Database),
 		ShiftSummary:      NewShiftSummary(params.Database),
 		Shift:             NewShift(params.Database),
 		TeacherSubmission: NewTeacherSubmission(params.Database),
@@ -50,6 +52,13 @@ func NewDatabase(params *Params) *Database {
 /**
  * interface
  */
+type Lesson interface {
+	List(ctx context.Context, p *ListLessonsParams, fields ...string) (entity.Lessons, error)
+	Create(ctx context.Context, lesson *entity.Lesson) error
+	Update(ctx context.Context, lessonID int64, lesson *entity.Lesson) error
+	Delete(ctx context.Context, lessonID int64) error
+}
+
 type ShiftSummary interface {
 	List(ctx context.Context, p *ListShiftSummariesParams, fields ...string) (entity.ShiftSummaries, error)
 	Get(ctx context.Context, id int64, fields ...string) (*entity.ShiftSummary, error)
@@ -105,6 +114,12 @@ const (
 	OrderByAsc
 	OrderByDesc
 )
+
+type ListLessonsParams struct {
+	Limit          int
+	Offset         int
+	ShiftSummaryID int64
+}
 
 type ListShiftSummariesParams struct {
 	Limit   int
