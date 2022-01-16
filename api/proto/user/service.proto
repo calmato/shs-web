@@ -21,6 +21,7 @@ service UserService {
   rpc ListStudents(ListStudentsRequest) returns (ListStudentsResponse);
   rpc GetStudent(GetStudentRequest) returns (GetStudentResponse);
   rpc CreateStudent(CreateStudentRequest) returns (CreateStudentResponse);
+  rpc DeleteStudent(DeleteStudentRequest) returns (DeleteStudentResponse);
 }
 
 message ListTeachersRequest {
@@ -117,3 +118,9 @@ message CreateStudentRequest {
 message CreateStudentResponse {
   Student student = 1;
 }
+
+message DeleteStudentRequest {
+  string id = 1 [(validate.rules).string = { min_len: 1 }];
+}
+
+message DeleteStudentResponse {}
