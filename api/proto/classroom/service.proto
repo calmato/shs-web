@@ -7,6 +7,7 @@ option go_package = "github.com/calmato/shs-web/api/proto/classroom";
 import "github.com/envoyproxy/protoc-gen-validate/validate/validate.proto";
 
 import "classroom/common.proto";
+import "classroom/room.proto";
 import "classroom/schedule.proto";
 import "classroom/student_subject.proto";
 import "classroom/subject.proto";
@@ -28,6 +29,7 @@ service ClassroomService {
   rpc ListSchedules(ListSchedulesRequest) returns (ListSchedulesResponse);
   rpc GetSchedule(GetScheduleRequest) returns (GetScheduleResponse);
   rpc UpdateSchedules(UpdateSchedulesRequest) returns (UpdateSchedulesResponse);
+  rpc GetRoom(GetRoomRequest) returns (GetRoomResponse);
   rpc GetRoomsTotal(GetRoomsTotalRequest) returns (GetRoomsTotalResponse);
   rpc UpdateRoomsTotal(UpdateRoomsTotalRequest) returns (UpdateRoomsTotalResponse);
 }
@@ -163,6 +165,14 @@ message UpdateSchedulesRequest {
 }
 
 message UpdateSchedulesResponse {}
+
+message GetRoomRequest {
+  int32 id = 1 [(validate.rules).int32 = { gt: 0 }];
+}
+
+message GetRoomResponse {
+  Room room = 1;
+}
 
 message GetRoomsTotalRequest {}
 

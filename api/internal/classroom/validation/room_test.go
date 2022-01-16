@@ -7,6 +7,41 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestGetRoom(t *testing.T) {
+	t.Parallel()
+	validator := NewRequestValidation()
+
+	tests := []struct {
+		name  string
+		req   *classroom.GetRoomRequest
+		isErr bool
+	}{
+		{
+			name: "success",
+			req: &classroom.GetRoomRequest{
+				Id: 1,
+			},
+			isErr: false,
+		},
+		{
+			name: "Id is gt",
+			req: &classroom.GetRoomRequest{
+				Id: 0,
+			},
+			isErr: true,
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			err := validator.GetRoom(tt.req)
+			assert.Equal(t, tt.isErr, err != nil, err)
+		})
+	}
+}
+
 func TestGetRoomsTotal(t *testing.T) {
 	t.Parallel()
 	validator := NewRequestValidation()

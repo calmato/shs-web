@@ -11,6 +11,80 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func TestRoom_Get(t *testing.T) {
+	m, err := newMock()
+	require.NoError(t, err)
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	_ = m.dbDelete(ctx, roomTable)
+
+	now := jst.Now()
+
+	room := testRoom(1, now)
+	err = m.db.DB.Create(&room).Error
+	require.NoError(t, err)
+
+	type args struct {
+		id int32
+	}
+	type want struct {
+		room  *entity.Room
+		isErr bool
+	}
+	tests := []struct {
+		name  string
+		setup func(ctx context.Context, t *testing.T, m *mocks)
+		args  args
+		want  want
+	}{
+		{
+			name:  "success",
+			setup: func(ctx context.Context, t *testing.T, m *mocks) {},
+			args: args{
+				id: 1,
+			},
+			want: want{
+				room:  room,
+				isErr: false,
+			},
+		},
+		{
+			name:  "not found",
+			setup: func(ctx context.Context, t *testing.T, m *mocks) {},
+			args: args{
+				id: 0,
+			},
+			want: want{
+				room:  nil,
+				isErr: true,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			ctx, cancel := context.WithCancel(context.Background())
+			defer cancel()
+
+			_ = m.dbDelete(ctx, teacherSubjectTable)
+			tt.setup(ctx, t, m)
+
+			db := NewRoom(m.db)
+			actual, err := db.Get(ctx, tt.args.id)
+			if tt.want.isErr {
+				assert.Error(t, err)
+				return
+			}
+			assert.NoError(t, err)
+			tt.want.room.CreatedAt = actual.CreatedAt
+			tt.want.room.UpdatedAt = actual.UpdatedAt
+			assert.Equal(t, tt.want.room, actual)
+		})
+	}
+}
+
 func TestRoom_Replace(t *testing.T) {
 	m, err := newMock()
 	require.NoError(t, err)

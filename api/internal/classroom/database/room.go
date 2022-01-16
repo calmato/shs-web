@@ -12,9 +12,9 @@ import (
 
 const roomTable = "rooms"
 
-// var roomFields = []string{
-// 	"id", "created_at", "updated_at",
-// }
+var roomFields = []string{
+	"id", "created_at", "updated_at",
+}
 
 type room struct {
 	db  *database.Client
@@ -26,6 +26,21 @@ func NewRoom(db *database.Client) Room {
 		db:  db,
 		now: jst.Now,
 	}
+}
+
+func (r *room) Get(ctx context.Context, id int32, fields ...string) (*entity.Room, error) {
+	var room *entity.Room
+	if len(fields) == 0 {
+		fields = roomFields
+	}
+
+	stmt := r.db.DB.Table(roomTable).Select(fields).Where("id = ?", id)
+
+	err := stmt.First(&room).Error
+	if err != nil {
+		return nil, dbError(err)
+	}
+	return room, nil
 }
 
 func (r *room) Replace(ctx context.Context, rooms entity.Rooms) error {

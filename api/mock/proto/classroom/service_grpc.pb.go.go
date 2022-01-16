@@ -76,6 +76,26 @@ func (mr *MockClassroomServiceClientMockRecorder) DeleteSubject(ctx, in interfac
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteSubject", reflect.TypeOf((*MockClassroomServiceClient)(nil).DeleteSubject), varargs...)
 }
 
+// GetRoom mocks base method.
+func (m *MockClassroomServiceClient) GetRoom(ctx context.Context, in *classroom.GetRoomRequest, opts ...grpc.CallOption) (*classroom.GetRoomResponse, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "GetRoom", varargs...)
+	ret0, _ := ret[0].(*classroom.GetRoomResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetRoom indicates an expected call of GetRoom.
+func (mr *MockClassroomServiceClientMockRecorder) GetRoom(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetRoom", reflect.TypeOf((*MockClassroomServiceClient)(nil).GetRoom), varargs...)
+}
+
 // GetRoomsTotal mocks base method.
 func (m *MockClassroomServiceClient) GetRoomsTotal(ctx context.Context, in *classroom.GetRoomsTotalRequest, opts ...grpc.CallOption) (*classroom.GetRoomsTotalResponse, error) {
 	m.ctrl.T.Helper()
@@ -427,6 +447,21 @@ func (m *MockClassroomServiceServer) DeleteSubject(arg0 context.Context, arg1 *c
 func (mr *MockClassroomServiceServerMockRecorder) DeleteSubject(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteSubject", reflect.TypeOf((*MockClassroomServiceServer)(nil).DeleteSubject), arg0, arg1)
+}
+
+// GetRoom mocks base method.
+func (m *MockClassroomServiceServer) GetRoom(arg0 context.Context, arg1 *classroom.GetRoomRequest) (*classroom.GetRoomResponse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetRoom", arg0, arg1)
+	ret0, _ := ret[0].(*classroom.GetRoomResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetRoom indicates an expected call of GetRoom.
+func (mr *MockClassroomServiceServerMockRecorder) GetRoom(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetRoom", reflect.TypeOf((*MockClassroomServiceServer)(nil).GetRoom), arg0, arg1)
 }
 
 // GetRoomsTotal mocks base method.

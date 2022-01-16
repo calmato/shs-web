@@ -1,6 +1,10 @@
 package entity
 
-import "time"
+import (
+	"time"
+
+	"github.com/calmato/shs-web/api/proto/classroom"
+)
 
 type Room struct {
 	ID        int32     `gorm:"primaryKey;<-:create"`
@@ -17,4 +21,12 @@ func NewRooms(size int) Rooms {
 		rooms[i] = room
 	}
 	return rooms
+}
+
+func (r *Room) Proto() *classroom.Room {
+	return &classroom.Room{
+		Id:        r.ID,
+		CreatedAt: r.CreatedAt.Unix(),
+		UpdatedAt: r.UpdatedAt.Unix(),
+	}
 }

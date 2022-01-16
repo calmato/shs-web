@@ -7,6 +7,24 @@ import (
 	"github.com/calmato/shs-web/api/proto/classroom"
 )
 
+func (s *classroomService) GetRoom(
+	ctx context.Context, req *classroom.GetRoomRequest,
+) (*classroom.GetRoomResponse, error) {
+	if err := s.validator.GetRoom(req); err != nil {
+		return nil, gRPCError(err)
+	}
+
+	room, err := s.db.Room.Get(ctx, req.Id)
+	if err != nil {
+		return nil, gRPCError(err)
+	}
+
+	res := &classroom.GetRoomResponse{
+		Room: room.Proto(),
+	}
+	return res, nil
+}
+
 func (s *classroomService) GetRoomsTotal(
 	ctx context.Context, req *classroom.GetRoomsTotalRequest,
 ) (*classroom.GetRoomsTotalResponse, error) {
