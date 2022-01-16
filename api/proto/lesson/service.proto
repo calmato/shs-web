@@ -7,6 +7,7 @@ option go_package = "github.com/calmato/shs-web/api/proto/lesson";
 import "github.com/envoyproxy/protoc-gen-validate/validate/validate.proto";
 
 import "lesson/common.proto";
+import "lesson/lesson.proto";
 import "lesson/shift.proto";
 import "lesson/shift_summary.proto";
 import "lesson/teacher_submission.proto";
@@ -15,6 +16,7 @@ import "lesson/student_submission.proto";
 import "lesson/student_shift.proto";
 
 service LessonService {
+  rpc CreateLesson(CreateLessonRequest) returns (CreateLessonResponse);
   rpc ListShiftSummaries(ListShiftSummariesRequest) returns (ListShiftSummariesResponse);
   rpc GetShiftSummary(GetShiftSummaryRequest) returns (GetShiftSummaryResponse);
   rpc UpdateShiftSummarySchedule(UpdateShiftSummaryScheduleRequest) returns (UpdateShiftSummaryShceduleResponse);
@@ -30,6 +32,20 @@ service LessonService {
   rpc ListStudentShifts(ListStudentShiftsRequest) returns (ListStudentShiftsResponse);
   rpc GetStudentShifts(GetStudentShiftsRequest) returns (GetStudentShiftsResponse);
   rpc UpsertStudentShifts(UpsertStudentShiftsRequest) returns (UpsertStudentShiftsResponse);
+}
+
+message CreateLessonRequest {
+  int64  shift_summary_id = 1 [(validate.rules).int64 = { gt: 0 }];
+  int64  shift_id         = 2 [(validate.rules).int64 = { gt: 0 }];
+  int64  subject_id       = 3 [(validate.rules).int64 = { gt: 0 }];
+  int32  room_id          = 4 [(validate.rules).int32 = { gt: 0 }];
+  string teacher_id       = 5 [(validate.rules).string = { min_len: 1 }];
+  string student_id       = 6 [(validate.rules).string = { min_len: 1 }];
+  string notes            = 7 [(validate.rules).string = { max_len: 200 }];
+}
+
+message CreateLessonResponse {
+  Lesson lesson = 1;
 }
 
 message ListShiftSummariesRequest {
