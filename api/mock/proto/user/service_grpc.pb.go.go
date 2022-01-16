@@ -137,7 +137,7 @@ func (mr *MockUserServiceClientMockRecorder) GetTeacher(ctx, in interface{}, opt
 }
 
 // ListStudents mocks base method.
-func (m *MockUserServiceClient) ListStudents(ctx context.Context, in *user.ListStudentRequest, opts ...grpc.CallOption) (*user.ListStudentsResponse, error) {
+func (m *MockUserServiceClient) ListStudents(ctx context.Context, in *user.ListStudentsRequest, opts ...grpc.CallOption) (*user.ListStudentsResponse, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
@@ -335,7 +335,7 @@ func (mr *MockUserServiceServerMockRecorder) GetTeacher(arg0, arg1 interface{}) 
 }
 
 // ListStudents mocks base method.
-func (m *MockUserServiceServer) ListStudents(arg0 context.Context, arg1 *user.ListStudentRequest) (*user.ListStudentsResponse, error) {
+func (m *MockUserServiceServer) ListStudents(arg0 context.Context, arg1 *user.ListStudentsRequest) (*user.ListStudentsResponse, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ListStudents", arg0, arg1)
 	ret0, _ := ret[0].(*user.ListStudentsResponse)
