@@ -8,6 +8,7 @@ import (
 	"github.com/calmato/shs-web/api/pkg/database"
 	"github.com/calmato/shs-web/api/pkg/firebase/authentication"
 	"github.com/calmato/shs-web/api/pkg/jst"
+	"github.com/calmato/shs-web/api/pkg/uuid"
 )
 
 const studentTable = "students"
@@ -86,6 +87,36 @@ func (s *student) Create(ctx context.Context, student *entity.Student) error {
 		return dbError(err)
 	}
 	return dbError(tx.Commit().Error)
+}
+
+func (s *student) Delete(ctx context.Context, studentID string) error {
+	now := s.now()
+	uid := uuid.Base58Encode(uuid.New())
+
+	err := s.auth.DeleteUser(ctx, studentID)
+	if err != nil {
+		return dbError(err)
+	}
+
+	tx, err := s.db.Begin()
+	if err != nil {
+		return dbError(err)
+	}
+	defer s.db.Close(tx)
+
+	params := map[string]interface{}{
+		"mail":       uid,
+		"updated_at": now,
+		"deleted_at": now,
+	}
+
+	err = tx.Table(studentTable).Where("id = ?", studentID).Updates(params).Error
+	if err != nil {
+		tx.Rollback()
+		return dbError(err)
+	}
+	return dbError(tx.Commit().Error)
+
 }
 
 func (s *student) Count(ctx context.Context) (int64, error) {
