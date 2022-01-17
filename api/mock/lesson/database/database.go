@@ -228,6 +228,26 @@ func (m *MockShift) EXPECT() *MockShiftMockRecorder {
 	return m.recorder
 }
 
+// Get mocks base method.
+func (m *MockShift) Get(ctx context.Context, id int64, fields ...string) (*entity.Shift, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, id}
+	for _, a := range fields {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "Get", varargs...)
+	ret0, _ := ret[0].(*entity.Shift)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Get indicates an expected call of Get.
+func (mr *MockShiftMockRecorder) Get(ctx, id interface{}, fields ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, id}, fields...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockShift)(nil).Get), varargs...)
+}
+
 // ListBySummaryID mocks base method.
 func (m *MockShift) ListBySummaryID(ctx context.Context, summaryID int64, fields ...string) (entity.Shifts, error) {
 	m.ctrl.T.Helper()

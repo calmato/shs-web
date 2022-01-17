@@ -36,6 +36,26 @@ func (m *MockLessonServiceClient) EXPECT() *MockLessonServiceClientMockRecorder 
 	return m.recorder
 }
 
+// CreateLesson mocks base method.
+func (m *MockLessonServiceClient) CreateLesson(ctx context.Context, in *lesson.CreateLessonRequest, opts ...grpc.CallOption) (*lesson.CreateLessonResponse, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "CreateLesson", varargs...)
+	ret0, _ := ret[0].(*lesson.CreateLessonResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CreateLesson indicates an expected call of CreateLesson.
+func (mr *MockLessonServiceClientMockRecorder) CreateLesson(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateLesson", reflect.TypeOf((*MockLessonServiceClient)(nil).CreateLesson), varargs...)
+}
+
 // CreateShifts mocks base method.
 func (m *MockLessonServiceClient) CreateShifts(ctx context.Context, in *lesson.CreateShiftsRequest, opts ...grpc.CallOption) (*lesson.CreateShiftsResponse, error) {
 	m.ctrl.T.Helper()
@@ -357,6 +377,21 @@ func NewMockLessonServiceServer(ctrl *gomock.Controller) *MockLessonServiceServe
 // EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockLessonServiceServer) EXPECT() *MockLessonServiceServerMockRecorder {
 	return m.recorder
+}
+
+// CreateLesson mocks base method.
+func (m *MockLessonServiceServer) CreateLesson(arg0 context.Context, arg1 *lesson.CreateLessonRequest) (*lesson.CreateLessonResponse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateLesson", arg0, arg1)
+	ret0, _ := ret[0].(*lesson.CreateLessonResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CreateLesson indicates an expected call of CreateLesson.
+func (mr *MockLessonServiceServerMockRecorder) CreateLesson(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateLesson", reflect.TypeOf((*MockLessonServiceServer)(nil).CreateLesson), arg0, arg1)
 }
 
 // CreateShifts mocks base method.

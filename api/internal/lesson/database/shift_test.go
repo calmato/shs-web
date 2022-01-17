@@ -166,6 +166,87 @@ func TestShift_MultiGet(t *testing.T) {
 	}
 }
 
+func TestShift_Get(t *testing.T) {
+	m, err := newMock()
+	require.NoError(t, err)
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	_ = m.dbDelete(ctx, shiftTable, shiftSummaryTable)
+
+	now := jst.Now()
+
+	openAt := jst.Date(2022, 1, 1, 0, 0, 0, 0)
+	endAt := jst.Date(2021, 1, 14, 23, 59, 59, 0)
+	summary := testShiftSummary(1, 202202, openAt, endAt, now)
+	err = m.db.DB.Create(&summary).Error
+	require.NoError(t, err)
+
+	shift := testShift(1, 1, jst.Date(2022, 2, 1, 0, 0, 0, 0), "1700", "1830", now)
+	err = m.db.DB.Create(&shift).Error
+	require.NoError(t, err)
+
+	type args struct {
+		shiftID int64
+	}
+	type want struct {
+		shift *entity.Shift
+		isErr bool
+	}
+	tests := []struct {
+		name  string
+		setup func(ctx context.Context, t *testing.T, m *mocks)
+		args  args
+		want  want
+	}{
+		{
+			name:  "success",
+			setup: func(ctx context.Context, t *testing.T, m *mocks) {},
+			args: args{
+				shiftID: 1,
+			},
+			want: want{
+				shift: shift,
+				isErr: false,
+			},
+		},
+		{
+			name:  "not found",
+			setup: func(ctx context.Context, t *testing.T, m *mocks) {},
+			args: args{
+				shiftID: 0,
+			},
+			want: want{
+				shift: nil,
+				isErr: true,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			ctx, cancel := context.WithCancel(context.Background())
+			defer cancel()
+
+			tt.setup(ctx, t, m)
+
+			db := NewShift(m.db)
+			actual, err := db.Get(ctx, tt.args.shiftID)
+			if tt.want.isErr {
+				assert.Error(t, err)
+				return
+			}
+			assert.NoError(t, err)
+			tt.want.shift.Date = actual.Date
+			tt.want.shift.CreatedAt = actual.CreatedAt
+			tt.want.shift.UpdatedAt = actual.UpdatedAt
+			assert.Equal(t, tt.want.shift, actual)
+		})
+	}
+}
+
 func TestShift_MultipleCreate(t *testing.T) {
 	m, err := newMock()
 	require.NoError(t, err)

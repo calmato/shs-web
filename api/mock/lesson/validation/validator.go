@@ -34,6 +34,20 @@ func (m *MockRequestValidation) EXPECT() *MockRequestValidationMockRecorder {
 	return m.recorder
 }
 
+// CreateLesson mocks base method.
+func (m *MockRequestValidation) CreateLesson(req *lesson.CreateLessonRequest) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateLesson", req)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// CreateLesson indicates an expected call of CreateLesson.
+func (mr *MockRequestValidationMockRecorder) CreateLesson(req interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateLesson", reflect.TypeOf((*MockRequestValidation)(nil).CreateLesson), req)
+}
+
 // CreateShifts mocks base method.
 func (m *MockRequestValidation) CreateShifts(req *lesson.CreateShiftsRequest) error {
 	m.ctrl.T.Helper()

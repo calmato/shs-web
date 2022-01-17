@@ -1,13 +1,17 @@
 package entity
 
-import "time"
+import (
+	"time"
+
+	"github.com/calmato/shs-web/api/proto/lesson"
+)
 
 type Lesson struct {
 	ID             int64     `gorm:"primaryKey;autoIncrement;<-:create"`
 	ShiftSummaryID int64     `gorm:""`
 	ShiftID        int64     `gorm:""`
 	SubjectID      int64     `gorm:""`
-	RoomID         int       `gorm:""`
+	RoomID         int32     `gorm:""`
 	TeacherID      string    `gorm:""`
 	StudentID      string    `gorm:""`
 	Notes          string    `gorm:""`
@@ -16,3 +20,18 @@ type Lesson struct {
 }
 
 type Lessons []*Lesson
+
+func (l *Lesson) Proto() *lesson.Lesson {
+	return &lesson.Lesson{
+		Id:             l.ID,
+		ShiftSummaryId: l.ShiftSummaryID,
+		ShiftId:        l.ShiftID,
+		SubjectId:      l.SubjectID,
+		RoomId:         l.RoomID,
+		TeacherId:      l.TeacherID,
+		StudentId:      l.StudentID,
+		Notes:          l.Notes,
+		CreatedAt:      l.CreatedAt.Unix(),
+		UpdatedAt:      l.CreatedAt.Unix(),
+	}
+}
