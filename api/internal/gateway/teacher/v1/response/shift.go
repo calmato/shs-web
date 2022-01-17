@@ -12,4 +12,5 @@ type ShiftsResponse struct {
 	Rooms    int64                           `json:"rooms"`    // 教室数
 	Teachers entity.TeacherSubmissionDetails `json:"teachers"` // 講師情報一覧
 	Students entity.StudentSubmissionDetails `json:"students"` // 生徒情報一覧
+	Lessons  entity.Lessons                  `json:"lessons"`  // 授業一覧
 }

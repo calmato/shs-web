@@ -97,6 +97,98 @@ func TestShifts(t *testing.T) {
 	}
 }
 
+func TestShifts_Map(t *testing.T) {
+	t.Parallel()
+	now := jst.Now()
+	tests := []struct {
+		name   string
+		shifts Shifts
+		expect map[int64]*Shift
+	}{
+		{
+			name: "success",
+			shifts: Shifts{
+				{
+					Shift: &lesson.Shift{
+						Id:             1,
+						ShiftSummaryId: 1,
+						Date:           "20211226",
+						StartTime:      "1700",
+						EndTime:        "1830",
+						CreatedAt:      now.Unix(),
+						UpdatedAt:      now.Unix(),
+					},
+				},
+				{
+					Shift: &lesson.Shift{
+						Id:             2,
+						ShiftSummaryId: 1,
+						Date:           "20211226",
+						StartTime:      "1830",
+						EndTime:        "2000",
+						CreatedAt:      now.Unix(),
+						UpdatedAt:      now.Unix(),
+					},
+				},
+				{
+					Shift: &lesson.Shift{
+						Id:             3,
+						ShiftSummaryId: 1,
+						Date:           "20211227",
+						StartTime:      "1700",
+						EndTime:        "1830",
+						CreatedAt:      now.Unix(),
+						UpdatedAt:      now.Unix(),
+					},
+				},
+			},
+			expect: map[int64]*Shift{
+				1: {
+					Shift: &lesson.Shift{
+						Id:             1,
+						ShiftSummaryId: 1,
+						Date:           "20211226",
+						StartTime:      "1700",
+						EndTime:        "1830",
+						CreatedAt:      now.Unix(),
+						UpdatedAt:      now.Unix(),
+					},
+				},
+				2: {
+					Shift: &lesson.Shift{
+						Id:             2,
+						ShiftSummaryId: 1,
+						Date:           "20211226",
+						StartTime:      "1830",
+						EndTime:        "2000",
+						CreatedAt:      now.Unix(),
+						UpdatedAt:      now.Unix(),
+					},
+				},
+				3: {
+					Shift: &lesson.Shift{
+						Id:             3,
+						ShiftSummaryId: 1,
+						Date:           "20211227",
+						StartTime:      "1700",
+						EndTime:        "1830",
+						CreatedAt:      now.Unix(),
+						UpdatedAt:      now.Unix(),
+					},
+				},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tt.expect, tt.shifts.Map())
+		})
+	}
+}
+
 func TestShifts_GroupByDate(t *testing.T) {
 	t.Parallel()
 	now := jst.Now()

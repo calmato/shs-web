@@ -27,6 +27,14 @@ func NewShifts(shifts []*lesson.Shift) Shifts {
 	return ss
 }
 
+func (ss Shifts) Map() map[int64]*Shift {
+	res := make(map[int64]*Shift, len(ss))
+	for _, s := range ss {
+		res[s.Id] = s
+	}
+	return res
+}
+
 func (ss Shifts) GroupByDate() (map[time.Time]Shifts, error) {
 	const maxDays = 31
 	const maxLessons = 5
