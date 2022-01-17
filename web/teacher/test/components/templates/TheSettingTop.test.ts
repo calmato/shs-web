@@ -13,27 +13,15 @@ describe('components/templates/TheSettingTop', () => {
 
   describe('script', () => {
     describe('props', () => {
-      describe('userItems', () => {
+      describe('menuItems', () => {
         it('初期値', () => {
-          expect(wrapper.props().userItems).toEqual([])
+          expect(wrapper.props().menuItems).toEqual([])
         })
 
         it('値が代入されること', async () => {
           const items: Menu[] = [{ title: 'テスト', path: '/test' }]
-          await wrapper.setProps({ userItems: items })
-          expect(wrapper.props().userItems).toEqual(items)
-        })
-      })
-
-      describe('systemItems', () => {
-        it('初期値', () => {
-          expect(wrapper.props().systemItems).toEqual([])
-        })
-
-        it('値が代入されること', async () => {
-          const items: Menu[] = [{ title: 'テスト', path: '/test' }]
-          await wrapper.setProps({ systemItems: items })
-          expect(wrapper.props().systemItems).toEqual(items)
+          await wrapper.setProps({ menuItems: items })
+          expect(wrapper.props().menuItems).toEqual(items)
         })
       })
     })

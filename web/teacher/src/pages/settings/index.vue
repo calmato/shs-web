@@ -1,8 +1,7 @@
 <template>
   <the-setting-top
     class="px-2"
-    :user-items="userItems"
-    :system-items="systemItems"
+    :menu-items="menuItems"
     :user="auth"
     :elementary-school-subjects="elementarySchoolSubjects"
     :junior-high-school-subjects="juniorHighSchoolSubjects"
@@ -35,24 +34,27 @@ export default defineComponent({
     const router = root.$router
     const store = root.$store
 
-    const userItems: Menu[] = [
+    const menuItems: Menu[] = [
+      {
+        title: 'メールアドレス変更',
+        path: '#メールアドレス変更',
+      },
       {
         title: 'パスワードの変更',
         path: '#パスワードの変更',
       },
       {
-        title: 'サインアウト',
-        path: '/signout',
-      },
-    ]
-    const systemItems: Menu[] = [
-      {
-        title: '教室・科目設定',
-        path: '#教室・科目設定',
+        title: '開講科目設定',
+        path: '#開講科目設定',
       },
       {
         title: '定休日/コマ/ブース 設定',
         path: '/settings/classroom',
+      },
+      {
+        title: 'サインアウト',
+        path: '/signout',
+        textColor: 'error',
       },
     ]
 
@@ -129,8 +131,7 @@ export default defineComponent({
     })
 
     return {
-      userItems,
-      systemItems,
+      menuItems,
       handleClick,
       handleBackButton,
       auth,

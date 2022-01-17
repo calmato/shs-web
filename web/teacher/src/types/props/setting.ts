@@ -1,6 +1,7 @@
 export interface Menu {
   title: string
   path: string
+  textColor?: 'error'
 }
 
 export interface UserProps {
