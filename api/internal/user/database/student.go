@@ -116,7 +116,6 @@ func (s *student) Delete(ctx context.Context, studentID string) error {
 		return dbError(err)
 	}
 	return dbError(tx.Commit().Error)
-
 }
 
 func (s *student) Count(ctx context.Context) (int64, error) {
