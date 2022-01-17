@@ -5,8 +5,10 @@ import (
 	"testing"
 	"time"
 
+	"github.com/calmato/shs-web/api/internal/lesson/database"
 	"github.com/calmato/shs-web/api/internal/lesson/entity"
 	"github.com/calmato/shs-web/api/internal/lesson/validation"
+	"github.com/calmato/shs-web/api/pkg/jst"
 	"github.com/calmato/shs-web/api/proto/classroom"
 	"github.com/calmato/shs-web/api/proto/lesson"
 	"github.com/calmato/shs-web/api/proto/user"
@@ -14,6 +16,95 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/protobuf/proto"
 )
+
+func TestListLessonsByShiftSummaryID(t *testing.T) {
+	t.Parallel()
+
+	now := jst.Now()
+	req := &lesson.ListLessonsByShiftSummaryIDRequest{
+		ShiftSummaryId: 1,
+	}
+	lessons := entity.Lessons{
+		{
+			ID:             1,
+			ShiftSummaryID: 1,
+			ShiftID:        1,
+			SubjectID:      1,
+			RoomID:         1,
+			TeacherID:      "teacherid",
+			StudentID:      "studentid",
+			Notes:          "",
+			CreatedAt:      now,
+			UpdatedAt:      now,
+		},
+	}
+
+	tests := []struct {
+		name   string
+		setup  func(ctx context.Context, t *testing.T, mocks *mocks)
+		req    *lesson.ListLessonsByShiftSummaryIDRequest
+		expect *testResponse
+	}{
+		{
+			name: "success",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				params := &database.ListLessonsParams{ShiftSummaryID: 1}
+				mocks.validator.EXPECT().ListLessonsByShiftSummaryID(req).Return(nil)
+				mocks.db.Lesson.EXPECT().List(ctx, params).Return(lessons, nil)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.OK,
+				body: &lesson.ListLessonsByShiftSummaryIDResponse{
+					Lessons: []*lesson.Lesson{
+						{
+							Id:             1,
+							ShiftSummaryId: 1,
+							ShiftId:        1,
+							SubjectId:      1,
+							RoomId:         1,
+							TeacherId:      "teacherid",
+							StudentId:      "studentid",
+							Notes:          "",
+							CreatedAt:      now.Unix(),
+							UpdatedAt:      now.Unix(),
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "invalid argument",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				req := &lesson.ListLessonsByShiftSummaryIDRequest{}
+				mocks.validator.EXPECT().ListLessonsByShiftSummaryID(req).Return(validation.ErrRequestValidation)
+			},
+			req: &lesson.ListLessonsByShiftSummaryIDRequest{},
+			expect: &testResponse{
+				code: codes.InvalidArgument,
+			},
+		},
+		{
+			name: "failed to list lessons",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				params := &database.ListLessonsParams{ShiftSummaryID: 1}
+				mocks.validator.EXPECT().ListLessonsByShiftSummaryID(req).Return(nil)
+				mocks.db.Lesson.EXPECT().List(ctx, params).Return(nil, errmock)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.Internal,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, testGRPC(tt.setup, tt.expect, func(ctx context.Context, service *lessonService) (proto.Message, error) {
+			return service.ListLessonsByShiftSummaryID(ctx, tt.req)
+		}))
+	}
+}
 
 func TestCreateLesson(t *testing.T) {
 	t.Parallel()

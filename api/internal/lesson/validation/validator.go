@@ -12,6 +12,7 @@ import (
 var ErrRequestValidation = errors.New("validation: invalid argument")
 
 type RequestValidation interface {
+	ListLessonsByShiftSummaryID(req *lesson.ListLessonsByShiftSummaryIDRequest) error
 	CreateLesson(req *lesson.CreateLessonRequest) error
 	ListShiftSummaries(req *lesson.ListShiftSummariesRequest) error
 	GetShiftSummary(req *lesson.GetShiftSummaryRequest) error
