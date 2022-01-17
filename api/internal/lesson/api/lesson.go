@@ -64,9 +64,10 @@ func (s *lessonService) CreateLesson(
 		_, err := s.db.ShiftSummary.Get(ectx, req.ShiftSummaryId, "id")
 		return err
 	})
-	eg.Go(func() error {
-		_, err := s.db.Shift.Get(ectx, req.ShiftId, "id")
-		return err
+	var shift *entity.Shift
+	eg.Go(func() (err error) {
+		shift, err = s.db.Shift.Get(ectx, req.ShiftId)
+		return
 	})
 	if err := eg.Wait(); err != nil {
 		return nil, gRPCError(err)
@@ -88,6 +89,7 @@ func (s *lessonService) CreateLesson(
 
 	res := &lesson.CreateLessonResponse{
 		Lesson: l.Proto(),
+		Shift:  shift.Proto(),
 	}
 	return res, nil
 }

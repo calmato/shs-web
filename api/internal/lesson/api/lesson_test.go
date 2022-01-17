@@ -109,6 +109,7 @@ func TestListLessonsByShiftSummaryID(t *testing.T) {
 func TestCreateLesson(t *testing.T) {
 	t.Parallel()
 
+	now := jst.Date(2022, 1, 15, 0, 0, 0, 0)
 	req := &lesson.CreateLessonRequest{
 		ShiftSummaryId: 1,
 		ShiftId:        1,
@@ -119,7 +120,15 @@ func TestCreateLesson(t *testing.T) {
 		Notes:          "",
 	}
 	summary := &entity.ShiftSummary{ID: 1}
-	shift := &entity.Shift{ID: 1}
+	shift := &entity.Shift{
+		ID:             1,
+		ShiftSummaryID: 1,
+		Date:           jst.Date(2022, 2, 2, 0, 0, 0, 0),
+		StartTime:      "1700",
+		EndTime:        "1830",
+		CreatedAt:      now,
+		UpdatedAt:      now,
+	}
 	l := &entity.Lesson{
 		ShiftSummaryID: 1,
 		ShiftID:        1,
@@ -153,7 +162,7 @@ func TestCreateLesson(t *testing.T) {
 				mocks.user.EXPECT().GetTeacher(gomock.Any(), teacherIn).Return(teacherOut, nil)
 				mocks.user.EXPECT().GetStudent(gomock.Any(), studentIn).Return(studentOut, nil)
 				mocks.db.ShiftSummary.EXPECT().Get(gomock.Any(), int64(1), "id").Return(summary, nil)
-				mocks.db.Shift.EXPECT().Get(gomock.Any(), int64(1), "id").Return(shift, nil)
+				mocks.db.Shift.EXPECT().Get(gomock.Any(), int64(1)).Return(shift, nil)
 				mocks.db.Lesson.EXPECT().Create(ctx, l).Return(nil)
 			},
 			req: req,
@@ -171,6 +180,15 @@ func TestCreateLesson(t *testing.T) {
 						Notes:          "",
 						CreatedAt:      time.Time{}.Unix(),
 						UpdatedAt:      time.Time{}.Unix(),
+					},
+					Shift: &lesson.Shift{
+						Id:             1,
+						ShiftSummaryId: 1,
+						Date:           "20220202",
+						StartTime:      "1700",
+						EndTime:        "1830",
+						CreatedAt:      now.Unix(),
+						UpdatedAt:      now.Unix(),
 					},
 				},
 			},
@@ -202,7 +220,7 @@ func TestCreateLesson(t *testing.T) {
 				mocks.user.EXPECT().GetTeacher(gomock.Any(), teacherIn).Return(teacherOut, nil)
 				mocks.user.EXPECT().GetStudent(gomock.Any(), studentIn).Return(studentOut, nil)
 				mocks.db.ShiftSummary.EXPECT().Get(gomock.Any(), int64(1), "id").Return(summary, nil)
-				mocks.db.Shift.EXPECT().Get(gomock.Any(), int64(1), "id").Return(shift, nil)
+				mocks.db.Shift.EXPECT().Get(gomock.Any(), int64(1)).Return(shift, nil)
 			},
 			req: req,
 			expect: &testResponse{
@@ -225,7 +243,7 @@ func TestCreateLesson(t *testing.T) {
 				mocks.user.EXPECT().GetTeacher(gomock.Any(), teacherIn).Return(teacherOut, nil)
 				mocks.user.EXPECT().GetStudent(gomock.Any(), studentIn).Return(studentOut, nil)
 				mocks.db.ShiftSummary.EXPECT().Get(gomock.Any(), int64(1), "id").Return(summary, nil)
-				mocks.db.Shift.EXPECT().Get(gomock.Any(), int64(1), "id").Return(shift, nil)
+				mocks.db.Shift.EXPECT().Get(gomock.Any(), int64(1)).Return(shift, nil)
 			},
 			req: req,
 			expect: &testResponse{
@@ -248,7 +266,7 @@ func TestCreateLesson(t *testing.T) {
 				mocks.user.EXPECT().GetTeacher(gomock.Any(), teacherIn).Return(nil, errmock)
 				mocks.user.EXPECT().GetStudent(gomock.Any(), studentIn).Return(studentOut, nil)
 				mocks.db.ShiftSummary.EXPECT().Get(gomock.Any(), int64(1), "id").Return(summary, nil)
-				mocks.db.Shift.EXPECT().Get(gomock.Any(), int64(1), "id").Return(shift, nil)
+				mocks.db.Shift.EXPECT().Get(gomock.Any(), int64(1)).Return(shift, nil)
 			},
 			req: req,
 			expect: &testResponse{
@@ -271,7 +289,7 @@ func TestCreateLesson(t *testing.T) {
 				mocks.user.EXPECT().GetTeacher(gomock.Any(), teacherIn).Return(teacherOut, nil)
 				mocks.user.EXPECT().GetStudent(gomock.Any(), studentIn).Return(nil, errmock)
 				mocks.db.ShiftSummary.EXPECT().Get(gomock.Any(), int64(1), "id").Return(summary, nil)
-				mocks.db.Shift.EXPECT().Get(gomock.Any(), int64(1), "id").Return(shift, nil)
+				mocks.db.Shift.EXPECT().Get(gomock.Any(), int64(1)).Return(shift, nil)
 			},
 			req: req,
 			expect: &testResponse{
@@ -295,7 +313,7 @@ func TestCreateLesson(t *testing.T) {
 				mocks.user.EXPECT().GetTeacher(gomock.Any(), teacherIn).Return(teacherOut, nil)
 				mocks.user.EXPECT().GetStudent(gomock.Any(), studentIn).Return(studentOut, nil)
 				mocks.db.ShiftSummary.EXPECT().Get(gomock.Any(), int64(1), "id").Return(summary, nil)
-				mocks.db.Shift.EXPECT().Get(gomock.Any(), int64(1), "id").Return(nil, errmock)
+				mocks.db.Shift.EXPECT().Get(gomock.Any(), int64(1)).Return(nil, errmock)
 			},
 			req: req,
 			expect: &testResponse{
@@ -319,7 +337,7 @@ func TestCreateLesson(t *testing.T) {
 				mocks.user.EXPECT().GetTeacher(gomock.Any(), teacherIn).Return(teacherOut, nil)
 				mocks.user.EXPECT().GetStudent(gomock.Any(), studentIn).Return(studentOut, nil)
 				mocks.db.ShiftSummary.EXPECT().Get(gomock.Any(), int64(1), "id").Return(summary, nil)
-				mocks.db.Shift.EXPECT().Get(gomock.Any(), int64(1), "id").Return(nil, errmock)
+				mocks.db.Shift.EXPECT().Get(gomock.Any(), int64(1)).Return(nil, errmock)
 			},
 			req: req,
 			expect: &testResponse{
@@ -343,7 +361,7 @@ func TestCreateLesson(t *testing.T) {
 				mocks.user.EXPECT().GetTeacher(gomock.Any(), teacherIn).Return(teacherOut, nil)
 				mocks.user.EXPECT().GetStudent(gomock.Any(), studentIn).Return(studentOut, nil)
 				mocks.db.ShiftSummary.EXPECT().Get(gomock.Any(), int64(1), "id").Return(summary, nil)
-				mocks.db.Shift.EXPECT().Get(gomock.Any(), int64(1), "id").Return(shift, nil)
+				mocks.db.Shift.EXPECT().Get(gomock.Any(), int64(1)).Return(shift, nil)
 				mocks.db.Lesson.EXPECT().Create(ctx, l).Return(errmock)
 			},
 			req: req,
