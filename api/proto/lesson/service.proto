@@ -55,6 +55,7 @@ message CreateLessonRequest {
 
 message CreateLessonResponse {
   Lesson lesson = 1;
+  Shift  shift  = 2;
 }
 
 message ListShiftSummariesRequest {
