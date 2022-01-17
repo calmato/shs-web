@@ -19,6 +19,8 @@ tags:
   description: シフト作成関連
 - name: Submission
   description: シフト提出関連
+- name: Lesson
+  description: 授業関連
 - name: Other
   description: その他
 paths:
@@ -60,6 +62,9 @@ paths:
     $ref: './paths/v1/shifts/_shiftId/index.yaml'
   /v1/shifts/{shiftId}/schedule:
     $ref: './paths/v1/shifts/_shiftId/schedule.yaml'
+  # Lessons
+  /v1/shifts/{shiftId}/lessons:
+    $ref: './paths/v1/shifts/_shiftId/lessons/index.yaml'
   # Submissions
   /v1/teachers/{teacherId}/submissions:
     $ref: './paths/v1/teachers/_teacherId/submissions/index.yaml'
@@ -108,6 +113,8 @@ components:
       $ref: './components/schemas/v1/shifts.request.yaml#/upsertTeacherShiftsRequest'
     v1UpdateRoomsTotalRequest:
       $ref: './components/schemas/v1/rooms.request.yaml#/updateRoomsTotalRequest'
+    v1CreateLessonRequest:
+      $ref: './components/schemas/v1/lessons.request.yaml#/createLessonRequest'
     # Response
     v1AuthResponse:
       $ref: './components/schemas/v1/auth.response.yaml#/authResponse'
@@ -131,3 +138,5 @@ components:
       $ref: './components/schemas/v1/shifts.response.yaml#/teacherShiftsResponse'
     v1RoomsTotalResponse:
       $ref: './components/schemas/v1/rooms.response.yaml#/roomsTotalResponse'
+    v1LessonResponse:
+      $ref: './components/schemas/v1/lessons.response.yaml#/lessonResponse'
