@@ -248,6 +248,77 @@ func TestStudent_Create(t *testing.T) {
 	}
 }
 
+func TestStudent_Delete(t *testing.T) {
+	m, err := newMock()
+	require.NoError(t, err)
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	_ = m.dbDelete(ctx, studentTable)
+
+	now := jst.Now()
+	student := testStudent(idmock, "student01@calmato.jp", now)
+
+	type args struct {
+		studentID string
+	}
+	type want struct {
+		isErr bool
+	}
+	tests := []struct {
+		name  string
+		setup func(ctx context.Context, t *testing.T, m *mocks)
+		args  args
+		want  want
+	}{
+		{
+			name: "success",
+			setup: func(ctx context.Context, t *testing.T, m *mocks) {
+				_, err := m.auth.CreateUser(ctx, idmock, "student01@calmato.jp", "12345678")
+				require.NoError(t, err)
+				err = m.db.DB.Create(&student).Error
+				require.NoError(t, err)
+			},
+			args: args{
+				studentID: idmock,
+			},
+			want: want{
+				isErr: false,
+			},
+		},
+		{
+			name: "failed to delete",
+			setup: func(ctx context.Context, t *testing.T, m *mocks) {
+				_, err := m.auth.CreateUser(ctx, idmock, "student01@calmato.jp", "12345678")
+				require.NoError(t, err)
+				err = m.db.DB.Create(&student).Error
+				require.NoError(t, err)
+			},
+			args: args{
+				studentID: "",
+			},
+			want: want{
+				isErr: true,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			ctx, cancel := context.WithCancel(context.Background())
+			defer cancel()
+
+			_ = m.authDelete(ctx, idmock)
+			_ = m.dbDelete(ctx, studentTable)
+			tt.setup(ctx, t, m)
+
+			db := NewStudent(m.db, m.auth)
+			err := db.Delete(ctx, tt.args.studentID)
+			assert.Equal(t, tt.want.isErr, err != nil, err)
+		})
+	}
+}
+
 func TestStudent_Count(t *testing.T) {
 	m, err := newMock()
 	require.NoError(t, err)

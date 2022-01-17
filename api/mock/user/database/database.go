@@ -65,6 +65,20 @@ func (mr *MockStudentMockRecorder) Create(ctx, s interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockStudent)(nil).Create), ctx, s)
 }
 
+// Delete mocks base method.
+func (m *MockStudent) Delete(ctx context.Context, studentID string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Delete", ctx, studentID)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Delete indicates an expected call of Delete.
+func (mr *MockStudentMockRecorder) Delete(ctx, studentID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockStudent)(nil).Delete), ctx, studentID)
+}
+
 // Get mocks base method.
 func (m *MockStudent) Get(ctx context.Context, id string, fields ...string) (*entity.Student, error) {
 	m.ctrl.T.Helper()
