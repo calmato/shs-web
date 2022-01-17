@@ -223,12 +223,29 @@ func (h *apiV1Handler) ListShifts(ctx *gin.Context) {
 		gstudentShifts = gentity.NewStudentShifts(out.Shifts)
 		return nil
 	})
+	var glessons gentity.Lessons
+	eg.Go(func() error {
+		in := &lesson.ListLessonsByShiftSummaryIDRequest{
+			ShiftSummaryId: shiftSummaryID,
+		}
+		out, err := h.lesson.ListLessonsByShiftSummaryID(ectx, in)
+		if err != nil {
+			return err
+		}
+		glessons = gentity.NewLessons(out.Lessons)
+		return nil
+	})
 	if err := eg.Wait(); err != nil {
 		httpError(ctx, err)
 		return
 	}
 
 	shiftsMap, err := gshifts.GroupByDate()
+	if err != nil {
+		httpError(ctx, err)
+		return
+	}
+	lessons, err := entity.NewLessons(glessons, gshifts.Map())
 	if err != nil {
 		httpError(ctx, err)
 		return
@@ -243,6 +260,7 @@ func (h *apiV1Handler) ListShifts(ctx *gin.Context) {
 		Rooms:    rooms,
 		Teachers: entity.NewTeacherSubmissionDetails(gteachers, teacherShiftsMap),
 		Students: entity.NewStudentSubmissionDetails(gstudents, studentSubmissionMap, studentShiftsMap),
+		Lessons:  lessons,
 	}
 	ctx.JSON(http.StatusOK, res)
 }
