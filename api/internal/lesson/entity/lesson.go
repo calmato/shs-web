@@ -35,3 +35,11 @@ func (l *Lesson) Proto() *lesson.Lesson {
 		UpdatedAt:      l.CreatedAt.Unix(),
 	}
 }
+
+func (ls Lessons) Proto() []*lesson.Lesson {
+	lessons := make([]*lesson.Lesson, len(ls))
+	for i := range ls {
+		lessons[i] = ls[i].Proto()
+	}
+	return lessons
+}

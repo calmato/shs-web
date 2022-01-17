@@ -8,6 +8,41 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestListLessonsByShiftSummaryID(t *testing.T) {
+	t.Parallel()
+	validator := NewRequestValidation()
+
+	tests := []struct {
+		name  string
+		req   *lesson.ListLessonsByShiftSummaryIDRequest
+		isErr bool
+	}{
+		{
+			name: "success",
+			req: &lesson.ListLessonsByShiftSummaryIDRequest{
+				ShiftSummaryId: 1,
+			},
+			isErr: false,
+		},
+		{
+			name: "ShiftSummaryId is gt",
+			req: &lesson.ListLessonsByShiftSummaryIDRequest{
+				ShiftSummaryId: 0,
+			},
+			isErr: true,
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			err := validator.ListLessonsByShiftSummaryID(tt.req)
+			assert.Equal(t, tt.isErr, err != nil, err)
+		})
+	}
+}
+
 func TestCreateLesson(t *testing.T) {
 	t.Parallel()
 	validator := NewRequestValidation()

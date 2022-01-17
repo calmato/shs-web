@@ -16,6 +16,7 @@ import "lesson/student_submission.proto";
 import "lesson/student_shift.proto";
 
 service LessonService {
+  rpc ListLessonsByShiftSummaryID(ListLessonsByShiftSummaryIDRequest) returns (ListLessonsByShiftSummaryIDResponse);
   rpc CreateLesson(CreateLessonRequest) returns (CreateLessonResponse);
   rpc ListShiftSummaries(ListShiftSummariesRequest) returns (ListShiftSummariesResponse);
   rpc GetShiftSummary(GetShiftSummaryRequest) returns (GetShiftSummaryResponse);
@@ -32,6 +33,14 @@ service LessonService {
   rpc ListStudentShifts(ListStudentShiftsRequest) returns (ListStudentShiftsResponse);
   rpc GetStudentShifts(GetStudentShiftsRequest) returns (GetStudentShiftsResponse);
   rpc UpsertStudentShifts(UpsertStudentShiftsRequest) returns (UpsertStudentShiftsResponse);
+}
+
+message ListLessonsByShiftSummaryIDRequest {
+  int64 shift_summary_id = 1 [(validate.rules).int64 = { gt: 0 }];
+}
+
+message ListLessonsByShiftSummaryIDResponse {
+  repeated Lesson lessons = 1;
 }
 
 message CreateLessonRequest {

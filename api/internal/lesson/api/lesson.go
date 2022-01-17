@@ -3,12 +3,34 @@ package api
 import (
 	"context"
 
+	"github.com/calmato/shs-web/api/internal/lesson/database"
 	"github.com/calmato/shs-web/api/internal/lesson/entity"
 	"github.com/calmato/shs-web/api/proto/classroom"
 	"github.com/calmato/shs-web/api/proto/lesson"
 	"github.com/calmato/shs-web/api/proto/user"
 	"golang.org/x/sync/errgroup"
 )
+
+func (s *lessonService) ListLessonsByShiftSummaryID(
+	ctx context.Context, req *lesson.ListLessonsByShiftSummaryIDRequest,
+) (*lesson.ListLessonsByShiftSummaryIDResponse, error) {
+	if err := s.validator.ListLessonsByShiftSummaryID(req); err != nil {
+		return nil, gRPCError(err)
+	}
+
+	params := &database.ListLessonsParams{
+		ShiftSummaryID: req.ShiftSummaryId,
+	}
+	lessons, err := s.db.Lesson.List(ctx, params)
+	if err != nil {
+		return nil, gRPCError(err)
+	}
+
+	res := &lesson.ListLessonsByShiftSummaryIDResponse{
+		Lessons: lessons.Proto(),
+	}
+	return res, nil
+}
 
 func (s *lessonService) CreateLesson(
 	ctx context.Context, req *lesson.CreateLessonRequest,
