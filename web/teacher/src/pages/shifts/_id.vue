@@ -64,9 +64,9 @@ export default defineComponent({
         )
         return {
           lesson,
-          teacher: teacher,
-          student: student,
-          subject: subject,
+          teacher,
+          student,
+          subject,
         }
       })
       return details
