@@ -79,8 +79,16 @@
         <v-container v-for="shift in details" :key="shift.date" tag="v-row" class="shift-lessons-item">
           <v-col cols="1" align="center" style="border: 1px solid #e5e5e5" class="pt-4">{{ getDay(shift.date) }}</v-col>
           <v-col cols="11" class="d-flex flex-column" align="center">
+            <!-- 休講日 -->
+            <div v-if="shift.isClosed" class="shift-lessons-detail error--text">
+              <v-card tile outlined class="align-center shift-lesson-room">
+                <v-card-text class="text-subtitle-2 error--text">休日</v-card-text>
+              </v-card>
+            </div>
+            <!-- 開講日 -->
             <div
               v-for="num in rooms"
+              v-else
               :key="`${shift.date}-${num}`"
               justify="start"
               class="d-flex align-stretch shift-lessons-detail"
