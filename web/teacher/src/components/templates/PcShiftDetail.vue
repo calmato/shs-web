@@ -9,14 +9,14 @@
             <td v-for="teacher in teachers" :key="teacher.id">
               {{ teacher.name }}
             </td>
-            <th class="fixed-right">合計</th>
+            <th class="fixed-right teal--text text--lighten-1">合計</th>
           </tr>
           <tr>
             <th class="fixed">担当授業数</th>
             <td v-for="teacher in teachers" :key="teacher.id">
               {{ teacher.lessonTotal }}
             </td>
-            <td class="fixed-right">0</td>
+            <td class="fixed-right">{{ getLessonTotal() }}</td>
           </tr>
         </table>
       </div>
@@ -25,11 +25,23 @@
         <table>
           <tr>
             <th class="fixed">生徒名</th>
-            <th class="fixed-right">残り</th>
+            <td v-for="student in students" :key="student.id">
+              {{ student.name }}
+            </td>
+            <th class="fixed-right orange--text text--accent-4">残り</th>
           </tr>
           <tr>
             <th class="fixed">残り授業数</th>
-            <td class="fixed-right">0</td>
+            <td
+              v-for="student in students"
+              :key="student.id"
+              :class="[student.suggestedClassesTotal > 0 ? 'orange--text text--accent-4' : '']"
+            >
+              {{ student.suggestedClassesTotal }}
+            </td>
+            <td class="fixed-right" :class="[getRemainingLessonTotal() > 0 ? 'orange--text text--accent-4' : '']">
+              {{ getRemainingLessonTotal() }}
+            </td>
           </tr>
         </table>
       </div>
@@ -48,24 +60,21 @@
       <!-- 授業タイムテーブル -->
       <div class="shift-lessons">
         <v-container v-for="shift in details" :key="shift.date" tag="v-row" class="shift-lessons-item">
-          <v-col cols="1" align="center">{{ getDay(shift.date) }}</v-col>
+          <v-col cols="1" align="center" style="border: 1px solid #e5e5e5" class="pt-4">{{ getDay(shift.date) }}</v-col>
           <v-col cols="11" class="d-flex flex-column" align="center">
-            <v-container
+            <div
               v-for="num in rooms"
               :key="`${shift.date}-${num}`"
               justify="start"
               class="d-flex align-stretch shift-lessons-detail"
             >
-              <v-card tile class="col col-1 shift-lesson-room">
-                <v-card-text>ブース{{ num }}</v-card-text>
+              <v-card tile outlined class="d-flex align-center col col-1 shift-lesson-room">
+                <v-card-text class="text-subtitle-2">ブース{{ num }}</v-card-text>
               </v-card>
-              <v-card v-for="lesson in shift.lessons" :key="lesson.id" tile class="shift-lessons-schedule">
-                <v-card-text>
-                  <h4>{{ getTime(lesson.startTime) }} ~ {{ getTime(lesson.endTime) }}</h4>
-                  <v-icon color="primary">mdi-pencil</v-icon>
-                </v-card-text>
+              <v-card v-for="lesson in shift.lessons" :key="lesson.id" tile outlined class="shift-lessons-schedule">
+                <the-shift-lesson-card :summary="lesson" :detail="getLesson(lesson, num)" />
               </v-card>
-            </v-container>
+            </div>
           </v-col>
         </v-container>
       </div>
@@ -76,9 +85,15 @@
 <script lang="ts">
 import { defineComponent, PropType } from '@nuxtjs/composition-api'
 import dayjs from '~/plugins/dayjs'
-import { ShiftDetail, ShiftSummary, TeacherShift } from '~/types/store'
+import { ShiftDetail, ShiftDetailLesson, ShiftSummary, StudentShift, TeacherShift } from '~/types/store'
+import { LessonDetail } from '~/types/props/shift'
+import TheShiftLessonCard from '~/components/organisms/TheShiftLessonCard.vue'
 
 export default defineComponent({
+  components: {
+    TheShiftLessonCard,
+  },
+
   props: {
     summary: {
       type: Object as PropType<ShiftSummary>,
@@ -96,6 +111,14 @@ export default defineComponent({
       type: Array as PropType<TeacherShift[]>,
       default: () => [],
     },
+    students: {
+      type: Array as PropType<StudentShift[]>,
+      default: () => [],
+    },
+    lessons: {
+      type: Array as PropType<LessonDetail[]>,
+      default: () => [],
+    },
   },
 
   setup(props) {
@@ -111,10 +134,35 @@ export default defineComponent({
       return dayjs(`2000-01-01 ${time}`).tz().format('HH:mm')
     }
 
+    const getLesson = (shift: ShiftDetailLesson, room: number): LessonDetail | undefined => {
+      return props.lessons.find((detail: LessonDetail) => {
+        return detail.lesson.shiftId === shift.id && detail.lesson.room === room
+      })
+    }
+
+    const getLessonTotal = (): number => {
+      let total: number = 0
+      props.teachers.forEach((teacher: TeacherShift) => {
+        total += teacher.lessonTotal
+      })
+      return total
+    }
+
+    const getRemainingLessonTotal = (): number => {
+      let total: number = 0
+      props.students.forEach((student: StudentShift) => {
+        total += student.suggestedClassesTotal
+      })
+      return total
+    }
+
     return {
       getTitle,
       getDay,
       getTime,
+      getLesson,
+      getLessonTotal,
+      getRemainingLessonTotal,
     }
   },
 })
@@ -128,14 +176,9 @@ export default defineComponent({
   height: calc(100vh - 64px); /* header: 64px */
 }
 
-.shift-header {
-  background: #fafafa;
-}
-
 .shift-content {
   flex: 1;
   overflow: auto;
-  background: var(--v-primary-base);
 }
 
 .shift-subheader {
@@ -204,17 +247,11 @@ export default defineComponent({
 .shift-lessons-item {
   margin: 0;
   padding: 0;
-  border: 1px solid #e5e5e5;
 }
 
 .shift-lessons-detail {
   margin: 0;
   padding: 0;
-}
-
-.shift-lessons-detail .v-card {
-  box-shadow: 0;
-  border: 1px solid #f5f5f5;
 }
 
 .shift-lessons-room {

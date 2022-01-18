@@ -28,6 +28,7 @@ export default {
   },
   post: {
     ...ShiftStore.createShifts,
+    ...SubmissionStore.submitTeacherShifts,
     ...UserStore.createTeacher,
   },
   patch: {

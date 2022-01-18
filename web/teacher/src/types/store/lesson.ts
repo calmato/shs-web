@@ -1,5 +1,5 @@
 import { BaseSubject } from '../api/v1'
-import { SchoolType } from '.'
+import { SchoolType } from './common'
 
 export interface Subject extends BaseSubject {
   schoolType: SchoolType
@@ -7,11 +7,14 @@ export interface Subject extends BaseSubject {
 
 export interface Lesson {
   id: number
+  shiftId: number
+  subjectId: number
+  room: number
   teacherId: string
   studentId: string
-  subjectId: number
   startAt: string
   endAt: string
+  notes: string
   createdAt: string
   updatedAt: string
 }

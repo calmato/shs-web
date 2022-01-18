@@ -141,5 +141,36 @@ describe('store/submission', () => {
         })
       })
     })
+
+    describe('submitTeacherShifts', () => {
+      describe('success', () => {
+        beforeEach(() => {
+          setSafetyMode(true)
+        })
+
+        it('return resolve', async () => {
+          await expect(
+            SubmissionStore.submitTeacherShifts({ teacherId: 'teacherid', shiftId: 1, lessonIds: [1, 2] })
+          ).resolves.toBeUndefined()
+        })
+      })
+
+      describe('failure', () => {
+        beforeEach(() => {
+          setSafetyMode(false)
+        })
+
+        it('return reject', async () => {
+          const err = new ApiError(400, 'api error', {
+            status: 400,
+            message: 'api error',
+            details: 'some error',
+          } as ErrorResponse)
+          await expect(
+            SubmissionStore.submitTeacherShifts({ teacherId: 'teacherid', shiftId: 1, lessonIds: [1, 2] })
+          ).rejects.toThrow(err)
+        })
+      })
+    })
   })
 })

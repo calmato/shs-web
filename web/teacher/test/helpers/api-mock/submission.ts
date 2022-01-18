@@ -59,3 +59,7 @@ export const listTeacherShifts: { [key: string]: TeacherShiftsResponse } = {
     ],
   },
 }
+
+export const submitTeacherShifts: { [key: string]: {} } = {
+  '/v1/teachers/teacherid/submissions/1': {},
+}

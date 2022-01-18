@@ -1,25 +1,39 @@
 <template>
-  <the-submission-detail :summary="summary" :shifts="shifts" />
+  <the-submission-detail
+    :loading="loading"
+    :summary="summary"
+    :shifts="shifts"
+    :enabled-lesson-ids="enabledLessonIds"
+    @click:change-items="handleClickChangeEnabled"
+    @click:submit="handleClickSubmit"
+  />
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, SetupContext, useAsync } from '@nuxtjs/composition-api'
+import { computed, defineComponent, ref, useAsync, useRoute, useRouter, useStore } from '@nuxtjs/composition-api'
 import TheSubmissionDetail from '~/components/templates/TheSubmissionDetail.vue'
 import { CommonStore, SubmissionStore } from '~/store'
-import { TeacherShiftDetail, TeacherShiftSummary } from '~/types/store'
+import { TeacherShiftDetailLesson } from '~/types/api/v1'
+import { PromiseState, TeacherShiftDetail, TeacherShiftSummary } from '~/types/store'
 
 export default defineComponent({
   components: {
     TheSubmissionDetail,
   },
 
-  setup(_, { root }: SetupContext) {
-    const route = root.$route
-    const store = root.$store
+  setup() {
+    const router = useRouter()
+    const route = useRoute()
+    const store = useStore()
+
+    const enabledLessonIds = ref<number[]>([])
 
     const teacherId = computed<string>(() => store.getters['auth/getUid'])
     const summary = computed<TeacherShiftSummary>(() => store.getters['submission/getSummary'])
     const shifts = computed<TeacherShiftDetail[]>(() => store.getters['submission/getShifts'])
+    const loading = computed<boolean>(() => {
+      return store.getters['common/getPromiseState'] === PromiseState.LOADING
+    })
 
     useAsync(async () => {
       await listTeacherShifts()
@@ -28,9 +42,18 @@ export default defineComponent({
     async function listTeacherShifts(): Promise<void> {
       CommonStore.startConnection()
 
-      const shiftId = Number(route.params.id)
+      const shiftId = Number(route.value.params.id)
 
       await SubmissionStore.listTeacherShifts({ teacherId: teacherId.value, shiftId })
+        .then(() => {
+          shifts.value.forEach((shift: TeacherShiftDetail): void => {
+            shift.lessons.forEach((lesson: TeacherShiftDetailLesson): void => {
+              if (lesson.enabled) {
+                enabledLessonIds.value.push(lesson.id)
+              }
+            })
+          })
+        })
         .catch((err: Error) => {
           console.log('failed to list teacher shifts', err)
         })
@@ -39,9 +62,44 @@ export default defineComponent({
         })
     }
 
+    const handleClickChangeEnabled = (lessonId: number): void => {
+      const index: number = enabledLessonIds.value.indexOf(lessonId)
+      if (index === -1) {
+        enabledLessonIds.value.push(lessonId)
+      } else {
+        enabledLessonIds.value.splice(index, 1)
+      }
+    }
+
+    const handleClickSubmit = async (): Promise<void> => {
+      CommonStore.startConnection()
+
+      const shiftId = Number(route.value.params.id)
+
+      await SubmissionStore.submitTeacherShifts({
+        teacherId: teacherId.value,
+        shiftId,
+        lessonIds: enabledLessonIds.value,
+      })
+        .then(() => {
+          router.push('/submissions')
+          CommonStore.showSnackbar({ color: 'success', message: 'シフト希望を提出しました' })
+        })
+        .catch((err: Error) => {
+          console.log('failed to submit teacher shifts', err)
+        })
+        .finally(() => {
+          CommonStore.endConnection()
+        })
+    }
+
     return {
+      loading,
+      enabledLessonIds,
       summary,
       shifts,
+      handleClickChangeEnabled,
+      handleClickSubmit,
     }
   },
 })

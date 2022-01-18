@@ -1,4 +1,5 @@
-import { Teacher } from './user'
+import { Lesson } from './lesson'
+import { Student, Teacher } from './user'
 
 /**
  * ---------------------------
@@ -50,6 +51,12 @@ export interface TeacherShift {
   lessonTotal: number
 }
 
+export interface StudentShift {
+  student: Student
+  lessonTotal: number
+  suggestedClassesTotal: number
+}
+
 export interface ShiftSummariesResponse {
   summaries: ShiftSummary[]
 }
@@ -57,5 +64,8 @@ export interface ShiftSummariesResponse {
 export interface ShiftDetailsResponse {
   summary: ShiftSummary
   shifts: ShiftDetail[]
+  rooms: number
   teachers: TeacherShift[]
+  students: StudentShift[]
+  lessons: Lesson[]
 }
