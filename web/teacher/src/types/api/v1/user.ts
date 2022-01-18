@@ -28,6 +28,19 @@ export interface UpdateTeacherRoleRequest {
  * Response
  * ---------------------------
  */
+export interface Student {
+  id: string
+  lastName: string
+  firstName: string
+  lastNameKana: string
+  firstNameKana: string
+  mail: string
+  schoolType: 1 | 2 | 3
+  grade: number
+  createdAt: string
+  updatedAt: string
+}
+
 export interface Teacher {
   id: string
   lastName: string

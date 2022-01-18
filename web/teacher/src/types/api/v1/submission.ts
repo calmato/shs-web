@@ -1,5 +1,14 @@
 /**
  * ---------------------------
+ * Request
+ * ---------------------------
+ */
+export interface SubmitTeacherShiftRequest {
+  shiftIds: number[]
+}
+
+/**
+ * ---------------------------
  * Response
  * ---------------------------
  */

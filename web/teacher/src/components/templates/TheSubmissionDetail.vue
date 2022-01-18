@@ -4,17 +4,23 @@
     <v-divider />
     <v-container class="d-flex">
       <v-row>
-        <v-col cols="3">授業日</v-col>
-        <v-col cols="9">授業希望</v-col>
+        <v-col cols="4">授業日</v-col>
+        <v-col cols="8">授業希望</v-col>
       </v-row>
     </v-container>
     <v-divider />
-    <the-submission-list :shifts="shifts" />
+    <the-submission-list
+      :loading="loading"
+      :shifts="shifts"
+      :selected-items="enabledLessonIds"
+      @click:change-items="onChangeItems"
+      @click:submit="onClickSave"
+    />
   </v-container>
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from '@nuxtjs/composition-api'
+import { defineComponent, PropType, SetupContext } from '@nuxtjs/composition-api'
 import TheSubmissionList from '../organisms/TheSubmissionList.vue'
 import { TeacherShiftDetail, TeacherShiftSummary } from '~/types/store'
 
@@ -24,6 +30,10 @@ export default defineComponent({
   },
 
   props: {
+    loading: {
+      type: Boolean,
+      default: false,
+    },
     summary: {
       type: Object as PropType<TeacherShiftSummary>,
       default: () => {},
@@ -32,6 +42,25 @@ export default defineComponent({
       type: Array as PropType<TeacherShiftDetail[]>,
       default: () => [],
     },
+    enabledLessonIds: {
+      type: Array as PropType<number[]>,
+      default: () => [],
+    },
+  },
+
+  setup(_, { emit }: SetupContext) {
+    const onChangeItems = (lessonId: number): void => {
+      emit('click:change-items', lessonId)
+    }
+
+    const onClickSave = (): void => {
+      emit('click:submit')
+    }
+
+    return {
+      onChangeItems,
+      onClickSave,
+    }
   },
 })
 </script>

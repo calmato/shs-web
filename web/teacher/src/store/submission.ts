@@ -6,6 +6,7 @@ import {
   TeacherShiftsResponse,
   TeacherShiftDetail as ShiftDetailResponse,
   TeacherShiftDetailLesson as LessonResponse,
+  SubmitTeacherShiftRequest,
 } from '~/types/api/v1'
 import {
   ShiftStatus,
@@ -110,5 +111,25 @@ export default class SubmissionModule extends VuexModule {
         const res: ErrorResponse = { ...err.response?.data }
         throw new ApiError(res.status, res.message, res)
       })
+  }
+
+  @Action({ rawError: true })
+  public async submitTeacherShifts({
+    teacherId,
+    shiftId,
+    lessonIds,
+  }: {
+    teacherId: string
+    shiftId: number
+    lessonIds: number[]
+  }): Promise<void> {
+    const req: SubmitTeacherShiftRequest = {
+      shiftIds: lessonIds,
+    }
+
+    await $axios.$post(`/v1/teachers/${teacherId}/submissions/${shiftId}`, req).catch((err: AxiosError) => {
+      const res: ErrorResponse = { ...err.response?.data }
+      throw new ApiError(res.status, res.message, res)
+    })
   }
 }
