@@ -39,12 +39,12 @@ export default defineComponent({
     }
 
     const getSubjectName = (detail: LessonDetail | undefined): string => {
-      return detail?.subject.name || ''
+      return detail?.subject?.name || ''
     }
 
     const getUserName = (detail: LessonDetail | undefined): string => {
-      const teacher: string = detail?.teacher.name || ''
-      const student: string = detail?.student.name || ''
+      const teacher: string = detail?.teacher?.name || ''
+      const student: string = detail?.student?.name || ''
       return `${student} => ${teacher}`
     }
 

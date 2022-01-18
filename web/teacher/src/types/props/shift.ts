@@ -1,8 +1,8 @@
-import { Lesson, Subject, Teacher, Student } from '~/types/store'
+import { Lesson, Subject, StudentShift, TeacherShift } from '~/types/store'
 
 export interface LessonDetail {
   lesson: Lesson
-  teacher?: Teacher
-  student?: Student
+  teacher?: TeacherShift
+  student?: StudentShift
   subject?: Subject
 }
