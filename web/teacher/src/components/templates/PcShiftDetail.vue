@@ -86,7 +86,7 @@
 import { defineComponent, PropType } from '@nuxtjs/composition-api'
 import dayjs from '~/plugins/dayjs'
 import { ShiftDetail, ShiftDetailLesson, ShiftSummary, StudentShift, TeacherShift } from '~/types/store'
-import { LessonDetail } from '~/types/props'
+import { LessonDetail } from '~/types/props/shift'
 import TheShiftLessonCard from '~/components/organisms/TheShiftLessonCard.vue'
 
 export default defineComponent({

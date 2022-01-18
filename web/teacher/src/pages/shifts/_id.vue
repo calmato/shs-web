@@ -14,7 +14,7 @@ import { computed, defineComponent, useAsync, useRoute, useStore } from '@nuxtjs
 import PcShiftDetail from '~/components/templates/PcShiftDetail.vue'
 import { CommonStore, ShiftStore } from '~/store'
 import { Lesson, ShiftDetail, ShiftSummary, StudentShift, Subject, TeacherShift } from '~/types/store'
-import { LessonDetail } from '~/types/props'
+import { LessonDetail } from '~/types/props/shift'
 
 export default defineComponent({
   components: {

@@ -19,7 +19,7 @@
 import { defineComponent, PropType } from '@nuxtjs/composition-api'
 import dayjs from '~/plugins/dayjs'
 import { ShiftDetailLesson } from '~/types/api/v1'
-import { LessonDetail } from '~/types/props'
+import { LessonDetail } from '~/types/props/shift'
 
 export default defineComponent({
   props: {
