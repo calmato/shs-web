@@ -1,16 +1,30 @@
 <template>
-  <pc-shift-detail
-    :summary="summary"
-    :details="details"
-    :rooms="rooms"
-    :teachers="teachers"
-    :students="students"
-    :lessons="getLessonDetails()"
-  />
+  <div>
+    <!-- PCレイアウト -->
+    <pc-shift-detail
+      class="hidden-sm-and-down"
+      :summary="summary"
+      :details="details"
+      :rooms="rooms"
+      :teachers="teachers"
+      :students="students"
+      :lessons="getLessonDetails()"
+      @click:show-teacher-submissions="handleClickShowTeacherSubmissions"
+      @click:show-teacher-lessons="handleClickShowTeacherLessons"
+      @click:show-student-submissions="handleClickShowStudentSubmissions"
+      @click:show-student-lessons="handleClickShowStudentLessons"
+      @click:decided-lesson="handleClickDecidedLesson"
+      @click:new-lesson="handleClickNewLesson"
+      @click:edit-lesson="handleClickEditLesson"
+    />
+    <!-- スマホレイアウト -->
+    <mb-shift-detail class="hidden-md-and-up" @click="handleClickTop" />
+  </div>
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, useAsync, useRoute, useStore } from '@nuxtjs/composition-api'
+import { computed, defineComponent, useAsync, useRoute, useRouter, useStore } from '@nuxtjs/composition-api'
+import MbShiftDetail from '~/components/templates/MbShiftDetail.vue'
 import PcShiftDetail from '~/components/templates/PcShiftDetail.vue'
 import { CommonStore, ShiftStore } from '~/store'
 import { Lesson, ShiftDetail, ShiftSummary, StudentShift, Subject, TeacherShift } from '~/types/store'
@@ -18,10 +32,12 @@ import { LessonDetail } from '~/types/props/shift'
 
 export default defineComponent({
   components: {
+    MbShiftDetail,
     PcShiftDetail,
   },
 
   setup() {
+    const router = useRouter()
     const route = useRoute()
     const store = useStore()
 
@@ -72,6 +88,38 @@ export default defineComponent({
       return details
     }
 
+    const handleClickTop = (): void => {
+      router.push('/')
+    }
+
+    const handleClickShowTeacherSubmissions = (teacherId: string): void => {
+      console.log('debug', 'show teacher submissions', teacherId)
+    }
+
+    const handleClickShowTeacherLessons = (teacherId: string): void => {
+      console.log('debug', 'show teacher lessons', teacherId)
+    }
+
+    const handleClickShowStudentSubmissions = (studentId: string): void => {
+      console.log('debug', 'show student submissions', studentId)
+    }
+
+    const handleClickShowStudentLessons = (studentId: string): void => {
+      console.log('debug', 'show student lessons', studentId)
+    }
+
+    const handleClickDecidedLesson = (): void => {
+      console.log('debug', 'decided lesson')
+    }
+
+    const handleClickNewLesson = ({ summaryId }: { summaryId: number }): void => {
+      console.log('debug', 'new lessons', { summaryId })
+    }
+
+    const handleClickEditLesson = ({ summaryId, lessonId }: { summaryId: number; lessonId: number }): void => {
+      console.log('debug', 'edit lessons', { summaryId, lessonId })
+    }
+
     return {
       summary,
       details,
@@ -80,6 +128,14 @@ export default defineComponent({
       students,
       lessons,
       getLessonDetails,
+      handleClickTop,
+      handleClickShowTeacherSubmissions,
+      handleClickShowTeacherLessons,
+      handleClickShowStudentSubmissions,
+      handleClickShowStudentLessons,
+      handleClickDecidedLesson,
+      handleClickNewLesson,
+      handleClickEditLesson,
     }
   },
 })

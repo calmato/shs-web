@@ -6,14 +6,24 @@
         <table>
           <tr>
             <th class="fixed">講師名</th>
-            <td v-for="teacher in teachers" :key="teacher.id">
+            <td
+              v-for="teacher in teachers"
+              :key="teacher.id"
+              class="text-decoration-underline"
+              @click="onClickTeacherSubmissions(teacher)"
+            >
               {{ teacher.name }}
             </td>
-            <th class="fixed-right teal--text text--lighten-1">合計</th>
+            <th class="fixed-right info--text text--lighten-1 text-decoration-underline">合計</th>
           </tr>
           <tr>
             <th class="fixed">担当授業数</th>
-            <td v-for="teacher in teachers" :key="teacher.id">
+            <td
+              v-for="teacher in teachers"
+              :key="teacher.id"
+              class="text-decoration-underline"
+              @click="onClickTeacherLessons(teacher)"
+            >
               {{ teacher.lessonTotal }}
             </td>
             <td class="fixed-right">{{ getLessonTotal() }}</td>
@@ -25,21 +35,28 @@
         <table>
           <tr>
             <th class="fixed">生徒名</th>
-            <td v-for="student in students" :key="student.id">
+            <td
+              v-for="student in students"
+              :key="student.id"
+              class="text-decoration-underline"
+              @click="onClickStudentSubmissions(student)"
+            >
               {{ student.name }}
             </td>
-            <th class="fixed-right orange--text text--accent-4">残り</th>
+            <th class="fixed-right secondary--text text--accent-4">残り</th>
           </tr>
           <tr>
             <th class="fixed">残り授業数</th>
             <td
               v-for="student in students"
               :key="student.id"
-              :class="[student.suggestedClassesTotal > 0 ? 'orange--text text--accent-4' : '']"
+              :class="[student.suggestedClassesTotal > 0 ? 'secondary--text text--accent-4' : '']"
+              class="text-decoration-underline"
+              @click="onClickStudentLessons(student)"
             >
               {{ student.suggestedClassesTotal }}
             </td>
-            <td class="fixed-right" :class="[getRemainingLessonTotal() > 0 ? 'orange--text text--accent-4' : '']">
+            <td class="fixed-right" :class="[getRemainingLessonTotal() > 0 ? 'secondary--text text--accent-4' : '']">
               {{ getRemainingLessonTotal() }}
             </td>
           </tr>
@@ -52,7 +69,7 @@
         </v-col>
         <v-spacer />
         <v-col cols="auto">
-          <v-btn color="primary">授業を確定する</v-btn>
+          <v-btn color="primary" @click="onClickDecidedLesson">授業を確定する</v-btn>
         </v-col>
       </v-row>
     </section>
@@ -72,7 +89,12 @@
                 <v-card-text class="text-subtitle-2">ブース{{ num }}</v-card-text>
               </v-card>
               <v-card v-for="lesson in shift.lessons" :key="lesson.id" tile outlined class="shift-lessons-schedule">
-                <the-shift-lesson-card :summary="lesson" :detail="getLesson(lesson, num)" />
+                <the-shift-lesson-card
+                  :summary="lesson"
+                  :detail="getLesson(lesson, num)"
+                  @click:new="onClickNewLesson"
+                  @click:edit="onClickEditLesson"
+                />
               </v-card>
             </div>
           </v-col>
@@ -83,7 +105,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from '@nuxtjs/composition-api'
+import { defineComponent, PropType, SetupContext } from '@nuxtjs/composition-api'
 import dayjs from '~/plugins/dayjs'
 import { ShiftDetail, ShiftDetailLesson, ShiftSummary, StudentShift, TeacherShift } from '~/types/store'
 import { LessonDetail } from '~/types/props/shift'
@@ -121,7 +143,7 @@ export default defineComponent({
     },
   },
 
-  setup(props) {
+  setup(props, { emit }: SetupContext) {
     const getTitle = (): string => {
       return `授業登録 ${props.summary?.year}年${props.summary?.month}月`
     }
@@ -156,6 +178,34 @@ export default defineComponent({
       return total
     }
 
+    const onClickTeacherSubmissions = (teacher: TeacherShift): void => {
+      emit('click:show-teacher-submissions', teacher.id)
+    }
+
+    const onClickTeacherLessons = (teacher: TeacherShift): void => {
+      emit('click:show-teacher-lessons', teacher.id)
+    }
+
+    const onClickStudentSubmissions = (student: StudentShift): void => {
+      emit('click:show-student-submissions', student.id)
+    }
+
+    const onClickStudentLessons = (student: StudentShift): void => {
+      emit('click:show-student-lessons', student.id)
+    }
+
+    const onClickDecidedLesson = (): void => {
+      emit('click:decided-lesson')
+    }
+
+    const onClickNewLesson = ({ summaryId }: { summaryId: number }): void => {
+      emit('click:new-lesson', { summaryId })
+    }
+
+    const onClickEditLesson = ({ summaryId, lessonId }: { summaryId: number; lessonId: number }): void => {
+      emit('click:edit-lesson', { summaryId, lessonId })
+    }
+
     return {
       getTitle,
       getDay,
@@ -163,6 +213,13 @@ export default defineComponent({
       getLesson,
       getLessonTotal,
       getRemainingLessonTotal,
+      onClickTeacherSubmissions,
+      onClickTeacherLessons,
+      onClickStudentSubmissions,
+      onClickStudentLessons,
+      onClickDecidedLesson,
+      onClickNewLesson,
+      onClickEditLesson,
     }
   },
 })
