@@ -16,6 +16,10 @@ export interface ITeacherNewParams {
   role: number
 }
 
+export interface ITeacherUpdateMailParams {
+  updateMail: string
+}
+
 export interface ITeacherEditSubjectParams {
   schoolType: 1 | 2 | 3
   subjectIds: number[]
@@ -50,6 +54,10 @@ export interface ITeacherEditRoleOptions {
   role: ISelect
 }
 
+export interface ITeacherUpdateMailOptions {
+  mail: ISelect
+}
+
 /**
  * ---------------------------
  * interface - form
@@ -68,6 +76,11 @@ export interface TeacherEditSubjectForm {
 export interface TeacherEditRoleForm {
   params: ITeacherEditRoleParams
   options: ITeacherEditRoleOptions
+}
+
+export interface TeacherUpdateMailForm {
+  params: ITeacherEditSubjectParams
+  options: ITeacherUpdateMailOptions
 }
 
 /**
