@@ -10,3 +10,8 @@ type TeacherShiftsResponse struct {
 	Summary *entity.TeacherSubmission  `json:"summary"` // シフト募集概要
 	Shifts  entity.TeacherShiftDetails `json:"shifts"`  // 募集シフト一覧
 }
+
+type StudentShiftsResponse struct {
+	Summary *entity.StudentSubmission  `json:"summary"` // 授業希望募集概要
+	Shifts  entity.StudentShiftDetails `json:"shifts"`  // 募集授業一覧
+}
