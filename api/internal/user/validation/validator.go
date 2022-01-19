@@ -24,6 +24,7 @@ type RequestValidation interface {
 	ListStudents(req *user.ListStudentsRequest) error
 	GetStudent(req *user.GetStudentRequest) error
 	CreateStudent(req *user.CreateStudentRequest) error
+	DeleteStudent(req *user.DeleteStudentRequest) error
 }
 
 type requestValidation struct{}

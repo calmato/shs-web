@@ -37,3 +37,12 @@ func (v *requestValidation) CreateStudent(req *user.CreateStudentRequest) error 
 
 	return nil
 }
+
+func (v *requestValidation) DeleteStudent(req *user.DeleteStudentRequest) error {
+	if err := req.Validate(); err != nil {
+		validete := err.(user.DeleteStudentRequestValidationError)
+		return validationError(validete.Error())
+	}
+
+	return nil
+}
