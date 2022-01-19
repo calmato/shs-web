@@ -16,7 +16,7 @@
           </v-col>
           <v-col cols="12">
             <h4>シフト提出可能期間</h4>
-            <div class="d-flex">
+            <div class="d-flex align-center">
               <the-date-picker
                 :label="form.options.openDate.label"
                 :rules="form.options.openDate.rules"
@@ -34,16 +34,17 @@
             <h4>
               <span class="pr-4">休日の設定</span>
               <v-btn color="primary" fab x-small @click="addClosedDate"><v-icon>mdi-plus</v-icon></v-btn>
-              <div v-for="(_, index) in form.params.closedDates" :key="index" class="d-flex flex-column">
-                <the-date-picker
-                  :label="form.options.closedDates.label"
-                  :rules="form.options.closedDates.rules"
-                  :value.sync="form.params.closedDates[index]"
-                >
-                  <v-btn color="error" fab x-small @click="removeClosedDate(index)"><v-icon>mdi-minus</v-icon></v-btn>
-                </the-date-picker>
-              </div>
             </h4>
+            <the-date-picker
+              v-for="(_, index) in form.params.closedDates"
+              :key="index"
+              :label="form.options.closedDates.label"
+              :rules="form.options.closedDates.rules"
+              :value.sync="form.params.closedDates[index]"
+              class="d-flex flex-column"
+            >
+              <v-btn color="error" fab x-small @click="removeClosedDate(index)"><v-icon>mdi-minus</v-icon></v-btn>
+            </the-date-picker>
           </v-col>
         </v-row>
       </the-form-group>

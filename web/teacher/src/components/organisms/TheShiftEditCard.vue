@@ -10,7 +10,7 @@
         <v-row v-else class="py-8">
           <v-col cols="12">
             <h4>シフト提出可能期間</h4>
-            <div class="d-flex">
+            <div class="d-flex align-center">
               <the-date-picker
                 :label="form.options.openDate.label"
                 :rules="form.options.openDate.rules"
