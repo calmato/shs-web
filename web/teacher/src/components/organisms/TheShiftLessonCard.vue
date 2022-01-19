@@ -2,13 +2,13 @@
   <v-card-text class="d-flex flex-column align-stretch">
     <h2>{{ getTime(summary.startTime) }} ~ {{ getTime(summary.endTime) }}</h2>
     <div class="d-flex align-center justify-center mt-2">
-      <a v-if="detail" class="d-block">
+      <a v-if="detail" class="d-block" @click="onClickEdit">
         <div class="info--text text--darken-2 text-subtitle-2 text-decoration-underline">
           {{ getSubjectName(detail) }}
         </div>
         <div class="info--text text--darken-2 text-subtitle-2 text-decoration-underline">{{ getUserName(detail) }}</div>
       </a>
-      <v-btn v-else icon color="primary" class="my-1">
+      <v-btn v-else icon color="primary" class="my-1" @click="onClickNew">
         <v-icon>mdi-pencil</v-icon>
       </v-btn>
     </div>
@@ -16,7 +16,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from '@nuxtjs/composition-api'
+import { defineComponent, PropType, SetupContext } from '@nuxtjs/composition-api'
 import dayjs from '~/plugins/dayjs'
 import { ShiftDetailLesson } from '~/types/api/v1'
 import { LessonDetail } from '~/types/props/shift'
@@ -33,7 +33,7 @@ export default defineComponent({
     },
   },
 
-  setup() {
+  setup(props, { emit }: SetupContext) {
     const getTime = (time: string): string => {
       return dayjs(`2000-01-01 ${time}`).tz().format('HH:mm')
     }
@@ -48,10 +48,20 @@ export default defineComponent({
       return `${student} => ${teacher}`
     }
 
+    const onClickNew = (): void => {
+      emit('click:new', { summaryId: props.summary.id })
+    }
+
+    const onClickEdit = (): void => {
+      emit('click:edit', { summaryId: props.summary.id, lessonId: props.detail?.lesson.id || 0 })
+    }
+
     return {
       getTime,
       getSubjectName,
       getUserName,
+      onClickNew,
+      onClickEdit,
     }
   },
 })
