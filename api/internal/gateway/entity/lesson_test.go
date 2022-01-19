@@ -107,3 +107,115 @@ func TestLessons(t *testing.T) {
 		})
 	}
 }
+
+func TestLessons_GroupByTeacherID(t *testing.T) {
+	t.Parallel()
+	now := jst.Now()
+	tests := []struct {
+		name    string
+		lessons Lessons
+		expect  map[string]Lessons
+	}{
+		{
+			name: "success",
+			lessons: Lessons{
+				{
+					Lesson: &lesson.Lesson{
+						Id:             1,
+						ShiftSummaryId: 1,
+						ShiftId:        1,
+						SubjectId:      1,
+						RoomId:         1,
+						TeacherId:      "teacherid",
+						StudentId:      "studentid",
+						Notes:          "感想",
+						CreatedAt:      now.Unix(),
+						UpdatedAt:      now.Unix(),
+					},
+				},
+			},
+			expect: map[string]Lessons{
+				"teacherid": {
+					{
+						Lesson: &lesson.Lesson{
+							Id:             1,
+							ShiftSummaryId: 1,
+							ShiftId:        1,
+							SubjectId:      1,
+							RoomId:         1,
+							TeacherId:      "teacherid",
+							StudentId:      "studentid",
+							Notes:          "感想",
+							CreatedAt:      now.Unix(),
+							UpdatedAt:      now.Unix(),
+						},
+					},
+				},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tt.expect, tt.lessons.GroupByTeacherID())
+		})
+	}
+}
+
+func TestLessons_GroupByStudentID(t *testing.T) {
+	t.Parallel()
+	now := jst.Now()
+	tests := []struct {
+		name    string
+		lessons Lessons
+		expect  map[string]Lessons
+	}{
+		{
+			name: "success",
+			lessons: Lessons{
+				{
+					Lesson: &lesson.Lesson{
+						Id:             1,
+						ShiftSummaryId: 1,
+						ShiftId:        1,
+						SubjectId:      1,
+						RoomId:         1,
+						TeacherId:      "teacherid",
+						StudentId:      "studentid",
+						Notes:          "感想",
+						CreatedAt:      now.Unix(),
+						UpdatedAt:      now.Unix(),
+					},
+				},
+			},
+			expect: map[string]Lessons{
+				"studentid": {
+					{
+						Lesson: &lesson.Lesson{
+							Id:             1,
+							ShiftSummaryId: 1,
+							ShiftId:        1,
+							SubjectId:      1,
+							RoomId:         1,
+							TeacherId:      "teacherid",
+							StudentId:      "studentid",
+							Notes:          "感想",
+							CreatedAt:      now.Unix(),
+							UpdatedAt:      now.Unix(),
+						},
+					},
+				},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tt.expect, tt.lessons.GroupByStudentID())
+		})
+	}
+}
