@@ -62,6 +62,20 @@ func (mr *MockRequestValidationMockRecorder) CreateTeacher(req interface{}) *gom
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateTeacher", reflect.TypeOf((*MockRequestValidation)(nil).CreateTeacher), req)
 }
 
+// DeleteStudent mocks base method.
+func (m *MockRequestValidation) DeleteStudent(req *user.DeleteStudentRequest) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteStudent", req)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeleteStudent indicates an expected call of DeleteStudent.
+func (mr *MockRequestValidationMockRecorder) DeleteStudent(req interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteStudent", reflect.TypeOf((*MockRequestValidation)(nil).DeleteStudent), req)
+}
+
 // DeleteTeacher mocks base method.
 func (m *MockRequestValidation) DeleteTeacher(req *user.DeleteTeacherRequest) error {
 	m.ctrl.T.Helper()
