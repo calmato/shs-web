@@ -33,22 +33,27 @@ func NewTeacherShift(shift *entity.Shift, enabled bool) *TeacherShift {
 	}
 }
 
-func NewTeacherShifts(shifts entity.Shifts, teacherShiftMap map[int64]*entity.TeacherShift) TeacherShifts {
-	ss := make(TeacherShifts, len(shifts))
-	for i, shift := range shifts {
+func NewTeacherShifts(
+	shifts entity.Shifts, teacherShiftMap map[int64]*entity.TeacherShift, onlyEnabled bool,
+) TeacherShifts {
+	ss := make(TeacherShifts, 0, len(shifts))
+	for _, shift := range shifts {
 		_, enabled := teacherShiftMap[shift.Id]
-		ss[i] = NewTeacherShift(shift, enabled)
+		if onlyEnabled && !enabled {
+			continue
+		}
+		ss = append(ss, NewTeacherShift(shift, enabled))
 	}
 	return ss
 }
 
-func NewTeacherShiftDetail(
+func NewTeacherShiftDetailForMonth(
 	shifts entity.Shifts, date time.Time, isClosed bool, teacherShiftMap map[int64]*entity.TeacherShift,
 ) *TeacherShiftDetail {
 	return &TeacherShiftDetail{
 		Date:     jst.FormatYYYYMMDD(date),
 		IsClosed: isClosed,
-		Lessons:  NewTeacherShifts(shifts, teacherShiftMap),
+		Lessons:  NewTeacherShifts(shifts, teacherShiftMap, false),
 	}
 }
 
@@ -61,7 +66,42 @@ func NewTeacherShiftDetailsForMonth(
 	details := make(TeacherShiftDetails, 0, maxDays)
 	for date := firstDate; date.Before(finalDate); date = date.AddDate(0, 0, 1) {
 		shifts, isOpened := shiftsMap[date] // 取得できない == 休校
-		detail := NewTeacherShiftDetail(shifts, date, !isOpened, teacherShiftMap)
+		detail := NewTeacherShiftDetailForMonth(shifts, date, !isOpened, teacherShiftMap)
+		details = append(details, detail)
+	}
+	return details
+}
+
+func NewEnabledTeacherShiftDetail(
+	shifts entity.Shifts, date time.Time, teacherShiftMap map[int64]*entity.TeacherShift,
+) *TeacherShiftDetail {
+	lessons := NewTeacherShifts(shifts, teacherShiftMap, true)
+	if len(lessons) == 0 {
+		return nil
+	}
+	return &TeacherShiftDetail{
+		Date:     jst.FormatYYYYMMDD(date),
+		IsClosed: false,
+		Lessons:  lessons,
+	}
+}
+
+func NewEnabledTeacherShiftDetails(
+	summary *ShiftSummary, shiftsMap map[time.Time]entity.Shifts, teacherShiftMap map[int64]*entity.TeacherShift,
+) TeacherShiftDetails {
+	const maxDays = 31
+	firstDate, finalDate := newFirstAndFinalOfMonth(summary)
+
+	details := make(TeacherShiftDetails, 0, maxDays)
+	for date := firstDate; date.Before(finalDate); date = date.AddDate(0, 0, 1) {
+		shifts, isOpened := shiftsMap[date] // 取得できない == 休校
+		if !isOpened {
+			continue
+		}
+		detail := NewEnabledTeacherShiftDetail(shifts, date, teacherShiftMap)
+		if detail == nil {
+			continue
+		}
 		details = append(details, detail)
 	}
 	return details

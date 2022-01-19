@@ -472,6 +472,251 @@ func TestListTeacherShifts(t *testing.T) {
 	}
 }
 
+func TestListEnabledTeacherShifts(t *testing.T) {
+	t.Parallel()
+	now := jst.Date(2022, 1, 12, 0, 0, 0, 0)
+	summary := &lesson.ShiftSummary{
+		Id:        1,
+		YearMonth: 202202,
+		Status:    lesson.ShiftStatus_SHIFT_STATUS_ACCEPTING,
+		OpenAt:    jst.Date(2022, 1, 1, 0, 0, 0, 0).Unix(),
+		EndAt:     jst.Date(2022, 1, 15, 0, 0, 0, 0).Unix(),
+		CreatedAt: now.Unix(),
+		UpdatedAt: now.Unix(),
+	}
+	shifts := []*lesson.Shift{
+		{
+			Id:             1,
+			ShiftSummaryId: 1,
+			Date:           "20220201",
+			StartTime:      "1700",
+			EndTime:        "1830",
+			CreatedAt:      now.Unix(),
+			UpdatedAt:      now.Unix(),
+		},
+		{
+			Id:             2,
+			ShiftSummaryId: 1,
+			Date:           "20220201",
+			StartTime:      "1830",
+			EndTime:        "2000",
+			CreatedAt:      now.Unix(),
+			UpdatedAt:      now.Unix(),
+		},
+		{
+			Id:             3,
+			ShiftSummaryId: 1,
+			Date:           "20220203",
+			StartTime:      "1700",
+			EndTime:        "1830",
+			CreatedAt:      now.Unix(),
+			UpdatedAt:      now.Unix(),
+		},
+	}
+	submission := &lesson.TeacherSubmission{
+		TeacherId:      idmock,
+		ShiftSummaryId: 1,
+		Decided:        true,
+		CreatedAt:      now.Unix(),
+		UpdatedAt:      now.Unix(),
+	}
+	teacherShifts := []*lesson.TeacherShift{
+		{
+			TeacherId:      idmock,
+			ShiftId:        1,
+			ShiftSummaryId: 1,
+			CreatedAt:      now.Unix(),
+			UpdatedAt:      now.Unix(),
+		},
+		{
+			TeacherId:      idmock,
+			ShiftId:        3,
+			ShiftSummaryId: 1,
+			CreatedAt:      now.Unix(),
+			UpdatedAt:      now.Unix(),
+		},
+	}
+
+	tests := []struct {
+		name      string
+		setup     func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller)
+		teacherID string
+		summaryID string
+		expect    *testResponse
+	}{
+		{
+			name: "success",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
+				summaryIn := &lesson.GetShiftSummaryRequest{Id: 1}
+				summaryOut := &lesson.GetShiftSummaryResponse{Summary: summary}
+				shiftsIn := &lesson.ListShiftsRequest{ShiftSummaryId: 1}
+				shiftsOut := &lesson.ListShiftsResponse{Shifts: shifts}
+				teacherIn := &lesson.GetTeacherShiftsRequest{
+					TeacherId:      idmock,
+					ShiftSummaryId: 1,
+				}
+				teacherOut := &lesson.GetTeacherShiftsResponse{
+					Submission: submission,
+					Shifts:     teacherShifts,
+				}
+				mocks.lesson.EXPECT().GetShiftSummary(gomock.Any(), summaryIn).Return(summaryOut, nil)
+				mocks.lesson.EXPECT().ListShifts(gomock.Any(), shiftsIn).Return(shiftsOut, nil)
+				mocks.lesson.EXPECT().GetTeacherShifts(gomock.Any(), teacherIn).Return(teacherOut, nil)
+			},
+			teacherID: idmock,
+			summaryID: "1",
+			expect: &testResponse{
+				code: http.StatusOK,
+				body: &response.TeacherShiftsResponse{
+					Summary: &entity.TeacherSubmission{
+						ShiftSummaryID:   1,
+						Year:             2022,
+						Month:            2,
+						ShiftStatus:      entity.ShiftStatusAccepting,
+						SubmissionStatus: entity.TeacherSubmissionStatusSubmitted,
+						OpenAt:           jst.Date(2022, 1, 1, 0, 0, 0, 0),
+						EndAt:            jst.Date(2022, 1, 15, 0, 0, 0, 0),
+						CreatedAt:        now,
+						UpdatedAt:        now,
+					},
+					Shifts: entity.TeacherShiftDetails{
+						{
+							Date:     "20220201",
+							IsClosed: false,
+							Lessons: entity.TeacherShifts{
+								{ID: 1, Enabled: true, StartTime: "1700", EndTime: "1830"},
+							},
+						},
+						{
+							Date:     "20220203",
+							IsClosed: false,
+							Lessons: entity.TeacherShifts{
+								{ID: 3, Enabled: true, StartTime: "1700", EndTime: "1830"},
+							},
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "failed to invalid summary id",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
+			},
+			teacherID: idmock,
+			summaryID: "aaa",
+			expect: &testResponse{
+				code: http.StatusBadRequest,
+			},
+		},
+		{
+			name: "failed to get shift summary",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
+				summaryIn := &lesson.GetShiftSummaryRequest{Id: 1}
+				shiftsIn := &lesson.ListShiftsRequest{ShiftSummaryId: 1}
+				shiftsOut := &lesson.ListShiftsResponse{Shifts: shifts}
+				teacherIn := &lesson.GetTeacherShiftsRequest{
+					TeacherId:      idmock,
+					ShiftSummaryId: 1,
+				}
+				teacherOut := &lesson.GetTeacherShiftsResponse{
+					Submission: submission,
+					Shifts:     teacherShifts,
+				}
+				mocks.lesson.EXPECT().GetShiftSummary(gomock.Any(), summaryIn).Return(nil, errmock)
+				mocks.lesson.EXPECT().ListShifts(gomock.Any(), shiftsIn).Return(shiftsOut, nil)
+				mocks.lesson.EXPECT().GetTeacherShifts(gomock.Any(), teacherIn).Return(teacherOut, nil)
+			},
+			teacherID: idmock,
+			summaryID: "1",
+			expect: &testResponse{
+				code: http.StatusInternalServerError,
+			},
+		},
+		{
+			name: "failed to list shifts",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
+				summaryIn := &lesson.GetShiftSummaryRequest{Id: 1}
+				summaryOut := &lesson.GetShiftSummaryResponse{Summary: summary}
+				shiftsIn := &lesson.ListShiftsRequest{ShiftSummaryId: 1}
+				teacherIn := &lesson.GetTeacherShiftsRequest{
+					TeacherId:      idmock,
+					ShiftSummaryId: 1,
+				}
+				teacherOut := &lesson.GetTeacherShiftsResponse{
+					Submission: submission,
+					Shifts:     teacherShifts,
+				}
+				mocks.lesson.EXPECT().GetShiftSummary(gomock.Any(), summaryIn).Return(summaryOut, nil)
+				mocks.lesson.EXPECT().ListShifts(gomock.Any(), shiftsIn).Return(nil, errmock)
+				mocks.lesson.EXPECT().GetTeacherShifts(gomock.Any(), teacherIn).Return(teacherOut, nil)
+			},
+			teacherID: idmock,
+			summaryID: "1",
+			expect: &testResponse{
+				code: http.StatusInternalServerError,
+			},
+		},
+		{
+			name: "failed to list teacher shifts",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
+				summaryIn := &lesson.GetShiftSummaryRequest{Id: 1}
+				summaryOut := &lesson.GetShiftSummaryResponse{Summary: summary}
+				shiftsIn := &lesson.ListShiftsRequest{ShiftSummaryId: 1}
+				shiftsOut := &lesson.ListShiftsResponse{Shifts: shifts}
+				teacherIn := &lesson.GetTeacherShiftsRequest{
+					TeacherId:      idmock,
+					ShiftSummaryId: 1,
+				}
+				mocks.lesson.EXPECT().GetShiftSummary(gomock.Any(), summaryIn).Return(summaryOut, nil)
+				mocks.lesson.EXPECT().ListShifts(gomock.Any(), shiftsIn).Return(shiftsOut, nil)
+				mocks.lesson.EXPECT().GetTeacherShifts(gomock.Any(), teacherIn).Return(nil, errmock)
+			},
+			teacherID: idmock,
+			summaryID: "1",
+			expect: &testResponse{
+				code: http.StatusInternalServerError,
+			},
+		},
+		{
+			name: "failed to shifts group by date",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
+				summaryIn := &lesson.GetShiftSummaryRequest{Id: 1}
+				summaryOut := &lesson.GetShiftSummaryResponse{Summary: summary}
+				shiftsIn := &lesson.ListShiftsRequest{ShiftSummaryId: 1}
+				shiftsOut := &lesson.ListShiftsResponse{
+					Shifts: []*lesson.Shift{{Date: "20220200"}},
+				}
+				teacherIn := &lesson.GetTeacherShiftsRequest{
+					TeacherId:      idmock,
+					ShiftSummaryId: 1,
+				}
+				teacherOut := &lesson.GetTeacherShiftsResponse{
+					Submission: submission,
+					Shifts:     teacherShifts,
+				}
+				mocks.lesson.EXPECT().GetShiftSummary(gomock.Any(), summaryIn).Return(summaryOut, nil)
+				mocks.lesson.EXPECT().ListShifts(gomock.Any(), shiftsIn).Return(shiftsOut, nil)
+				mocks.lesson.EXPECT().GetTeacherShifts(gomock.Any(), teacherIn).Return(teacherOut, nil)
+			},
+			teacherID: idmock,
+			summaryID: "1",
+			expect: &testResponse{
+				code: http.StatusInternalServerError,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			path := fmt.Sprintf("/v1/shifts/%s/teachers/%s", tt.summaryID, tt.teacherID)
+			req := newHTTPRequest(t, http.MethodGet, path, nil)
+			testHTTP(t, tt.setup, tt.expect, req)
+		})
+	}
+}
+
 func TestUpsertTeacherShifts(t *testing.T) {
 	t.Parallel()
 	now := jst.Date(2022, 1, 12, 0, 0, 0, 0)

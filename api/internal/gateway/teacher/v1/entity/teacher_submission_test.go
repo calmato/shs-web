@@ -198,7 +198,7 @@ func TestTeacherSubmissionDetail(t *testing.T) {
 					CreatedAt:     now,
 					UpdatedAt:     now,
 				},
-				LessonTotal: 2,
+				LessonTotal: 1,
 			},
 		},
 	}
@@ -282,7 +282,7 @@ func TestTeacherSubmissionDetails(t *testing.T) {
 						CreatedAt:     now,
 						UpdatedAt:     now,
 					},
-					LessonTotal: 2,
+					LessonTotal: 0,
 				},
 				{
 					Teacher: &Teacher{
@@ -296,7 +296,7 @@ func TestTeacherSubmissionDetails(t *testing.T) {
 						CreatedAt:     now,
 						UpdatedAt:     now,
 					},
-					LessonTotal: 0,
+					LessonTotal: 1,
 				},
 			},
 		},

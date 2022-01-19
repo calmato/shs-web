@@ -10,7 +10,7 @@
               v-for="lesson in shift.lessons"
               :key="lesson.id"
               :value="lesson.id"
-              small
+              :small="$vuetify.breakpoint.xs"
               class="my-2"
               @click="onChange(lesson.id)"
             >

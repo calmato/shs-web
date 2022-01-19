@@ -62,9 +62,10 @@ paths:
     $ref: './paths/v1/shifts/_shiftId/index.yaml'
   /v1/shifts/{shiftId}/schedule:
     $ref: './paths/v1/shifts/_shiftId/schedule.yaml'
-  # Lessons
   /v1/shifts/{shiftId}/lessons:
     $ref: './paths/v1/shifts/_shiftId/lessons/index.yaml'
+  /v1/shifts/{shiftId}/teachers/{teacherId}:
+    $ref: './paths/v1/shifts/_shiftId/teachers/_teacherId.yaml'
   # Submissions
   /v1/teachers/{teacherId}/submissions:
     $ref: './paths/v1/teachers/_teacherId/submissions/index.yaml'
