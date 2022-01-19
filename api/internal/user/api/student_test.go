@@ -251,7 +251,7 @@ func TestCreateStudent(t *testing.T) {
 			},
 		},
 		{
-			name: "failed to create teacher",
+			name: "failed to create Student",
 			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
 				mocks.validator.EXPECT().CreateStudent(req).Return(nil)
 				mocks.db.Student.EXPECT().Create(ctx, gomock.Any()).Return(errmock)
@@ -267,6 +267,63 @@ func TestCreateStudent(t *testing.T) {
 		tt := tt
 		t.Run(tt.name, testGRPC(tt.setup, tt.expect, func(ctx context.Context, service *userService) (proto.Message, error) {
 			return service.CreateStudent(ctx, tt.req)
+		}))
+	}
+}
+
+func TestDeleteStudent(t *testing.T) {
+	t.Parallel()
+
+	req := &user.DeleteStudentRequest{
+		Id: "kSByoE6FetnPs5Byk3a9Zx",
+	}
+
+	tests := []struct {
+		name   string
+		setup  func(ctx context.Context, t *testing.T, mocks *mocks)
+		req    *user.DeleteStudentRequest
+		expect *testResponse
+	}{
+		{
+			name: "success",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				mocks.validator.EXPECT().DeleteStudent(req).Return(nil)
+				mocks.db.Student.EXPECT().Delete(ctx, "kSByoE6FetnPs5Byk3a9Zx").Return(nil)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.OK,
+				body: &user.DeleteStudentResponse{},
+			},
+		},
+		{
+			name: "invalid argument",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				req := &user.DeleteStudentRequest{}
+				mocks.validator.EXPECT().DeleteStudent(req).Return(validation.ErrRequestValidation)
+			},
+			req: &user.DeleteStudentRequest{},
+			expect: &testResponse{
+				code: codes.InvalidArgument,
+			},
+		},
+		{
+			name: "failed to delete Student",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				mocks.validator.EXPECT().DeleteStudent(req).Return(nil)
+				mocks.db.Student.EXPECT().Delete(ctx, "kSByoE6FetnPs5Byk3a9Zx").Return(errmock)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.Internal,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, testGRPC(tt.setup, tt.expect, func(ctx context.Context, service *userService) (proto.Message, error) {
+			return service.DeleteStudent(ctx, tt.req)
 		}))
 	}
 }

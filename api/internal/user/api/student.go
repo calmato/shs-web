@@ -89,3 +89,17 @@ func (s *userService) CreateStudent(
 	}
 	return res, nil
 }
+
+func (s *userService) DeleteStudent(
+	ctx context.Context, req *user.DeleteStudentRequest,
+) (*user.DeleteStudentResponse, error) {
+	if err := s.validator.DeleteStudent(req); err != nil {
+		return nil, gRPCError(err)
+	}
+
+	err := s.db.Student.Delete(ctx, req.Id)
+	if err != nil {
+		return nil, gRPCError(err)
+	}
+	return &user.DeleteStudentResponse{}, nil
+}
