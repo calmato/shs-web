@@ -101,6 +101,7 @@ func (h *apiV1Handler) AdminRoutes(rg *gin.RouterGroup) {
 	rg.POST("/v1/shifts", h.CreateShifts)
 	rg.PATCH("/v1/shifts/:shiftId/schedule", h.UpdateShiftSummarySchedule)
 	rg.DELETE("/v1/shifts/:shiftId", h.DeleteShiftSummary)
+	rg.GET("/v1/shifts/:shiftId/teachers/:teacherId", h.ListEnabledTeacherShifts)
 	rg.POST("/v1/shifts/:shiftId/lessons", h.CreateLesson)
 }
 

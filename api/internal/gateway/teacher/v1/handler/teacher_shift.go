@@ -128,6 +128,60 @@ func (h *apiV1Handler) ListTeacherShifts(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, res)
 }
 
+func (h *apiV1Handler) ListEnabledTeacherShifts(ctx *gin.Context) {
+	c := util.SetMetadata(ctx)
+
+	teacherID := ctx.Param("teacherId")
+	shiftSummaryID, err := strconv.ParseInt(ctx.Param("shiftId"), 10, 64)
+	if err != nil {
+		badRequest(ctx, err)
+		return
+	}
+
+	eg, ectx := errgroup.WithContext(c)
+	var gsummary *gentity.ShiftSummary
+	eg.Go(func() (err error) {
+		gsummary, err = h.getShiftSummary(ectx, shiftSummaryID)
+		return
+	})
+	var gshifts gentity.Shifts
+	eg.Go(func() (err error) {
+		gshifts, err = h.listShiftsBySummaryID(ectx, shiftSummaryID)
+		return
+	})
+	var submission *gentity.TeacherSubmission
+	var teacherShifts gentity.TeacherShifts
+	eg.Go(func() error {
+		in := &lesson.GetTeacherShiftsRequest{
+			TeacherId:      teacherID,
+			ShiftSummaryId: shiftSummaryID,
+		}
+		out, err := h.lesson.GetTeacherShifts(ectx, in)
+		if err != nil {
+			return err
+		}
+		submission = gentity.NewTeacherSubmission(out.Submission)
+		teacherShifts = gentity.NewTeacherShifts(out.Shifts)
+		return nil
+	})
+	if err := eg.Wait(); err != nil {
+		httpError(ctx, err)
+		return
+	}
+	summary := entity.NewShiftSummary(gsummary)
+	shifts, err := gshifts.GroupByDate()
+	if err != nil {
+		httpError(ctx, err)
+		return
+	}
+
+	res := &response.TeacherShiftsResponse{
+		Summary: entity.NewTeacherSubmission(gsummary, submission),
+		Shifts:  entity.NewEnabledTeacherShiftDetails(summary, shifts, teacherShifts.MapByShiftID()),
+	}
+	ctx.JSON(http.StatusOK, res)
+}
+
 func (h *apiV1Handler) UpsertTeacherShifts(ctx *gin.Context) {
 	c := util.SetMetadata(ctx)
 

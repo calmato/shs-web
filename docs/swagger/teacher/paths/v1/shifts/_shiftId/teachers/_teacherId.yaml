@@ -1,5 +1,5 @@
-post:
-  summary: 授業登録
+get:
+  summary: 出勤可能シフト一覧
   tags:
   - Shift
   security:
@@ -13,19 +13,20 @@ post:
       format: int64
     description: シフト募集ID
     example: 1
-  requestBody:
+  - in: path
+    name: teacherId
     required: true
-    content:
-      application/json:
-        schema:
-          $ref: './../../../../../openapi.yaml#/components/schemas/v1CreateLessonRequest'
+    schema:
+      type: string
+    description: 講師ID
+    example: kSByoE6FetnPs5Byk3a9Zx
   responses:
     200:
       description: A successful response.
       content:
         application/json:
           schema:
-            $ref: './../../../../../openapi.yaml#/components/schemas/v1LessonResponse'
+            $ref: './../../../../../openapi.yaml#/components/schemas/v1TeacherShiftsResponse'
     default:
       description: An unexpected error response.
       content:

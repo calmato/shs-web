@@ -58,6 +58,7 @@ func TestTeacherShifts(t *testing.T) {
 		name          string
 		shifts        entity.Shifts
 		teacherShifts map[int64]*entity.TeacherShift
+		onlyEnabled   bool
 		expect        TeacherShifts
 	}{
 		{
@@ -76,6 +77,7 @@ func TestTeacherShifts(t *testing.T) {
 				},
 			},
 			teacherShifts: map[int64]*entity.TeacherShift{},
+			onlyEnabled:   false,
 			expect: TeacherShifts{
 				{
 					ID:        1,
@@ -85,18 +87,37 @@ func TestTeacherShifts(t *testing.T) {
 				},
 			},
 		},
+		{
+			name: "success to only enabled",
+			shifts: entity.Shifts{
+				{
+					Shift: &lesson.Shift{
+						Id:             1,
+						ShiftSummaryId: 1,
+						Date:           "20211226",
+						StartTime:      "1700",
+						EndTime:        "1830",
+						CreatedAt:      now.Unix(),
+						UpdatedAt:      now.Unix(),
+					},
+				},
+			},
+			teacherShifts: map[int64]*entity.TeacherShift{},
+			onlyEnabled:   true,
+			expect:        TeacherShifts{},
+		},
 	}
 
 	for _, tt := range tests {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			assert.Equal(t, tt.expect, NewTeacherShifts(tt.shifts, tt.teacherShifts))
+			assert.Equal(t, tt.expect, NewTeacherShifts(tt.shifts, tt.teacherShifts, tt.onlyEnabled))
 		})
 	}
 }
 
-func TestTeacherShiftDetail(t *testing.T) {
+func TestTeacherShiftDetailForMonth(t *testing.T) {
 	t.Parallel()
 	now := jst.Date(2021, 12, 1, 12, 30, 0, 0)
 	tests := []struct {
@@ -161,7 +182,7 @@ func TestTeacherShiftDetail(t *testing.T) {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			actual := NewTeacherShiftDetail(tt.shifts, tt.date, tt.isClosed, tt.teacherShifts)
+			actual := NewTeacherShiftDetailForMonth(tt.shifts, tt.date, tt.isClosed, tt.teacherShifts)
 			assert.Equal(t, tt.expect, actual)
 		})
 	}
@@ -299,6 +320,197 @@ func TestShifts_NewTeacherShiftDetailsForMonth(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 			actual := NewTeacherShiftDetailsForMonth(tt.summary, tt.shifts, tt.teacherShifts)
+			assert.Equal(t, tt.expect, actual)
+		})
+	}
+}
+
+func TestEnabledTeacherShiftDetail(t *testing.T) {
+	t.Parallel()
+	now := jst.Date(2021, 12, 1, 12, 30, 0, 0)
+	tests := []struct {
+		name          string
+		shifts        entity.Shifts
+		date          time.Time
+		teacherShifts map[int64]*entity.TeacherShift
+		expect        *TeacherShiftDetail
+	}{
+		{
+			name: "success",
+			shifts: entity.Shifts{
+				{
+					Shift: &lesson.Shift{
+						Id:             1,
+						ShiftSummaryId: 1,
+						Date:           "20211226",
+						StartTime:      "1700",
+						EndTime:        "1830",
+						CreatedAt:      now.Unix(),
+						UpdatedAt:      now.Unix(),
+					},
+				},
+				{
+					Shift: &lesson.Shift{
+						Id:             2,
+						ShiftSummaryId: 1,
+						Date:           "20211226",
+						StartTime:      "1830",
+						EndTime:        "2000",
+						CreatedAt:      now.Unix(),
+						UpdatedAt:      now.Unix(),
+					},
+				},
+			},
+			date: jst.Date(2021, 12, 26, 0, 0, 0, 0),
+			teacherShifts: map[int64]*entity.TeacherShift{
+				1: {
+					TeacherShift: &lesson.TeacherShift{
+						TeacherId:      "teacherid",
+						ShiftId:        1,
+						ShiftSummaryId: 1,
+						CreatedAt:      now.Unix(),
+						UpdatedAt:      now.Unix(),
+					},
+				},
+			},
+			expect: &TeacherShiftDetail{
+				Date:     "20211226",
+				IsClosed: false,
+				Lessons: TeacherShifts{
+					{ID: 1, Enabled: true, StartTime: "1700", EndTime: "1830"},
+				},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			actual := NewEnabledTeacherShiftDetail(tt.shifts, tt.date, tt.teacherShifts)
+			assert.Equal(t, tt.expect, actual)
+		})
+	}
+}
+
+func TestEnabledTeacherShiftDetails(t *testing.T) {
+	t.Parallel()
+	now := jst.Now()
+	tests := []struct {
+		name          string
+		summary       *ShiftSummary
+		shifts        map[time.Time]entity.Shifts
+		teacherShifts map[int64]*entity.TeacherShift
+		expect        TeacherShiftDetails
+	}{
+		{
+			name: "success",
+			summary: &ShiftSummary{
+				ID:        1,
+				Year:      2022,
+				Month:     2,
+				Status:    ShiftStatusAccepting,
+				OpenAt:    jst.Date(2022, 1, 1, 0, 0, 0, 0),
+				EndAt:     jst.Date(2022, 1, 15, 0, 0, 0, 0),
+				CreatedAt: now,
+				UpdatedAt: now,
+			},
+			shifts: map[time.Time]entity.Shifts{
+				jst.Date(2022, 2, 1, 0, 0, 0, 0): {
+					{
+						Shift: &lesson.Shift{
+							Id:             1,
+							ShiftSummaryId: 1,
+							Date:           "20220201",
+							StartTime:      "1700",
+							EndTime:        "1830",
+							CreatedAt:      now.Unix(),
+							UpdatedAt:      now.Unix(),
+						},
+					},
+					{
+						Shift: &lesson.Shift{
+							Id:             2,
+							ShiftSummaryId: 1,
+							Date:           "20220201",
+							StartTime:      "1830",
+							EndTime:        "2000",
+							CreatedAt:      now.Unix(),
+							UpdatedAt:      now.Unix(),
+						},
+					},
+				},
+				jst.Date(2022, 2, 3, 0, 0, 0, 0): {
+					{
+						Shift: &lesson.Shift{
+							Id:             3,
+							ShiftSummaryId: 1,
+							Date:           "20220203",
+							StartTime:      "1700",
+							EndTime:        "1830",
+							CreatedAt:      now.Unix(),
+							UpdatedAt:      now.Unix(),
+						},
+					},
+				},
+				jst.Date(2022, 2, 4, 0, 0, 0, 0): {
+					{
+						Shift: &lesson.Shift{
+							Id:             4,
+							ShiftSummaryId: 1,
+							Date:           "2022020",
+							StartTime:      "1700",
+							EndTime:        "1830",
+							CreatedAt:      now.Unix(),
+							UpdatedAt:      now.Unix(),
+						},
+					},
+				},
+			},
+			teacherShifts: map[int64]*entity.TeacherShift{
+				1: {
+					TeacherShift: &lesson.TeacherShift{
+						TeacherId:      "teacherid",
+						ShiftId:        1,
+						ShiftSummaryId: 1,
+						CreatedAt:      now.Unix(),
+						UpdatedAt:      now.Unix(),
+					},
+				},
+				3: {
+					TeacherShift: &lesson.TeacherShift{
+						TeacherId:      "teacherid",
+						ShiftId:        3,
+						ShiftSummaryId: 1,
+						CreatedAt:      now.Unix(),
+						UpdatedAt:      now.Unix(),
+					},
+				},
+			},
+			expect: TeacherShiftDetails{
+				{
+					Date:     "20220201",
+					IsClosed: false,
+					Lessons: TeacherShifts{
+						{ID: 1, Enabled: true, StartTime: "1700", EndTime: "1830"},
+					},
+				},
+				{
+					Date:     "20220203",
+					IsClosed: false,
+					Lessons: TeacherShifts{
+						{ID: 3, Enabled: true, StartTime: "1700", EndTime: "1830"},
+					},
+				},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			actual := NewEnabledTeacherShiftDetails(tt.summary, tt.shifts, tt.teacherShifts)
 			assert.Equal(t, tt.expect, actual)
 		})
 	}
