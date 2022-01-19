@@ -132,6 +132,34 @@ func (mr *MockRequestValidationMockRecorder) ListLessonsByShiftSummaryID(req int
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListLessonsByShiftSummaryID", reflect.TypeOf((*MockRequestValidation)(nil).ListLessonsByShiftSummaryID), req)
 }
 
+// ListLessonsByStudentID mocks base method.
+func (m *MockRequestValidation) ListLessonsByStudentID(req *lesson.ListLessonsByStudentIDRequest) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ListLessonsByStudentID", req)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// ListLessonsByStudentID indicates an expected call of ListLessonsByStudentID.
+func (mr *MockRequestValidationMockRecorder) ListLessonsByStudentID(req interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListLessonsByStudentID", reflect.TypeOf((*MockRequestValidation)(nil).ListLessonsByStudentID), req)
+}
+
+// ListLessonsByTeacherID mocks base method.
+func (m *MockRequestValidation) ListLessonsByTeacherID(req *lesson.ListLessonsByTeacherIDRequest) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ListLessonsByTeacherID", req)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// ListLessonsByTeacherID indicates an expected call of ListLessonsByTeacherID.
+func (mr *MockRequestValidationMockRecorder) ListLessonsByTeacherID(req interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListLessonsByTeacherID", reflect.TypeOf((*MockRequestValidation)(nil).ListLessonsByTeacherID), req)
+}
+
 // ListShiftSummaries mocks base method.
 func (m *MockRequestValidation) ListShiftSummaries(req *lesson.ListShiftSummariesRequest) error {
 	m.ctrl.T.Helper()

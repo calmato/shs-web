@@ -120,6 +120,8 @@ type ListLessonsParams struct {
 	Limit          int
 	Offset         int
 	ShiftSummaryID int64
+	TeacherID      string
+	StudentID      string
 }
 
 type ListShiftSummariesParams struct {
