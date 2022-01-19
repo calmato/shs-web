@@ -184,19 +184,6 @@ func (h *apiV1Handler) ListShifts(ctx *gin.Context) {
 		gshifts, err = h.listShiftsBySummaryID(ectx, shiftSummaryID)
 		return
 	})
-	var gteacherShifts gentity.TeacherShifts
-	eg.Go(func() error {
-		in := &lesson.ListTeacherShiftsRequest{
-			TeacherIds:     gteachers.IDs(),
-			ShiftSummaryId: shiftSummaryID,
-		}
-		out, err := h.lesson.ListTeacherShifts(ectx, in)
-		if err != nil {
-			return err
-		}
-		gteacherShifts = gentity.NewTeacherShifts(out.Shifts)
-		return nil
-	})
 	var gstudentSubmissions gentity.StudentSubmissions
 	eg.Go((func() error {
 		in := &lesson.ListStudentSubmissionsByStudentIDsRequest{
@@ -210,19 +197,6 @@ func (h *apiV1Handler) ListShifts(ctx *gin.Context) {
 		gstudentSubmissions = gentity.NewStudentSubmissions(out.Submissions)
 		return nil
 	}))
-	var gstudentShifts gentity.StudentShifts
-	eg.Go(func() error {
-		in := &lesson.ListStudentShiftsRequest{
-			StudentIds:     gstudents.IDs(),
-			ShiftSummaryId: shiftSummaryID,
-		}
-		out, err := h.lesson.ListStudentShifts(ectx, in)
-		if err != nil {
-			return err
-		}
-		gstudentShifts = gentity.NewStudentShifts(out.Shifts)
-		return nil
-	})
 	var glessons gentity.Lessons
 	eg.Go(func() error {
 		in := &lesson.ListLessonsByShiftSummaryIDRequest{
@@ -250,16 +224,16 @@ func (h *apiV1Handler) ListShifts(ctx *gin.Context) {
 		httpError(ctx, err)
 		return
 	}
+	teacherLessonsMap := glessons.GroupByTeacherID()
+	studentLessonsMap := glessons.GroupByStudentID()
 	studentSubmissionMap := gstudentSubmissions.MapByStudentID()
-	teacherShiftsMap := gteacherShifts.GroupByTeacherID()
-	studentShiftsMap := gstudentShifts.GroupByStudentID()
 	summary := entity.NewShiftSummary(gsummary)
 	res := &response.ShiftsResponse{
 		Summary:  summary,
 		Shifts:   entity.NewShiftDetailsForMonth(summary, shiftsMap),
 		Rooms:    rooms,
-		Teachers: entity.NewTeacherSubmissionDetails(gteachers, teacherShiftsMap),
-		Students: entity.NewStudentSubmissionDetails(gstudents, studentSubmissionMap, studentShiftsMap),
+		Teachers: entity.NewTeacherSubmissionDetails(gteachers, teacherLessonsMap),
+		Students: entity.NewStudentSubmissionDetails(gstudents, studentSubmissionMap, studentLessonsMap),
 		Lessons:  lessons,
 	}
 	ctx.JSON(http.StatusOK, res)

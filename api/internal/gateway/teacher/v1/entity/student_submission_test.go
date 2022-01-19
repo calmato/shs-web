@@ -17,7 +17,7 @@ func TestStudentSubmissionDetail(t *testing.T) {
 		name       string
 		student    *entity.Student
 		submission *entity.StudentSubmission
-		shifts     entity.StudentShifts
+		lessons    entity.Lessons
 		expect     *StudentSubmissionDetail
 	}{
 		{
@@ -46,21 +46,17 @@ func TestStudentSubmissionDetail(t *testing.T) {
 					UpdatedAt:        now.Unix(),
 				},
 			},
-			shifts: entity.StudentShifts{
+			lessons: entity.Lessons{
 				{
-					StudentShift: &lesson.StudentShift{
-						StudentId:      "kSByoE6FetnPs5Byk3a9Zx",
+					Lesson: &lesson.Lesson{
+						Id:             1,
+						ShiftSummaryId: 1,
 						ShiftId:        1,
-						ShiftSummaryId: 1,
-						CreatedAt:      now.Unix(),
-						UpdatedAt:      now.Unix(),
-					},
-				},
-				{
-					StudentShift: &lesson.StudentShift{
-						StudentId:      "kSByoE6FetnPs5Byk3a9Zx",
-						ShiftId:        3,
-						ShiftSummaryId: 1,
+						SubjectId:      1,
+						RoomId:         1,
+						TeacherId:      "teacherid",
+						StudentId:      "studentid",
+						Notes:          "感想",
 						CreatedAt:      now.Unix(),
 						UpdatedAt:      now.Unix(),
 					},
@@ -89,7 +85,7 @@ func TestStudentSubmissionDetail(t *testing.T) {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			assert.Equal(t, tt.expect, NewStudentSubmissionDetail(tt.student, tt.submission, tt.shifts))
+			assert.Equal(t, tt.expect, NewStudentSubmissionDetail(tt.student, tt.submission, tt.lessons))
 		})
 	}
 }
@@ -101,7 +97,7 @@ func TestStudentSubmissionDetails(t *testing.T) {
 		name        string
 		students    entity.Students
 		submissions map[string]*entity.StudentSubmission
-		shifts      map[string]entity.StudentShifts
+		lessons     map[string]entity.Lessons
 		expect      StudentSubmissionDetails
 	}{
 		{
@@ -148,22 +144,18 @@ func TestStudentSubmissionDetails(t *testing.T) {
 					},
 				},
 			},
-			shifts: map[string]entity.StudentShifts{
-				"kSByoE6FetnPs5Byk3a9Zx": {
+			lessons: map[string]entity.Lessons{
+				"studentid": {
 					{
-						StudentShift: &lesson.StudentShift{
-							StudentId:      "kSByoE6FetnPs5Byk3a9Zx",
+						Lesson: &lesson.Lesson{
+							Id:             1,
+							ShiftSummaryId: 1,
 							ShiftId:        1,
-							ShiftSummaryId: 1,
-							CreatedAt:      now.Unix(),
-							UpdatedAt:      now.Unix(),
-						},
-					},
-					{
-						StudentShift: &lesson.StudentShift{
-							StudentId:      "kSByoE6FetnPs5Byk3a9Zx",
-							ShiftId:        3,
-							ShiftSummaryId: 1,
+							SubjectId:      1,
+							RoomId:         1,
+							TeacherId:      "teacherid",
+							StudentId:      "studentid",
+							Notes:          "感想",
 							CreatedAt:      now.Unix(),
 							UpdatedAt:      now.Unix(),
 						},
@@ -211,7 +203,7 @@ func TestStudentSubmissionDetails(t *testing.T) {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			assert.Equal(t, tt.expect, NewStudentSubmissionDetails(tt.students, tt.submissions, tt.shifts))
+			assert.Equal(t, tt.expect, NewStudentSubmissionDetails(tt.students, tt.submissions, tt.lessons))
 		})
 	}
 }

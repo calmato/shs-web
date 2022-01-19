@@ -1,6 +1,8 @@
 package entity
 
-import "github.com/calmato/shs-web/api/proto/lesson"
+import (
+	"github.com/calmato/shs-web/api/proto/lesson"
+)
 
 type Lesson struct {
 	*lesson.Lesson
@@ -20,4 +22,26 @@ func NewLessons(lessons []*lesson.Lesson) Lessons {
 		ls[i] = NewLesson(lessons[i])
 	}
 	return ls
+}
+
+func (ls Lessons) GroupByTeacherID() map[string]Lessons {
+	res := make(map[string]Lessons)
+	for _, l := range ls {
+		if _, ok := res[l.TeacherId]; !ok {
+			res[l.TeacherId] = make(Lessons, 0)
+		}
+		res[l.TeacherId] = append(res[l.TeacherId], l)
+	}
+	return res
+}
+
+func (ls Lessons) GroupByStudentID() map[string]Lessons {
+	res := make(map[string]Lessons)
+	for _, l := range ls {
+		if _, ok := res[l.StudentId]; !ok {
+			res[l.StudentId] = make(Lessons, 0)
+		}
+		res[l.StudentId] = append(res[l.StudentId], l)
+	}
+	return res
 }
