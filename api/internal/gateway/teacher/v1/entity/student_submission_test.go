@@ -368,7 +368,7 @@ func TestStudentSubmissionStatus(t *testing.T) {
 			name:       "student submission status unknown",
 			summary:    nil,
 			submission: nil,
-			expect:     StudentSubmissionStatusSubmitted,
+			expect:     StudentSubmissionStatusUnknown,
 		},
 	}
 
