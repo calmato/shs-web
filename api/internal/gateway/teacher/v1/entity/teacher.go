@@ -12,15 +12,16 @@ import (
 var errInvalidRole = errors.New("entity: invalid role")
 
 type Teacher struct {
-	ID            string    `json:"id"`            // 講師ID
-	LastName      string    `json:"lastName"`      // 姓
-	FirstName     string    `json:"firstName"`     // 名
-	LastNameKana  string    `json:"lastNameKana"`  // 姓(かな)
-	FirstNameKana string    `json:"firstNameKana"` // 名(かな)
-	Mail          string    `json:"mail"`          // メールアドレス
-	Role          Role      `json:"role"`          // 権限
-	CreatedAt     time.Time `json:"createdAt"`     // 登録日時
-	UpdatedAt     time.Time `json:"updatedAt"`     // 更新日時
+	ID            string                  `json:"id"`            // 講師ID
+	LastName      string                  `json:"lastName"`      // 姓
+	FirstName     string                  `json:"firstName"`     // 名
+	LastNameKana  string                  `json:"lastNameKana"`  // 姓(かな)
+	FirstNameKana string                  `json:"firstNameKana"` // 名(かな)
+	Mail          string                  `json:"mail"`          // メールアドレス
+	Role          Role                    `json:"role"`          // 権限
+	Subjects      map[SchoolType]Subjects `json:"subjects"`      // 担当教科一覧
+	CreatedAt     time.Time               `json:"createdAt"`     // 登録日時
+	UpdatedAt     time.Time               `json:"updatedAt"`     // 更新日時
 }
 
 type Teachers []*Teacher
@@ -33,7 +34,7 @@ const (
 	RoleAdministrator Role = 2
 )
 
-func NewTeacher(teacher *entity.Teacher) *Teacher {
+func NewTeacher(teacher *entity.Teacher, subjects entity.Subjects) *Teacher {
 	return &Teacher{
 		ID:            teacher.Id,
 		LastName:      teacher.LastName,
@@ -42,15 +43,17 @@ func NewTeacher(teacher *entity.Teacher) *Teacher {
 		FirstNameKana: teacher.FirstNameKana,
 		Mail:          teacher.Mail,
 		Role:          NewRole(teacher.Role),
+		Subjects:      NewSubjects(subjects).GroupBySchoolType(),
 		CreatedAt:     jst.ParseFromUnix(teacher.CreatedAt),
 		UpdatedAt:     jst.ParseFromUnix(teacher.UpdatedAt),
 	}
 }
 
-func NewTeachers(teachers entity.Teachers) Teachers {
+func NewTeachers(teachers entity.Teachers, subjectsMap map[string]entity.Subjects) Teachers {
 	ts := make(Teachers, len(teachers))
 	for i := range teachers {
-		ts[i] = NewTeacher(teachers[i])
+		subjects := subjectsMap[teachers[i].Id]
+		ts[i] = NewTeacher(teachers[i], subjects)
 	}
 	return ts
 }

@@ -31,6 +31,22 @@ func TestListTeachers(t *testing.T) {
 			UpdatedAt:     now.Unix(),
 		},
 	}
+	subjects := []*classroom.Subject{
+		{
+			Id:         1,
+			Name:       "国語",
+			Color:      "#F8BBD0",
+			SchoolType: classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL,
+			CreatedAt:  now.Unix(),
+			UpdatedAt:  now.Unix(),
+		},
+	}
+	teacherSubjects := []*classroom.TeacherSubject{
+		{
+			TeacherId:  idmock,
+			SubjectIds: []int64{1},
+		},
+	}
 	tests := []struct {
 		name   string
 		setup  func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller)
@@ -40,9 +56,15 @@ func TestListTeachers(t *testing.T) {
 		{
 			name: "success",
 			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
-				in := &user.ListTeachersRequest{Limit: 100, Offset: 20}
-				out := &user.ListTeachersResponse{Teachers: teachers, Total: 1}
-				mocks.user.EXPECT().ListTeachers(gomock.Any(), in).Return(out, nil)
+				teachersIn := &user.ListTeachersRequest{Limit: 100, Offset: 20}
+				teachersOut := &user.ListTeachersResponse{Teachers: teachers, Total: 1}
+				subjectsIn := &classroom.MultiGetTeacherSubjectsRequest{TeacherIds: []string{idmock}}
+				subjectsOut := &classroom.MultiGetTeacherSubjectsResponse{
+					TeacherSubjects: teacherSubjects,
+					Subjects:        subjects,
+				}
+				mocks.user.EXPECT().ListTeachers(gomock.Any(), teachersIn).Return(teachersOut, nil)
+				mocks.classroom.EXPECT().MultiGetTeacherSubjects(gomock.Any(), subjectsIn).Return(subjectsOut, nil)
 			},
 			query: "?limit=100&offset=20",
 			expect: &testResponse{
@@ -59,6 +81,20 @@ func TestListTeachers(t *testing.T) {
 							Role:          entity.RoleTeacher,
 							CreatedAt:     now,
 							UpdatedAt:     now,
+							Subjects: map[entity.SchoolType]entity.Subjects{
+								entity.SchoolTypeElementarySchool: {},
+								entity.SchoolTypeJuniorHighSchool: {},
+								entity.SchoolTypeHighSchool: {
+									{
+										ID:         1,
+										Name:       "国語",
+										Color:      "#F8BBD0",
+										SchoolType: entity.SchoolTypeHighSchool,
+										CreatedAt:  now,
+										UpdatedAt:  now,
+									},
+								},
+							},
 						},
 					},
 					Total: 1,
@@ -84,8 +120,22 @@ func TestListTeachers(t *testing.T) {
 		{
 			name: "failed to list teachers",
 			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
-				in := &user.ListTeachersRequest{Limit: 30, Offset: 0}
-				mocks.user.EXPECT().ListTeachers(gomock.Any(), in).Return(nil, errmock)
+				teachersIn := &user.ListTeachersRequest{Limit: 30, Offset: 0}
+				mocks.user.EXPECT().ListTeachers(gomock.Any(), teachersIn).Return(nil, errmock)
+			},
+			query: "",
+			expect: &testResponse{
+				code: http.StatusInternalServerError,
+			},
+		},
+		{
+			name: "failed to multi get subjects",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
+				teachersIn := &user.ListTeachersRequest{Limit: 30, Offset: 0}
+				teachersOut := &user.ListTeachersResponse{Teachers: teachers, Total: 1}
+				subjectsIn := &classroom.MultiGetTeacherSubjectsRequest{TeacherIds: []string{idmock}}
+				mocks.user.EXPECT().ListTeachers(gomock.Any(), teachersIn).Return(teachersOut, nil)
+				mocks.classroom.EXPECT().MultiGetTeacherSubjects(gomock.Any(), subjectsIn).Return(nil, errmock)
 			},
 			query: "",
 			expect: &testResponse{
@@ -159,18 +209,18 @@ func TestGetTeacher(t *testing.T) {
 						Role:          entity.RoleTeacher,
 						CreatedAt:     now,
 						UpdatedAt:     now,
-					},
-					Subjects: map[entity.SchoolType]entity.Subjects{
-						entity.SchoolTypeElementarySchool: {},
-						entity.SchoolTypeJuniorHighSchool: {},
-						entity.SchoolTypeHighSchool: {
-							{
-								ID:         1,
-								Name:       "国語",
-								Color:      "#F8BBD0",
-								SchoolType: entity.SchoolTypeHighSchool,
-								CreatedAt:  now,
-								UpdatedAt:  now,
+						Subjects: map[entity.SchoolType]entity.Subjects{
+							entity.SchoolTypeElementarySchool: {},
+							entity.SchoolTypeJuniorHighSchool: {},
+							entity.SchoolTypeHighSchool: {
+								{
+									ID:         1,
+									Name:       "国語",
+									Color:      "#F8BBD0",
+									SchoolType: entity.SchoolTypeHighSchool,
+									CreatedAt:  now,
+									UpdatedAt:  now,
+								},
 							},
 						},
 					},
@@ -277,11 +327,11 @@ func TestCreateTeacher(t *testing.T) {
 						Role:          entity.RoleTeacher,
 						CreatedAt:     now,
 						UpdatedAt:     now,
-					},
-					Subjects: map[entity.SchoolType]entity.Subjects{
-						entity.SchoolTypeElementarySchool: {},
-						entity.SchoolTypeJuniorHighSchool: {},
-						entity.SchoolTypeHighSchool:       {},
+						Subjects: map[entity.SchoolType]entity.Subjects{
+							entity.SchoolTypeElementarySchool: {},
+							entity.SchoolTypeJuniorHighSchool: {},
+							entity.SchoolTypeHighSchool:       {},
+						},
 					},
 				},
 			},

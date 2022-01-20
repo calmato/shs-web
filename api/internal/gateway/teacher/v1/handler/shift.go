@@ -174,6 +174,11 @@ func (h *apiV1Handler) ListShifts(ctx *gin.Context) {
 		rooms = out.Total
 		return nil
 	})
+	var gteacherSubjects map[string]gentity.Subjects
+	eg.Go(func() (err error) {
+		gteacherSubjects, err = h.multiGetTeacherSubjects(ectx, gteachers.IDs())
+		return
+	})
 	var gsummary *gentity.ShiftSummary
 	eg.Go(func() (err error) {
 		gsummary, err = h.getShiftSummary(ectx, shiftSummaryID)
@@ -232,7 +237,7 @@ func (h *apiV1Handler) ListShifts(ctx *gin.Context) {
 		Summary:  summary,
 		Shifts:   entity.NewShiftDetailsForMonth(summary, shiftsMap),
 		Rooms:    rooms,
-		Teachers: entity.NewTeacherSubmissionDetails(gteachers, teacherLessonsMap),
+		Teachers: entity.NewTeacherSubmissionDetails(gteachers, gteacherSubjects, teacherLessonsMap),
 		Students: entity.NewStudentSubmissionDetails(gstudents, studentSubmissionMap, studentLessonsMap),
 		Lessons:  lessons,
 	}

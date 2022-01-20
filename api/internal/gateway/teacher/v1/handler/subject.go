@@ -125,6 +125,21 @@ func (h *apiV1Handler) DeleteSubject(ctx *gin.Context) {
 	ctx.JSON(http.StatusNoContent, gin.H{})
 }
 
+func (h *apiV1Handler) multiGetTeacherSubjects(
+	ctx context.Context, teacherIDs []string,
+) (map[string]gentity.Subjects, error) {
+	in := &classroom.MultiGetTeacherSubjectsRequest{
+		TeacherIds: teacherIDs,
+	}
+	out, err := h.classroom.MultiGetTeacherSubjects(ctx, in)
+	if err != nil {
+		return nil, err
+	}
+	teacherSubjects := gentity.NewTeacherSubjects(out.TeacherSubjects)
+	subjects := gentity.NewSubjects(out.Subjects)
+	return subjects.GroupByTeacher(teacherSubjects), nil
+}
+
 func (h *apiV1Handler) getTeacherSubject(
 	ctx context.Context, teacherID string,
 ) (gentity.Subjects, error) {
