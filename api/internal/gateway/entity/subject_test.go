@@ -93,18 +93,20 @@ func TestSubjects_Map(t *testing.T) {
 	now := jst.Now()
 	tests := []struct {
 		name     string
-		subjects []*classroom.Subject
+		subjects Subjects
 		expect   map[int64]*Subject
 	}{
 		{
 			name: "success",
-			subjects: []*classroom.Subject{
+			subjects: Subjects{
 				{
-					Id:        1,
-					Name:      "国語",
-					Color:     "#f8bbd0",
-					CreatedAt: now.Unix(),
-					UpdatedAt: now.Unix(),
+					Subject: &classroom.Subject{
+						Id:        1,
+						Name:      "国語",
+						Color:     "#f8bbd0",
+						CreatedAt: now.Unix(),
+						UpdatedAt: now.Unix(),
+					},
 				},
 			},
 			expect: map[int64]*Subject{
@@ -125,7 +127,7 @@ func TestSubjects_Map(t *testing.T) {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			assert.Equal(t, tt.expect, NewSubjects(tt.subjects))
+			assert.Equal(t, tt.expect, tt.subjects.Map())
 		})
 	}
 }
