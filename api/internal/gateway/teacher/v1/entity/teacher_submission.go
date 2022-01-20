@@ -61,20 +61,22 @@ func NewTeacherSubmissions(
 	return ss
 }
 
-func NewTeacherSubmissionDetail(teacher *entity.Teacher, lessons entity.Lessons) *TeacherSubmissionDetail {
+func NewTeacherSubmissionDetail(
+	teacher *entity.Teacher, subjects entity.Subjects, lessons entity.Lessons,
+) *TeacherSubmissionDetail {
 	return &TeacherSubmissionDetail{
-		Teacher:     NewTeacher(teacher),
+		Teacher:     NewTeacher(teacher, subjects),
 		LessonTotal: int64(len(lessons)),
 	}
 }
 
 func NewTeacherSubmissionDetails(
-	teachers entity.Teachers, lessonsMap map[string]entity.Lessons,
+	teachers entity.Teachers, subjects map[string]entity.Subjects, lessonsMap map[string]entity.Lessons,
 ) TeacherSubmissionDetails {
 	ss := make(TeacherSubmissionDetails, len(teachers))
 	for i, teacher := range teachers {
 		lessons := lessonsMap[teacher.Id]
-		ss[i] = NewTeacherSubmissionDetail(teacher, lessons)
+		ss[i] = NewTeacherSubmissionDetail(teacher, subjects[teacher.Id], lessons)
 	}
 	return ss
 }

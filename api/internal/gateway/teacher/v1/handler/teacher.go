@@ -44,9 +44,14 @@ func (h *apiV1Handler) ListTeachers(ctx *gin.Context) {
 		return
 	}
 	teachers := gentity.NewTeachers(out.Teachers)
+	subjects, err := h.multiGetTeacherSubjects(c, teachers.IDs())
+	if err != nil {
+		httpError(ctx, err)
+		return
+	}
 
 	res := &response.TeachersResponse{
-		Teachers: entity.NewTeachers(teachers),
+		Teachers: entity.NewTeachers(teachers, subjects),
 		Total:    out.Total,
 	}
 	ctx.JSON(http.StatusOK, res)
@@ -74,8 +79,7 @@ func (h *apiV1Handler) GetTeacher(ctx *gin.Context) {
 	}
 
 	res := &response.TeacherResponse{
-		Teacher:  entity.NewTeacher(teacher),
-		Subjects: entity.NewSubjects(subjects).GroupBySchoolType(),
+		Teacher: entity.NewTeacher(teacher, subjects),
 	}
 	ctx.JSON(http.StatusOK, res)
 }
@@ -112,8 +116,7 @@ func (h *apiV1Handler) CreateTeacher(ctx *gin.Context) {
 	teacher := gentity.NewTeacher(out.Teacher)
 
 	res := &response.TeacherResponse{
-		Teacher:  entity.NewTeacher(teacher),
-		Subjects: entity.NewSubjects(nil).GroupBySchoolType(),
+		Teacher: entity.NewTeacher(teacher, nil),
 	}
 	ctx.JSON(http.StatusOK, res)
 }

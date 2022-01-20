@@ -4,7 +4,6 @@ import "github.com/calmato/shs-web/api/internal/gateway/teacher/v1/entity"
 
 type TeacherResponse struct {
 	*entity.Teacher
-	Subjects map[entity.SchoolType]entity.Subjects `json:"subjects"` // 担当教科一覧
 }
 
 type TeachersResponse struct {

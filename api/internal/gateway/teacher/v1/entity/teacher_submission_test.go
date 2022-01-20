@@ -5,6 +5,7 @@ import (
 
 	"github.com/calmato/shs-web/api/internal/gateway/entity"
 	"github.com/calmato/shs-web/api/pkg/jst"
+	"github.com/calmato/shs-web/api/proto/classroom"
 	"github.com/calmato/shs-web/api/proto/lesson"
 	"github.com/calmato/shs-web/api/proto/user"
 	"github.com/stretchr/testify/assert"
@@ -150,10 +151,11 @@ func TestTeacherSubmissionDetail(t *testing.T) {
 	t.Parallel()
 	now := jst.Date(2021, 8, 2, 18, 30, 0, 0)
 	tests := []struct {
-		name    string
-		teacher *entity.Teacher
-		lessons entity.Lessons
-		expect  *TeacherSubmissionDetail
+		name     string
+		teacher  *entity.Teacher
+		subjects entity.Subjects
+		lessons  entity.Lessons
+		expect   *TeacherSubmissionDetail
 	}{
 		{
 			name: "success",
@@ -168,6 +170,18 @@ func TestTeacherSubmissionDetail(t *testing.T) {
 					Role:          user.Role_ROLE_TEACHER,
 					CreatedAt:     now.Unix(),
 					UpdatedAt:     now.Unix(),
+				},
+			},
+			subjects: entity.Subjects{
+				{
+					Subject: &classroom.Subject{
+						Id:         1,
+						Name:       "国語",
+						Color:      "#F8BBD0",
+						SchoolType: classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL,
+						CreatedAt:  now.Unix(),
+						UpdatedAt:  now.Unix(),
+					},
 				},
 			},
 			lessons: entity.Lessons{
@@ -197,6 +211,20 @@ func TestTeacherSubmissionDetail(t *testing.T) {
 					Role:          RoleTeacher,
 					CreatedAt:     now,
 					UpdatedAt:     now,
+					Subjects: map[SchoolType]Subjects{
+						SchoolTypeElementarySchool: {},
+						SchoolTypeJuniorHighSchool: {},
+						SchoolTypeHighSchool: {
+							{
+								ID:         1,
+								Name:       "国語",
+								Color:      "#F8BBD0",
+								SchoolType: SchoolTypeHighSchool,
+								CreatedAt:  now,
+								UpdatedAt:  now,
+							},
+						},
+					},
 				},
 				LessonTotal: 1,
 			},
@@ -207,7 +235,7 @@ func TestTeacherSubmissionDetail(t *testing.T) {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			assert.Equal(t, tt.expect, NewTeacherSubmissionDetail(tt.teacher, tt.lessons))
+			assert.Equal(t, tt.expect, NewTeacherSubmissionDetail(tt.teacher, tt.subjects, tt.lessons))
 		})
 	}
 }
@@ -218,6 +246,7 @@ func TestTeacherSubmissionDetails(t *testing.T) {
 	tests := []struct {
 		name     string
 		teachers entity.Teachers
+		subjects map[string]entity.Subjects
 		lessons  map[string]entity.Lessons
 		expect   TeacherSubmissionDetails
 	}{
@@ -251,6 +280,20 @@ func TestTeacherSubmissionDetails(t *testing.T) {
 					},
 				},
 			},
+			subjects: map[string]entity.Subjects{
+				"kSByoE6FetnPs5Byk3a9Zx": {
+					{
+						Subject: &classroom.Subject{
+							Id:         1,
+							Name:       "国語",
+							Color:      "#F8BBD0",
+							SchoolType: classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL,
+							CreatedAt:  now.Unix(),
+							UpdatedAt:  now.Unix(),
+						},
+					},
+				},
+			},
 			lessons: map[string]entity.Lessons{
 				"teacherid": {
 					{
@@ -281,6 +324,20 @@ func TestTeacherSubmissionDetails(t *testing.T) {
 						Role:          RoleTeacher,
 						CreatedAt:     now,
 						UpdatedAt:     now,
+						Subjects: map[SchoolType]Subjects{
+							SchoolTypeElementarySchool: {},
+							SchoolTypeJuniorHighSchool: {},
+							SchoolTypeHighSchool: {
+								{
+									ID:         1,
+									Name:       "国語",
+									Color:      "#F8BBD0",
+									SchoolType: SchoolTypeHighSchool,
+									CreatedAt:  now,
+									UpdatedAt:  now,
+								},
+							},
+						},
 					},
 					LessonTotal: 0,
 				},
@@ -295,6 +352,11 @@ func TestTeacherSubmissionDetails(t *testing.T) {
 						Role:          RoleAdministrator,
 						CreatedAt:     now,
 						UpdatedAt:     now,
+						Subjects: map[SchoolType]Subjects{
+							SchoolTypeElementarySchool: {},
+							SchoolTypeJuniorHighSchool: {},
+							SchoolTypeHighSchool:       {},
+						},
 					},
 					LessonTotal: 1,
 				},
@@ -306,7 +368,7 @@ func TestTeacherSubmissionDetails(t *testing.T) {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			assert.Equal(t, tt.expect, NewTeacherSubmissionDetails(tt.teachers, tt.lessons))
+			assert.Equal(t, tt.expect, NewTeacherSubmissionDetails(tt.teachers, tt.subjects, tt.lessons))
 		})
 	}
 }
