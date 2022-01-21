@@ -63,14 +63,17 @@ func NewStudentSubmissions(
 }
 
 func NewStudentSubmissionDetail(
-	student *entity.Student, submission *entity.StudentSubmission, lessons entity.Lessons,
+	student *entity.Student,
+	subjects entity.Subjects,
+	submission *entity.StudentSubmission,
+	lessons entity.Lessons,
 ) *StudentSubmissionDetail {
 	var suggestedClassesTotal int64
 	if submission != nil {
 		suggestedClassesTotal = submission.SuggestedClasses
 	}
 	return &StudentSubmissionDetail{
-		Student:               NewStudent(student),
+		Student:               NewStudent(student, subjects),
 		LessonTotal:           int64(len(lessons)),
 		SuggestedClassesTotal: suggestedClassesTotal,
 	}
@@ -78,14 +81,16 @@ func NewStudentSubmissionDetail(
 
 func NewStudentSubmissionDetails(
 	students entity.Students,
+	subjectsMap map[string]entity.Subjects,
 	submissionMap map[string]*entity.StudentSubmission,
 	lessonsMap map[string]entity.Lessons,
 ) StudentSubmissionDetails {
 	ss := make(StudentSubmissionDetails, len(students))
 	for i, student := range students {
+		subjects := subjectsMap[student.Id]
 		submission := submissionMap[student.Id]
 		lessons := lessonsMap[student.Id]
-		ss[i] = NewStudentSubmissionDetail(student, submission, lessons)
+		ss[i] = NewStudentSubmissionDetail(student, subjects, submission, lessons)
 	}
 	return ss
 }

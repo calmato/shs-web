@@ -42,3 +42,16 @@ func (ss Subjects) GroupByTeacher(teachers TeacherSubjects) map[string]Subjects 
 	}
 	return res
 }
+
+func (ss Subjects) GroupByStudent(students StudentSubjects) map[string]Subjects {
+	sm := ss.Map()
+	res := make(map[string]Subjects, len(students))
+	for _, t := range students {
+		sss := make(Subjects, 0, len(t.SubjectIds))
+		for _, sid := range t.SubjectIds {
+			sss = append(sss, sm[sid])
+		}
+		res[t.StudentId] = sss
+	}
+	return res
+}

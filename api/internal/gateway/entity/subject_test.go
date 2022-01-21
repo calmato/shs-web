@@ -186,3 +186,58 @@ func TestSubjects_GroupByTeacher(t *testing.T) {
 		})
 	}
 }
+
+func TestSubjects_GroupByStudent(t *testing.T) {
+	t.Parallel()
+	now := jst.Now()
+	tests := []struct {
+		name     string
+		subjects Subjects
+		students StudentSubjects
+		expect   map[string]Subjects
+	}{
+		{
+			name: "success",
+			subjects: Subjects{
+				{
+					Subject: &classroom.Subject{
+						Id:        1,
+						Name:      "国語",
+						Color:     "#f8bbd0",
+						CreatedAt: now.Unix(),
+						UpdatedAt: now.Unix(),
+					},
+				},
+			},
+			students: StudentSubjects{
+				{
+					StudentSubject: &classroom.StudentSubject{
+						StudentId:  "kSByoE6FetnPs5Byk3a9Zx",
+						SubjectIds: []int64{1},
+					},
+				},
+			},
+			expect: map[string]Subjects{
+				"kSByoE6FetnPs5Byk3a9Zx": {
+					{
+						Subject: &classroom.Subject{
+							Id:        1,
+							Name:      "国語",
+							Color:     "#f8bbd0",
+							CreatedAt: now.Unix(),
+							UpdatedAt: now.Unix(),
+						},
+					},
+				},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tt.expect, tt.subjects.GroupByStudent(tt.students))
+		})
+	}
+}

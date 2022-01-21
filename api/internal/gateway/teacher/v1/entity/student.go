@@ -17,13 +17,14 @@ type Student struct {
 	Mail          string     `json:"mail"`          // メールアドレス
 	SchoolType    SchoolType `json:"schoolType"`    // 校種
 	Grade         int64      `json:"grade"`         // 学年
+	Subjects      Subjects   `json:"subjects"`      // 受講教科一覧
 	CreatedAt     time.Time  `json:"createdAt"`     // 登録日時
 	UpdatedAt     time.Time  `json:"updatedAt"`     // 更新日時
 }
 
 type Students []*Student
 
-func NewStudent(student *entity.Student) *Student {
+func NewStudent(student *entity.Student, subjects entity.Subjects) *Student {
 	return &Student{
 		ID:            student.Id,
 		LastName:      student.LastName,
@@ -33,15 +34,17 @@ func NewStudent(student *entity.Student) *Student {
 		Mail:          student.Mail,
 		SchoolType:    NewSchoolTypeFromUser(student.SchoolType),
 		Grade:         student.Grade,
+		Subjects:      NewSubjects(subjects),
 		CreatedAt:     jst.ParseFromUnix(student.CreatedAt),
 		UpdatedAt:     jst.ParseFromUnix(student.UpdatedAt),
 	}
 }
 
-func NewStudents(students entity.Students) Students {
+func NewStudents(students entity.Students, subjectsMap map[string]entity.Subjects) Students {
 	ts := make(Students, len(students))
 	for i := range students {
-		ts[i] = NewStudent(students[i])
+		subjects := subjectsMap[students[i].Id]
+		ts[i] = NewStudent(students[i], subjects)
 	}
 	return ts
 }
