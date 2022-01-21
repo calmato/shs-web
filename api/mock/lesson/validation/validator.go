@@ -230,6 +230,20 @@ func (mr *MockRequestValidationMockRecorder) ListStudentSubmissionsByStudentIDs(
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListStudentSubmissionsByStudentIDs", reflect.TypeOf((*MockRequestValidation)(nil).ListStudentSubmissionsByStudentIDs), req)
 }
 
+// ListSubmissions mocks base method.
+func (m *MockRequestValidation) ListSubmissions(req *lesson.ListSubmissionsRequest) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ListSubmissions", req)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// ListSubmissions indicates an expected call of ListSubmissions.
+func (mr *MockRequestValidationMockRecorder) ListSubmissions(req interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListSubmissions", reflect.TypeOf((*MockRequestValidation)(nil).ListSubmissions), req)
+}
+
 // ListTeacherShifts mocks base method.
 func (m *MockRequestValidation) ListTeacherShifts(req *lesson.ListTeacherShiftsRequest) error {
 	m.ctrl.T.Helper()
