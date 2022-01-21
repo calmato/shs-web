@@ -1,0 +1,53 @@
+studentResponse:
+  type: object
+  properties:
+    id:
+      type: string
+      description: 生徒ID
+    lastName:
+      type: string
+      description: 姓
+    firstName:
+      type: string
+      description: 名
+    lastNameKana:
+      type: string
+      description: 姓(かな)
+    firstNamaKana:
+      type: string
+      description: 名(かな)
+    mail:
+      type: string
+      description: メールアドレス
+    birthYear:
+      type: integer
+      format: int64
+      description: メールアドレス
+    createdAt:
+      type: integer
+      format: int64
+      description: 作成日時
+    updatedAt:
+      type: integer
+      format: int64
+      description: 更新日時
+    schoolType:
+      type: integer
+      format: int32
+      description: 校種(0:不明, 1:小学校, 2:中学校, 3:高等学校)
+    grade:
+      type: integer
+      format: int64
+      description: 学年
+  example:
+    id: 'kSByoE6FetnPs5Byk3a9Zx'
+    lastName: '中村'
+    firstName: '広大'
+    lastNameKana: 'なかむら'
+    firstNamaKana: 'こうだい'
+    mail: 'teacher-test01@calmato.jp'
+    birthYear: 2005
+    createdAt: '2021-12-12T12:12:30.100Z'
+    updatedAt: '2021-12-12T12:12:30.100Z'
+    schoolType: 3
+    grade: 1
