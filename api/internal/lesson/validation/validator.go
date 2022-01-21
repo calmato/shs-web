@@ -22,6 +22,7 @@ type RequestValidation interface {
 	DeleteShiftSummary(req *lesson.DeleteShiftSummaryRequest) error
 	ListShifts(req *lesson.ListShiftsRequest) error
 	CreateShifts(req *lesson.CreateShiftsRequest) error
+	ListSubmissions(req *lesson.ListSubmissionsRequest) error
 	ListTeacherSubmissionsByShiftSummaryIDs(req *lesson.ListTeacherSubmissionsByShiftSummaryIDsRequest) error
 	ListTeacherShifts(req *lesson.ListTeacherShiftsRequest) error
 	GetTeacherShifts(req *lesson.GetTeacherShiftsRequest) error

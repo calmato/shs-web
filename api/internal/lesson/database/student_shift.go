@@ -46,6 +46,21 @@ func (s *studentShift) ListByShiftSummaryID(
 	return shifts, dbError(err)
 }
 
+func (s *studentShift) ListByShiftID(
+	ctx context.Context, shiftID int64, fields ...string,
+) (entity.StudentShifts, error) {
+	var shifts entity.StudentShifts
+	if len(fields) == 0 {
+		fields = studentShiftFields
+	}
+
+	stmt := s.db.DB.Table(studentShiftTable).Select(fields).
+		Where("shift_id = ?", shiftID)
+
+	err := stmt.Find(&shifts).Error
+	return shifts, dbError(err)
+}
+
 func (s *studentShift) Replace(
 	ctx context.Context, submission *entity.StudentSubmission, shifts entity.StudentShifts,
 ) error {
