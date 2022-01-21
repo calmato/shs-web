@@ -153,3 +153,18 @@ func (h *apiV1Handler) getTeacherSubject(
 	subjects := gentity.NewSubjects(out.Subjects)
 	return subjects, nil
 }
+
+func (h *apiV1Handler) multiGetStudentSubjects(
+	ctx context.Context, studentIDs []string,
+) (map[string]gentity.Subjects, error) {
+	in := &classroom.MultiGetStudentSubjectsRequest{
+		StudentIds: studentIDs,
+	}
+	out, err := h.classroom.MultiGetStudentSubjects(ctx, in)
+	if err != nil {
+		return nil, err
+	}
+	studentSubjects := gentity.NewStudentSubjects(out.StudentSubjects)
+	subjects := gentity.NewSubjects(out.Subjects)
+	return subjects.GroupByStudent(studentSubjects), nil
+}

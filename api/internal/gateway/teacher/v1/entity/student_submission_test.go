@@ -5,6 +5,7 @@ import (
 
 	"github.com/calmato/shs-web/api/internal/gateway/entity"
 	"github.com/calmato/shs-web/api/pkg/jst"
+	"github.com/calmato/shs-web/api/proto/classroom"
 	"github.com/calmato/shs-web/api/proto/lesson"
 	"github.com/calmato/shs-web/api/proto/user"
 	"github.com/stretchr/testify/assert"
@@ -152,6 +153,7 @@ func TestStudentSubmissionDetail(t *testing.T) {
 	tests := []struct {
 		name       string
 		student    *entity.Student
+		subjects   entity.Subjects
 		submission *entity.StudentSubmission
 		lessons    entity.Lessons
 		expect     *StudentSubmissionDetail
@@ -170,6 +172,18 @@ func TestStudentSubmissionDetail(t *testing.T) {
 					Grade:         3,
 					CreatedAt:     now.Unix(),
 					UpdatedAt:     now.Unix(),
+				},
+			},
+			subjects: entity.Subjects{
+				{
+					Subject: &classroom.Subject{
+						Id:         1,
+						Name:       "国語",
+						Color:      "#F8BBD0",
+						SchoolType: classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL,
+						CreatedAt:  now.Unix(),
+						UpdatedAt:  now.Unix(),
+					},
 				},
 			},
 			submission: &entity.StudentSubmission{
@@ -208,8 +222,18 @@ func TestStudentSubmissionDetail(t *testing.T) {
 					Mail:          "student-test001@calmato.jp",
 					SchoolType:    SchoolTypeHighSchool,
 					Grade:         3,
-					CreatedAt:     now,
-					UpdatedAt:     now,
+					Subjects: Subjects{
+						{
+							ID:         1,
+							Name:       "国語",
+							Color:      "#F8BBD0",
+							SchoolType: SchoolTypeHighSchool,
+							CreatedAt:  now,
+							UpdatedAt:  now,
+						},
+					},
+					CreatedAt: now,
+					UpdatedAt: now,
 				},
 				LessonTotal:           1,
 				SuggestedClassesTotal: 8,
@@ -221,7 +245,7 @@ func TestStudentSubmissionDetail(t *testing.T) {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			assert.Equal(t, tt.expect, NewStudentSubmissionDetail(tt.student, tt.submission, tt.lessons))
+			assert.Equal(t, tt.expect, NewStudentSubmissionDetail(tt.student, tt.subjects, tt.submission, tt.lessons))
 		})
 	}
 }
@@ -232,6 +256,7 @@ func TestStudentSubmissionDetails(t *testing.T) {
 	tests := []struct {
 		name        string
 		students    entity.Students
+		subjects    map[string]entity.Subjects
 		submissions map[string]*entity.StudentSubmission
 		lessons     map[string]entity.Lessons
 		expect      StudentSubmissionDetails
@@ -265,6 +290,20 @@ func TestStudentSubmissionDetails(t *testing.T) {
 						Grade:         3,
 						CreatedAt:     now.Unix(),
 						UpdatedAt:     now.Unix(),
+					},
+				},
+			},
+			subjects: map[string]entity.Subjects{
+				"kSByoE6FetnPs5Byk3a9Zx": {
+					{
+						Subject: &classroom.Subject{
+							Id:         1,
+							Name:       "国語",
+							Color:      "#F8BBD0",
+							SchoolType: classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL,
+							CreatedAt:  now.Unix(),
+							UpdatedAt:  now.Unix(),
+						},
 					},
 				},
 			},
@@ -309,8 +348,18 @@ func TestStudentSubmissionDetails(t *testing.T) {
 						Mail:          "student-test001@calmato.jp",
 						SchoolType:    SchoolTypeHighSchool,
 						Grade:         3,
-						CreatedAt:     now,
-						UpdatedAt:     now,
+						Subjects: Subjects{
+							{
+								ID:         1,
+								Name:       "国語",
+								Color:      "#F8BBD0",
+								SchoolType: SchoolTypeHighSchool,
+								CreatedAt:  now,
+								UpdatedAt:  now,
+							},
+						},
+						CreatedAt: now,
+						UpdatedAt: now,
 					},
 					LessonTotal:           0,
 					SuggestedClassesTotal: 8,
@@ -325,6 +374,7 @@ func TestStudentSubmissionDetails(t *testing.T) {
 						Mail:          "student-test002@calmato.jp",
 						SchoolType:    SchoolTypeHighSchool,
 						Grade:         3,
+						Subjects:      Subjects{},
 						CreatedAt:     now,
 						UpdatedAt:     now,
 					},
@@ -339,7 +389,7 @@ func TestStudentSubmissionDetails(t *testing.T) {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			assert.Equal(t, tt.expect, NewStudentSubmissionDetails(tt.students, tt.submissions, tt.lessons))
+			assert.Equal(t, tt.expect, NewStudentSubmissionDetails(tt.students, tt.subjects, tt.submissions, tt.lessons))
 		})
 	}
 }
