@@ -1,0 +1,36 @@
+get:
+  summary: 時間毎のシフト提出状況一覧
+  tags:
+  - Shift
+  security:
+  - BearerAuth: []
+  parameters:
+  - in: path
+    name: shiftId
+    required: true
+    schema:
+      type: integer
+      format: int64
+    description: シフトサマリID
+    example: 1
+  - in: path
+    name: submissionId
+    required: true
+    schema:
+      type: integer
+      format: int64
+    description: シフト詳細ID
+    example: 1
+  responses:
+    200:
+      description: A successful response.
+      content:
+        application/json:
+          schema:
+            $ref: './../../../../../openapi.yaml#/components/schemas/v1ShiftSubmissionsResponse'
+    default:
+      description: An unexpected error response.
+      content:
+        application/json:
+          schema:
+            $ref: './../../../../../openapi.yaml#/components/schemas/errorResponse'

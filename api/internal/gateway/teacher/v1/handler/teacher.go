@@ -243,6 +243,11 @@ func (h *apiV1Handler) DeleteTeacher(ctx *gin.Context) {
 	ctx.JSON(http.StatusNoContent, gin.H{})
 }
 
+func (h *apiV1Handler) multiGetTeachers(ctx context.Context, teacherIDs []string) (gentity.Teachers, error) {
+	// TODO: 実装
+	return gentity.Teachers{}, nil
+}
+
 func (h *apiV1Handler) getTeacher(ctx context.Context, teacherID string) (*gentity.Teacher, error) {
 	in := &user.GetTeacherRequest{
 		Id: teacherID,
