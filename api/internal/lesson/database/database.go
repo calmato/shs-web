@@ -85,6 +85,7 @@ type TeacherShift interface {
 	ListByShiftSummaryID(
 		ctx context.Context, teacherIDs []string, summaryID int64, fields ...string,
 	) (entity.TeacherShifts, error)
+	ListByShiftID(ctx context.Context, shiftID int64, fields ...string) (entity.TeacherShifts, error)
 	Replace(ctx context.Context, submission *entity.TeacherSubmission, shifts entity.TeacherShifts) error
 }
 
@@ -102,6 +103,7 @@ type StudentShift interface {
 	ListByShiftSummaryID(
 		ctx context.Context, studentIDs []string, summaryID int64, fields ...string,
 	) (entity.StudentShifts, error)
+	ListByShiftID(ctx context.Context, shiftID int64, fields ...string) (entity.StudentShifts, error)
 	Replace(ctx context.Context, submission *entity.StudentSubmission, shifts entity.StudentShifts) error
 }
 

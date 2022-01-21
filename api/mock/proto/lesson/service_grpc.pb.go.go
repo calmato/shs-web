@@ -316,6 +316,26 @@ func (mr *MockLessonServiceClientMockRecorder) ListStudentSubmissionsByStudentID
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListStudentSubmissionsByStudentIDs", reflect.TypeOf((*MockLessonServiceClient)(nil).ListStudentSubmissionsByStudentIDs), varargs...)
 }
 
+// ListSubmissions mocks base method.
+func (m *MockLessonServiceClient) ListSubmissions(ctx context.Context, in *lesson.ListSubmissionsRequest, opts ...grpc.CallOption) (*lesson.ListSubmissionsResponse, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "ListSubmissions", varargs...)
+	ret0, _ := ret[0].(*lesson.ListSubmissionsResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListSubmissions indicates an expected call of ListSubmissions.
+func (mr *MockLessonServiceClientMockRecorder) ListSubmissions(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListSubmissions", reflect.TypeOf((*MockLessonServiceClient)(nil).ListSubmissions), varargs...)
+}
+
 // ListTeacherShifts mocks base method.
 func (m *MockLessonServiceClient) ListTeacherShifts(ctx context.Context, in *lesson.ListTeacherShiftsRequest, opts ...grpc.CallOption) (*lesson.ListTeacherShiftsResponse, error) {
 	m.ctrl.T.Helper()
@@ -647,6 +667,21 @@ func (m *MockLessonServiceServer) ListStudentSubmissionsByStudentIDs(arg0 contex
 func (mr *MockLessonServiceServerMockRecorder) ListStudentSubmissionsByStudentIDs(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListStudentSubmissionsByStudentIDs", reflect.TypeOf((*MockLessonServiceServer)(nil).ListStudentSubmissionsByStudentIDs), arg0, arg1)
+}
+
+// ListSubmissions mocks base method.
+func (m *MockLessonServiceServer) ListSubmissions(arg0 context.Context, arg1 *lesson.ListSubmissionsRequest) (*lesson.ListSubmissionsResponse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ListSubmissions", arg0, arg1)
+	ret0, _ := ret[0].(*lesson.ListSubmissionsResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListSubmissions indicates an expected call of ListSubmissions.
+func (mr *MockLessonServiceServerMockRecorder) ListSubmissions(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListSubmissions", reflect.TypeOf((*MockLessonServiceServer)(nil).ListSubmissions), arg0, arg1)
 }
 
 // ListTeacherShifts mocks base method.

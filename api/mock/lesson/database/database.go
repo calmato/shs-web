@@ -388,6 +388,26 @@ func (m *MockTeacherShift) EXPECT() *MockTeacherShiftMockRecorder {
 	return m.recorder
 }
 
+// ListByShiftID mocks base method.
+func (m *MockTeacherShift) ListByShiftID(ctx context.Context, shiftID int64, fields ...string) (entity.TeacherShifts, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, shiftID}
+	for _, a := range fields {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "ListByShiftID", varargs...)
+	ret0, _ := ret[0].(entity.TeacherShifts)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListByShiftID indicates an expected call of ListByShiftID.
+func (mr *MockTeacherShiftMockRecorder) ListByShiftID(ctx, shiftID interface{}, fields ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, shiftID}, fields...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListByShiftID", reflect.TypeOf((*MockTeacherShift)(nil).ListByShiftID), varargs...)
+}
+
 // ListByShiftSummaryID mocks base method.
 func (m *MockTeacherShift) ListByShiftSummaryID(ctx context.Context, teacherIDs []string, summaryID int64, fields ...string) (entity.TeacherShifts, error) {
 	m.ctrl.T.Helper()
@@ -526,6 +546,26 @@ func NewMockStudentShift(ctrl *gomock.Controller) *MockStudentShift {
 // EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockStudentShift) EXPECT() *MockStudentShiftMockRecorder {
 	return m.recorder
+}
+
+// ListByShiftID mocks base method.
+func (m *MockStudentShift) ListByShiftID(ctx context.Context, shiftID int64, fields ...string) (entity.StudentShifts, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, shiftID}
+	for _, a := range fields {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "ListByShiftID", varargs...)
+	ret0, _ := ret[0].(entity.StudentShifts)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListByShiftID indicates an expected call of ListByShiftID.
+func (mr *MockStudentShiftMockRecorder) ListByShiftID(ctx, shiftID interface{}, fields ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, shiftID}, fields...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListByShiftID", reflect.TypeOf((*MockStudentShift)(nil).ListByShiftID), varargs...)
 }
 
 // ListByShiftSummaryID mocks base method.

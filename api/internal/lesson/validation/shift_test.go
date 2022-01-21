@@ -341,3 +341,38 @@ func TestCreateShifts(t *testing.T) {
 		})
 	}
 }
+
+func TestListSubmissions(t *testing.T) {
+	t.Parallel()
+	validator := NewRequestValidation()
+
+	tests := []struct {
+		name  string
+		req   *lesson.ListSubmissionsRequest
+		isErr bool
+	}{
+		{
+			name: "success",
+			req: &lesson.ListSubmissionsRequest{
+				ShiftId: 1,
+			},
+			isErr: false,
+		},
+		{
+			name: "Id is gt",
+			req: &lesson.ListSubmissionsRequest{
+				ShiftId: 0,
+			},
+			isErr: true,
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			err := validator.ListSubmissions(tt.req)
+			assert.Equal(t, tt.isErr, err != nil, err)
+		})
+	}
+}

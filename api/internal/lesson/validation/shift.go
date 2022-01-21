@@ -55,3 +55,12 @@ func (v *requestValidation) CreateShifts(req *lesson.CreateShiftsRequest) error 
 
 	return nil
 }
+
+func (v *requestValidation) ListSubmissions(req *lesson.ListSubmissionsRequest) error {
+	if err := req.Validate(); err != nil {
+		validate := err.(lesson.ListSubmissionsRequestValidationError)
+		return validationError(validate.Error())
+	}
+
+	return nil
+}

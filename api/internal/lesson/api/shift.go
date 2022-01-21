@@ -194,3 +194,48 @@ func (s *lessonService) listClassroomSchedules(ctx context.Context) (entity.Sche
 	schedules := entity.NewSchedules(out.Schedules)
 	return schedules, nil
 }
+
+func (s *lessonService) ListSubmissions(
+	ctx context.Context, req *lesson.ListSubmissionsRequest,
+) (*lesson.ListSubmissionsResponse, error) {
+	const prefixKey = "listSubmissions"
+	if err := s.validator.ListSubmissions(req); err != nil {
+		return nil, gRPCError(err)
+	}
+	sharedKey := fmt.Sprintf("%s:%d", prefixKey, req.ShiftId)
+	res, err, _ := s.sharedGroup.Do(sharedKey, func() (interface{}, error) {
+		teachers, students, err := s.listSubmissions(ctx, req.ShiftId)
+		if err != nil {
+			return nil, err
+		}
+		res := &lesson.ListSubmissionsResponse{
+			TeacherShifts: teachers.Proto(),
+			StudentShifts: students.Proto(),
+		}
+		return res, nil
+	})
+	if err != nil {
+		return nil, gRPCError(err)
+	}
+	return res.(*lesson.ListSubmissionsResponse), nil
+}
+
+func (s *lessonService) listSubmissions(
+	ctx context.Context, shiftID int64,
+) (entity.TeacherShifts, entity.StudentShifts, error) {
+	eg, ectx := errgroup.WithContext(ctx)
+	var teachers entity.TeacherShifts
+	eg.Go(func() (err error) {
+		teachers, err = s.db.TeacherShift.ListByShiftID(ectx, shiftID)
+		return
+	})
+	var students entity.StudentShifts
+	eg.Go(func() (err error) {
+		students, err = s.db.StudentShift.ListByShiftID(ectx, shiftID)
+		return
+	})
+	if err := eg.Wait(); err != nil {
+		return nil, nil, err
+	}
+	return teachers, students, nil
+}

@@ -588,3 +588,139 @@ func TestCreateShifts(t *testing.T) {
 		}))
 	}
 }
+
+func TestListSubmissions(t *testing.T) {
+	t.Parallel()
+	now := jst.Now()
+	req := &lesson.ListSubmissionsRequest{
+		ShiftId: 1,
+	}
+	teacherShifts := entity.TeacherShifts{
+		{
+			TeacherID:      "teacherid",
+			ShiftID:        1,
+			ShiftSummaryID: 1,
+			CreatedAt:      now,
+			UpdatedAt:      now,
+		},
+		{
+			TeacherID:      "teacherid",
+			ShiftID:        2,
+			ShiftSummaryID: 1,
+			CreatedAt:      now,
+			UpdatedAt:      now,
+		},
+	}
+	studentShifts := entity.StudentShifts{
+		{
+			StudentID:      "studentid",
+			ShiftID:        1,
+			ShiftSummaryID: 1,
+			CreatedAt:      now,
+			UpdatedAt:      now,
+		},
+		{
+			StudentID:      "studentid",
+			ShiftID:        2,
+			ShiftSummaryID: 1,
+			CreatedAt:      now,
+			UpdatedAt:      now,
+		},
+	}
+
+	tests := []struct {
+		name   string
+		setup  func(ctx context.Context, t *testing.T, mocks *mocks)
+		req    *lesson.ListSubmissionsRequest
+		expect *testResponse
+	}{
+		{
+			name: "success",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				mocks.validator.EXPECT().ListSubmissions(req).Return(nil)
+				mocks.db.TeacherShift.EXPECT().ListByShiftID(gomock.Any(), int64(1)).Return(teacherShifts, nil)
+				mocks.db.StudentShift.EXPECT().ListByShiftID(gomock.Any(), int64(1)).Return(studentShifts, nil)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.OK,
+				body: &lesson.ListSubmissionsResponse{
+					TeacherShifts: []*lesson.TeacherShift{
+						{
+							TeacherId:      "teacherid",
+							ShiftId:        1,
+							ShiftSummaryId: 1,
+							CreatedAt:      now.Unix(),
+							UpdatedAt:      now.Unix(),
+						},
+						{
+							TeacherId:      "teacherid",
+							ShiftId:        2,
+							ShiftSummaryId: 1,
+							CreatedAt:      now.Unix(),
+							UpdatedAt:      now.Unix(),
+						},
+					},
+					StudentShifts: []*lesson.StudentShift{
+						{
+							StudentId:      "studentid",
+							ShiftId:        1,
+							ShiftSummaryId: 1,
+							CreatedAt:      now.Unix(),
+							UpdatedAt:      now.Unix(),
+						},
+						{
+							StudentId:      "studentid",
+							ShiftId:        2,
+							ShiftSummaryId: 1,
+							CreatedAt:      now.Unix(),
+							UpdatedAt:      now.Unix(),
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "invalid argument",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				req := &lesson.ListSubmissionsRequest{}
+				mocks.validator.EXPECT().ListSubmissions(req).Return(validation.ErrRequestValidation)
+			},
+			req: &lesson.ListSubmissionsRequest{},
+			expect: &testResponse{
+				code: codes.InvalidArgument,
+			},
+		},
+		{
+			name: "failed to list teacher shifts",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				mocks.validator.EXPECT().ListSubmissions(req).Return(nil)
+				mocks.db.TeacherShift.EXPECT().ListByShiftID(gomock.Any(), int64(1)).Return(nil, errmock)
+				mocks.db.StudentShift.EXPECT().ListByShiftID(gomock.Any(), int64(1)).Return(studentShifts, nil)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.Internal,
+			},
+		},
+		{
+			name: "failed to list student shifts",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				mocks.validator.EXPECT().ListSubmissions(req).Return(nil)
+				mocks.db.TeacherShift.EXPECT().ListByShiftID(gomock.Any(), int64(1)).Return(teacherShifts, nil)
+				mocks.db.StudentShift.EXPECT().ListByShiftID(gomock.Any(), int64(1)).Return(nil, errmock)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.Internal,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, testGRPC(tt.setup, tt.expect, func(ctx context.Context, service *lessonService) (proto.Message, error) {
+			return service.ListSubmissions(ctx, tt.req)
+		}))
+	}
+}
