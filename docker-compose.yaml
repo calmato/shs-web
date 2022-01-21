@@ -237,9 +237,9 @@ services:
     build:
       context: ./infra/docker/infra/swagger/generator
       dockerfile: Dockerfile
-    working_dir: /var/swagger/src
+    working_dir: /var/swagger
     volumes:
-      - ./docs/swagger:/var/swagger/src:cached
+      - ./docs/swagger:/var/swagger:cached
       - ./tmp/data/swagger:/tmp/data/swagger:cached
     command: yarn watch
 
