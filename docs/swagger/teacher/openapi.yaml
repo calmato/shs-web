@@ -1,4 +1,4 @@
-openapi: 3.0.3
+openapi: "3.0.3"
 info:
   title: SHS Web
   description: 管理者・講師用API
@@ -11,6 +11,8 @@ tags:
   description: 認証関連
 - name: Teacher
   description: 講師関連
+- name: Student
+  description: 生徒・保護者関連
 - name: Subject
   description: 授業科目関連
 - name: Schedule
@@ -47,6 +49,8 @@ paths:
   /v1/teachers/{teacherId}/subjects:
     $ref: './paths/v1/teachers/_teacherId/subjects.yaml'
   # Students
+  /v1/students/{studentId}:
+    $ref: './paths/v1/students/_studentId/index.yaml'
   # Subjects
   /v1/subjects:
     $ref: './paths/v1/subjects/index.yaml'
@@ -145,3 +149,5 @@ components:
       $ref: './components/schemas/v1/rooms.response.yaml#/roomsTotalResponse'
     v1LessonResponse:
       $ref: './components/schemas/v1/lessons.response.yaml#/lessonResponse'
+    v1StudentResponse:
+      $ref: './components/schemas/v1/students.response.yaml#/studentResponse'

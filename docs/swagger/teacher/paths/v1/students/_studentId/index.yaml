@@ -1,0 +1,28 @@
+get:
+  summary: 生徒詳細取得
+  tags:
+  - Student
+  security:
+  - BearerAuth: []
+  parameters:
+  - in: path
+    name: studentId
+    required: true
+    schema:
+      type: string
+    description: 生徒ID
+    example: kSByoE6FetnPs5Byk3a9Zx
+  responses:
+    200:
+      description: A successful response.
+      content:
+        application/json:
+          schema:
+            $ref: './../../../../openapi.yaml#/components/schemas/v1StudentResponse'
+    default:
+      description: An unexpected error response.
+      content:
+        application/json:
+          schema:
+            $ref: './../../../../openapi.yaml#/components/schemas/errorResponse'
+
