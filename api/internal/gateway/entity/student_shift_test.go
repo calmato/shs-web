@@ -138,7 +138,11 @@ func TestStudentShifts_StudentIDs(t *testing.T) {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			assert.Equal(t, tt.expect, tt.shifts.StudentIDs())
+			actual := tt.shifts.StudentIDs()
+			assert.Len(t, actual, len(tt.expect))
+			for i := range tt.expect {
+				assert.Contains(t, actual, tt.expect[i])
+			}
 		})
 	}
 }
