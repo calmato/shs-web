@@ -18,7 +18,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted, reactive, SetupContext } from '@nuxtjs/composition-api'
+import { computed, defineComponent, onMounted, reactive, useRouter, useStore } from '@nuxtjs/composition-api'
 import TheSettingTop from '~/components/templates/TheSettingTop.vue'
 import { AuthStore } from '~/store'
 import { SubjectUpdateForm } from '~/types/form'
@@ -30,9 +30,9 @@ export default defineComponent({
     TheSettingTop,
   },
 
-  setup(_, { root }: SetupContext) {
-    const router = root.$router
-    const store = root.$store
+  setup() {
+    const router = useRouter()
+    const store = useStore()
 
     const menuItems: Menu[] = [
       {
