@@ -1,9 +1,5 @@
 <template>
   <v-container>
-    <v-btn text class="px-0 mb-4" @click="handleBackButton">
-      <v-icon>mdi-chevron-left</v-icon>
-      戻る
-    </v-btn>
     <the-subject-select-form-item
       :elementary-school-subjects-form-value.sync="elementarySchoolSubjectsFormData"
       :junior-high-school-subjects-form-value.sync="juniorHighSchoolSubjectsFormData"
@@ -102,10 +98,6 @@ export default defineComponent({
       emit('click', item)
     }
 
-    const handleBackButton = (): void => {
-      emit('onClickBackButton')
-    }
-
     const elementarySchoolSubjectsFormData = computed({
       get: () => props.elementarySchoolSubjectsFormValue,
       set: (val: object) => emit('update:elementarySchoolSubjectsFormValue', val),
@@ -134,7 +126,6 @@ export default defineComponent({
 
     return {
       onClick,
-      handleBackButton,
       elementarySchoolSubjectsFormData,
       juniorHighSchoolSubjectsFormData,
       highSchoolSubjectsFormData,

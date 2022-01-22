@@ -13,7 +13,6 @@
     @handleJuniorHighSchoolSubjectsBlur="handleJuniorHighSchoolSubjectsBlur"
     @handleHighSchoolSubjectsBlur="handleHighSchoolSubjectsBlur"
     @click="handleClick"
-    @onClickBackButton="handleBackButton"
   />
 </template>
 
@@ -93,10 +92,6 @@ export default defineComponent({
       router.push(item.path)
     }
 
-    const handleBackButton = (): void => {
-      router.back()
-    }
-
     const handleElementarySchoolSubjectsBlur = (_val: number[]) => {
       AuthStore.updateOwnSubjects(elementarySchoolSubjectForm)
     }
@@ -133,7 +128,6 @@ export default defineComponent({
     return {
       menuItems,
       handleClick,
-      handleBackButton,
       auth,
       elementarySchoolSubjects,
       juniorHighSchoolSubjects,
