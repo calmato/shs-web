@@ -41,7 +41,7 @@ export default defineComponent({
     const store = root.$store
     const vuetify = root.$vuetify
 
-    const greyBackgroundPaths = ['/settings']
+    const greyBackgroundPaths: string[] = []
     const items: Menu[] = [
       {
         name: 'トップ',
