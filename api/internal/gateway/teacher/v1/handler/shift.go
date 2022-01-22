@@ -162,14 +162,26 @@ func (h *apiV1Handler) ListShiftSubmissions(ctx *gin.Context) {
 		gstudentSubjects, err = h.multiGetStudentSubjects(ectx, studentIDs)
 		return
 	})
+	var glessons gentity.Lessons
+	var gshifts gentity.Shifts
+	eg.Go(func() (err error) {
+		// TODO: 実装
+		return
+	})
 	if err := eg.Wait(); err != nil {
 		httpError(ctx, err)
 		return
 	}
 
+	lessons, err := entity.NewLessons(glessons, gshifts.Map())
+	if err != nil {
+		httpError(ctx, err)
+		return
+	}
 	res := &response.ShiftSubmissionsResponse{
 		Teachers: entity.NewTeachers(gteachers, gteacherSubjects),
 		Students: entity.NewStudents(gstudents, gstudentSubjects),
+		Lessons:  lessons,
 	}
 	ctx.JSON(http.StatusOK, res)
 }

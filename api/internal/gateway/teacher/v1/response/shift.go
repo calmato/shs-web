@@ -9,6 +9,7 @@ type ShiftSummariesResponse struct {
 type ShiftSubmissionsResponse struct {
 	Teachers entity.Teachers `json:"teachers"` // 出勤可能講師一覧
 	Students entity.Students `json:"students"` // 授業希望生徒一覧
+	Lessons  entity.Lessons  `json:"lessons"`  // 授業一覧
 }
 
 type ShiftsResponse struct {
