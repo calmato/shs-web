@@ -1,7 +1,7 @@
 <template>
   <v-container>
-    <the-regular-holiday-setting-form :value.sync="regularHolidayFormData" />
     <the-booth-setting-form :value.sync="boothFormData" />
+    <the-regular-holiday-setting-form :value.sync="regularHolidayFormData" />
     <the-hour-setting-form
       :weekday-hour-form="weekdayHourForm"
       :holiday-hour-form="holidayHourForm"
