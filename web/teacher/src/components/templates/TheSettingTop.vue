@@ -1,5 +1,5 @@
 <template>
-  <v-container class="px-0">
+  <v-container>
     <v-btn text class="px-0 mb-4" @click="handleBackButton">
       <v-icon>mdi-chevron-left</v-icon>
       戻る
@@ -18,7 +18,14 @@
     />
     <v-row class="py-4">
       <v-col cols="12">
-        <v-card v-for="item in menuItems" :key="`menu-${item.title}`" elevation="0" class="my-1" @click="onClick(item)">
+        <v-card
+          v-for="item in menuItems"
+          :key="`menu-${item.title}`"
+          elevation="0"
+          class="my-1"
+          outlined
+          @click="onClick(item)"
+        >
           <v-list-item>
             <v-list-item-content>
               <v-list-item-title :class="`${item.textColor}--text`">{{ item.title }}</v-list-item-title>
