@@ -16,9 +16,7 @@ import "lesson/student_submission.proto";
 import "lesson/student_shift.proto";
 
 service LessonService {
-  rpc ListLessonsByShiftSummaryID(ListLessonsByShiftSummaryIDRequest) returns (ListLessonsByShiftSummaryIDResponse);
-  rpc ListLessonsByTeacherID(ListLessonsByTeacherIDRequest) returns (ListLessonsByTeacherIDResponse);
-  rpc ListLessonsByStudentID(ListLessonsByStudentIDRequest) returns (ListLessonsByStudentIDResponse);
+  rpc ListLessons(ListLessonsRequest) returns (ListLessonsResponse);
   rpc CreateLesson(CreateLessonRequest) returns (CreateLessonResponse);
   rpc ListShiftSummaries(ListShiftSummariesRequest) returns (ListShiftSummariesResponse);
   rpc GetShiftSummary(GetShiftSummaryRequest) returns (GetShiftSummaryResponse);
@@ -38,29 +36,14 @@ service LessonService {
   rpc UpsertStudentShifts(UpsertStudentShiftsRequest) returns (UpsertStudentShiftsResponse);
 }
 
-message ListLessonsByShiftSummaryIDRequest {
-  int64 shift_summary_id = 1 [(validate.rules).int64 = { gt: 0 }];
+message ListLessonsRequest {
+  int64  shift_summary_id = 1 [(validate.rules).int64 = { gte: 0 }];
+  int64  shift_id         = 2 [(validate.rules).int64 = { gte: 0 }];
+  string teacher_id       = 3;
+  string student_id       = 4;
 }
 
-message ListLessonsByShiftSummaryIDResponse {
-  repeated Lesson lessons = 1;
-}
-
-message ListLessonsByTeacherIDRequest {
-  int64  shift_summary_id = 1 [(validate.rules).int64 = { gt: 0 }];
-  string teacher_id       = 2 [(validate.rules).string = { min_len: 1 }];
-}
-
-message ListLessonsByTeacherIDResponse {
-  repeated Lesson lessons = 1;
-}
-
-message ListLessonsByStudentIDRequest {
-  int64  shift_summary_id = 1 [(validate.rules).int64 = { gt: 0 }];
-  string student_id       = 2 [(validate.rules).string = { min_len: 1 }];
-}
-
-message ListLessonsByStudentIDResponse {
+message ListLessonsResponse {
   repeated Lesson lessons = 1;
 }
 

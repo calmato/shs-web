@@ -11,58 +11,17 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
-func (s *lessonService) ListLessonsByShiftSummaryID(
-	ctx context.Context, req *lesson.ListLessonsByShiftSummaryIDRequest,
-) (*lesson.ListLessonsByShiftSummaryIDResponse, error) {
-	if err := s.validator.ListLessonsByShiftSummaryID(req); err != nil {
+func (s *lessonService) ListLessons(
+	ctx context.Context, req *lesson.ListLessonsRequest,
+) (*lesson.ListLessonsResponse, error) {
+	if err := s.validator.ListLessons(req); err != nil {
 		return nil, gRPCError(err)
 	}
 
 	params := &database.ListLessonsParams{
 		ShiftSummaryID: req.ShiftSummaryId,
-	}
-	lessons, err := s.db.Lesson.List(ctx, params)
-	if err != nil {
-		return nil, gRPCError(err)
-	}
-
-	res := &lesson.ListLessonsByShiftSummaryIDResponse{
-		Lessons: lessons.Proto(),
-	}
-	return res, nil
-}
-
-func (s *lessonService) ListLessonsByTeacherID(
-	ctx context.Context, req *lesson.ListLessonsByTeacherIDRequest,
-) (*lesson.ListLessonsByTeacherIDResponse, error) {
-	if err := s.validator.ListLessonsByTeacherID(req); err != nil {
-		return nil, gRPCError(err)
-	}
-
-	params := &database.ListLessonsParams{
-		ShiftSummaryID: req.ShiftSummaryId,
+		ShiftID:        req.ShiftId,
 		TeacherID:      req.TeacherId,
-	}
-	lessons, err := s.db.Lesson.List(ctx, params)
-	if err != nil {
-		return nil, gRPCError(err)
-	}
-
-	res := &lesson.ListLessonsByTeacherIDResponse{
-		Lessons: lessons.Proto(),
-	}
-	return res, nil
-}
-
-func (s *lessonService) ListLessonsByStudentID(
-	ctx context.Context, req *lesson.ListLessonsByStudentIDRequest,
-) (*lesson.ListLessonsByStudentIDResponse, error) {
-	if err := s.validator.ListLessonsByStudentID(req); err != nil {
-		return nil, gRPCError(err)
-	}
-
-	params := &database.ListLessonsParams{
-		ShiftSummaryID: req.ShiftSummaryId,
 		StudentID:      req.StudentId,
 	}
 	lessons, err := s.db.Lesson.List(ctx, params)
@@ -70,7 +29,7 @@ func (s *lessonService) ListLessonsByStudentID(
 		return nil, gRPCError(err)
 	}
 
-	res := &lesson.ListLessonsByStudentIDResponse{
+	res := &lesson.ListLessonsResponse{
 		Lessons: lessons.Proto(),
 	}
 	return res, nil

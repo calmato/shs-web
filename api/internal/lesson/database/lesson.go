@@ -38,6 +38,9 @@ func (l *lesson) List(ctx context.Context, params *ListLessonsParams, fields ...
 	if params.ShiftSummaryID > 0 {
 		stmt.Where("shift_summary_id = ?", params.ShiftSummaryID)
 	}
+	if params.ShiftID > 0 {
+		stmt.Where("shift_id = ?", params.ShiftID)
+	}
 	if params.TeacherID != "" {
 		stmt.Where("teacher_id = ?", params.TeacherID)
 	}
