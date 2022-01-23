@@ -4,11 +4,11 @@ info:
   description: 生徒・保護者用API
   version: 0.1.0
 servers:
-  - url: http://localhost:18010
-    description: 開発環境
+- url: http://localhost:18010
+  description: 開発環境
 tags:
-  - name: Auth
-    description: 認証関連
+- name: Auth
+  description: 認証関連
 paths:
   # Auth
   /v1/me:
