@@ -244,8 +244,14 @@ func (h *apiV1Handler) DeleteTeacher(ctx *gin.Context) {
 }
 
 func (h *apiV1Handler) multiGetTeachers(ctx context.Context, teacherIDs []string) (gentity.Teachers, error) {
-	// TODO: 実装
-	return gentity.Teachers{}, nil
+	in := &user.MultiGetTeachersRequest{
+		Ids: teacherIDs,
+	}
+	out, err := h.user.MultiGetTeachers(ctx, in)
+	if err != nil {
+		return nil, err
+	}
+	return gentity.NewTeachers(out.Teachers), nil
 }
 
 func (h *apiV1Handler) getTeacher(ctx context.Context, teacherID string) (*gentity.Teacher, error) {
