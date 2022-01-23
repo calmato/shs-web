@@ -135,19 +135,19 @@ func TestListShiftSubmissions(t *testing.T) {
 			UpdatedAt:  now.Unix(),
 		},
 	}
-	// teachers := []*user.Teacher{
-	// 	{
-	// 		Id:            "teacherid",
-	// 		LastName:      "中村",
-	// 		FirstName:     "広大",
-	// 		LastNameKana:  "なかむら",
-	// 		FirstNameKana: "こうだい",
-	// 		Mail:          "teacher-test001@calmato.jp",
-	// 		Role:          user.Role_ROLE_TEACHER,
-	// 		CreatedAt:     now.Unix(),
-	// 		UpdatedAt:     now.Unix(),
-	// 	},
-	// }
+	teachers := []*user.Teacher{
+		{
+			Id:            "teacherid",
+			LastName:      "中村",
+			FirstName:     "広大",
+			LastNameKana:  "なかむら",
+			FirstNameKana: "こうだい",
+			Mail:          "teacher-test001@calmato.jp",
+			Role:          user.Role_ROLE_TEACHER,
+			CreatedAt:     now.Unix(),
+			UpdatedAt:     now.Unix(),
+		},
+	}
 	teacherSubjects := []*classroom.TeacherSubject{
 		{
 			TeacherId:  "teacherid",
@@ -170,20 +170,20 @@ func TestListShiftSubmissions(t *testing.T) {
 			UpdatedAt:      now.Unix(),
 		},
 	}
-	// students := []*user.Student{
-	// 	{
-	// 		Id:            "studentid",
-	// 		LastName:      "中村",
-	// 		FirstName:     "広大",
-	// 		LastNameKana:  "なかむら",
-	// 		FirstNameKana: "こうだい",
-	// 		Mail:          "student-test001@calmato.jp",
-	// 		SchoolType:    user.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL,
-	// 		Grade:         3,
-	// 		CreatedAt:     now.Unix(),
-	// 		UpdatedAt:     now.Unix(),
-	// 	},
-	// }
+	students := []*user.Student{
+		{
+			Id:            "studentid",
+			LastName:      "中村",
+			FirstName:     "広大",
+			LastNameKana:  "なかむら",
+			FirstNameKana: "こうだい",
+			Mail:          "student-test001@calmato.jp",
+			SchoolType:    user.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL,
+			Grade:         3,
+			CreatedAt:     now.Unix(),
+			UpdatedAt:     now.Unix(),
+		},
+	}
 	studentSubjects := []*classroom.StudentSubject{
 		{
 			StudentId:  "studentid",
@@ -206,20 +206,31 @@ func TestListShiftSubmissions(t *testing.T) {
 			UpdatedAt:      now.Unix(),
 		},
 	}
-	// lessons := []*lesson.Lesson{
-	// 	{
-	// 		Id:             1,
-	// 		ShiftSummaryId: 1,
-	// 		ShiftId:        1,
-	// 		SubjectId:      1,
-	// 		RoomId:         1,
-	// 		TeacherId:      "teacherid",
-	// 		StudentId:      "studentid",
-	// 		Notes:          "感想",
-	// 		CreatedAt:      now.Unix(),
-	// 		UpdatedAt:      now.Unix(),
-	// 	},
-	// }
+	lessons := []*lesson.Lesson{
+		{
+			Id:             1,
+			ShiftSummaryId: 1,
+			ShiftId:        1,
+			SubjectId:      1,
+			RoomId:         1,
+			TeacherId:      "teacherid",
+			StudentId:      "studentid",
+			Notes:          "感想",
+			CreatedAt:      now.Unix(),
+			UpdatedAt:      now.Unix(),
+		},
+	}
+	shifts := []*lesson.Shift{
+		{
+			Id:             1,
+			ShiftSummaryId: 1,
+			Date:           "20220201",
+			StartTime:      "1700",
+			EndTime:        "1830",
+			CreatedAt:      now.Unix(),
+			UpdatedAt:      now.Unix(),
+		},
+	}
 	tests := []struct {
 		name      string
 		setup     func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller)
@@ -245,11 +256,23 @@ func TestListShiftSubmissions(t *testing.T) {
 					StudentSubjects: studentSubjects,
 					Subjects:        subjects,
 				}
+				teachersIn := &user.MultiGetTeachersRequest{Ids: []string{"teacherid"}}
+				teachersOut := &user.MultiGetTeachersResponse{Teachers: teachers}
+				studentsIn := &user.MultiGetStudentsRequest{Ids: []string{"studentid"}}
+				studentsOut := &user.MultiGetStudentsResponse{Students: students}
+				lessonsIn := &lesson.ListLessonsRequest{ShiftId: 1}
+				lessonsOut := &lesson.ListLessonsResponse{Lessons: lessons}
+				shiftsIn := &lesson.ListShiftsRequest{ShiftId: 1}
+				shiftsOut := &lesson.ListShiftsResponse{Shifts: shifts}
 				mocks.lesson.EXPECT().ListSubmissions(gomock.Any(), submissionsIn).Return(submissionsOut, nil)
 				mocks.classroom.EXPECT().MultiGetTeacherSubjects(gomock.Any(), teacherSubjectsIn).
 					Return(teacherSubjectsOut, nil)
 				mocks.classroom.EXPECT().MultiGetStudentSubjects(gomock.Any(), studentSubjectsIn).
 					Return(studentSubjectsOut, nil)
+				mocks.user.EXPECT().MultiGetTeachers(gomock.Any(), teachersIn).Return(teachersOut, nil)
+				mocks.user.EXPECT().MultiGetStudents(gomock.Any(), studentsIn).Return(studentsOut, nil)
+				mocks.lesson.EXPECT().ListLessons(gomock.Any(), lessonsIn).Return(lessonsOut, nil)
+				mocks.lesson.EXPECT().ListShifts(gomock.Any(), shiftsIn).Return(shiftsOut, nil)
 			},
 			summaryID: "1",
 			shiftID:   "1",
@@ -257,58 +280,331 @@ func TestListShiftSubmissions(t *testing.T) {
 				code: http.StatusOK,
 				body: &response.ShiftSubmissionsResponse{
 					Teachers: entity.Teachers{
-						// {
-						// 	ID:            "teacherid",
-						// 	LastName:      "中村",
-						// 	FirstName:     "広大",
-						// 	LastNameKana:  "なかむら",
-						// 	FirstNameKana: "こうだい",
-						// 	Mail:          "teacher-test001@calmato.jp",
-						// 	Role:          entity.RoleTeacher,
-						// 	CreatedAt:     now,
-						// 	UpdatedAt:     now,
-						// 	Subjects: map[entity.SchoolType]entity.Subjects{
-						// 		entity.SchoolTypeElementarySchool: {},
-						// 		entity.SchoolTypeJuniorHighSchool: {},
-						// 		entity.SchoolTypeHighSchool: {
-						// 			{
-						// 				ID:         1,
-						// 				Name:       "国語",
-						// 				Color:      "#F8BBD0",
-						// 				SchoolType: entity.SchoolTypeHighSchool,
-						// 				CreatedAt:  now,
-						// 				UpdatedAt:  now,
-						// 			},
-						// 		},
-						// 	},
-						// },
+						{
+							ID:            "teacherid",
+							LastName:      "中村",
+							FirstName:     "広大",
+							LastNameKana:  "なかむら",
+							FirstNameKana: "こうだい",
+							Mail:          "teacher-test001@calmato.jp",
+							Role:          entity.RoleTeacher,
+							CreatedAt:     now,
+							UpdatedAt:     now,
+							Subjects: map[entity.SchoolType]entity.Subjects{
+								entity.SchoolTypeElementarySchool: {},
+								entity.SchoolTypeJuniorHighSchool: {},
+								entity.SchoolTypeHighSchool: {
+									{
+										ID:         1,
+										Name:       "国語",
+										Color:      "#F8BBD0",
+										SchoolType: entity.SchoolTypeHighSchool,
+										CreatedAt:  now,
+										UpdatedAt:  now,
+									},
+								},
+							},
+						},
 					},
 					Students: entity.Students{
-						// {
-						// 	ID:            "studentid",
-						// 	LastName:      "中村",
-						// 	FirstName:     "広大",
-						// 	LastNameKana:  "なかむら",
-						// 	FirstNameKana: "こうだい",
-						// 	Mail:          "student-test001@calmato.jp",
-						// 	SchoolType:    entity.SchoolTypeHighSchool,
-						// 	Grade:         3,
-						// 	CreatedAt:     now,
-						// 	UpdatedAt:     now,
-						// 	Subjects: entity.Subjects{
-						// 		{
-						// 			ID:         1,
-						// 			Name:       "国語",
-						// 			Color:      "#F8BBD0",
-						// 			SchoolType: entity.SchoolTypeHighSchool,
-						// 			CreatedAt:  now,
-						// 			UpdatedAt:  now,
-						// 		},
-						// 	},
-						// },
+						{
+							ID:            "studentid",
+							LastName:      "中村",
+							FirstName:     "広大",
+							LastNameKana:  "なかむら",
+							FirstNameKana: "こうだい",
+							Mail:          "student-test001@calmato.jp",
+							SchoolType:    entity.SchoolTypeHighSchool,
+							Grade:         3,
+							CreatedAt:     now,
+							UpdatedAt:     now,
+							Subjects: entity.Subjects{
+								{
+									ID:         1,
+									Name:       "国語",
+									Color:      "#F8BBD0",
+									SchoolType: entity.SchoolTypeHighSchool,
+									CreatedAt:  now,
+									UpdatedAt:  now,
+								},
+							},
+						},
 					},
-					Lessons: entity.Lessons{},
+					Lessons: entity.Lessons{
+						{
+							ID:        1,
+							ShiftID:   1,
+							SubjectID: 1,
+							Room:      1,
+							TeacherID: "teacherid",
+							StudentID: "studentid",
+							Notes:     "感想",
+							StartAt:   jst.Date(2022, 2, 1, 17, 0, 0, 0),
+							EndAt:     jst.Date(2022, 2, 1, 18, 30, 0, 0),
+							CreatedAt: now,
+							UpdatedAt: now,
+						},
+					},
 				},
+			},
+		},
+		{
+			name:      "failed to parse submissin id",
+			setup:     func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {},
+			summaryID: "1",
+			shiftID:   "aa",
+			expect: &testResponse{
+				code: http.StatusBadRequest,
+			},
+		},
+		{
+			name: "failed to list submissions",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
+				submissionsIn := &lesson.ListSubmissionsRequest{ShiftId: 1}
+				mocks.lesson.EXPECT().ListSubmissions(gomock.Any(), submissionsIn).Return(nil, errmock)
+			},
+			summaryID: "1",
+			shiftID:   "1",
+			expect: &testResponse{
+				code: http.StatusInternalServerError,
+			},
+		},
+		{
+			name: "failed to multi get teacher subjects",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
+				submissionsIn := &lesson.ListSubmissionsRequest{ShiftId: 1}
+				submissionsOut := &lesson.ListSubmissionsResponse{
+					TeacherShifts: teacherShifts,
+					StudentShifts: studentShifts,
+				}
+				teacherSubjectsIn := &classroom.MultiGetTeacherSubjectsRequest{TeacherIds: []string{"teacherid"}}
+				studentSubjectsIn := &classroom.MultiGetStudentSubjectsRequest{StudentIds: []string{"studentid"}}
+				studentSubjectsOut := &classroom.MultiGetStudentSubjectsResponse{
+					StudentSubjects: studentSubjects,
+					Subjects:        subjects,
+				}
+				teachersIn := &user.MultiGetTeachersRequest{Ids: []string{"teacherid"}}
+				teachersOut := &user.MultiGetTeachersResponse{Teachers: teachers}
+				studentsIn := &user.MultiGetStudentsRequest{Ids: []string{"studentid"}}
+				studentsOut := &user.MultiGetStudentsResponse{Students: students}
+				lessonsIn := &lesson.ListLessonsRequest{ShiftId: 1}
+				lessonsOut := &lesson.ListLessonsResponse{Lessons: lessons}
+				shiftsIn := &lesson.ListShiftsRequest{ShiftId: 1}
+				shiftsOut := &lesson.ListShiftsResponse{Shifts: shifts}
+				mocks.lesson.EXPECT().ListSubmissions(gomock.Any(), submissionsIn).Return(submissionsOut, nil)
+				mocks.classroom.EXPECT().MultiGetTeacherSubjects(gomock.Any(), teacherSubjectsIn).Return(nil, errmock)
+				mocks.classroom.EXPECT().MultiGetStudentSubjects(gomock.Any(), studentSubjectsIn).
+					Return(studentSubjectsOut, nil)
+				mocks.user.EXPECT().MultiGetTeachers(gomock.Any(), teachersIn).Return(teachersOut, nil)
+				mocks.user.EXPECT().MultiGetStudents(gomock.Any(), studentsIn).Return(studentsOut, nil)
+				mocks.lesson.EXPECT().ListLessons(gomock.Any(), lessonsIn).Return(lessonsOut, nil)
+				mocks.lesson.EXPECT().ListShifts(gomock.Any(), shiftsIn).Return(shiftsOut, nil)
+			},
+			summaryID: "1",
+			shiftID:   "1",
+			expect: &testResponse{
+				code: http.StatusInternalServerError,
+			},
+		},
+		{
+			name: "failed to multi get student subjects",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
+				submissionsIn := &lesson.ListSubmissionsRequest{ShiftId: 1}
+				submissionsOut := &lesson.ListSubmissionsResponse{
+					TeacherShifts: teacherShifts,
+					StudentShifts: studentShifts,
+				}
+				teacherSubjectsIn := &classroom.MultiGetTeacherSubjectsRequest{TeacherIds: []string{"teacherid"}}
+				teacherSubjectsOut := &classroom.MultiGetTeacherSubjectsResponse{
+					TeacherSubjects: teacherSubjects,
+					Subjects:        subjects,
+				}
+				studentSubjectsIn := &classroom.MultiGetStudentSubjectsRequest{StudentIds: []string{"studentid"}}
+				teachersIn := &user.MultiGetTeachersRequest{Ids: []string{"teacherid"}}
+				teachersOut := &user.MultiGetTeachersResponse{Teachers: teachers}
+				studentsIn := &user.MultiGetStudentsRequest{Ids: []string{"studentid"}}
+				studentsOut := &user.MultiGetStudentsResponse{Students: students}
+				lessonsIn := &lesson.ListLessonsRequest{ShiftId: 1}
+				lessonsOut := &lesson.ListLessonsResponse{Lessons: lessons}
+				shiftsIn := &lesson.ListShiftsRequest{ShiftId: 1}
+				shiftsOut := &lesson.ListShiftsResponse{Shifts: shifts}
+				mocks.lesson.EXPECT().ListSubmissions(gomock.Any(), submissionsIn).Return(submissionsOut, nil)
+				mocks.classroom.EXPECT().MultiGetTeacherSubjects(gomock.Any(), teacherSubjectsIn).
+					Return(teacherSubjectsOut, nil)
+				mocks.classroom.EXPECT().MultiGetStudentSubjects(gomock.Any(), studentSubjectsIn).Return(nil, errmock)
+				mocks.user.EXPECT().MultiGetTeachers(gomock.Any(), teachersIn).Return(teachersOut, nil)
+				mocks.user.EXPECT().MultiGetStudents(gomock.Any(), studentsIn).Return(studentsOut, nil)
+				mocks.lesson.EXPECT().ListLessons(gomock.Any(), lessonsIn).Return(lessonsOut, nil)
+				mocks.lesson.EXPECT().ListShifts(gomock.Any(), shiftsIn).Return(shiftsOut, nil)
+			},
+			summaryID: "1",
+			shiftID:   "1",
+			expect: &testResponse{
+				code: http.StatusInternalServerError,
+			},
+		},
+		{
+			name: "failed to multi get teachers",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
+				submissionsIn := &lesson.ListSubmissionsRequest{ShiftId: 1}
+				submissionsOut := &lesson.ListSubmissionsResponse{
+					TeacherShifts: teacherShifts,
+					StudentShifts: studentShifts,
+				}
+				teacherSubjectsIn := &classroom.MultiGetTeacherSubjectsRequest{TeacherIds: []string{"teacherid"}}
+				teacherSubjectsOut := &classroom.MultiGetTeacherSubjectsResponse{
+					TeacherSubjects: teacherSubjects,
+					Subjects:        subjects,
+				}
+				studentSubjectsIn := &classroom.MultiGetStudentSubjectsRequest{StudentIds: []string{"studentid"}}
+				studentSubjectsOut := &classroom.MultiGetStudentSubjectsResponse{
+					StudentSubjects: studentSubjects,
+					Subjects:        subjects,
+				}
+				teachersIn := &user.MultiGetTeachersRequest{Ids: []string{"teacherid"}}
+				studentsIn := &user.MultiGetStudentsRequest{Ids: []string{"studentid"}}
+				studentsOut := &user.MultiGetStudentsResponse{Students: students}
+				lessonsIn := &lesson.ListLessonsRequest{ShiftId: 1}
+				lessonsOut := &lesson.ListLessonsResponse{Lessons: lessons}
+				shiftsIn := &lesson.ListShiftsRequest{ShiftId: 1}
+				shiftsOut := &lesson.ListShiftsResponse{Shifts: shifts}
+				mocks.lesson.EXPECT().ListSubmissions(gomock.Any(), submissionsIn).Return(submissionsOut, nil)
+				mocks.classroom.EXPECT().MultiGetTeacherSubjects(gomock.Any(), teacherSubjectsIn).
+					Return(teacherSubjectsOut, nil)
+				mocks.classroom.EXPECT().MultiGetStudentSubjects(gomock.Any(), studentSubjectsIn).
+					Return(studentSubjectsOut, nil)
+				mocks.user.EXPECT().MultiGetTeachers(gomock.Any(), teachersIn).Return(nil, errmock)
+				mocks.user.EXPECT().MultiGetStudents(gomock.Any(), studentsIn).Return(studentsOut, nil)
+				mocks.lesson.EXPECT().ListLessons(gomock.Any(), lessonsIn).Return(lessonsOut, nil)
+				mocks.lesson.EXPECT().ListShifts(gomock.Any(), shiftsIn).Return(shiftsOut, nil)
+			},
+			summaryID: "1",
+			shiftID:   "1",
+			expect: &testResponse{
+				code: http.StatusInternalServerError,
+			},
+		},
+		{
+			name: "failed to multi get students",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
+				submissionsIn := &lesson.ListSubmissionsRequest{ShiftId: 1}
+				submissionsOut := &lesson.ListSubmissionsResponse{
+					TeacherShifts: teacherShifts,
+					StudentShifts: studentShifts,
+				}
+				teacherSubjectsIn := &classroom.MultiGetTeacherSubjectsRequest{TeacherIds: []string{"teacherid"}}
+				teacherSubjectsOut := &classroom.MultiGetTeacherSubjectsResponse{
+					TeacherSubjects: teacherSubjects,
+					Subjects:        subjects,
+				}
+				studentSubjectsIn := &classroom.MultiGetStudentSubjectsRequest{StudentIds: []string{"studentid"}}
+				studentSubjectsOut := &classroom.MultiGetStudentSubjectsResponse{
+					StudentSubjects: studentSubjects,
+					Subjects:        subjects,
+				}
+				teachersIn := &user.MultiGetTeachersRequest{Ids: []string{"teacherid"}}
+				teachersOut := &user.MultiGetTeachersResponse{Teachers: teachers}
+				studentsIn := &user.MultiGetStudentsRequest{Ids: []string{"studentid"}}
+				lessonsIn := &lesson.ListLessonsRequest{ShiftId: 1}
+				lessonsOut := &lesson.ListLessonsResponse{Lessons: lessons}
+				shiftsIn := &lesson.ListShiftsRequest{ShiftId: 1}
+				shiftsOut := &lesson.ListShiftsResponse{Shifts: shifts}
+				mocks.lesson.EXPECT().ListSubmissions(gomock.Any(), submissionsIn).Return(submissionsOut, nil)
+				mocks.classroom.EXPECT().MultiGetTeacherSubjects(gomock.Any(), teacherSubjectsIn).
+					Return(teacherSubjectsOut, nil)
+				mocks.classroom.EXPECT().MultiGetStudentSubjects(gomock.Any(), studentSubjectsIn).
+					Return(studentSubjectsOut, nil)
+				mocks.user.EXPECT().MultiGetTeachers(gomock.Any(), teachersIn).Return(teachersOut, nil)
+				mocks.user.EXPECT().MultiGetStudents(gomock.Any(), studentsIn).Return(nil, errmock)
+				mocks.lesson.EXPECT().ListLessons(gomock.Any(), lessonsIn).Return(lessonsOut, nil)
+				mocks.lesson.EXPECT().ListShifts(gomock.Any(), shiftsIn).Return(shiftsOut, nil)
+			},
+			summaryID: "1",
+			shiftID:   "1",
+			expect: &testResponse{
+				code: http.StatusInternalServerError,
+			},
+		},
+		{
+			name: "failed to list lessons",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
+				submissionsIn := &lesson.ListSubmissionsRequest{ShiftId: 1}
+				submissionsOut := &lesson.ListSubmissionsResponse{
+					TeacherShifts: teacherShifts,
+					StudentShifts: studentShifts,
+				}
+				teacherSubjectsIn := &classroom.MultiGetTeacherSubjectsRequest{TeacherIds: []string{"teacherid"}}
+				teacherSubjectsOut := &classroom.MultiGetTeacherSubjectsResponse{
+					TeacherSubjects: teacherSubjects,
+					Subjects:        subjects,
+				}
+				studentSubjectsIn := &classroom.MultiGetStudentSubjectsRequest{StudentIds: []string{"studentid"}}
+				studentSubjectsOut := &classroom.MultiGetStudentSubjectsResponse{
+					StudentSubjects: studentSubjects,
+					Subjects:        subjects,
+				}
+				teachersIn := &user.MultiGetTeachersRequest{Ids: []string{"teacherid"}}
+				teachersOut := &user.MultiGetTeachersResponse{Teachers: teachers}
+				studentsIn := &user.MultiGetStudentsRequest{Ids: []string{"studentid"}}
+				studentsOut := &user.MultiGetStudentsResponse{Students: students}
+				lessonsIn := &lesson.ListLessonsRequest{ShiftId: 1}
+				shiftsIn := &lesson.ListShiftsRequest{ShiftId: 1}
+				shiftsOut := &lesson.ListShiftsResponse{Shifts: shifts}
+				mocks.lesson.EXPECT().ListSubmissions(gomock.Any(), submissionsIn).Return(submissionsOut, nil)
+				mocks.classroom.EXPECT().MultiGetTeacherSubjects(gomock.Any(), teacherSubjectsIn).
+					Return(teacherSubjectsOut, nil)
+				mocks.classroom.EXPECT().MultiGetStudentSubjects(gomock.Any(), studentSubjectsIn).
+					Return(studentSubjectsOut, nil)
+				mocks.user.EXPECT().MultiGetTeachers(gomock.Any(), teachersIn).Return(teachersOut, nil)
+				mocks.user.EXPECT().MultiGetStudents(gomock.Any(), studentsIn).Return(studentsOut, nil)
+				mocks.lesson.EXPECT().ListLessons(gomock.Any(), lessonsIn).Return(nil, errmock)
+				mocks.lesson.EXPECT().ListShifts(gomock.Any(), shiftsIn).Return(shiftsOut, nil)
+			},
+			summaryID: "1",
+			shiftID:   "1",
+			expect: &testResponse{
+				code: http.StatusInternalServerError,
+			},
+		},
+		{
+			name: "failed to list lessons",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
+				submissionsIn := &lesson.ListSubmissionsRequest{ShiftId: 1}
+				submissionsOut := &lesson.ListSubmissionsResponse{
+					TeacherShifts: teacherShifts,
+					StudentShifts: studentShifts,
+				}
+				teacherSubjectsIn := &classroom.MultiGetTeacherSubjectsRequest{TeacherIds: []string{"teacherid"}}
+				teacherSubjectsOut := &classroom.MultiGetTeacherSubjectsResponse{
+					TeacherSubjects: teacherSubjects,
+					Subjects:        subjects,
+				}
+				studentSubjectsIn := &classroom.MultiGetStudentSubjectsRequest{StudentIds: []string{"studentid"}}
+				studentSubjectsOut := &classroom.MultiGetStudentSubjectsResponse{
+					StudentSubjects: studentSubjects,
+					Subjects:        subjects,
+				}
+				teachersIn := &user.MultiGetTeachersRequest{Ids: []string{"teacherid"}}
+				teachersOut := &user.MultiGetTeachersResponse{Teachers: teachers}
+				studentsIn := &user.MultiGetStudentsRequest{Ids: []string{"studentid"}}
+				studentsOut := &user.MultiGetStudentsResponse{Students: students}
+				lessonsIn := &lesson.ListLessonsRequest{ShiftId: 1}
+				lessonsOut := &lesson.ListLessonsResponse{Lessons: lessons}
+				shiftsIn := &lesson.ListShiftsRequest{ShiftId: 1}
+				mocks.lesson.EXPECT().ListSubmissions(gomock.Any(), submissionsIn).Return(submissionsOut, nil)
+				mocks.classroom.EXPECT().MultiGetTeacherSubjects(gomock.Any(), teacherSubjectsIn).
+					Return(teacherSubjectsOut, nil)
+				mocks.classroom.EXPECT().MultiGetStudentSubjects(gomock.Any(), studentSubjectsIn).
+					Return(studentSubjectsOut, nil)
+				mocks.user.EXPECT().MultiGetTeachers(gomock.Any(), teachersIn).Return(teachersOut, nil)
+				mocks.user.EXPECT().MultiGetStudents(gomock.Any(), studentsIn).Return(studentsOut, nil)
+				mocks.lesson.EXPECT().ListLessons(gomock.Any(), lessonsIn).Return(lessonsOut, nil)
+				mocks.lesson.EXPECT().ListShifts(gomock.Any(), shiftsIn).Return(nil, errmock)
+			},
+			summaryID: "1",
+			shiftID:   "1",
+			expect: &testResponse{
+				code: http.StatusInternalServerError,
 			},
 		},
 	}
