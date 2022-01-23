@@ -65,8 +65,8 @@ func TestShift_List(t *testing.T) {
 			setup: func(ctx context.Context, t *testing.T, m *mocks) {},
 			args: args{
 				params: &ListShiftsParams{
-					ShiftSummaryID: 1,
-					ShiftID:        1,
+					ShiftSummaryID: 100,
+					ShiftID:        100,
 					Limit:          100,
 					Offset:         100,
 				},
