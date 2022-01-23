@@ -196,6 +196,26 @@ func (mr *MockUserServiceClientMockRecorder) ListTeachers(ctx, in interface{}, o
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListTeachers", reflect.TypeOf((*MockUserServiceClient)(nil).ListTeachers), varargs...)
 }
 
+// MultiGetTeachers mocks base method.
+func (m *MockUserServiceClient) MultiGetTeachers(ctx context.Context, in *user.MultiGetTeachersRequest, opts ...grpc.CallOption) (*user.MultiGetTeachersResponse, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "MultiGetTeachers", varargs...)
+	ret0, _ := ret[0].(*user.MultiGetTeachersResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// MultiGetTeachers indicates an expected call of MultiGetTeachers.
+func (mr *MockUserServiceClientMockRecorder) MultiGetTeachers(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MultiGetTeachers", reflect.TypeOf((*MockUserServiceClient)(nil).MultiGetTeachers), varargs...)
+}
+
 // UpdateTeacherMail mocks base method.
 func (m *MockUserServiceClient) UpdateTeacherMail(ctx context.Context, in *user.UpdateTeacherMailRequest, opts ...grpc.CallOption) (*user.UpdateTeacherMailResponse, error) {
 	m.ctrl.T.Helper()
@@ -397,6 +417,21 @@ func (m *MockUserServiceServer) ListTeachers(arg0 context.Context, arg1 *user.Li
 func (mr *MockUserServiceServerMockRecorder) ListTeachers(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListTeachers", reflect.TypeOf((*MockUserServiceServer)(nil).ListTeachers), arg0, arg1)
+}
+
+// MultiGetTeachers mocks base method.
+func (m *MockUserServiceServer) MultiGetTeachers(arg0 context.Context, arg1 *user.MultiGetTeachersRequest) (*user.MultiGetTeachersResponse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "MultiGetTeachers", arg0, arg1)
+	ret0, _ := ret[0].(*user.MultiGetTeachersResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// MultiGetTeachers indicates an expected call of MultiGetTeachers.
+func (mr *MockUserServiceServerMockRecorder) MultiGetTeachers(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MultiGetTeachers", reflect.TypeOf((*MockUserServiceServer)(nil).MultiGetTeachers), arg0, arg1)
 }
 
 // UpdateTeacherMail mocks base method.

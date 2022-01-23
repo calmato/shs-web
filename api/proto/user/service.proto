@@ -12,6 +12,7 @@ import "user/student.proto";
 
 service UserService {
   rpc ListTeachers(ListTeachersRequest) returns (ListTeachersResponse);
+  rpc MultiGetTeachers(MultiGetTeachersRequest) returns (MultiGetTeachersResponse);
   rpc GetTeacher(GetTeacherRequest) returns (GetTeacherResponse);
   rpc CreateTeacher(CreateTeacherRequest) returns (CreateTeacherResponse);
   rpc UpdateTeacherMail(UpdateTeacherMailRequest) returns (UpdateTeacherMailResponse);
