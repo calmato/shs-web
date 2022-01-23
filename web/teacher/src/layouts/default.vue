@@ -1,5 +1,5 @@
 <template>
-  <v-app class="root" :style="{ background }">
+  <v-app class="root">
     <the-snackbar :snackbar.sync="snackbar" :color="snackbarColor" :message="snackbarMessage" />
     <the-header :overlay="overlay" @click="handleClickMenu" />
     <the-sidebar :items="getMenuItems()" :current="current" @click="handleClickMenuItem" />
@@ -17,8 +17,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref, SetupContext, watch } from '@nuxtjs/composition-api'
-import { VuetifyThemeItem } from 'vuetify/types/services/theme'
+import { computed, defineComponent, ref, useRoute, useRouter, useStore, watch } from '@nuxtjs/composition-api'
 import TheHeader from '~/components/organisms/TheHeader.vue'
 import TheMenu from '~/components/organisms/TheMenu.vue'
 import TheSidebar from '~/components/organisms/TheSidebar.vue'
@@ -35,13 +34,11 @@ export default defineComponent({
     TheSidebar,
   },
 
-  setup(_, { root }: SetupContext) {
-    const route = root.$route
-    const router = root.$router
-    const store = root.$store
-    const vuetify = root.$vuetify
+  setup(_) {
+    const route = useRoute()
+    const router = useRouter()
+    const store = useStore()
 
-    const greyBackgroundPaths = ['/settings']
     const items: Menu[] = [
       {
         name: 'トップ',
@@ -75,31 +72,18 @@ export default defineComponent({
       },
     ]
 
-    const getBackgroundColor = (path: string): VuetifyThemeItem => {
-      const theme = vuetify.theme.dark ? 'dark' : 'light'
-
-      let color: VuetifyThemeItem = vuetify.theme.themes[theme].white
-      if (greyBackgroundPaths.includes(path)) {
-        color = vuetify.theme.themes[theme].grey
-      }
-
-      return color
-    }
-
-    const current = ref<string>(route.path)
+    const current = ref<string>(route.value.path)
     const snackbar = ref<Boolean>(false)
     const overlay = ref<boolean>(false)
-    const background = ref<VuetifyThemeItem>(getBackgroundColor(root.$route.path))
 
     const role = computed<Role>(() => store.getters['auth/getRole'])
     const snackbarColor = computed(() => store.getters['common/getSnackbarColor'])
     const snackbarMessage = computed(() => store.getters['common/getSnackbarMessage'])
 
     watch(
-      () => root.$route,
+      () => route,
       (): void => {
-        current.value = root.$route.path
-        background.value = getBackgroundColor(root.$route.path)
+        current.value = route.value.path
       }
     )
 
@@ -136,7 +120,6 @@ export default defineComponent({
     return {
       overlay,
       current,
-      background,
       snackbar,
       snackbarColor,
       snackbarMessage,

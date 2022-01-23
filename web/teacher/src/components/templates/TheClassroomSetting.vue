@@ -1,7 +1,11 @@
 <template>
   <v-container>
-    <the-regular-holiday-setting-form :value.sync="regularHolidayFormData" />
+    <v-btn text class="px-0 mb-4" @click="handleBackButton">
+      <v-icon>mdi-chevron-left</v-icon>
+      戻る
+    </v-btn>
     <the-booth-setting-form :value.sync="boothFormData" />
+    <the-regular-holiday-setting-form :value.sync="regularHolidayFormData" />
     <the-hour-setting-form
       :weekday-hour-form="weekdayHourForm"
       :holiday-hour-form="holidayHourForm"
@@ -55,6 +59,10 @@ export default defineComponent({
       },
     })
 
+    const handleBackButton = (): void => {
+      emit('onClickBackButton')
+    }
+
     const handleWeekdayHourFormAddButton = () => {
       emit('click:addWeekdayHourForm')
     }
@@ -74,6 +82,7 @@ export default defineComponent({
     return {
       regularHolidayFormData,
       boothFormData,
+      handleBackButton,
       handleWeekdayHourFormAddButton,
       handleWeekdayHourFormRemoveButton,
       handleHolidayHourFormAddButton,

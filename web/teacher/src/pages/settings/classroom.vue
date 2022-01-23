@@ -8,11 +8,12 @@
     @click:removeWeekdayHourForm="handleWeekdayHourFormRemoveButton"
     @click:addHolidayHourForm="handleHolidayHourFormAddButton"
     @click:removeHolidayHourForm="handleHolidayHourFormRemoveButton"
+    @onClickBackButton="handleBackButton"
   />
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, ref, Ref } from '@nuxtjs/composition-api'
+import { defineComponent, reactive, ref, Ref, useRouter } from '@nuxtjs/composition-api'
 import customParseFormat from 'dayjs/plugin/customParseFormat'
 import dayjs from '~/plugins/dayjs'
 import TheClassroomSetting from '~/components/templates/TheClassroomSetting.vue'
@@ -33,6 +34,8 @@ export default defineComponent({
   },
 
   setup() {
+    const router = useRouter()
+
     const selectedRegularHoliday = reactive<string[]>([])
     const boothRef: Ref<number> = ref<number>(1)
     const weekdayHourForm = reactive<HourForm[]>([{ startAt: '17:00', endAt: '18:30' }])
@@ -50,6 +53,10 @@ export default defineComponent({
         endAt: endAt.tz().format('HH:mm'),
       }
       weekdayHourForm.push(newFormItem)
+    }
+
+    const handleBackButton = (): void => {
+      router.back()
     }
 
     const handleWeekdayHourFormRemoveButton = (i: number) => {
@@ -91,6 +98,7 @@ export default defineComponent({
       boothRef,
       weekdayHourForm,
       holidayHourForm,
+      handleBackButton,
       handleWeekdayHourFormAddButton,
       handleWeekdayHourFormRemoveButton,
       handleHolidayHourFormAddButton,
