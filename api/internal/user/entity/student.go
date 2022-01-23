@@ -76,10 +76,10 @@ func (s *Student) Fill(now time.Time) {
 	case age > 6 && age <= 12:
 		s.SchoolType = SchoolTypeElementarySchool
 		s.Grade = age - 6
-	case age <= 15:
+	case age > 12 && age <= 15:
 		s.SchoolType = SchoolTypeJuniorHighSchool
 		s.Grade = age - 12
-	case age <= 18:
+	case age > 15 && age <= 18:
 		s.SchoolType = SchoolTypeHighSchool
 		s.Grade = age - 15
 	default:

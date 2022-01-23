@@ -43,7 +43,7 @@ func TestStudent(t *testing.T) {
 				LastNameKana:  "はまだ",
 				FirstNameKana: "ただし",
 				Mail:          "student-test002@calmato.jp",
-				BirthYear:     2021,
+				BirthYear:     0,
 				Password:      "12345678",
 				SchoolType:    SchoolTypeUnknown,
 				Grade:         0,
