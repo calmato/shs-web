@@ -63,6 +63,24 @@ func (s *userService) listTeachers(ctx context.Context, limit, offset int64) (en
 	return teachers, total, nil
 }
 
+func (s *userService) MultiGetTeachers(
+	ctx context.Context, req *user.MultiGetTeachersRequest,
+) (*user.MultiGetTeachersResponse, error) {
+	if err := s.validator.MultiGetTeachers(req); err != nil {
+		return nil, gRPCError(err)
+	}
+
+	teachers, err := s.db.Teacher.MultiGet(ctx, req.Ids)
+	if err != nil {
+		return nil, gRPCError(err)
+	}
+
+	res := &user.MultiGetTeachersResponse{
+		Teachers: teachers.Proto(),
+	}
+	return res, nil
+}
+
 func (s *userService) GetTeacher(ctx context.Context, req *user.GetTeacherRequest) (*user.GetTeacherResponse, error) {
 	if err := s.validator.GetTeacher(req); err != nil {
 		return nil, gRPCError(err)

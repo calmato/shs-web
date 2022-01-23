@@ -34,6 +34,14 @@ message ListTeachersResponse {
   int64            total    = 2;
 }
 
+message MultiGetTeachersRequest {
+  repeated string ids = 1 [(validate.rules).repeated = { unique: true, items: { string: { min_len: 1 }}}];
+}
+
+message MultiGetTeachersResponse {
+  repeated Teacher teachers = 1;
+}
+
 message GetTeacherRequest {
   string id = 1 [(validate.rules).string = { min_len: 1 }];
 }

@@ -50,6 +50,19 @@ func (t *teacher) List(ctx context.Context, params *ListTeachersParams, fields .
 	return teachers, dbError(err)
 }
 
+func (t *teacher) MultiGet(ctx context.Context, ids []string, fields ...string) (entity.Teachers, error) {
+	var teachers entity.Teachers
+	if len(fields) == 0 {
+		fields = teacherFields
+	}
+
+	stmt := t.db.DB.Table(teacherTable).Select(fields).
+		Where("id IN (?)", ids)
+
+	err := stmt.Find(&teachers).Error
+	return teachers, dbError(err)
+}
+
 func (t *teacher) Get(ctx context.Context, id string, fields ...string) (*entity.Teacher, error) {
 	var teacher *entity.Teacher
 	if len(fields) == 0 {
