@@ -15,6 +15,15 @@ func (v *requestValidation) ListTeachers(req *user.ListTeachersRequest) error {
 	return nil
 }
 
+func (v *requestValidation) MultiGetTeachers(req *user.MultiGetTeachersRequest) error {
+	if err := req.Validate(); err != nil {
+		validate := err.(user.MultiGetTeachersRequestValidationError)
+		return validationError(validate.Error())
+	}
+
+	return nil
+}
+
 func (v *requestValidation) GetTeacher(req *user.GetTeacherRequest) error {
 	if err := req.Validate(); err != nil {
 		validate := err.(user.GetTeacherRequestValidationError)

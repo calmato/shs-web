@@ -54,6 +54,7 @@ type Student interface {
 
 type Teacher interface {
 	List(ctx context.Context, p *ListTeachersParams, fields ...string) (entity.Teachers, error)
+	MultiGet(ctx context.Context, ids []string, fields ...string) (entity.Teachers, error)
 	Get(ctx context.Context, id string, fields ...string) (*entity.Teacher, error)
 	Create(ctx context.Context, t *entity.Teacher) error
 	UpdateMail(ctx context.Context, teacherID string, mail string) error

@@ -12,6 +12,7 @@ import "user/student.proto";
 
 service UserService {
   rpc ListTeachers(ListTeachersRequest) returns (ListTeachersResponse);
+  rpc MultiGetTeachers(MultiGetTeachersRequest) returns (MultiGetTeachersResponse);
   rpc GetTeacher(GetTeacherRequest) returns (GetTeacherResponse);
   rpc CreateTeacher(CreateTeacherRequest) returns (CreateTeacherResponse);
   rpc UpdateTeacherMail(UpdateTeacherMailRequest) returns (UpdateTeacherMailResponse);
@@ -32,6 +33,14 @@ message ListTeachersRequest {
 message ListTeachersResponse {
   repeated Teacher teachers = 1;
   int64            total    = 2;
+}
+
+message MultiGetTeachersRequest {
+  repeated string ids = 1 [(validate.rules).repeated = { unique: true, items: { string: { min_len: 1 }}}];
+}
+
+message MultiGetTeachersResponse {
+  repeated Teacher teachers = 1;
 }
 
 message GetTeacherRequest {

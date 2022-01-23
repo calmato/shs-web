@@ -90,6 +90,87 @@ func TestTeacher_List(t *testing.T) {
 	}
 }
 
+func TestTeacher_MultiGet(t *testing.T) {
+	m, err := newMock()
+	require.NoError(t, err)
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	_ = m.dbDelete(ctx, teacherTable)
+
+	now := jst.Now()
+
+	teachers := make(entity.Teachers, 3)
+	teachers[0] = testTeacher("cvcTyJFfgoDQrqC1KDHbRe", "teacher01@calmato.jp", now)
+	teachers[1] = testTeacher("jx2NB7t3xodUu53LYtYTf2", "teacher02@calmato.jp", now)
+	teachers[2] = testTeacher("kvnMftmwoVsCzZRKNTEZtg", "teacher03@calmato.jp", now)
+	err = m.db.DB.Create(&teachers).Error
+	require.NoError(t, err)
+
+	type args struct {
+		teacherIDs []string
+	}
+	type want struct {
+		teachers entity.Teachers
+		isErr    bool
+	}
+	tests := []struct {
+		name  string
+		setup func(ctx context.Context, t *testing.T, m *mocks)
+		args  args
+		want  want
+	}{
+		{
+			name:  "success",
+			setup: func(ctx context.Context, t *testing.T, m *mocks) {},
+			args: args{
+				teacherIDs: []string{
+					"cvcTyJFfgoDQrqC1KDHbRe",
+					"jx2NB7t3xodUu53LYtYTf2",
+					"kvnMftmwoVsCzZRKNTEZtg",
+				},
+			},
+			want: want{
+				teachers: teachers,
+				isErr:    false,
+			},
+		},
+		{
+			name:  "success to length is 0",
+			setup: func(ctx context.Context, t *testing.T, m *mocks) {},
+			args: args{
+				teacherIDs: []string{
+					"teacherid",
+				},
+			},
+			want: want{
+				teachers: entity.Teachers{},
+				isErr:    false,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			ctx, cancel := context.WithCancel(context.Background())
+			defer cancel()
+
+			tt.setup(ctx, t, m)
+
+			db := NewTeacher(m.db, m.auth)
+			actual, err := db.MultiGet(ctx, tt.args.teacherIDs)
+			assert.Equal(t, tt.want.isErr, err != nil, err)
+			for i, teacher := range tt.want.teachers {
+				teacher.CreatedAt = actual[i].CreatedAt // ignore
+				teacher.UpdatedAt = actual[i].UpdatedAt // ignore
+				assert.Contains(t, actual, teacher)
+			}
+		})
+	}
+}
+
 func TestTeacher_Get(t *testing.T) {
 	m, err := newMock()
 	require.NoError(t, err)
