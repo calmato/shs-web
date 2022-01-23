@@ -45,7 +45,7 @@ export default defineComponent({
       },
       {
         title: '開講科目設定',
-        path: '#開講科目設定',
+        path: '/settings/subjects',
       },
       {
         title: '定休日/コマ/ブース 設定',
