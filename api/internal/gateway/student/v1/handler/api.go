@@ -68,7 +68,6 @@ func NewAPIV1Handler(params *Params) APIV1Handler {
  */
 func (h *apiV1Handler) AuthRoutes(rg *gin.RouterGroup) {
 	rg.GET("/v1/me", h.GetAuth)
-	rg.GET("/v1/students/:studentId", h.GetStudent)
 }
 
 func (h *apiV1Handler) NoAuthRoutes(rg *gin.RouterGroup) {}
