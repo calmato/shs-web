@@ -383,8 +383,9 @@ func TestListShifts(t *testing.T) {
 		{
 			name: "success",
 			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				params := &database.ListShiftsParams{ShiftSummaryID: 1}
 				mocks.validator.EXPECT().ListShifts(req).Return(nil)
-				mocks.db.Shift.EXPECT().ListBySummaryID(ctx, int64(1)).Return(shifts, nil)
+				mocks.db.Shift.EXPECT().List(ctx, params).Return(shifts, nil)
 			},
 			req: req,
 			expect: &testResponse{
@@ -427,8 +428,9 @@ func TestListShifts(t *testing.T) {
 		{
 			name: "failed to list shifts",
 			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				params := &database.ListShiftsParams{ShiftSummaryID: 1}
 				mocks.validator.EXPECT().ListShifts(req).Return(nil)
-				mocks.db.Shift.EXPECT().ListBySummaryID(ctx, int64(1)).Return(nil, errmock)
+				mocks.db.Shift.EXPECT().List(ctx, params).Return(nil, errmock)
 			},
 			req: req,
 			expect: &testResponse{

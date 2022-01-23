@@ -248,24 +248,24 @@ func (mr *MockShiftMockRecorder) Get(ctx, id interface{}, fields ...interface{})
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockShift)(nil).Get), varargs...)
 }
 
-// ListBySummaryID mocks base method.
-func (m *MockShift) ListBySummaryID(ctx context.Context, summaryID int64, fields ...string) (entity.Shifts, error) {
+// List mocks base method.
+func (m *MockShift) List(ctx context.Context, p *database.ListShiftsParams, fields ...string) (entity.Shifts, error) {
 	m.ctrl.T.Helper()
-	varargs := []interface{}{ctx, summaryID}
+	varargs := []interface{}{ctx, p}
 	for _, a := range fields {
 		varargs = append(varargs, a)
 	}
-	ret := m.ctrl.Call(m, "ListBySummaryID", varargs...)
+	ret := m.ctrl.Call(m, "List", varargs...)
 	ret0, _ := ret[0].(entity.Shifts)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// ListBySummaryID indicates an expected call of ListBySummaryID.
-func (mr *MockShiftMockRecorder) ListBySummaryID(ctx, summaryID interface{}, fields ...interface{}) *gomock.Call {
+// List indicates an expected call of List.
+func (mr *MockShiftMockRecorder) List(ctx, p interface{}, fields ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	varargs := append([]interface{}{ctx, summaryID}, fields...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListBySummaryID", reflect.TypeOf((*MockShift)(nil).ListBySummaryID), varargs...)
+	varargs := append([]interface{}{ctx, p}, fields...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "List", reflect.TypeOf((*MockShift)(nil).List), varargs...)
 }
 
 // MultiGet mocks base method.

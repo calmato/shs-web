@@ -136,9 +136,13 @@ func (s *lessonService) ListShifts(
 		return nil, gRPCError(err)
 	}
 
-	sharedKey := fmt.Sprintf("%s:%d", prefixKey, req.ShiftSummaryId)
+	sharedKey := fmt.Sprintf("%s:%d:%d", prefixKey, req.ShiftSummaryId, req.ShiftId)
 	res, err, _ := s.sharedGroup.Do(sharedKey, func() (interface{}, error) {
-		shifts, err := s.db.Shift.ListBySummaryID(ctx, req.ShiftSummaryId)
+		params := &database.ListShiftsParams{
+			ShiftSummaryID: req.ShiftSummaryId,
+			ShiftID:        req.ShiftId,
+		}
+		shifts, err := s.db.Shift.List(ctx, params)
 		if err != nil {
 			return nil, err
 		}
