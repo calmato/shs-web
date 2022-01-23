@@ -40,7 +40,7 @@ export default defineComponent({
       },
       {
         title: 'パスワードの変更',
-        path: '#パスワードの変更',
+        path: '/settings/password',
       },
       {
         title: '開講科目設定',
