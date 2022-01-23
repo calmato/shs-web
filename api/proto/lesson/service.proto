@@ -17,9 +17,6 @@ import "lesson/student_shift.proto";
 
 service LessonService {
   rpc ListLessons(ListLessonsRequest) returns (ListLessonsResponse);
-  rpc ListLessonsByShiftSummaryID(ListLessonsByShiftSummaryIDRequest) returns (ListLessonsByShiftSummaryIDResponse); // Deprecated: use to ListLessons
-  rpc ListLessonsByTeacherID(ListLessonsByTeacherIDRequest) returns (ListLessonsByTeacherIDResponse); // Deprecated: use to ListLessons
-  rpc ListLessonsByStudentID(ListLessonsByStudentIDRequest) returns (ListLessonsByStudentIDResponse); // Deprecated: use to ListLessons
   rpc CreateLesson(CreateLessonRequest) returns (CreateLessonResponse);
   rpc ListShiftSummaries(ListShiftSummariesRequest) returns (ListShiftSummariesResponse);
   rpc GetShiftSummary(GetShiftSummaryRequest) returns (GetShiftSummaryResponse);
@@ -47,38 +44,6 @@ message ListLessonsRequest {
 }
 
 message ListLessonsResponse {
-  repeated Lesson lessons = 1;
-}
-
-// Deprecated: use to ListLessons
-message ListLessonsByShiftSummaryIDRequest {
-  int64 shift_summary_id = 1 [(validate.rules).int64 = { gt: 0 }];
-}
-
-// Deprecated: use to ListLessons
-message ListLessonsByShiftSummaryIDResponse {
-  repeated Lesson lessons = 1;
-}
-
-// Deprecated: use to ListLessons
-message ListLessonsByTeacherIDRequest {
-  int64  shift_summary_id = 1 [(validate.rules).int64 = { gt: 0 }];
-  string teacher_id       = 2 [(validate.rules).string = { min_len: 1 }];
-}
-
-// Deprecated: use to ListLessons
-message ListLessonsByTeacherIDResponse {
-  repeated Lesson lessons = 1;
-}
-
-// Deprecated: use to ListLessons
-message ListLessonsByStudentIDRequest {
-  int64  shift_summary_id = 1 [(validate.rules).int64 = { gt: 0 }];
-  string student_id       = 2 [(validate.rules).string = { min_len: 1 }];
-}
-
-// Deprecated: use to ListLessons
-message ListLessonsByStudentIDResponse {
   repeated Lesson lessons = 1;
 }
 

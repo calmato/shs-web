@@ -274,10 +274,10 @@ func (h *apiV1Handler) ListShifts(ctx *gin.Context) {
 	}))
 	var glessons gentity.Lessons
 	eg.Go(func() error {
-		in := &lesson.ListLessonsByShiftSummaryIDRequest{
+		in := &lesson.ListLessonsRequest{
 			ShiftSummaryId: shiftSummaryID,
 		}
-		out, err := h.lesson.ListLessonsByShiftSummaryID(ectx, in)
+		out, err := h.lesson.ListLessons(ectx, in)
 		if err != nil {
 			return err
 		}
