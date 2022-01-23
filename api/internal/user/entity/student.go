@@ -41,19 +41,6 @@ func NewStudent(
 	schoolType SchoolType, grade int64, now time.Time,
 ) *Student {
 	uid := uuid.Base58Encode(uuid.New())
-	year := int64(jst.FiscalYear(now))
-	age := int64(0)
-	switch schoolType {
-	case SchoolTypeElementarySchool:
-		age = grade + 6
-	case SchoolTypeJuniorHighSchool:
-		age = grade + 12
-	case SchoolTypeHighSchool:
-		age = grade + 15
-	default:
-		age = 0
-	}
-	birthYear := year - age
 	return &Student{
 		ID:            uid,
 		LastName:      lastName,
@@ -61,10 +48,24 @@ func NewStudent(
 		LastNameKana:  lastNameKana,
 		FirstNameKana: firstNameKana,
 		Mail:          mail,
-		BirthYear:     birthYear,
+		BirthYear:     newStudentBirthYear(schoolType, grade, now),
 		SchoolType:    schoolType,
 		Grade:         grade,
 		Password:      password,
+	}
+}
+
+func newStudentBirthYear(schoolType SchoolType, grade int64, now time.Time) int64 {
+	year := int64(jst.FiscalYear(now))
+	switch schoolType {
+	case SchoolTypeElementarySchool:
+		return year - (grade + 6)
+	case SchoolTypeJuniorHighSchool:
+		return year - (grade + 12)
+	case SchoolTypeHighSchool:
+		return year - (grade + 15)
+	default:
+		return 0
 	}
 }
 
@@ -72,13 +73,13 @@ func (s *Student) Fill(now time.Time) {
 	year := int64(jst.FiscalYear(now))
 	age := year - s.BirthYear
 	switch {
-	case age >= 7 && age <= 12:
+	case age > 6 && age <= 12:
 		s.SchoolType = SchoolTypeElementarySchool
 		s.Grade = age - 6
-	case age >= 13 && age <= 15:
+	case age <= 15:
 		s.SchoolType = SchoolTypeJuniorHighSchool
 		s.Grade = age - 12
-	case age >= 16 && age <= 18:
+	case age <= 18:
 		s.SchoolType = SchoolTypeHighSchool
 		s.Grade = age - 15
 	default:
@@ -95,7 +96,6 @@ func (s *Student) Proto() *user.Student {
 		LastNameKana:  s.LastNameKana,
 		FirstNameKana: s.FirstNameKana,
 		Mail:          s.Mail,
-		BirthYear:     s.BirthYear,
 		SchoolType:    user.SchoolType(s.SchoolType),
 		Grade:         s.Grade,
 		CreatedAt:     s.CreatedAt.Unix(),

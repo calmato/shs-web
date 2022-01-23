@@ -90,6 +90,87 @@ func TestStudents_List(t *testing.T) {
 	}
 }
 
+func TestStudent_MultiGet(t *testing.T) {
+	m, err := newMock()
+	require.NoError(t, err)
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	_ = m.dbDelete(ctx, studentTable)
+
+	now := jst.Now()
+
+	students := make(entity.Students, 3)
+	students[0] = testStudent("cvcTyJFfgoDQrqC1KDHbRe", "student01@calmato.jp", now)
+	students[1] = testStudent("jx2NB7t3xodUu53LYtYTf2", "student02@calmato.jp", now)
+	students[2] = testStudent("kvnMftmwoVsCzZRKNTEZtg", "student03@calmato.jp", now)
+	err = m.db.DB.Create(&students).Error
+	require.NoError(t, err)
+
+	type args struct {
+		studentIDs []string
+	}
+	type want struct {
+		students entity.Students
+		isErr    bool
+	}
+	tests := []struct {
+		name  string
+		setup func(ctx context.Context, t *testing.T, m *mocks)
+		args  args
+		want  want
+	}{
+		{
+			name:  "success",
+			setup: func(ctx context.Context, t *testing.T, m *mocks) {},
+			args: args{
+				studentIDs: []string{
+					"cvcTyJFfgoDQrqC1KDHbRe",
+					"jx2NB7t3xodUu53LYtYTf2",
+					"kvnMftmwoVsCzZRKNTEZtg",
+				},
+			},
+			want: want{
+				students: students,
+				isErr:    false,
+			},
+		},
+		{
+			name:  "success to length is 0",
+			setup: func(ctx context.Context, t *testing.T, m *mocks) {},
+			args: args{
+				studentIDs: []string{
+					"studentid",
+				},
+			},
+			want: want{
+				students: entity.Students{},
+				isErr:    false,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			ctx, cancel := context.WithCancel(context.Background())
+			defer cancel()
+
+			tt.setup(ctx, t, m)
+
+			db := NewStudent(m.db, m.auth)
+			actual, err := db.MultiGet(ctx, tt.args.studentIDs)
+			assert.Equal(t, tt.want.isErr, err != nil, err)
+			for i, student := range tt.want.students {
+				student.CreatedAt = actual[i].CreatedAt // ignore
+				student.UpdatedAt = actual[i].UpdatedAt // ignore
+				assert.Contains(t, actual, student)
+			}
+		})
+	}
+}
+
 func TestStudent_Get(t *testing.T) {
 	m, err := newMock()
 	require.NoError(t, err)
@@ -376,15 +457,17 @@ func TestStudent_Count(t *testing.T) {
 }
 
 func testStudent(id string, mail string, now time.Time) *entity.Student {
-	return &entity.Student{
+	student := &entity.Student{
 		ID:            id,
 		LastName:      "浜田",
 		FirstName:     "直志",
 		LastNameKana:  "はまだ",
 		FirstNameKana: "ただし",
 		Mail:          mail,
-		BirthYear:     2005,
+		BirthYear:     int64(jst.FiscalYear(now) - 12),
 		CreatedAt:     now,
 		UpdatedAt:     now,
 	}
+	student.Fill(now)
+	return student
 }

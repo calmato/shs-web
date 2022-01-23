@@ -146,6 +146,20 @@ func (mr *MockRequestValidationMockRecorder) ListTeachers(req interface{}) *gomo
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListTeachers", reflect.TypeOf((*MockRequestValidation)(nil).ListTeachers), req)
 }
 
+// MultiGetStudents mocks base method.
+func (m *MockRequestValidation) MultiGetStudents(req *user.MultiGetStudentsRequest) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "MultiGetStudents", req)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// MultiGetStudents indicates an expected call of MultiGetStudents.
+func (mr *MockRequestValidationMockRecorder) MultiGetStudents(req interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MultiGetStudents", reflect.TypeOf((*MockRequestValidation)(nil).MultiGetStudents), req)
+}
+
 // MultiGetTeachers mocks base method.
 func (m *MockRequestValidation) MultiGetTeachers(req *user.MultiGetTeachersRequest) error {
 	m.ctrl.T.Helper()
