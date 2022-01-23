@@ -51,6 +51,24 @@ func (s *userService) ListStudents(
 	return res, nil
 }
 
+func (s *userService) MultiGetStudents(
+	ctx context.Context, req *user.MultiGetStudentsRequest,
+) (*user.MultiGetStudentsResponse, error) {
+	if err := s.validator.MultiGetStudents(req); err != nil {
+		return nil, gRPCError(err)
+	}
+
+	students, err := s.db.Student.MultiGet(ctx, req.Ids)
+	if err != nil {
+		return nil, gRPCError(err)
+	}
+
+	res := &user.MultiGetStudentsResponse{
+		Students: students.Proto(),
+	}
+	return res, nil
+}
+
 func (s *userService) GetStudent(ctx context.Context, req *user.GetStudentRequest) (*user.GetStudentResponse, error) {
 	if err := s.validator.GetStudent(req); err != nil {
 		return nil, gRPCError(err)

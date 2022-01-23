@@ -20,6 +20,7 @@ service UserService {
   rpc UpdateTeacherRole(UpdateTeacherRoleRequest) returns (UpdateTeacherRoleResponse);
   rpc DeleteTeacher(DeleteTeacherRequest) returns (DeleteTeacherResponse);
   rpc ListStudents(ListStudentsRequest) returns (ListStudentsResponse);
+  rpc MultiGetStudents(MultiGetStudentsRequest) returns (MultiGetStudentsResponse);
   rpc GetStudent(GetStudentRequest) returns (GetStudentResponse);
   rpc CreateStudent(CreateStudentRequest) returns (CreateStudentResponse);
   rpc DeleteStudent(DeleteStudentRequest) returns (DeleteStudentResponse);
@@ -102,6 +103,14 @@ message ListStudentsRequest {
 message ListStudentsResponse {
   repeated Student students = 1;
   int64            total    = 2;
+}
+
+message MultiGetStudentsRequest {
+  repeated string ids = 1 [(validate.rules).repeated = { unique: true, items: { string: { min_len: 1 }}}];
+}
+
+message MultiGetStudentsResponse {
+  repeated Student students = 1;
 }
 
 message GetStudentRequest {

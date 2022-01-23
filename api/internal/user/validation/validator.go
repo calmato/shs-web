@@ -23,6 +23,7 @@ type RequestValidation interface {
 	UpdateTeacherRole(req *user.UpdateTeacherRoleRequest) error
 	DeleteTeacher(req *user.DeleteTeacherRequest) error
 	ListStudents(req *user.ListStudentsRequest) error
+	MultiGetStudents(req *user.MultiGetStudentsRequest) error
 	GetStudent(req *user.GetStudentRequest) error
 	CreateStudent(req *user.CreateStudentRequest) error
 	DeleteStudent(req *user.DeleteStudentRequest) error

@@ -15,6 +15,15 @@ func (v *requestValidation) ListStudents(req *user.ListStudentsRequest) error {
 	return nil
 }
 
+func (v *requestValidation) MultiGetStudents(req *user.MultiGetStudentsRequest) error {
+	if err := req.Validate(); err != nil {
+		validate := err.(user.MultiGetStudentsRequestValidationError)
+		return validationError(validate.Error())
+	}
+
+	return nil
+}
+
 func (v *requestValidation) GetStudent(req *user.GetStudentRequest) error {
 	if err := req.Validate(); err != nil {
 		validate := err.(user.GetStudentRequestValidationError)

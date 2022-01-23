@@ -46,6 +46,7 @@ func NewDatabase(params *Params) *Database {
  */
 type Student interface {
 	List(ctx context.Context, p *ListStudentsParams, fields ...string) (entity.Students, error)
+	MultiGet(ctx context.Context, ids []string, fields ...string) (entity.Students, error)
 	Get(ctx context.Context, id string, fields ...string) (*entity.Student, error)
 	Create(ctx context.Context, s *entity.Student) error
 	Delete(ctx context.Context, studentID string) error

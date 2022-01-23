@@ -69,10 +69,9 @@ func TestListStudents(t *testing.T) {
 							LastNameKana:  "なかむら",
 							FirstNameKana: "こうだい",
 							Mail:          "student-test001@calmato.jp",
-							BirthYear:     2005,
 							CreatedAt:     now.Unix(),
 							UpdatedAt:     now.Unix(),
-							SchoolType:    3,
+							SchoolType:    user.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL,
 							Grade:         1,
 						},
 					},
@@ -125,6 +124,93 @@ func TestListStudents(t *testing.T) {
 	}
 }
 
+func TestMultiGetStudents(t *testing.T) {
+	t.Parallel()
+	now := jst.Now()
+
+	req := &user.MultiGetStudentsRequest{
+		Ids: []string{"kSByoE6FetnPs5Byk3a9Zx"},
+	}
+	students := entity.Students{
+		{
+			ID:            "kSByoE6FetnPs5Byk3a9Zx",
+			LastName:      "中村",
+			FirstName:     "広大",
+			LastNameKana:  "なかむら",
+			FirstNameKana: "こうだい",
+			Mail:          "student-test001@calmato.jp",
+			SchoolType:    entity.SchoolTypeHighSchool,
+			Grade:         1,
+			CreatedAt:     now,
+			UpdatedAt:     now,
+		},
+	}
+
+	tests := []struct {
+		name   string
+		setup  func(ctx context.Context, t *testing.T, mocks *mocks)
+		req    *user.MultiGetStudentsRequest
+		expect *testResponse
+	}{
+		{
+			name: "success",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				mocks.validator.EXPECT().MultiGetStudents(req).Return(nil)
+				mocks.db.Student.EXPECT().MultiGet(gomock.Any(), []string{"kSByoE6FetnPs5Byk3a9Zx"}).Return(students, nil)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.OK,
+				body: &user.MultiGetStudentsResponse{
+					Students: []*user.Student{
+						{
+							Id:            "kSByoE6FetnPs5Byk3a9Zx",
+							LastName:      "中村",
+							FirstName:     "広大",
+							LastNameKana:  "なかむら",
+							FirstNameKana: "こうだい",
+							Mail:          "student-test001@calmato.jp",
+							CreatedAt:     now.Unix(),
+							UpdatedAt:     now.Unix(),
+							SchoolType:    user.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL,
+							Grade:         1,
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "invalid argument",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				req := &user.MultiGetStudentsRequest{}
+				mocks.validator.EXPECT().MultiGetStudents(req).Return(validation.ErrRequestValidation)
+			},
+			req: &user.MultiGetStudentsRequest{},
+			expect: &testResponse{
+				code: codes.InvalidArgument,
+			},
+		},
+		{
+			name: "success",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				mocks.validator.EXPECT().MultiGetStudents(req).Return(nil)
+				mocks.db.Student.EXPECT().MultiGet(gomock.Any(), []string{"kSByoE6FetnPs5Byk3a9Zx"}).Return(nil, errmock)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.Internal,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, testGRPC(tt.setup, tt.expect, func(ctx context.Context, service *userService) (proto.Message, error) {
+			return service.MultiGetStudents(ctx, tt.req)
+		}))
+	}
+}
+
 func TestGetStudent(t *testing.T) {
 	t.Parallel()
 	now := jst.Now()
@@ -140,6 +226,8 @@ func TestGetStudent(t *testing.T) {
 		FirstNameKana: "ただし",
 		Mail:          "student-test001@calmato.jp",
 		BirthYear:     2021,
+		SchoolType:    entity.SchoolTypeHighSchool,
+		Grade:         1,
 		CreatedAt:     now,
 		UpdatedAt:     now,
 	}
@@ -167,7 +255,8 @@ func TestGetStudent(t *testing.T) {
 						LastNameKana:  "はまだ",
 						FirstNameKana: "ただし",
 						Mail:          "student-test001@calmato.jp",
-						BirthYear:     2021,
+						SchoolType:    user.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL,
+						Grade:         1,
 						CreatedAt:     now.Unix(),
 						UpdatedAt:     now.Unix(),
 					},

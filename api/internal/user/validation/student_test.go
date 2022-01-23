@@ -54,6 +54,48 @@ func TestListStudents(t *testing.T) {
 	}
 }
 
+func TestMultiGetStudents(t *testing.T) {
+	t.Parallel()
+	validator := NewRequestValidation()
+
+	tests := []struct {
+		name  string
+		req   *user.MultiGetStudentsRequest
+		isErr bool
+	}{
+		{
+			name: "success",
+			req: &user.MultiGetStudentsRequest{
+				Ids: []string{"cvcTyJFfgoDQrqC1KDHbRe"},
+			},
+			isErr: false,
+		},
+		{
+			name: "Ids is unique",
+			req: &user.MultiGetStudentsRequest{
+				Ids: []string{"studentid", "studentid"},
+			},
+			isErr: true,
+		},
+		{
+			name: "Ids is min_len",
+			req: &user.MultiGetStudentsRequest{
+				Ids: []string{""},
+			},
+			isErr: true,
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			err := validator.MultiGetStudents(tt.req)
+			assert.Equal(t, tt.isErr, err != nil, err)
+		})
+	}
+}
+
 func TestGetStudent(t *testing.T) {
 	t.Parallel()
 	validator := NewRequestValidation()

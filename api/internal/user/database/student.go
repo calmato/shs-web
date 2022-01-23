@@ -47,7 +47,28 @@ func (s *student) List(ctx context.Context, params *ListStudentsParams, fields .
 	}
 
 	err := stmt.Find(&students).Error
-	return students, dbError(err)
+	if err != nil {
+		return nil, dbError(err)
+	}
+	students.Fill(s.now())
+	return students, nil
+}
+
+func (s *student) MultiGet(ctx context.Context, ids []string, fields ...string) (entity.Students, error) {
+	var students entity.Students
+	if len(fields) == 0 {
+		fields = studentFields
+	}
+
+	stmt := s.db.DB.Table(studentTable).Select(fields).
+		Where("id IN (?)", ids)
+
+	err := stmt.Find(&students).Error
+	if err != nil {
+		return nil, dbError(err)
+	}
+	students.Fill(s.now())
+	return students, nil
 }
 
 func (s *student) Get(ctx context.Context, id string, fields ...string) (*entity.Student, error) {
@@ -63,6 +84,7 @@ func (s *student) Get(ctx context.Context, id string, fields ...string) (*entity
 	if err != nil {
 		return nil, dbError(err)
 	}
+	student.Fill(s.now())
 	return student, nil
 }
 

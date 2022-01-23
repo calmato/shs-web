@@ -119,6 +119,26 @@ func (mr *MockStudentMockRecorder) List(ctx, p interface{}, fields ...interface{
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "List", reflect.TypeOf((*MockStudent)(nil).List), varargs...)
 }
 
+// MultiGet mocks base method.
+func (m *MockStudent) MultiGet(ctx context.Context, ids []string, fields ...string) (entity.Students, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, ids}
+	for _, a := range fields {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "MultiGet", varargs...)
+	ret0, _ := ret[0].(entity.Students)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// MultiGet indicates an expected call of MultiGet.
+func (mr *MockStudentMockRecorder) MultiGet(ctx, ids interface{}, fields ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, ids}, fields...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MultiGet", reflect.TypeOf((*MockStudent)(nil).MultiGet), varargs...)
+}
+
 // MockTeacher is a mock of Teacher interface.
 type MockTeacher struct {
 	ctrl     *gomock.Controller
