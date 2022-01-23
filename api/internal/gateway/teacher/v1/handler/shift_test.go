@@ -122,6 +122,208 @@ func TestListShiftSummaries(t *testing.T) {
 	}
 }
 
+func TestListShiftSubmissions(t *testing.T) {
+	t.Parallel()
+	now := jst.Date(2022, 1, 12, 0, 0, 0, 0)
+	subjects := []*classroom.Subject{
+		{
+			Id:         1,
+			Name:       "国語",
+			Color:      "#F8BBD0",
+			SchoolType: classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL,
+			CreatedAt:  now.Unix(),
+			UpdatedAt:  now.Unix(),
+		},
+	}
+	// teachers := []*user.Teacher{
+	// 	{
+	// 		Id:            "teacherid",
+	// 		LastName:      "中村",
+	// 		FirstName:     "広大",
+	// 		LastNameKana:  "なかむら",
+	// 		FirstNameKana: "こうだい",
+	// 		Mail:          "teacher-test001@calmato.jp",
+	// 		Role:          user.Role_ROLE_TEACHER,
+	// 		CreatedAt:     now.Unix(),
+	// 		UpdatedAt:     now.Unix(),
+	// 	},
+	// }
+	teacherSubjects := []*classroom.TeacherSubject{
+		{
+			TeacherId:  "teacherid",
+			SubjectIds: []int64{1},
+		},
+	}
+	teacherShifts := []*lesson.TeacherShift{
+		{
+			TeacherId:      "teacherid",
+			ShiftId:        1,
+			ShiftSummaryId: 1,
+			CreatedAt:      now.Unix(),
+			UpdatedAt:      now.Unix(),
+		},
+		{
+			TeacherId:      "teacherid",
+			ShiftId:        3,
+			ShiftSummaryId: 1,
+			CreatedAt:      now.Unix(),
+			UpdatedAt:      now.Unix(),
+		},
+	}
+	// students := []*user.Student{
+	// 	{
+	// 		Id:            "studentid",
+	// 		LastName:      "中村",
+	// 		FirstName:     "広大",
+	// 		LastNameKana:  "なかむら",
+	// 		FirstNameKana: "こうだい",
+	// 		Mail:          "student-test001@calmato.jp",
+	// 		SchoolType:    user.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL,
+	// 		Grade:         3,
+	// 		CreatedAt:     now.Unix(),
+	// 		UpdatedAt:     now.Unix(),
+	// 	},
+	// }
+	studentSubjects := []*classroom.StudentSubject{
+		{
+			StudentId:  "studentid",
+			SubjectIds: []int64{1},
+		},
+	}
+	studentShifts := []*lesson.StudentShift{
+		{
+			StudentId:      "studentid",
+			ShiftId:        1,
+			ShiftSummaryId: 1,
+			CreatedAt:      now.Unix(),
+			UpdatedAt:      now.Unix(),
+		},
+		{
+			StudentId:      "studentid",
+			ShiftId:        3,
+			ShiftSummaryId: 1,
+			CreatedAt:      now.Unix(),
+			UpdatedAt:      now.Unix(),
+		},
+	}
+	// lessons := []*lesson.Lesson{
+	// 	{
+	// 		Id:             1,
+	// 		ShiftSummaryId: 1,
+	// 		ShiftId:        1,
+	// 		SubjectId:      1,
+	// 		RoomId:         1,
+	// 		TeacherId:      "teacherid",
+	// 		StudentId:      "studentid",
+	// 		Notes:          "感想",
+	// 		CreatedAt:      now.Unix(),
+	// 		UpdatedAt:      now.Unix(),
+	// 	},
+	// }
+	tests := []struct {
+		name      string
+		setup     func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller)
+		summaryID string
+		shiftID   string
+		expect    *testResponse
+	}{
+		{
+			name: "succcess",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
+				submissionsIn := &lesson.ListSubmissionsRequest{ShiftId: 1}
+				submissionsOut := &lesson.ListSubmissionsResponse{
+					TeacherShifts: teacherShifts,
+					StudentShifts: studentShifts,
+				}
+				teacherSubjectsIn := &classroom.MultiGetTeacherSubjectsRequest{TeacherIds: []string{"teacherid"}}
+				teacherSubjectsOut := &classroom.MultiGetTeacherSubjectsResponse{
+					TeacherSubjects: teacherSubjects,
+					Subjects:        subjects,
+				}
+				studentSubjectsIn := &classroom.MultiGetStudentSubjectsRequest{StudentIds: []string{"studentid"}}
+				studentSubjectsOut := &classroom.MultiGetStudentSubjectsResponse{
+					StudentSubjects: studentSubjects,
+					Subjects:        subjects,
+				}
+				mocks.lesson.EXPECT().ListSubmissions(gomock.Any(), submissionsIn).Return(submissionsOut, nil)
+				mocks.classroom.EXPECT().MultiGetTeacherSubjects(gomock.Any(), teacherSubjectsIn).
+					Return(teacherSubjectsOut, nil)
+				mocks.classroom.EXPECT().MultiGetStudentSubjects(gomock.Any(), studentSubjectsIn).
+					Return(studentSubjectsOut, nil)
+			},
+			summaryID: "1",
+			shiftID:   "1",
+			expect: &testResponse{
+				code: http.StatusOK,
+				body: &response.ShiftSubmissionsResponse{
+					Teachers: entity.Teachers{
+						// {
+						// 	ID:            "teacherid",
+						// 	LastName:      "中村",
+						// 	FirstName:     "広大",
+						// 	LastNameKana:  "なかむら",
+						// 	FirstNameKana: "こうだい",
+						// 	Mail:          "teacher-test001@calmato.jp",
+						// 	Role:          entity.RoleTeacher,
+						// 	CreatedAt:     now,
+						// 	UpdatedAt:     now,
+						// 	Subjects: map[entity.SchoolType]entity.Subjects{
+						// 		entity.SchoolTypeElementarySchool: {},
+						// 		entity.SchoolTypeJuniorHighSchool: {},
+						// 		entity.SchoolTypeHighSchool: {
+						// 			{
+						// 				ID:         1,
+						// 				Name:       "国語",
+						// 				Color:      "#F8BBD0",
+						// 				SchoolType: entity.SchoolTypeHighSchool,
+						// 				CreatedAt:  now,
+						// 				UpdatedAt:  now,
+						// 			},
+						// 		},
+						// 	},
+						// },
+					},
+					Students: entity.Students{
+						// {
+						// 	ID:            "studentid",
+						// 	LastName:      "中村",
+						// 	FirstName:     "広大",
+						// 	LastNameKana:  "なかむら",
+						// 	FirstNameKana: "こうだい",
+						// 	Mail:          "student-test001@calmato.jp",
+						// 	SchoolType:    entity.SchoolTypeHighSchool,
+						// 	Grade:         3,
+						// 	CreatedAt:     now,
+						// 	UpdatedAt:     now,
+						// 	Subjects: entity.Subjects{
+						// 		{
+						// 			ID:         1,
+						// 			Name:       "国語",
+						// 			Color:      "#F8BBD0",
+						// 			SchoolType: entity.SchoolTypeHighSchool,
+						// 			CreatedAt:  now,
+						// 			UpdatedAt:  now,
+						// 		},
+						// 	},
+						// },
+					},
+					Lessons: entity.Lessons{},
+				},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			path := fmt.Sprintf("/v1/shifts/%s/submissions/%s", tt.summaryID, tt.shiftID)
+			req := newHTTPRequest(t, http.MethodGet, path, nil)
+			testHTTP(t, tt.setup, tt.expect, req)
+		})
+	}
+}
+
 func TestUpdateShiftSummarySchedule(t *testing.T) {
 	t.Parallel()
 

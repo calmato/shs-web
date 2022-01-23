@@ -119,6 +119,91 @@ func TestListTeachers(t *testing.T) {
 	}
 }
 
+func TestMultiGetTeachers(t *testing.T) {
+	t.Parallel()
+	now := jst.Now()
+
+	req := &user.MultiGetTeachersRequest{
+		Ids: []string{"kSByoE6FetnPs5Byk3a9Zx"},
+	}
+	teachers := entity.Teachers{
+		{
+			ID:            "kSByoE6FetnPs5Byk3a9Zx",
+			LastName:      "中村",
+			FirstName:     "広大",
+			LastNameKana:  "なかむら",
+			FirstNameKana: "こうだい",
+			Mail:          "teacher-test001@calmato.jp",
+			Role:          entity.RoleTeacher,
+			CreatedAt:     now,
+			UpdatedAt:     now,
+		},
+	}
+
+	tests := []struct {
+		name   string
+		setup  func(ctx context.Context, t *testing.T, mocks *mocks)
+		req    *user.MultiGetTeachersRequest
+		expect *testResponse
+	}{
+		{
+			name: "success",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				mocks.validator.EXPECT().MultiGetTeachers(req).Return(nil)
+				mocks.db.Teacher.EXPECT().MultiGet(gomock.Any(), []string{"kSByoE6FetnPs5Byk3a9Zx"}).Return(teachers, nil)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.OK,
+				body: &user.MultiGetTeachersResponse{
+					Teachers: []*user.Teacher{
+						{
+							Id:            "kSByoE6FetnPs5Byk3a9Zx",
+							LastName:      "中村",
+							FirstName:     "広大",
+							LastNameKana:  "なかむら",
+							FirstNameKana: "こうだい",
+							Mail:          "teacher-test001@calmato.jp",
+							Role:          user.Role_ROLE_TEACHER,
+							CreatedAt:     now.Unix(),
+							UpdatedAt:     now.Unix(),
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "invalid argument",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				req := &user.MultiGetTeachersRequest{}
+				mocks.validator.EXPECT().MultiGetTeachers(req).Return(validation.ErrRequestValidation)
+			},
+			req: &user.MultiGetTeachersRequest{},
+			expect: &testResponse{
+				code: codes.InvalidArgument,
+			},
+		},
+		{
+			name: "success",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				mocks.validator.EXPECT().MultiGetTeachers(req).Return(nil)
+				mocks.db.Teacher.EXPECT().MultiGet(gomock.Any(), []string{"kSByoE6FetnPs5Byk3a9Zx"}).Return(nil, errmock)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.Internal,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, testGRPC(tt.setup, tt.expect, func(ctx context.Context, service *userService) (proto.Message, error) {
+			return service.MultiGetTeachers(ctx, tt.req)
+		}))
+	}
+}
+
 func TestGetTeacher(t *testing.T) {
 	t.Parallel()
 	now := jst.Now()

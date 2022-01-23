@@ -37,7 +37,7 @@ export default defineComponent({
     const menuItems: Menu[] = [
       {
         title: 'メールアドレス変更',
-        path: '#メールアドレス変更',
+        path: '/settings/mail',
       },
       {
         title: 'パスワードの変更',

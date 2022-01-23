@@ -121,6 +121,71 @@ func (h *apiV1Handler) DeleteShiftSummary(ctx *gin.Context) {
 	ctx.JSON(http.StatusNoContent, gin.H{})
 }
 
+func (h *apiV1Handler) ListShiftSubmissions(ctx *gin.Context) {
+	c := util.SetMetadata(ctx)
+
+	shiftID, err := strconv.ParseInt(ctx.Param("submissionId"), 10, 64)
+	if err != nil {
+		badRequest(ctx, err)
+		return
+	}
+
+	in := &lesson.ListSubmissionsRequest{
+		ShiftId: shiftID,
+	}
+	out, err := h.lesson.ListSubmissions(c, in)
+	if err != nil {
+		httpError(ctx, err)
+		return
+	}
+	teacherIDs := gentity.NewTeacherShifts(out.TeacherShifts).TeacherIDs()
+	studentIDs := gentity.NewStudentShifts(out.StudentShifts).StudentIDs()
+
+	eg, ectx := errgroup.WithContext(c)
+	var gteachers gentity.Teachers
+	eg.Go(func() (err error) {
+		gteachers, err = h.multiGetTeachers(ectx, teacherIDs)
+		return
+	})
+	var gteacherSubjects map[string]gentity.Subjects
+	eg.Go(func() (err error) {
+		gteacherSubjects, err = h.multiGetTeacherSubjects(ectx, teacherIDs)
+		return
+	})
+	var gstudents gentity.Students
+	eg.Go(func() (err error) {
+		gstudents, err = h.multiGetStudents(ectx, studentIDs)
+		return
+	})
+	var gstudentSubjects map[string]gentity.Subjects
+	eg.Go(func() (err error) {
+		gstudentSubjects, err = h.multiGetStudentSubjects(ectx, studentIDs)
+		return
+	})
+	var glessons gentity.Lessons
+	var gshifts gentity.Shifts
+	eg.Go(func() (err error) {
+		// TODO: 実装
+		return
+	})
+	if err := eg.Wait(); err != nil {
+		httpError(ctx, err)
+		return
+	}
+
+	lessons, err := entity.NewLessons(glessons, gshifts.Map())
+	if err != nil {
+		httpError(ctx, err)
+		return
+	}
+	res := &response.ShiftSubmissionsResponse{
+		Teachers: entity.NewTeachers(gteachers, gteacherSubjects),
+		Students: entity.NewStudents(gstudents, gstudentSubjects),
+		Lessons:  lessons,
+	}
+	ctx.JSON(http.StatusOK, res)
+}
+
 //nolint:funlen
 func (h *apiV1Handler) ListShifts(ctx *gin.Context) {
 	c := util.SetMetadata(ctx)

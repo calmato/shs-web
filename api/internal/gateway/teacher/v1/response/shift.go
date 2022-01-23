@@ -6,6 +6,12 @@ type ShiftSummariesResponse struct {
 	Summaries entity.ShiftSummaries `json:"summaries"` // シフト募集概要一覧
 }
 
+type ShiftSubmissionsResponse struct {
+	Teachers entity.Teachers `json:"teachers"` // 出勤可能講師一覧
+	Students entity.Students `json:"students"` // 授業希望生徒一覧
+	Lessons  entity.Lessons  `json:"lessons"`  // 授業一覧
+}
+
 type ShiftsResponse struct {
 	Summary  *entity.ShiftSummary            `json:"summary"`  // シフト募集概要
 	Shifts   entity.ShiftDetails             `json:"shifts"`   // 募集シフト一覧

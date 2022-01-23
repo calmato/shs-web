@@ -16,6 +16,10 @@ export interface ITeacherNewParams {
   role: number
 }
 
+export interface ITeacherUpdateMailParams {
+  updateMail: string
+}
+
 export interface ITeacherEditSubjectParams {
   schoolType: 1 | 2 | 3
   subjectIds: number[]
@@ -50,6 +54,10 @@ export interface ITeacherEditRoleOptions {
   role: ISelect
 }
 
+export interface ITeacherUpdateMailOptions {
+  mail: ITextField
+}
+
 /**
  * ---------------------------
  * interface - form
@@ -68,6 +76,11 @@ export interface TeacherEditSubjectForm {
 export interface TeacherEditRoleForm {
   params: ITeacherEditRoleParams
   options: ITeacherEditRoleOptions
+}
+
+export interface TeacherUpdateMailForm {
+  params: ITeacherUpdateMailParams
+  options: ITeacherUpdateMailOptions
 }
 
 /**
@@ -103,6 +116,10 @@ export const TeacherEditSubjectForHighSchoolParams: ITeacherEditSubjectParams = 
 
 export const TeacherEditRoleParams: ITeacherEditRoleParams = {
   role: 0,
+}
+
+export const TeacherUpdateMailParams: ITeacherUpdateMailParams = {
+  updateMail: '',
 }
 
 /**
@@ -170,6 +187,16 @@ export const TeacherNewOptions: ITeacherNewOptions = {
       required: true,
     },
   } as ISelect,
+}
+
+export const TeacherUpdateMailOptions: ITeacherUpdateMailOptions = {
+  mail: {
+    label: 'メールアドレス',
+    rules: {
+      required: true,
+      email: true,
+    },
+  } as ITextField,
 }
 
 export const TeacherEditSubjectForElementarySchoolOptions: ITeacherEditSubjectOptions = {
