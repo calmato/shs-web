@@ -1,6 +1,9 @@
 package entity
 
-import "github.com/calmato/shs-web/api/proto/lesson"
+import (
+	"github.com/calmato/shs-web/api/pkg/set"
+	"github.com/calmato/shs-web/api/proto/lesson"
+)
 
 type StudentShift struct {
 	*lesson.StudentShift
@@ -20,6 +23,14 @@ func NewStudentShifts(shifts []*lesson.StudentShift) StudentShifts {
 		ss[i] = NewStudentShift(shifts[i])
 	}
 	return ss
+}
+
+func (ss StudentShifts) StudentIDs() []string {
+	set := set.New(len(ss))
+	for i := range ss {
+		set.AddStrings(ss[i].StudentId)
+	}
+	return set.Strings()
 }
 
 func (ss StudentShifts) MapByShiftID() map[int64]*StudentShift {

@@ -64,6 +64,8 @@ paths:
     $ref: './paths/v1/shifts/_shiftId/schedule.yaml'
   /v1/shifts/{shiftId}/lessons:
     $ref: './paths/v1/shifts/_shiftId/lessons/index.yaml'
+  /v1/shifts/{shiftId}/submissions/{submissionId}:
+    $ref: './paths/v1/shifts/_shiftId/submissions/_submissionId.yaml'
   /v1/shifts/{shiftId}/teachers/{teacherId}:
     $ref: './paths/v1/shifts/_shiftId/teachers/_teacherId.yaml'
   /v1/shifts/{shiftId}/students/{studentId}:
@@ -133,6 +135,8 @@ components:
       $ref: './components/schemas/v1/schedules.response.yaml#/schedulesResponse'
     v1ShiftSummariesResponse:
       $ref: './components/schemas/v1/shifts.response.yaml#/shiftSummariesResponse'
+    v1ShiftSubmissionsResponse:
+      $ref: './components/schemas/v1/shifts.response.yaml#/shiftSubmissionsResponse'
     v1ShiftsResponse:
       $ref: './components/schemas/v1/shifts.response.yaml#/shiftsResponse'
     v1TeacherSubmissionsResponse:
