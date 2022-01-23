@@ -51,7 +51,7 @@ func (l *lesson) List(ctx context.Context, params *ListLessonsParams, fields ...
 		stmt.Limit(params.Limit)
 	}
 	if params.Offset > 0 {
-		stmt.Limit(params.Limit)
+		stmt.Limit(params.Offset)
 	}
 
 	err := stmt.Find(&lessons).Error

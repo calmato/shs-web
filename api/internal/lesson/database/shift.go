@@ -28,6 +28,30 @@ func NewShift(db *database.Client) Shift {
 	}
 }
 
+func (s *shift) List(ctx context.Context, params *ListShiftsParams, fields ...string) (entity.Shifts, error) {
+	var shifts entity.Shifts
+	if len(fields) == 0 {
+		fields = shiftFields
+	}
+
+	stmt := s.db.DB.Table(shiftTable).Select(fields)
+	if params.ShiftID > 0 {
+		stmt.Where("id = ?", params.ShiftID)
+	}
+	if params.ShiftSummaryID > 0 {
+		stmt.Where("shift_summary_id = ?", params.ShiftSummaryID)
+	}
+	if params.Limit > 0 {
+		stmt.Limit(params.Limit)
+	}
+	if params.Offset > 0 {
+		stmt.Limit(params.Offset)
+	}
+
+	err := stmt.Find(&shifts).Error
+	return shifts, dbError(err)
+}
+
 func (s *shift) ListBySummaryID(ctx context.Context, summaryID int64, fields ...string) (entity.Shifts, error) {
 	var shifts entity.Shifts
 	if len(fields) == 0 {

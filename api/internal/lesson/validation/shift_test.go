@@ -225,7 +225,14 @@ func TestListShifts(t *testing.T) {
 		{
 			name: "ShiftSummaryId is gt",
 			req: &lesson.ListShiftsRequest{
-				ShiftSummaryId: 0,
+				ShiftSummaryId: -1,
+			},
+			isErr: true,
+		},
+		{
+			name: "ShiftId is gt",
+			req: &lesson.ListShiftsRequest{
+				ShiftId: -1,
 			},
 			isErr: true,
 		},
