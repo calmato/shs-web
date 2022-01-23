@@ -8,116 +8,36 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestListLessonsByShiftSummaryID(t *testing.T) {
+func TestListLessons(t *testing.T) {
 	t.Parallel()
 	validator := NewRequestValidation()
 
 	tests := []struct {
 		name  string
-		req   *lesson.ListLessonsByShiftSummaryIDRequest
+		req   *lesson.ListLessonsRequest
 		isErr bool
 	}{
 		{
 			name: "success",
-			req: &lesson.ListLessonsByShiftSummaryIDRequest{
+			req: &lesson.ListLessonsRequest{
 				ShiftSummaryId: 1,
-			},
-			isErr: false,
-		},
-		{
-			name: "ShiftSummaryId is gt",
-			req: &lesson.ListLessonsByShiftSummaryIDRequest{
-				ShiftSummaryId: 0,
-			},
-			isErr: true,
-		},
-	}
-
-	for _, tt := range tests {
-		tt := tt
-		t.Run(tt.name, func(t *testing.T) {
-			t.Parallel()
-			err := validator.ListLessonsByShiftSummaryID(tt.req)
-			assert.Equal(t, tt.isErr, err != nil, err)
-		})
-	}
-}
-
-func TestListLessonsByTeacherID(t *testing.T) {
-	t.Parallel()
-	validator := NewRequestValidation()
-
-	tests := []struct {
-		name  string
-		req   *lesson.ListLessonsByTeacherIDRequest
-		isErr bool
-	}{
-		{
-			name: "success",
-			req: &lesson.ListLessonsByTeacherIDRequest{
-				ShiftSummaryId: 1,
+				ShiftId:        1,
 				TeacherId:      "teacherid",
-			},
-			isErr: false,
-		},
-		{
-			name: "ShiftSummaryId is gt",
-			req: &lesson.ListLessonsByTeacherIDRequest{
-				ShiftSummaryId: 0,
-				TeacherId:      "teacherid",
-			},
-			isErr: true,
-		},
-		{
-			name: "TeacherId is min_len",
-			req: &lesson.ListLessonsByTeacherIDRequest{
-				ShiftSummaryId: 1,
-				TeacherId:      "",
-			},
-			isErr: true,
-		},
-	}
-
-	for _, tt := range tests {
-		tt := tt
-		t.Run(tt.name, func(t *testing.T) {
-			t.Parallel()
-			err := validator.ListLessonsByTeacherID(tt.req)
-			assert.Equal(t, tt.isErr, err != nil, err)
-		})
-	}
-}
-
-func TestListLessonsByStudentID(t *testing.T) {
-	t.Parallel()
-	validator := NewRequestValidation()
-
-	tests := []struct {
-		name  string
-		req   *lesson.ListLessonsByStudentIDRequest
-		isErr bool
-	}{
-		{
-			name: "success",
-			req: &lesson.ListLessonsByStudentIDRequest{
-				ShiftSummaryId: 1,
 				StudentId:      "studentid",
 			},
 			isErr: false,
 		},
 		{
-			name: "ShiftSummaryId is gt",
-			req: &lesson.ListLessonsByStudentIDRequest{
-				ShiftSummaryId: 0,
-				StudentId:      "studentid",
+			name: "ShiftSummaryId is gte",
+			req: &lesson.ListLessonsRequest{
+				ShiftSummaryId: -1,
 			},
 			isErr: true,
 		},
 		{
-			name: "StudentId is min_len",
-			req: &lesson.ListLessonsByStudentIDRequest{
-				ShiftSummaryId: 1,
-				StudentId:      "",
+			name: "ShiftId is gte",
+			req: &lesson.ListLessonsRequest{
+				ShiftId: -1,
 			},
 			isErr: true,
 		},
@@ -127,7 +47,7 @@ func TestListLessonsByStudentID(t *testing.T) {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			err := validator.ListLessonsByStudentID(tt.req)
+			err := validator.ListLessons(tt.req)
 			assert.Equal(t, tt.isErr, err != nil, err)
 		})
 	}

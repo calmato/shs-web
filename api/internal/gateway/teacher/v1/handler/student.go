@@ -41,8 +41,14 @@ func (h *apiV1Handler) GetStudent(ctx *gin.Context) {
 }
 
 func (h *apiV1Handler) multiGetStudents(ctx context.Context, studentIDs []string) (gentity.Students, error) {
-	// TODO: 実装
-	return gentity.Students{}, nil
+	in := &user.MultiGetStudentsRequest{
+		Ids: studentIDs,
+	}
+	out, err := h.user.MultiGetStudents(ctx, in)
+	if err != nil {
+		return nil, err
+	}
+	return gentity.NewStudents(out.Students), nil
 }
 
 func (h *apiV1Handler) getStudent(ctx context.Context, studentID string) (*gentity.Student, error) {

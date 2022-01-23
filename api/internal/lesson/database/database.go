@@ -68,7 +68,7 @@ type ShiftSummary interface {
 }
 
 type Shift interface {
-	ListBySummaryID(ctx context.Context, summaryID int64, fields ...string) (entity.Shifts, error)
+	List(ctx context.Context, p *ListShiftsParams, fields ...string) (entity.Shifts, error)
 	MultiGet(ctx context.Context, ids []int64, fields ...string) (entity.Shifts, error)
 	Get(ctx context.Context, id int64, fields ...string) (*entity.Shift, error)
 	MultipleCreate(ctx context.Context, summary *entity.ShiftSummary, shifts entity.Shifts) error
@@ -122,6 +122,7 @@ type ListLessonsParams struct {
 	Limit          int
 	Offset         int
 	ShiftSummaryID int64
+	ShiftID        int64
 	TeacherID      string
 	StudentID      string
 }
@@ -131,6 +132,13 @@ type ListShiftSummariesParams struct {
 	Offset  int
 	Status  entity.ShiftStatus
 	OrderBy OrderBy
+}
+
+type ListShiftsParams struct {
+	Limit          int
+	Offset         int
+	ShiftSummaryID int64
+	ShiftID        int64
 }
 
 /**

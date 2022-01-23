@@ -163,10 +163,28 @@ func (h *apiV1Handler) ListShiftSubmissions(ctx *gin.Context) {
 		return
 	})
 	var glessons gentity.Lessons
+	eg.Go(func() error {
+		in := &lesson.ListLessonsRequest{
+			ShiftId: shiftID,
+		}
+		out, err := h.lesson.ListLessons(ectx, in)
+		if err != nil {
+			return err
+		}
+		glessons = gentity.NewLessons(out.Lessons)
+		return nil
+	})
 	var gshifts gentity.Shifts
-	eg.Go(func() (err error) {
-		// TODO: 実装
-		return
+	eg.Go(func() error {
+		in := &lesson.ListShiftsRequest{
+			ShiftId: shiftID,
+		}
+		out, err := h.lesson.ListShifts(ectx, in)
+		if err != nil {
+			return err
+		}
+		gshifts = gentity.NewShifts(out.Shifts)
+		return nil
 	})
 	if err := eg.Wait(); err != nil {
 		httpError(ctx, err)
@@ -274,10 +292,10 @@ func (h *apiV1Handler) ListShifts(ctx *gin.Context) {
 	}))
 	var glessons gentity.Lessons
 	eg.Go(func() error {
-		in := &lesson.ListLessonsByShiftSummaryIDRequest{
+		in := &lesson.ListLessonsRequest{
 			ShiftSummaryId: shiftSummaryID,
 		}
-		out, err := h.lesson.ListLessonsByShiftSummaryID(ectx, in)
+		out, err := h.lesson.ListLessons(ectx, in)
 		if err != nil {
 			return err
 		}

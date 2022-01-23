@@ -11,7 +11,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestShift_ListBySummaryID(t *testing.T) {
+func TestShift_List(t *testing.T) {
 	m, err := newMock()
 	require.NoError(t, err)
 
@@ -35,7 +35,7 @@ func TestShift_ListBySummaryID(t *testing.T) {
 	require.NoError(t, err)
 
 	type args struct {
-		summaryID int64
+		params *ListShiftsParams
 	}
 	type want struct {
 		shifts entity.Shifts
@@ -51,10 +51,28 @@ func TestShift_ListBySummaryID(t *testing.T) {
 			name:  "success",
 			setup: func(ctx context.Context, t *testing.T, m *mocks) {},
 			args: args{
-				summaryID: 1,
+				params: &ListShiftsParams{
+					ShiftSummaryID: 1,
+				},
 			},
 			want: want{
 				shifts: shifts,
+				isErr:  false,
+			},
+		},
+		{
+			name:  "success to length is 0",
+			setup: func(ctx context.Context, t *testing.T, m *mocks) {},
+			args: args{
+				params: &ListShiftsParams{
+					ShiftSummaryID: 100,
+					ShiftID:        100,
+					Limit:          100,
+					Offset:         100,
+				},
+			},
+			want: want{
+				shifts: entity.Shifts{},
 				isErr:  false,
 			},
 		},
@@ -70,7 +88,7 @@ func TestShift_ListBySummaryID(t *testing.T) {
 			tt.setup(ctx, t, m)
 
 			db := NewShift(m.db)
-			actual, err := db.ListBySummaryID(ctx, tt.args.summaryID)
+			actual, err := db.List(ctx, tt.args.params)
 			assert.Equal(t, tt.want.isErr, err != nil, err)
 			assert.Len(t, actual, len(tt.want.shifts))
 			for i, shift := range tt.want.shifts {
