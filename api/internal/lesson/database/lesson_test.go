@@ -71,6 +71,7 @@ func TestLesson_List(t *testing.T) {
 			args: args{
 				params: &ListLessonsParams{
 					ShiftSummaryID: 100,
+					ShiftID:        100,
 					TeacherID:      "teacherid",
 					StudentID:      "studentid",
 					Limit:          1,

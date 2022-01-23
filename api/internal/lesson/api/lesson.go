@@ -11,6 +11,30 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
+func (s *lessonService) ListLessons(
+	ctx context.Context, req *lesson.ListLessonsRequest,
+) (*lesson.ListLessonsResponse, error) {
+	if err := s.validator.ListLessons(req); err != nil {
+		return nil, gRPCError(err)
+	}
+
+	params := &database.ListLessonsParams{
+		ShiftSummaryID: req.ShiftSummaryId,
+		ShiftID:        req.ShiftId,
+		TeacherID:      req.TeacherId,
+		StudentID:      req.StudentId,
+	}
+	lessons, err := s.db.Lesson.List(ctx, params)
+	if err != nil {
+		return nil, gRPCError(err)
+	}
+
+	res := &lesson.ListLessonsResponse{
+		Lessons: lessons.Proto(),
+	}
+	return res, nil
+}
+
 func (s *lessonService) ListLessonsByShiftSummaryID(
 	ctx context.Context, req *lesson.ListLessonsByShiftSummaryIDRequest,
 ) (*lesson.ListLessonsByShiftSummaryIDResponse, error) {

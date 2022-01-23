@@ -156,6 +156,26 @@ func (mr *MockLessonServiceClientMockRecorder) GetTeacherShifts(ctx, in interfac
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTeacherShifts", reflect.TypeOf((*MockLessonServiceClient)(nil).GetTeacherShifts), varargs...)
 }
 
+// ListLessons mocks base method.
+func (m *MockLessonServiceClient) ListLessons(ctx context.Context, in *lesson.ListLessonsRequest, opts ...grpc.CallOption) (*lesson.ListLessonsResponse, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "ListLessons", varargs...)
+	ret0, _ := ret[0].(*lesson.ListLessonsResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListLessons indicates an expected call of ListLessons.
+func (mr *MockLessonServiceClientMockRecorder) ListLessons(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListLessons", reflect.TypeOf((*MockLessonServiceClient)(nil).ListLessons), varargs...)
+}
+
 // ListLessonsByShiftSummaryID mocks base method.
 func (m *MockLessonServiceClient) ListLessonsByShiftSummaryID(ctx context.Context, in *lesson.ListLessonsByShiftSummaryIDRequest, opts ...grpc.CallOption) (*lesson.ListLessonsByShiftSummaryIDResponse, error) {
 	m.ctrl.T.Helper()
@@ -547,6 +567,21 @@ func (m *MockLessonServiceServer) GetTeacherShifts(arg0 context.Context, arg1 *l
 func (mr *MockLessonServiceServerMockRecorder) GetTeacherShifts(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTeacherShifts", reflect.TypeOf((*MockLessonServiceServer)(nil).GetTeacherShifts), arg0, arg1)
+}
+
+// ListLessons mocks base method.
+func (m *MockLessonServiceServer) ListLessons(arg0 context.Context, arg1 *lesson.ListLessonsRequest) (*lesson.ListLessonsResponse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ListLessons", arg0, arg1)
+	ret0, _ := ret[0].(*lesson.ListLessonsResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListLessons indicates an expected call of ListLessons.
+func (mr *MockLessonServiceServerMockRecorder) ListLessons(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListLessons", reflect.TypeOf((*MockLessonServiceServer)(nil).ListLessons), arg0, arg1)
 }
 
 // ListLessonsByShiftSummaryID mocks base method.

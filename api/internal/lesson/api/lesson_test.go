@@ -17,6 +17,108 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
+func TestListLessons(t *testing.T) {
+	t.Parallel()
+
+	now := jst.Now()
+	req := &lesson.ListLessonsRequest{
+		ShiftSummaryId: 1,
+		ShiftId:        1,
+		TeacherId:      "teacherid",
+		StudentId:      "studentid",
+	}
+	lessons := entity.Lessons{
+		{
+			ID:             1,
+			ShiftSummaryID: 1,
+			ShiftID:        1,
+			SubjectID:      1,
+			RoomID:         1,
+			TeacherID:      "teacherid",
+			StudentID:      "studentid",
+			Notes:          "",
+			CreatedAt:      now,
+			UpdatedAt:      now,
+		},
+	}
+
+	tests := []struct {
+		name   string
+		setup  func(ctx context.Context, t *testing.T, mocks *mocks)
+		req    *lesson.ListLessonsRequest
+		expect *testResponse
+	}{
+		{
+			name: "success",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				params := &database.ListLessonsParams{
+					ShiftSummaryID: 1,
+					ShiftID:        1,
+					TeacherID:      "teacherid",
+					StudentID:      "studentid",
+				}
+				mocks.validator.EXPECT().ListLessons(req).Return(nil)
+				mocks.db.Lesson.EXPECT().List(ctx, params).Return(lessons, nil)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.OK,
+				body: &lesson.ListLessonsResponse{
+					Lessons: []*lesson.Lesson{
+						{
+							Id:             1,
+							ShiftSummaryId: 1,
+							ShiftId:        1,
+							SubjectId:      1,
+							RoomId:         1,
+							TeacherId:      "teacherid",
+							StudentId:      "studentid",
+							Notes:          "",
+							CreatedAt:      now.Unix(),
+							UpdatedAt:      now.Unix(),
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "invalid argument",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				req := &lesson.ListLessonsRequest{}
+				mocks.validator.EXPECT().ListLessons(req).Return(validation.ErrRequestValidation)
+			},
+			req: &lesson.ListLessonsRequest{},
+			expect: &testResponse{
+				code: codes.InvalidArgument,
+			},
+		},
+		{
+			name: "failed to list lessons",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				params := &database.ListLessonsParams{
+					ShiftSummaryID: 1,
+					ShiftID:        1,
+					TeacherID:      "teacherid",
+					StudentID:      "studentid",
+				}
+				mocks.validator.EXPECT().ListLessons(req).Return(nil)
+				mocks.db.Lesson.EXPECT().List(ctx, params).Return(nil, errmock)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.Internal,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, testGRPC(tt.setup, tt.expect, func(ctx context.Context, service *lessonService) (proto.Message, error) {
+			return service.ListLessons(ctx, tt.req)
+		}))
+	}
+}
+
 func TestListLessonsByShiftSummaryID(t *testing.T) {
 	t.Parallel()
 
