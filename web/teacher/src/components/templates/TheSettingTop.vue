@@ -1,9 +1,5 @@
 <template>
-  <v-container class="px-0">
-    <v-btn text class="px-0 mb-4" @click="handleBackButton">
-      <v-icon>mdi-chevron-left</v-icon>
-      戻る
-    </v-btn>
+  <v-container>
     <the-subject-select-form-item
       :elementary-school-subjects-form-value.sync="elementarySchoolSubjectsFormData"
       :junior-high-school-subjects-form-value.sync="juniorHighSchoolSubjectsFormData"
@@ -18,7 +14,14 @@
     />
     <v-row class="py-4">
       <v-col cols="12">
-        <v-card v-for="item in menuItems" :key="`menu-${item.title}`" elevation="0" class="my-1" @click="onClick(item)">
+        <v-card
+          v-for="item in menuItems"
+          :key="`menu-${item.title}`"
+          elevation="0"
+          class="my-1"
+          outlined
+          @click="onClick(item)"
+        >
           <v-list-item>
             <v-list-item-content>
               <v-list-item-title :class="`${item.textColor}--text`">{{ item.title }}</v-list-item-title>
@@ -95,10 +98,6 @@ export default defineComponent({
       emit('click', item)
     }
 
-    const handleBackButton = (): void => {
-      emit('onClickBackButton')
-    }
-
     const elementarySchoolSubjectsFormData = computed({
       get: () => props.elementarySchoolSubjectsFormValue,
       set: (val: object) => emit('update:elementarySchoolSubjectsFormValue', val),
@@ -127,7 +126,6 @@ export default defineComponent({
 
     return {
       onClick,
-      handleBackButton,
       elementarySchoolSubjectsFormData,
       juniorHighSchoolSubjectsFormData,
       highSchoolSubjectsFormData,
