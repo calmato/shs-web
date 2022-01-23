@@ -19,10 +19,6 @@ studentResponse:
     mail:
       type: string
       description: メールアドレス
-    birthYear:
-      type: integer
-      format: int64
-      description: メールアドレス
     createdAt:
       type: integer
       format: int64
@@ -46,7 +42,6 @@ studentResponse:
     lastNameKana: 'なかむら'
     firstNamaKana: 'こうだい'
     mail: 'teacher-test01@calmato.jp'
-    birthYear: 2005
     createdAt: '2021-12-12T12:12:30.100Z'
     updatedAt: '2021-12-12T12:12:30.100Z'
     schoolType: 3
