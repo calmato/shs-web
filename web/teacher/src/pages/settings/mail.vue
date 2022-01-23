@@ -16,10 +16,10 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from '@vue/composition-api'
+import { defineComponent } from '@vue/composition-api'
 import TheFormGroup from '~/components/atoms/TheFormGroup.vue'
 import TheTextField from '~/components/atoms/TheTextField.vue'
-import { TeacherUpdateMailForm, TeacherUpdateMailOptions, TeacherUpdateMailParams } from '~/types/form'
+import { TeacherUpdateMailOptions, TeacherUpdateMailParams } from '~/types/form'
 
 export default defineComponent({
   components: {
@@ -27,16 +27,15 @@ export default defineComponent({
     TheTextField,
   },
 
-  props: {
-    form: {
-      type: Object as PropType<TeacherUpdateMailForm>,
-      default: () => ({
-        params: TeacherUpdateMailParams,
-        options: TeacherUpdateMailOptions,
-      }),
-    },
-  },
+  setup() {
+    const form = {
+      params: TeacherUpdateMailParams,
+      options: TeacherUpdateMailOptions,
+    }
 
-  setup() {},
+    return {
+      form,
+    }
+  },
 })
 </script>
