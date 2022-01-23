@@ -1,23 +1,17 @@
 <template>
-  <div>
-    <p class="text-h5 mt-3 mb-1 ml-3">メールアドレス変更</p>
-    <the-form-group>
-      <v-row>
-        <v-col cols="10" class="ml-3">
-          <the-text-field
-            :label="form.options.mail.label"
-            :rules="form.options.mail.rules"
-            :value.sync="form.params.updateMail"
-            type="email"
-          />
-        </v-col>
-      </v-row>
+  <div class="pa-2">
+    <p class="text-h5 mb-0">メールアドレス変更</p>
+    <the-form-group class="pa-2">
+      <the-text-field
+        :label="form.options.mail.label"
+        :rules="form.options.mail.rules"
+        :value.sync="form.params.updateMail"
+        type="email"
+      />
     </the-form-group>
-    <v-container>
-      <v-row class="justify-end">
-        <v-btn color="primary" class="right mt-3 mr-15"> 保存する </v-btn>
-      </v-row>
-    </v-container>
+    <div class="d-flex justify-end pr-4">
+      <v-btn color="primary"> 保存する </v-btn>
+    </div>
   </div>
 </template>
 
