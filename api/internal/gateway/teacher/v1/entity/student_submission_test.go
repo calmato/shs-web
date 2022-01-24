@@ -161,7 +161,7 @@ func TestStudentSuggestedLesson(t *testing.T) {
 				Total:     4,
 			},
 			expect: &StudentSuggestedLesson{
-				SubjectID: 4,
+				SubjectID: 1,
 				Total:     4,
 			},
 		},
