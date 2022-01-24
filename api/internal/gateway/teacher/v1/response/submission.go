@@ -12,6 +12,7 @@ type TeacherShiftsResponse struct {
 }
 
 type StudentShiftsResponse struct {
-	Summary *entity.StudentSubmission  `json:"summary"` // 授業希望募集概要
-	Shifts  entity.StudentShiftDetails `json:"shifts"`  // 募集授業一覧
+	Summary          *entity.StudentSubmission      `json:"summary"`          // 授業希望募集概要
+	Shifts           entity.StudentShiftDetails     `json:"shifts"`           // 募集授業一覧
+	SuggestedLessons entity.StudentSuggestedLessons `json:"suggestedLessons"` // 授業毎の受講希望回数
 }

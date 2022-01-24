@@ -147,6 +147,74 @@ func TestStudentSubmissions(t *testing.T) {
 	}
 }
 
+func TestStudentSuggestedLesson(t *testing.T) {
+	t.Parallel()
+	tests := []struct {
+		name   string
+		lesson *lesson.SuggestedLesson
+		expect *StudentSuggestedLesson
+	}{
+		{
+			name: "success",
+			lesson: &lesson.SuggestedLesson{
+				SubjectId: 1,
+				Total:     4,
+			},
+			expect: &StudentSuggestedLesson{
+				SubjectID: 4,
+				Total:     4,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tt.expect, NewStudentSuggestedLesson(tt.lesson))
+		})
+	}
+}
+
+func TestStudentSuggestedLessons(t *testing.T) {
+	t.Parallel()
+	now := jst.Date(2021, 8, 2, 18, 30, 0, 0)
+	tests := []struct {
+		name       string
+		submission *entity.StudentSubmission
+		expect     StudentSuggestedLessons
+	}{
+		{
+			name: "success",
+			submission: &entity.StudentSubmission{
+				StudentSubmission: &lesson.StudentSubmission{
+					StudentId:      "kSByoE6FetnPs5Byk3a9Zx",
+					ShiftSummaryId: 1,
+					Decided:        true,
+					SuggestedLessons: []*lesson.SuggestedLesson{
+						{SubjectId: 1, Total: 4},
+						{SubjectId: 2, Total: 4},
+					},
+					CreatedAt: now.Unix(),
+					UpdatedAt: now.Unix(),
+				},
+			},
+			expect: StudentSuggestedLessons{
+				{SubjectID: 1, Total: 4},
+				{SubjectID: 2, Total: 4},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tt.expect, NewStudentSuggestedLessons(tt.submission))
+		})
+	}
+}
+
 func TestStudentSubmissionDetail(t *testing.T) {
 	t.Parallel()
 	now := jst.Date(2021, 8, 2, 18, 30, 0, 0)

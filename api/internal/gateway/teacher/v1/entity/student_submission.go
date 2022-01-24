@@ -5,6 +5,7 @@ import (
 
 	"github.com/calmato/shs-web/api/internal/gateway/entity"
 	"github.com/calmato/shs-web/api/pkg/jst"
+	"github.com/calmato/shs-web/api/proto/lesson"
 )
 
 type StudentSubmission struct {
@@ -20,6 +21,13 @@ type StudentSubmission struct {
 }
 
 type StudentSubmissions []*StudentSubmission
+
+type StudentSuggestedLesson struct {
+	SubjectID int64 `json:"subjectId"` // 授業ID
+	Total     int64 `json:"total"`     // 希望授業数
+}
+
+type StudentSuggestedLessons []*StudentSuggestedLesson
 
 type StudentSubmissionDetail struct {
 	Student               *Student `json:"student"`               // 生徒情報
@@ -60,6 +68,21 @@ func NewStudentSubmissions(
 		ss[i] = NewStudentSubmission(s, submission)
 	}
 	return ss
+}
+
+func NewStudentSuggestedLesson(suggestedLesson *lesson.SuggestedLesson) *StudentSuggestedLesson {
+	return &StudentSuggestedLesson{
+		SubjectID: suggestedLesson.SubjectId,
+		Total:     suggestedLesson.Total,
+	}
+}
+
+func NewStudentSuggestedLessons(submission *entity.StudentSubmission) StudentSuggestedLessons {
+	ls := make(StudentSuggestedLessons, len(submission.SuggestedLessons))
+	for i := range submission.SuggestedLessons {
+		ls[i] = NewStudentSuggestedLesson(submission.SuggestedLessons[i])
+	}
+	return ls
 }
 
 func NewStudentSubmissionDetail(
