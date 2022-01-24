@@ -101,7 +101,14 @@
 
 <script lang="ts">
 import { defineComponent, PropType, SetupContext } from '@nuxtjs/composition-api'
-import { ShiftDetail, ShiftSummary, StudentShift, StudentSubmissionDetail, TeacherShift, TeacherSubmissionDetail } from '~/types/store'
+import {
+  ShiftDetail,
+  ShiftSummary,
+  StudentShift,
+  StudentSubmissionDetail,
+  TeacherShift,
+  TeacherSubmissionDetail,
+} from '~/types/store'
 import { LessonDetail } from '~/types/props/shift'
 import TheShiftLessonList from '~/components/organisms/TheShiftLessonList.vue'
 import TheShiftStudentTable from '~/components/organisms/TheShiftStudentTable.vue'
