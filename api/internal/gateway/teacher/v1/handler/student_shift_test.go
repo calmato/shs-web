@@ -58,8 +58,11 @@ func TestListEnabledStudentShifts(t *testing.T) {
 		StudentId:      idmock,
 		ShiftSummaryId: 1,
 		Decided:        true,
-		CreatedAt:      now.Unix(),
-		UpdatedAt:      now.Unix(),
+		SuggestedLessons: []*lesson.SuggestedLesson{
+			{SubjectId: 1, Total: 4},
+		},
+		CreatedAt: now.Unix(),
+		UpdatedAt: now.Unix(),
 	}
 	studentShifts := []*lesson.StudentShift{
 		{
@@ -135,6 +138,9 @@ func TestListEnabledStudentShifts(t *testing.T) {
 								{ID: 3, Enabled: true, StartTime: "1700", EndTime: "1830"},
 							},
 						},
+					},
+					SuggestedLessons: entity.StudentSuggestedLessons{
+						{SubjectID: 1, Total: 4},
 					},
 				},
 			},

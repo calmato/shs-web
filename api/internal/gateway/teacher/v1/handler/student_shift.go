@@ -62,8 +62,9 @@ func (h *apiV1Handler) ListEnabledStudentShifts(ctx *gin.Context) {
 	}
 
 	res := &response.StudentShiftsResponse{
-		Summary: entity.NewStudentSubmission(gsummary, submission),
-		Shifts:  entity.NewEnabledStudentShiftDetails(summary, shifts, studentShifts.MapByShiftID()),
+		Summary:          entity.NewStudentSubmission(gsummary, submission),
+		Shifts:           entity.NewEnabledStudentShiftDetails(summary, shifts, studentShifts.MapByShiftID()),
+		SuggestedLessons: entity.NewStudentSuggestedLessons(submission),
 	}
 	ctx.JSON(http.StatusOK, res)
 }
