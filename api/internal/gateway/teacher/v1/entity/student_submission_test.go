@@ -188,12 +188,15 @@ func TestStudentSubmissionDetail(t *testing.T) {
 			},
 			submission: &entity.StudentSubmission{
 				StudentSubmission: &lesson.StudentSubmission{
-					StudentId:        "kSByoE6FetnPs5Byk3a9Zx",
-					ShiftSummaryId:   1,
-					Decided:          true,
-					SuggestedClasses: 8,
-					CreatedAt:        now.Unix(),
-					UpdatedAt:        now.Unix(),
+					StudentId:      "kSByoE6FetnPs5Byk3a9Zx",
+					ShiftSummaryId: 1,
+					Decided:        true,
+					SuggestedLessons: []*lesson.SuggestedLesson{
+						{SubjectId: 1, Total: 4},
+						{SubjectId: 2, Total: 4},
+					},
+					CreatedAt: now.Unix(),
+					UpdatedAt: now.Unix(),
 				},
 			},
 			lessons: entity.Lessons{
@@ -236,7 +239,7 @@ func TestStudentSubmissionDetail(t *testing.T) {
 					UpdatedAt: now,
 				},
 				LessonTotal:           1,
-				SuggestedClassesTotal: 8,
+				SuggestedLessonsTotal: 8,
 			},
 		},
 	}
@@ -310,12 +313,15 @@ func TestStudentSubmissionDetails(t *testing.T) {
 			submissions: map[string]*entity.StudentSubmission{
 				"kSByoE6FetnPs5Byk3a9Zx": {
 					StudentSubmission: &lesson.StudentSubmission{
-						StudentId:        "kSByoE6FetnPs5Byk3a9Zx",
-						ShiftSummaryId:   1,
-						Decided:          true,
-						SuggestedClasses: 8,
-						CreatedAt:        now.Unix(),
-						UpdatedAt:        now.Unix(),
+						StudentId:      "kSByoE6FetnPs5Byk3a9Zx",
+						ShiftSummaryId: 1,
+						Decided:        true,
+						SuggestedLessons: []*lesson.SuggestedLesson{
+							{SubjectId: 1, Total: 4},
+							{SubjectId: 2, Total: 4},
+						},
+						CreatedAt: now.Unix(),
+						UpdatedAt: now.Unix(),
 					},
 				},
 			},
@@ -362,7 +368,7 @@ func TestStudentSubmissionDetails(t *testing.T) {
 						UpdatedAt: now,
 					},
 					LessonTotal:           0,
-					SuggestedClassesTotal: 8,
+					SuggestedLessonsTotal: 8,
 				},
 				{
 					Student: &Student{
@@ -379,7 +385,7 @@ func TestStudentSubmissionDetails(t *testing.T) {
 						UpdatedAt:     now,
 					},
 					LessonTotal:           1,
-					SuggestedClassesTotal: 0,
+					SuggestedLessonsTotal: 0,
 				},
 			},
 		},

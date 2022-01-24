@@ -262,12 +262,17 @@ func TestStudentSubmission_Get(t *testing.T) {
 }
 
 func testStudentSubmission(studentID string, summaryID int64, decided bool, now time.Time) *entity.StudentSubmission {
-	return &entity.StudentSubmission{
-		StudentID:        studentID,
-		ShiftSummaryID:   summaryID,
-		Decided:          decided,
-		SuggestedClasses: 8,
-		CreatedAt:        now,
-		UpdatedAt:        now,
+	submission := &entity.StudentSubmission{
+		StudentID:      studentID,
+		ShiftSummaryID: summaryID,
+		Decided:        decided,
+		SuggestedLessons: entity.SuggestedLessons{
+			{SubjectID: 1, Total: 4},
+			{SubjectID: 2, Total: 4},
+		},
+		CreatedAt: now,
+		UpdatedAt: now,
 	}
+	_ = submission.FillJSON()
+	return submission
 }

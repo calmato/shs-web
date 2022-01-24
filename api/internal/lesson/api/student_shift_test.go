@@ -8,6 +8,7 @@ import (
 	"github.com/calmato/shs-web/api/internal/lesson/entity"
 	"github.com/calmato/shs-web/api/internal/lesson/validation"
 	"github.com/calmato/shs-web/api/pkg/jst"
+	"github.com/calmato/shs-web/api/proto/classroom"
 	"github.com/calmato/shs-web/api/proto/lesson"
 	"github.com/calmato/shs-web/api/proto/user"
 	"github.com/golang/mock/gomock"
@@ -24,20 +25,25 @@ func TestListStudentSubmissionsByShiftSummaryID(t *testing.T) {
 	}
 	submissions := entity.StudentSubmissions{
 		{
-			StudentID:        "studentid",
-			ShiftSummaryID:   1,
-			Decided:          true,
-			SuggestedClasses: 8,
-			CreatedAt:        now,
-			UpdatedAt:        now,
+			StudentID:      "studentid",
+			ShiftSummaryID: 1,
+			Decided:        true,
+			SuggestedLessons: entity.SuggestedLessons{
+				{SubjectID: 1, Total: 4},
+				{SubjectID: 2, Total: 4},
+			},
+			CreatedAt: now,
+			UpdatedAt: now,
 		},
 		{
-			StudentID:        "studentid",
-			ShiftSummaryID:   2,
-			Decided:          false,
-			SuggestedClasses: 8,
-			CreatedAt:        now,
-			UpdatedAt:        now,
+			StudentID:      "studentid",
+			ShiftSummaryID: 2,
+			Decided:        false,
+			SuggestedLessons: entity.SuggestedLessons{
+				{SubjectID: 1, Total: 8},
+			},
+			CreatedAt: now,
+			UpdatedAt: now,
 		},
 	}
 
@@ -59,20 +65,25 @@ func TestListStudentSubmissionsByShiftSummaryID(t *testing.T) {
 				body: &lesson.ListStudentSubmissionsByShiftSummaryIDsResponse{
 					Submissions: []*lesson.StudentSubmission{
 						{
-							StudentId:        "studentid",
-							ShiftSummaryId:   1,
-							Decided:          true,
-							SuggestedClasses: 8,
-							CreatedAt:        now.Unix(),
-							UpdatedAt:        now.Unix(),
+							StudentId:      "studentid",
+							ShiftSummaryId: 1,
+							Decided:        true,
+							SuggestedLessons: []*lesson.SuggestedLesson{
+								{SubjectId: 1, Total: 4},
+								{SubjectId: 2, Total: 4},
+							},
+							CreatedAt: now.Unix(),
+							UpdatedAt: now.Unix(),
 						},
 						{
-							StudentId:        "studentid",
-							ShiftSummaryId:   2,
-							Decided:          false,
-							SuggestedClasses: 8,
-							CreatedAt:        now.Unix(),
-							UpdatedAt:        now.Unix(),
+							StudentId:      "studentid",
+							ShiftSummaryId: 2,
+							Decided:        false,
+							SuggestedLessons: []*lesson.SuggestedLesson{
+								{SubjectId: 1, Total: 8},
+							},
+							CreatedAt: now.Unix(),
+							UpdatedAt: now.Unix(),
 						},
 					},
 				},
@@ -121,15 +132,20 @@ func TestListStudentSubmissionsByStudentIDs(t *testing.T) {
 			StudentID:      "studentid1",
 			ShiftSummaryID: 1,
 			Decided:        true,
-			CreatedAt:      now,
-			UpdatedAt:      now,
+			SuggestedLessons: entity.SuggestedLessons{
+				{SubjectID: 1, Total: 4},
+				{SubjectID: 2, Total: 4},
+			},
+			CreatedAt: now,
+			UpdatedAt: now,
 		},
 		{
-			StudentID:      "studentid2",
-			ShiftSummaryID: 1,
-			Decided:        false,
-			CreatedAt:      now,
-			UpdatedAt:      now,
+			StudentID:        "studentid2",
+			ShiftSummaryID:   1,
+			Decided:          false,
+			SuggestedLessons: entity.SuggestedLessons{},
+			CreatedAt:        now,
+			UpdatedAt:        now,
 		},
 	}
 
@@ -154,15 +170,20 @@ func TestListStudentSubmissionsByStudentIDs(t *testing.T) {
 							StudentId:      "studentid1",
 							ShiftSummaryId: 1,
 							Decided:        true,
-							CreatedAt:      now.Unix(),
-							UpdatedAt:      now.Unix(),
+							SuggestedLessons: []*lesson.SuggestedLesson{
+								{SubjectId: 1, Total: 4},
+								{SubjectId: 2, Total: 4},
+							},
+							CreatedAt: now.Unix(),
+							UpdatedAt: now.Unix(),
 						},
 						{
-							StudentId:      "studentid2",
-							ShiftSummaryId: 1,
-							Decided:        false,
-							CreatedAt:      now.Unix(),
-							UpdatedAt:      now.Unix(),
+							StudentId:        "studentid2",
+							ShiftSummaryId:   1,
+							Decided:          false,
+							SuggestedLessons: []*lesson.SuggestedLesson{},
+							CreatedAt:        now.Unix(),
+							UpdatedAt:        now.Unix(),
 						},
 					},
 				},
@@ -293,10 +314,13 @@ func TestGetStudentShifts(t *testing.T) {
 		ShiftSummaryId: 1,
 	}
 	submission := &entity.StudentSubmission{
-		StudentID:        "studentid",
-		ShiftSummaryID:   1,
-		Decided:          true,
-		SuggestedClasses: 8,
+		StudentID:      "studentid",
+		ShiftSummaryID: 1,
+		Decided:        true,
+		SuggestedLessons: entity.SuggestedLessons{
+			{SubjectID: 1, Total: 4},
+			{SubjectID: 2, Total: 4},
+		},
 	}
 	shifts := entity.StudentShifts{
 		{
@@ -329,12 +353,15 @@ func TestGetStudentShifts(t *testing.T) {
 				code: codes.OK,
 				body: &lesson.GetStudentShiftsResponse{
 					Submission: &lesson.StudentSubmission{
-						StudentId:        "studentid",
-						ShiftSummaryId:   1,
-						Decided:          true,
-						SuggestedClasses: 8,
-						CreatedAt:        time.Time{}.Unix(),
-						UpdatedAt:        time.Time{}.Unix(),
+						StudentId:      "studentid",
+						ShiftSummaryId: 1,
+						Decided:        true,
+						SuggestedLessons: []*lesson.SuggestedLesson{
+							{SubjectId: 1, Total: 4},
+							{SubjectId: 2, Total: 4},
+						},
+						CreatedAt: time.Time{}.Unix(),
+						UpdatedAt: time.Time{}.Unix(),
 					},
 					Shifts: []*lesson.StudentShift{
 						{
@@ -403,11 +430,14 @@ func TestGetStudentShifts(t *testing.T) {
 func TestUpsertStudentShifts(t *testing.T) {
 	t.Parallel()
 	req := &lesson.UpsertStudentShiftsRequest{
-		StudentId:        "studentid",
-		ShiftSummaryId:   1,
-		ShiftIds:         []int64{1, 2},
-		Decided:          true,
-		SuggestedClasses: 8,
+		StudentId:      "studentid",
+		ShiftSummaryId: 1,
+		ShiftIds:       []int64{1, 2},
+		Decided:        true,
+		Lessons: []*lesson.StudentSuggestedLesson{
+			{SubjectId: 1, Total: 4},
+			{SubjectId: 2, Total: 4},
+		},
 	}
 	student := &user.Student{Id: "studentid"}
 	summary := &entity.ShiftSummary{
@@ -419,11 +449,15 @@ func TestUpsertStudentShifts(t *testing.T) {
 		{ID: 2, ShiftSummaryID: 1},
 	}
 	studentSubmission := &entity.StudentSubmission{
-		StudentID:        "studentid",
-		ShiftSummaryID:   1,
-		Decided:          true,
-		SuggestedClasses: 8,
+		StudentID:      "studentid",
+		ShiftSummaryID: 1,
+		Decided:        true,
+		SuggestedLessons: entity.SuggestedLessons{
+			{SubjectID: 1, Total: 4},
+			{SubjectID: 2, Total: 4},
+		},
 	}
+	_ = studentSubmission.FillJSON()
 	studentShifts := entity.StudentShifts{
 		{
 			StudentID:      "studentid",
@@ -435,6 +469,10 @@ func TestUpsertStudentShifts(t *testing.T) {
 			ShiftID:        2,
 			ShiftSummaryID: 1,
 		},
+	}
+	studentSubject := &classroom.StudentSubject{
+		StudentId:  "studentid",
+		SubjectIds: []int64{1, 2},
 	}
 
 	tests := []struct {
@@ -448,8 +486,11 @@ func TestUpsertStudentShifts(t *testing.T) {
 			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
 				studentIn := &user.GetStudentRequest{Id: "studentid"}
 				studentOut := &user.GetStudentResponse{Student: student}
+				subjectIn := &classroom.GetStudentSubjectRequest{StudentId: "studentid"}
+				subjectOut := &classroom.GetStudentSubjectResponse{StudentSubject: studentSubject}
 				mocks.validator.EXPECT().UpsertStudentShifts(req).Return(nil)
 				mocks.user.EXPECT().GetStudent(gomock.Any(), studentIn).Return(studentOut, nil)
+				mocks.classroom.EXPECT().GetStudentSubject(ctx, subjectIn).Return(subjectOut, nil)
 				mocks.db.ShiftSummary.EXPECT().Get(gomock.Any(), int64(1)).Return(summary, nil)
 				mocks.db.Shift.EXPECT().MultiGet(gomock.Any(), []int64{1, 2}, "id").Return(shifts, nil)
 				mocks.db.StudentShift.EXPECT().Replace(ctx, studentSubmission, studentShifts).Return(nil)
@@ -459,12 +500,15 @@ func TestUpsertStudentShifts(t *testing.T) {
 				code: codes.OK,
 				body: &lesson.UpsertStudentShiftsResponse{
 					Submission: &lesson.StudentSubmission{
-						StudentId:        "studentid",
-						ShiftSummaryId:   1,
-						Decided:          true,
-						SuggestedClasses: 8,
-						CreatedAt:        time.Time{}.Unix(),
-						UpdatedAt:        time.Time{}.Unix(),
+						StudentId:      "studentid",
+						ShiftSummaryId: 1,
+						Decided:        true,
+						SuggestedLessons: []*lesson.SuggestedLesson{
+							{SubjectId: 1, Total: 4},
+							{SubjectId: 2, Total: 4},
+						},
+						CreatedAt: time.Time{}.Unix(),
+						UpdatedAt: time.Time{}.Unix(),
 					},
 					Shifts: []*lesson.StudentShift{
 						{
@@ -500,8 +544,28 @@ func TestUpsertStudentShifts(t *testing.T) {
 			name: "failed to get student",
 			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
 				studentIn := &user.GetStudentRequest{Id: "studentid"}
+				subjectIn := &classroom.GetStudentSubjectRequest{StudentId: "studentid"}
+				subjectOut := &classroom.GetStudentSubjectResponse{StudentSubject: studentSubject}
 				mocks.validator.EXPECT().UpsertStudentShifts(req).Return(nil)
 				mocks.user.EXPECT().GetStudent(gomock.Any(), studentIn).Return(nil, errmock)
+				mocks.classroom.EXPECT().GetStudentSubject(ctx, subjectIn).Return(subjectOut, nil)
+				mocks.db.ShiftSummary.EXPECT().Get(gomock.Any(), int64(1)).Return(summary, nil)
+				mocks.db.Shift.EXPECT().MultiGet(gomock.Any(), []int64{1, 2}, "id").Return(shifts, nil)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.Internal,
+			},
+		},
+		{
+			name: "failed to get student subject",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				studentIn := &user.GetStudentRequest{Id: "studentid"}
+				studentOut := &user.GetStudentResponse{Student: student}
+				subjectIn := &classroom.GetStudentSubjectRequest{StudentId: "studentid"}
+				mocks.validator.EXPECT().UpsertStudentShifts(req).Return(nil)
+				mocks.user.EXPECT().GetStudent(gomock.Any(), studentIn).Return(studentOut, nil)
+				mocks.classroom.EXPECT().GetStudentSubject(ctx, subjectIn).Return(nil, errmock)
 				mocks.db.ShiftSummary.EXPECT().Get(gomock.Any(), int64(1)).Return(summary, nil)
 				mocks.db.Shift.EXPECT().MultiGet(gomock.Any(), []int64{1, 2}, "id").Return(shifts, nil)
 			},
@@ -515,8 +579,11 @@ func TestUpsertStudentShifts(t *testing.T) {
 			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
 				studentIn := &user.GetStudentRequest{Id: "studentid"}
 				studentOut := &user.GetStudentResponse{Student: student}
+				subjectIn := &classroom.GetStudentSubjectRequest{StudentId: "studentid"}
+				subjectOut := &classroom.GetStudentSubjectResponse{StudentSubject: studentSubject}
 				mocks.validator.EXPECT().UpsertStudentShifts(req).Return(nil)
 				mocks.user.EXPECT().GetStudent(gomock.Any(), studentIn).Return(studentOut, nil)
+				mocks.classroom.EXPECT().GetStudentSubject(ctx, subjectIn).Return(subjectOut, nil)
 				mocks.db.ShiftSummary.EXPECT().Get(gomock.Any(), int64(1)).Return(nil, errmock)
 				mocks.db.Shift.EXPECT().MultiGet(gomock.Any(), []int64{1, 2}, "id").Return(shifts, nil)
 			},
@@ -530,8 +597,11 @@ func TestUpsertStudentShifts(t *testing.T) {
 			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
 				studentIn := &user.GetStudentRequest{Id: "studentid"}
 				studentOut := &user.GetStudentResponse{Student: student}
+				subjectIn := &classroom.GetStudentSubjectRequest{StudentId: "studentid"}
+				subjectOut := &classroom.GetStudentSubjectResponse{StudentSubject: studentSubject}
 				mocks.validator.EXPECT().UpsertStudentShifts(req).Return(nil)
 				mocks.user.EXPECT().GetStudent(gomock.Any(), studentIn).Return(studentOut, nil)
+				mocks.classroom.EXPECT().GetStudentSubject(ctx, subjectIn).Return(subjectOut, nil)
 				mocks.db.ShiftSummary.EXPECT().Get(gomock.Any(), int64(1)).Return(summary, nil)
 				mocks.db.Shift.EXPECT().MultiGet(gomock.Any(), []int64{1, 2}, "id").Return(nil, errmock)
 			},
@@ -545,9 +615,12 @@ func TestUpsertStudentShifts(t *testing.T) {
 			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
 				studentIn := &user.GetStudentRequest{Id: "studentid"}
 				studentOut := &user.GetStudentResponse{Student: student}
+				subjectIn := &classroom.GetStudentSubjectRequest{StudentId: "studentid"}
+				subjectOut := &classroom.GetStudentSubjectResponse{StudentSubject: studentSubject}
 				shifts := entity.Shifts{}
 				mocks.validator.EXPECT().UpsertStudentShifts(req).Return(nil)
 				mocks.user.EXPECT().GetStudent(gomock.Any(), studentIn).Return(studentOut, nil)
+				mocks.classroom.EXPECT().GetStudentSubject(ctx, subjectIn).Return(subjectOut, nil)
 				mocks.db.ShiftSummary.EXPECT().Get(gomock.Any(), int64(1)).Return(summary, nil)
 				mocks.db.Shift.EXPECT().MultiGet(gomock.Any(), []int64{1, 2}, "id").Return(shifts, nil)
 			},
@@ -561,12 +634,15 @@ func TestUpsertStudentShifts(t *testing.T) {
 			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
 				studentIn := &user.GetStudentRequest{Id: "studentid"}
 				studentOut := &user.GetStudentResponse{Student: student}
+				subjectIn := &classroom.GetStudentSubjectRequest{StudentId: "studentid"}
+				subjectOut := &classroom.GetStudentSubjectResponse{StudentSubject: studentSubject}
 				summary := &entity.ShiftSummary{
 					ID:     1,
 					Status: entity.ShiftStatusFinished,
 				}
 				mocks.validator.EXPECT().UpsertStudentShifts(req).Return(nil)
 				mocks.user.EXPECT().GetStudent(gomock.Any(), studentIn).Return(studentOut, nil)
+				mocks.classroom.EXPECT().GetStudentSubject(ctx, subjectIn).Return(subjectOut, nil)
 				mocks.db.ShiftSummary.EXPECT().Get(gomock.Any(), int64(1)).Return(summary, nil)
 				mocks.db.Shift.EXPECT().MultiGet(gomock.Any(), []int64{1, 2}, "id").Return(shifts, nil)
 			},
@@ -580,8 +656,29 @@ func TestUpsertStudentShifts(t *testing.T) {
 			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
 				studentIn := &user.GetStudentRequest{Id: "studentid"}
 				studentOut := &user.GetStudentResponse{Student: student}
+				subjectIn := &classroom.GetStudentSubjectRequest{StudentId: "studentid"}
+				subjectOut := &classroom.GetStudentSubjectResponse{StudentSubject: &classroom.StudentSubject{}}
 				mocks.validator.EXPECT().UpsertStudentShifts(req).Return(nil)
 				mocks.user.EXPECT().GetStudent(gomock.Any(), studentIn).Return(studentOut, nil)
+				mocks.classroom.EXPECT().GetStudentSubject(ctx, subjectIn).Return(subjectOut, nil)
+				mocks.db.ShiftSummary.EXPECT().Get(gomock.Any(), int64(1)).Return(summary, nil)
+				mocks.db.Shift.EXPECT().MultiGet(gomock.Any(), []int64{1, 2}, "id").Return(shifts, nil)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.InvalidArgument,
+			},
+		},
+		{
+			name: "failed to replace student shifts",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				studentIn := &user.GetStudentRequest{Id: "studentid"}
+				studentOut := &user.GetStudentResponse{Student: student}
+				subjectIn := &classroom.GetStudentSubjectRequest{StudentId: "studentid"}
+				subjectOut := &classroom.GetStudentSubjectResponse{StudentSubject: studentSubject}
+				mocks.validator.EXPECT().UpsertStudentShifts(req).Return(nil)
+				mocks.user.EXPECT().GetStudent(gomock.Any(), studentIn).Return(studentOut, nil)
+				mocks.classroom.EXPECT().GetStudentSubject(ctx, subjectIn).Return(subjectOut, nil)
 				mocks.db.ShiftSummary.EXPECT().Get(gomock.Any(), int64(1)).Return(summary, nil)
 				mocks.db.Shift.EXPECT().MultiGet(gomock.Any(), []int64{1, 2}, "id").Return(shifts, nil)
 				mocks.db.StudentShift.EXPECT().Replace(ctx, studentSubmission, studentShifts).Return(errmock)

@@ -118,6 +118,23 @@ func TestShiftSummary_Month(t *testing.T) {
 	}
 }
 
+func TestShiftSummary_EnabledSubmit(t *testing.T) {
+	t.Parallel()
+	tests := []struct {
+		name    string
+		summary *ShiftSummary
+		expect  bool
+	}{}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tt.expect, tt.summary.EnabledSubmit())
+		})
+	}
+}
+
 func TestShiftSummary_Fill(t *testing.T) {
 	t.Parallel()
 	now := jst.Date(2021, 12, 02, 18, 30, 0, 0)

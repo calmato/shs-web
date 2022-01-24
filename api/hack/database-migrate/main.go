@@ -134,6 +134,7 @@ func run() error {
 
 		isApplied, err := app.getSchema(tx, schemas[i])
 		if err != nil {
+			fmt.Println("debug: err=", err)
 			return app.rollback(tx, err)
 		}
 		if isApplied {
@@ -143,12 +144,14 @@ func run() error {
 
 		fmt.Printf("%s is applying...", schemas[i].filename)
 		if err := app.applySchema(tx, schemas[i]); err != nil {
+			fmt.Println("debug: err=", err)
 			return app.rollback(tx, err)
 		}
 		fmt.Printf(" -> succeeded!!\n")
 	}
 
 	if err := tx.Commit(); err != nil {
+		fmt.Println("debug: err=", err)
 		return app.rollback(tx, err)
 	}
 	return nil
@@ -239,7 +242,7 @@ func (a *app) getSchema(tx *sql.Tx, schema *schema) (bool, error) {
 func (a *app) applySchema(tx *sql.Tx, schema *schema) error {
 	bytes, err := ioutil.ReadFile(schema.path)
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	// 1つのファイルに複数定義が書いてある場合はエラーになるため、分割して適用

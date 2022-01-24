@@ -209,11 +209,18 @@ message GetStudentShiftsResponse {
 }
 
 message UpsertStudentShiftsRequest {
-  string         student_id        = 1 [(validate.rules).string = { min_len: 1 }];
-  int64          shift_summary_id  = 2 [(validate.rules).int64 = { gt: 0 }];
-  repeated int64 shift_ids         = 3 [(validate.rules).repeated = { unique: true, items: { int64: { gt: 0 }}}];
-  bool           decided           = 4;
-  int64          suggested_classes = 5 [(validate.rules).int64 = { gte: 0 }];
+  string                          student_id        = 1 [(validate.rules).string = { min_len: 1 }];
+  int64                           shift_summary_id  = 2 [(validate.rules).int64 = { gt: 0 }];
+  repeated int64                  shift_ids         = 3 [(validate.rules).repeated = { unique: true, items: { int64: { gt: 0 }}}];
+  bool                            decided           = 4;
+  // int64                           suggested_classes = 5 [(validate.rules).int64 = { gte: 0 }];
+  repeated StudentSuggestedLesson lessons = 6 [(validate.rules).repeated = { items: { message: { required: true }}}];
+  reserved 5;
+}
+
+message StudentSuggestedLesson {
+  int64 subject_id = 1 [(validate.rules).int64 = { gt: 0 }];
+  int64 total      = 2 [(validate.rules).int64 = { gte: 0 }];
 }
 
 message UpsertStudentShiftsResponse {
