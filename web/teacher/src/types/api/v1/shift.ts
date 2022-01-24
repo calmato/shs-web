@@ -54,7 +54,12 @@ export interface TeacherShift {
 export interface StudentShift {
   student: Student
   lessonTotal: number
-  suggestedClassesTotal: number
+  suggestedLessonsTotal: number
+}
+
+export interface SuggestedLesson {
+  subjectId: number
+  total: number
 }
 
 export interface ShiftSummariesResponse {
@@ -68,4 +73,15 @@ export interface ShiftDetailsResponse {
   teachers: TeacherShift[]
   students: StudentShift[]
   lessons: Lesson[]
+}
+
+export interface TeacherShiftsResponse {
+  summary: ShiftSummary
+  shifts: ShiftDetail[]
+}
+
+export interface StudentShiftsResponse {
+  summary: ShiftSummary
+  shifts: ShiftDetail[]
+  suggestedLessons: SuggestedLesson[]
 }

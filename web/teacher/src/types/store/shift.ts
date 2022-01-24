@@ -24,6 +24,11 @@ export interface ShiftDetail {
   lessons: ShiftDetailLesson[]
 }
 
+export interface SuggestedLesson {
+  subjectId: number
+  total: number
+}
+
 export interface TeacherShift {
   id: string
   name: string
@@ -31,12 +36,31 @@ export interface TeacherShift {
   lessonTotal: number
 }
 
+export interface TeacherSubmissionDetail {
+  id: string
+  name: string
+  nameKana: string
+  summary: ShiftSummary
+  shifts: ShiftDetail[]
+  submissionTotal: number
+}
+
 export interface StudentShift {
   id: string
   name: string
   nameKana: string
   lessonTotal: number
-  suggestedClassesTotal: number
+  suggestedLessonsTotal: number
+}
+
+export interface StudentSubmissionDetail {
+  id: string
+  name: string
+  nameKana: string
+  summary: ShiftSummary
+  shifts: ShiftDetail[]
+  suggestedLessons: SuggestedLesson[]
+  submissionTotal: number
 }
 
 export interface ShiftState {
@@ -47,4 +71,6 @@ export interface ShiftState {
   teachers: TeacherShift[]
   students: StudentShift[]
   lessons: Lesson[]
+  teacherSubmission: TeacherSubmissionDetail
+  studentSubmission: StudentSubmissionDetail
 }

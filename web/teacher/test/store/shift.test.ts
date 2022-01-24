@@ -328,14 +328,14 @@ describe('store/shift', () => {
               name: '中村 太郎',
               nameKana: 'なかむら たろう',
               lessonTotal: 0,
-              suggestedClassesTotal: 0,
+              suggestedLessonsTotal: 0,
             },
             {
               id: '100000000000000000002',
               name: '西山 幸子',
               nameKana: 'にしやま さちこ',
               lessonTotal: 2,
-              suggestedClassesTotal: 0,
+              suggestedLessonsTotal: 0,
             },
           ])
           expect(ShiftStore.getLessons).toEqual([

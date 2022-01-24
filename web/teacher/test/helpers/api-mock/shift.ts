@@ -170,7 +170,7 @@ export const listShiftDetails: { [key: string]: ShiftDetailsResponse } = {
           updatedAt: '2021-12-02T18:30:00+09:00',
         },
         lessonTotal: 0,
-        suggestedClassesTotal: 0,
+        suggestedLessonsTotal: 0,
       },
       {
         student: {
@@ -186,7 +186,7 @@ export const listShiftDetails: { [key: string]: ShiftDetailsResponse } = {
           updatedAt: '2021-12-02T18:30:00+09:00',
         },
         lessonTotal: 2,
-        suggestedClassesTotal: 0,
+        suggestedLessonsTotal: 0,
       },
     ],
     lessons: [

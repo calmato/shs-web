@@ -12,6 +12,9 @@ import {
   TeacherShift as v1Teacher,
   StudentShift as v1Student,
   Lesson as v1Lesson,
+  SuggestedLesson as v1SuggestedLesson,
+  TeacherShiftsResponse,
+  StudentShiftsResponse,
   UpdateShiftSummaryScheduleRequest,
 } from '~/types/api/v1'
 import {
@@ -23,6 +26,9 @@ import {
   TeacherShift,
   StudentShift,
   Lesson,
+  TeacherSubmissionDetail,
+  StudentSubmissionDetail,
+  SuggestedLesson,
 } from '~/types/store'
 import { ErrorResponse } from '~/types/api/exception'
 import { ApiError } from '~/types/exception'
@@ -45,6 +51,41 @@ const initialState: ShiftState = {
   teachers: [],
   students: [],
   lessons: [],
+  teacherSubmission: {
+    id: '',
+    name: '',
+    nameKana: '',
+    summary: {
+      id: 0,
+      year: 0,
+      month: 0,
+      status: ShiftStatus.UNKNOWN,
+      openAt: '',
+      endAt: '',
+      createdAt: '',
+      updatedAt: '',
+    },
+    shifts: [],
+    submissionTotal: 0,
+  },
+  studentSubmission: {
+    id: '',
+    name: '',
+    nameKana: '',
+    summary: {
+      id: 0,
+      year: 0,
+      month: 0,
+      status: ShiftStatus.UNKNOWN,
+      openAt: '',
+      endAt: '',
+      createdAt: '',
+      updatedAt: '',
+    },
+    shifts: [],
+    suggestedLessons: [],
+    submissionTotal: 0,
+  },
 }
 
 @Module({
@@ -60,6 +101,8 @@ export default class ShiftModule extends VuexModule {
   private students: ShiftState['students'] = initialState.students
   private rooms: ShiftState['rooms'] = initialState.rooms
   private lessons: ShiftState['lessons'] = initialState.lessons
+  private teacherSubmission: ShiftState['teacherSubmission'] = initialState.teacherSubmission
+  private studentSubmission: ShiftState['studentSubmission'] = initialState.studentSubmission
 
   public get getSummary(): ShiftSummary {
     return this.summary
@@ -87,6 +130,14 @@ export default class ShiftModule extends VuexModule {
 
   public get getLessons(): Lesson[] {
     return this.lessons
+  }
+
+  public get getTeacherSubmission(): TeacherSubmissionDetail {
+    return this.teacherSubmission
+  }
+
+  public get getStudentSubmission(): StudentSubmissionDetail {
+    return this.studentSubmission
   }
 
   @Mutation
@@ -153,6 +204,32 @@ export default class ShiftModule extends VuexModule {
     this.summaries.splice(index, 1)
   }
 
+  @Mutation
+  private setTeacherSubmission(submission: TeacherSubmissionDetail): void {
+    const teacher: TeacherShift | undefined = this.teachers.find(
+      (val: TeacherShift): boolean => val.id === submission.id
+    )
+    if (!teacher) {
+      return
+    }
+    submission.name = teacher.name
+    submission.nameKana = teacher.nameKana
+    this.teacherSubmission = submission
+  }
+
+  @Mutation
+  private setStudentSubmission(submission: StudentSubmissionDetail): void {
+    const student: StudentShift | undefined = this.students.find(
+      (val: StudentShift): boolean => val.id === submission.id
+    )
+    if (!student) {
+      return
+    }
+    submission.name = student.name
+    submission.nameKana = student.nameKana
+    this.studentSubmission = submission
+  }
+
   @Action({})
   public factory(): void {
     this.setSummaries({ summaries: initialState.summaries })
@@ -164,6 +241,7 @@ export default class ShiftModule extends VuexModule {
       rooms: initialState.rooms,
       lessons: initialState.lessons,
     })
+    this.setTeacherSubmission(initialState.teacherSubmission)
   }
 
   @Action({ rawError: true })
@@ -299,7 +377,7 @@ export default class ShiftModule extends VuexModule {
             name,
             nameKana,
             lessonTotal: val.lessonTotal,
-            suggestedClassesTotal: val.suggestedClassesTotal,
+            suggestedLessonsTotal: val.suggestedLessonsTotal,
           }
         })
         const lessons: Lesson[] = res.lessons.map((val: v1Lesson): Lesson => {
@@ -307,6 +385,77 @@ export default class ShiftModule extends VuexModule {
         })
 
         this.setDetails({ summary, details, teachers, students, rooms, lessons })
+      })
+      .catch((err: AxiosError) => {
+        const res: ErrorResponse = { ...err.response?.data }
+        throw new ApiError(res.status, res.message, res)
+      })
+  }
+
+  @Action({ rawError: true })
+  public async showTeacherSubmissions({
+    summaryId,
+    teacherId,
+  }: {
+    summaryId: number
+    teacherId: string
+  }): Promise<void> {
+    await $axios
+      .$get(`/v1/shifts/${summaryId}/teachers/${teacherId}`)
+      .then((res: TeacherShiftsResponse) => {
+        let submissionTotal: number = 0
+        const summary: ShiftSummary = { ...res.summary }
+        const shifts: ShiftDetail[] = res.shifts.map((shift: ShiftDetailResponse): ShiftDetail => {
+          const lessons: ShiftDetailLesson[] = shift.lessons.map((lesson: LessonResponse): ShiftDetailLesson => {
+            return { ...lesson }
+          })
+          submissionTotal += lessons.length
+          return { ...shift, lessons }
+        })
+
+        this.setTeacherSubmission({ id: teacherId, name: '', nameKana: '', summary, shifts, submissionTotal })
+      })
+      .catch((err: AxiosError) => {
+        const res: ErrorResponse = { ...err.response?.data }
+        throw new ApiError(res.status, res.message, res)
+      })
+  }
+
+  @Action({ rawError: true })
+  public async showStudentSubmissions({
+    summaryId,
+    studentId,
+  }: {
+    summaryId: number
+    studentId: string
+  }): Promise<void> {
+    await $axios
+      .$get(`/v1/shifts/${summaryId}/students/${studentId}`)
+      .then((res: StudentShiftsResponse) => {
+        let submissionTotal: number = 0
+        const summary: ShiftSummary = { ...res.summary }
+        const shifts: ShiftDetail[] = res.shifts.map((shift: ShiftDetailResponse): ShiftDetail => {
+          const lessons: ShiftDetailLesson[] = shift.lessons.map((lesson: LessonResponse): ShiftDetailLesson => {
+            return { ...lesson }
+          })
+          submissionTotal += lessons.length
+          return { ...shift, lessons }
+        })
+        const suggestedLessons: SuggestedLesson[] = res.suggestedLessons.map(
+          (lesson: v1SuggestedLesson): SuggestedLesson => {
+            return { ...lesson }
+          }
+        )
+
+        this.setStudentSubmission({
+          id: studentId,
+          name: '',
+          nameKana: '',
+          summary,
+          shifts,
+          suggestedLessons,
+          submissionTotal,
+        })
       })
       .catch((err: AxiosError) => {
         const res: ErrorResponse = { ...err.response?.data }

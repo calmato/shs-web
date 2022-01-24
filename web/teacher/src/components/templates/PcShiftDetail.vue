@@ -1,5 +1,70 @@
 <template>
   <v-container class="shift">
+    <!-- 講師 提出シフト一覧ダイアログ -->
+    <v-dialog
+      :value.sync="teacherSubmissionsDialog"
+      width="600px"
+      scrollable
+      @click:outside="onCloseTeacherSubmissionsDialog"
+    >
+      <v-card>
+        <v-toolbar color="primary" dark>提出シフト一覧</v-toolbar>
+        <v-card-text>{{ teacherSubmission }}</v-card-text>
+        <v-card-actions>
+          <v-spacer />
+          <v-btn color="secondary" @click="onCloseTeacherSubmissionsDialog">閉じる</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <!-- 講師 授業一覧ダイアログ -->
+    <v-dialog :value.sync="teacherLessonsDialog" width="600px" scrollable @click:outside="onCloseTeacherLessonsDialog">
+      <v-card>
+        <v-toolbar color="primary" dark>講師授業一覧</v-toolbar>
+        <v-card-actions>
+          <v-spacer />
+          <v-btn color="secondary" @click="onCloseTeacherLessonsDialog">閉じる</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <!-- 生徒 授業希望一覧ダイアログ -->
+    <v-dialog
+      :value.sync="studentSubmissionsDialog"
+      width="600px"
+      scrollable
+      @click:outside="onCloseStudentSubmissionsDialog"
+    >
+      <v-card>
+        <v-toolbar color="primary" dark>授業希望一覧</v-toolbar>
+        <v-card-text>{{ studentSubmission }}</v-card-text>
+        <v-card-actions>
+          <v-spacer />
+          <v-btn color="secondary" @click="onCloseStudentSubmissionsDialog">閉じる</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <!-- 生徒 授業一覧ダイアログ -->
+    <v-dialog :value.sync="studentLessonsDialog" width="600px" scrollable @click:outside="onCloseStudentLessonsDialog">
+      <v-card>
+        <v-toolbar color="primary" dark>生徒授業一覧</v-toolbar>
+        <v-card-actions>
+          <v-spacer />
+          <v-btn color="secondary" @click="onCloseStudentLessonsDialog">閉じる</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <!-- 授業登録ダイアログ -->
+    <v-dialog :value.sync="newLessonDialog" width="600px" scrollable @click:outside="onCloseNewLessonDialog">
+      <v-card>
+        <v-toolbar color="primary" dark>授業登録</v-toolbar>
+      </v-card>
+    </v-dialog>
+    <!-- 授業編集ダイアログ -->
+    <v-dialog :value.sync="editLessonDialog" width="600px" scrollable @click:outside="onCloseEditLessonDialog">
+      <v-card>
+        <v-toolbar color="primary" dark>授業登録</v-toolbar>
+      </v-card>
+    </v-dialog>
+
     <section class="shift-header">
       <!-- 講師情報一覧 -->
       <the-shift-teacher-table
@@ -36,7 +101,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType, SetupContext } from '@nuxtjs/composition-api'
-import { ShiftDetail, ShiftSummary, StudentShift, TeacherShift } from '~/types/store'
+import { ShiftDetail, ShiftSummary, StudentShift, StudentSubmissionDetail, TeacherShift, TeacherSubmissionDetail } from '~/types/store'
 import { LessonDetail } from '~/types/props/shift'
 import TheShiftLessonList from '~/components/organisms/TheShiftLessonList.vue'
 import TheShiftStudentTable from '~/components/organisms/TheShiftStudentTable.vue'
@@ -74,6 +139,38 @@ export default defineComponent({
       type: Number,
       default: 0,
     },
+    teacherSubmission: {
+      type: Object as PropType<TeacherSubmissionDetail>,
+      default: () => {},
+    },
+    studentSubmission: {
+      type: Object as PropType<StudentSubmissionDetail>,
+      default: () => {},
+    },
+    teacherSubmissionsDialog: {
+      type: Boolean,
+      default: false,
+    },
+    teacherLessonsDialog: {
+      type: Boolean,
+      default: false,
+    },
+    studentSubmissionsDialog: {
+      type: Boolean,
+      default: false,
+    },
+    studentLessonsDialog: {
+      type: Boolean,
+      default: false,
+    },
+    newLessonDialog: {
+      type: Boolean,
+      default: false,
+    },
+    editLessonDialog: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   setup(props, { emit }: SetupContext) {
@@ -101,12 +198,44 @@ export default defineComponent({
       emit('click:decided-lesson')
     }
 
-    const onClickNewLesson = ({ summaryId }: { summaryId: number }): void => {
-      emit('click:new-lesson', { summaryId })
+    const onClickNewLesson = ({ summaryId, room }: { summaryId: number; room: number }): void => {
+      emit('click:new-lesson', { summaryId, room })
     }
 
-    const onClickEditLesson = ({ summaryId, lessonId }: { summaryId: number; lessonId: number }): void => {
-      emit('click:edit-lesson', { summaryId, lessonId })
+    const onClickEditLesson = ({
+      summaryId,
+      lessonId,
+      room,
+    }: {
+      summaryId: number
+      lessonId: number
+      room: number
+    }): void => {
+      emit('click:edit-lesson', { summaryId, lessonId, room })
+    }
+
+    const onCloseTeacherSubmissionsDialog = (): void => {
+      emit('click:close-teacher-submissions')
+    }
+
+    const onCloseTeacherLessonsDialog = (): void => {
+      emit('click:close-teacher-lessons')
+    }
+
+    const onCloseStudentSubmissionsDialog = (): void => {
+      emit('click:close-student-submissions')
+    }
+
+    const onCloseStudentLessonsDialog = (): void => {
+      emit('click:close-student-lessons')
+    }
+
+    const onCloseNewLessonDialog = (): void => {
+      emit('click:close-new-lesson')
+    }
+
+    const onCloseEditLessonDialog = (): void => {
+      emit('click:close-edit-lesson')
     }
 
     return {
@@ -118,6 +247,12 @@ export default defineComponent({
       onClickDecidedLesson,
       onClickNewLesson,
       onClickEditLesson,
+      onCloseTeacherSubmissionsDialog,
+      onCloseTeacherLessonsDialog,
+      onCloseStudentSubmissionsDialog,
+      onCloseStudentLessonsDialog,
+      onCloseNewLessonDialog,
+      onCloseEditLessonDialog,
     }
   },
 })
