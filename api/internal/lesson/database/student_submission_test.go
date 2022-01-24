@@ -91,6 +91,7 @@ func TestStudentSubmission_ListByShiftSummaryIDs(t *testing.T) {
 			assert.Len(t, actual, len(tt.want.submissions))
 			for i, expect := range tt.want.submissions {
 				expect.CreatedAt, expect.UpdatedAt = actual[i].CreatedAt, actual[i].UpdatedAt
+				expect.SuggestedLessonsJSON = actual[i].SuggestedLessonsJSON
 				assert.Contains(t, actual, expect)
 			}
 		})
@@ -172,6 +173,7 @@ func TestStudentSubmission_ListByStudentIDs(t *testing.T) {
 			assert.Len(t, actual, len(tt.want.submissions))
 			for i, expect := range tt.want.submissions {
 				expect.CreatedAt, expect.UpdatedAt = actual[i].CreatedAt, actual[i].UpdatedAt
+				expect.SuggestedLessonsJSON = actual[i].SuggestedLessonsJSON
 				assert.Contains(t, actual, expect)
 			}
 		})
@@ -253,6 +255,7 @@ func TestStudentSubmission_Get(t *testing.T) {
 				assert.Error(t, err)
 			} else {
 				require.NoError(t, err)
+				tt.want.submission.SuggestedLessonsJSON = actual.SuggestedLessonsJSON
 				tt.want.submission.CreatedAt = actual.CreatedAt
 				tt.want.submission.UpdatedAt = actual.UpdatedAt
 				assert.Equal(t, tt.want.submission, actual)
