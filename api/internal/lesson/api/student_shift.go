@@ -169,7 +169,9 @@ func (s *lessonService) UpsertStudentShifts(
 	return res, nil
 }
 
-func (s *lessonService) isContainsStudentSubjects(subject *classroom.StudentSubject, lessons entity.SuggestedLessons) bool {
+func (s *lessonService) isContainsStudentSubjects(
+	subject *classroom.StudentSubject, lessons entity.SuggestedLessons,
+) bool {
 	set := set.New(len(subject.SubjectIds))
 	set.AddInt64s(subject.SubjectIds...)
 	for i := range lessons {
