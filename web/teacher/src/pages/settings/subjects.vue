@@ -66,7 +66,7 @@ export default defineComponent({
     const store = useStore()
 
     const schoolTypeArray: string[] = ['小学校', '中学校', '高校']
-    const swatches: string[][] = [['#F8BBD0'], ['#BBDEFB'], ['#E8F5E9'], ['#FFE0B2']]
+    const swatches: string[][] = [['#F8BBD0'], ['#DBD0E6'], ['#BBDEFB'], ['#E8F5E9'], ['#FFE0B2']]
 
     const isOpen = ref<boolean>(false)
 
