@@ -24,7 +24,7 @@ type StudentSubmissions []*StudentSubmission
 type StudentSubmissionDetail struct {
 	Student               *Student `json:"student"`               // 生徒情報
 	LessonTotal           int64    `json:"lessonTotal"`           // 登録受講授業数
-	SuggestedClassesTotal int64    `json:"suggestedClassesTotal"` // 希望受講授業数
+	SuggestedLessonsTotal int64    `json:"suggestedLessonsTotal"` // 希望受講授業数
 }
 
 type StudentSubmissionDetails []*StudentSubmissionDetail
@@ -68,14 +68,16 @@ func NewStudentSubmissionDetail(
 	submission *entity.StudentSubmission,
 	lessons entity.Lessons,
 ) *StudentSubmissionDetail {
-	var suggestedClassesTotal int64
+	var suggestedLessonsTotal int64
 	if submission != nil {
-		suggestedClassesTotal = submission.SuggestedClasses
+		for _, l := range submission.SuggestedLessons {
+			suggestedLessonsTotal += l.Total
+		}
 	}
 	return &StudentSubmissionDetail{
 		Student:               NewStudent(student, subjects),
 		LessonTotal:           int64(len(lessons)),
-		SuggestedClassesTotal: suggestedClassesTotal,
+		SuggestedLessonsTotal: suggestedLessonsTotal,
 	}
 }
 

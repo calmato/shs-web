@@ -56,7 +56,7 @@ func (s *ShiftSummary) Month() (int, error) {
 	return int(date.Month()), nil
 }
 
-func (s *ShiftSummary) IsSubmit() bool {
+func (s *ShiftSummary) EnabledSubmit() bool {
 	return s.Status == ShiftStatusAccepting
 }
 

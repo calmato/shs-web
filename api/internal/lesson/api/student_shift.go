@@ -6,6 +6,8 @@ import (
 
 	"github.com/calmato/shs-web/api/internal/lesson/database"
 	"github.com/calmato/shs-web/api/internal/lesson/entity"
+	"github.com/calmato/shs-web/api/pkg/set"
+	"github.com/calmato/shs-web/api/proto/classroom"
 	"github.com/calmato/shs-web/api/proto/lesson"
 	"github.com/calmato/shs-web/api/proto/user"
 	"golang.org/x/sync/errgroup"
@@ -109,6 +111,18 @@ func (s *lessonService) UpsertStudentShifts(
 		_, err = s.user.GetStudent(ectx, in)
 		return
 	})
+	var subject *classroom.StudentSubject
+	eg.Go(func() error {
+		in := &classroom.GetStudentSubjectRequest{
+			StudentId: req.StudentId,
+		}
+		out, err := s.classroom.GetStudentSubject(ctx, in)
+		if err != nil {
+			return err
+		}
+		subject = out.StudentSubject
+		return nil
+	})
 	var summary *entity.ShiftSummary
 	eg.Go(func() (err error) {
 		summary, err = s.db.ShiftSummary.Get(ectx, req.ShiftSummaryId)
@@ -128,14 +142,22 @@ func (s *lessonService) UpsertStudentShifts(
 	if err := eg.Wait(); err != nil {
 		return nil, gRPCError(err)
 	}
-
-	if !summary.IsSubmit() {
+	if !summary.EnabledSubmit() {
 		return nil, status.Error(codes.FailedPrecondition, "api: outside of shift submission")
 	}
 
-	submission := entity.NewStudentSubmission(req.StudentId, req.ShiftSummaryId, req.Decided, req.SuggestedClasses)
+	lessons := entity.NewSuggestedLessons(req.Lessons)
+	if !s.isContainsStudentSubjects(subject, lessons) {
+		return nil, status.Error(codes.InvalidArgument, "api: contains invalid subject id")
+	}
+
+	submission := entity.NewStudentSubmission(req.StudentId, req.ShiftSummaryId, req.Decided, lessons)
+	err := submission.FillJSON()
+	if err != nil {
+		return nil, gRPCError(err)
+	}
 	shifts := entity.NewStudentShifts(req.StudentId, req.ShiftSummaryId, req.ShiftIds)
-	err := s.db.StudentShift.Replace(ctx, submission, shifts)
+	err = s.db.StudentShift.Replace(ctx, submission, shifts)
 	if err != nil {
 		return nil, gRPCError(err)
 	}
@@ -145,4 +167,17 @@ func (s *lessonService) UpsertStudentShifts(
 		Shifts:     shifts.Proto(),
 	}
 	return res, nil
+}
+
+func (s *lessonService) isContainsStudentSubjects(
+	subject *classroom.StudentSubject, lessons entity.SuggestedLessons,
+) bool {
+	set := set.New(len(subject.SubjectIds))
+	set.AddInt64s(subject.SubjectIds...)
+	for i := range lessons {
+		if !set.Contains(lessons[i].SubjectID) {
+			return false
+		}
+	}
+	return true
 }

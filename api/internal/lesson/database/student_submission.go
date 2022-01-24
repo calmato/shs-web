@@ -13,7 +13,7 @@ const studentSubmissionTable = "student_submissions"
 
 var studentSubmissionFields = []string{
 	"student_id", "shift_summary_id", "decided",
-	"suggested_classes", "created_at", "updated_at",
+	"suggested_lessons", "created_at", "updated_at",
 }
 
 type studentSubmission struct {
@@ -41,7 +41,14 @@ func (s *studentSubmission) ListByShiftSummaryIDs(
 		Where("shift_summary_id IN (?)", summaryIDs)
 
 	err := stmt.Find(&submissions).Error
-	return submissions, dbError(err)
+	if err != nil {
+		return nil, dbError(err)
+	}
+	err = submissions.Fill()
+	if err != nil {
+		return nil, dbError(err)
+	}
+	return submissions, nil
 }
 
 func (s *studentSubmission) ListByStudentIDs(
@@ -57,7 +64,14 @@ func (s *studentSubmission) ListByStudentIDs(
 		Where("shift_summary_id = ?", summaryID)
 
 	err := stmt.Find(&submissions).Error
-	return submissions, dbError(err)
+	if err != nil {
+		return nil, dbError(err)
+	}
+	err = submissions.Fill()
+	if err != nil {
+		return nil, dbError(err)
+	}
+	return submissions, nil
 }
 
 func (s *studentSubmission) Get(
@@ -73,5 +87,12 @@ func (s *studentSubmission) Get(
 		Where("shift_summary_id = ?", summaryID)
 
 	err := stmt.First(&submission).Error
-	return submission, dbError(err)
+	if err != nil {
+		return nil, dbError(err)
+	}
+	err = submission.Fill()
+	if err != nil {
+		return nil, dbError(err)
+	}
+	return submission, nil
 }

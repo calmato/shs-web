@@ -111,7 +111,7 @@ func (s *lessonService) UpsertTeacherShifts(
 		return nil, gRPCError(err)
 	}
 
-	if !summary.IsSubmit() {
+	if !summary.EnabledSubmit() {
 		return nil, status.Error(codes.FailedPrecondition, "api: outside of shift submission")
 	}
 

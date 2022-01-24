@@ -863,12 +863,15 @@ func TestListShifts(t *testing.T) {
 	}
 	studentSubmissions := []*lesson.StudentSubmission{
 		{
-			StudentId:        "studentid",
-			ShiftSummaryId:   1,
-			Decided:          true,
-			SuggestedClasses: 8,
-			CreatedAt:        now.Unix(),
-			UpdatedAt:        now.Unix(),
+			StudentId:      "studentid",
+			ShiftSummaryId: 1,
+			Decided:        true,
+			SuggestedLessons: []*lesson.SuggestedLesson{
+				{SubjectId: 1, Total: 4},
+				{SubjectId: 2, Total: 4},
+			},
+			CreatedAt: now.Unix(),
+			UpdatedAt: now.Unix(),
 		},
 	}
 	lessons := []*lesson.Lesson{
@@ -1047,7 +1050,7 @@ func TestListShifts(t *testing.T) {
 								},
 							},
 							LessonTotal:           1,
-							SuggestedClassesTotal: 8,
+							SuggestedLessonsTotal: 8,
 						},
 					},
 					Lessons: entity.Lessons{
