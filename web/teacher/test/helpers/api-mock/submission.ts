@@ -1,6 +1,6 @@
-import { TeacherShiftsResponse, TeacherSubmissionsResponse } from '~/types/api/v1'
+import { SubmissionResponse, SubmissionsResponse } from '~/types/api/v1'
 
-export const listTeacherSubmissions: { [key: string]: TeacherSubmissionsResponse } = {
+export const listTeacherSubmissions: { [key: string]: SubmissionsResponse } = {
   '/v1/teachers/teacherid/submissions': {
     summaries: [
       {
@@ -29,7 +29,7 @@ export const listTeacherSubmissions: { [key: string]: TeacherSubmissionsResponse
   },
 }
 
-export const listTeacherShifts: { [key: string]: TeacherShiftsResponse } = {
+export const listTeacherShifts: { [key: string]: SubmissionResponse } = {
   '/v1/teachers/teacherid/submissions/1': {
     summary: {
       id: 1,

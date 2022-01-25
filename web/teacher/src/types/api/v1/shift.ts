@@ -1,4 +1,3 @@
-import { TeacherShiftSummary } from './submission'
 import { Lesson } from './lesson'
 import { Student, Teacher } from './user'
 
@@ -47,9 +46,26 @@ export interface ShiftDetail {
   lessons: ShiftDetailLesson[]
 }
 
+export interface SuggestedLesson {
+  subjectId: number
+  total: number
+}
+
 export interface TeacherShift {
   teacher: Teacher
   lessonTotal: number
+}
+
+export interface TeacherShiftSummary {
+  id: number
+  year: number
+  month: number
+  shiftStatus: number
+  submissionStatus: number
+  openAt: string
+  endAt: string
+  createdAt: string
+  updatedAt: string
 }
 
 export interface StudentShift {
@@ -68,11 +84,6 @@ export interface StudentShiftSummary {
   endAt: string
   createdAt: string
   updatedAt: string
-}
-
-export interface SuggestedLesson {
-  subjectId: number
-  total: number
 }
 
 export interface ShiftSummariesResponse {

@@ -1,6 +1,6 @@
 import { Lesson } from './lesson'
 import { ShiftStatus } from './common'
-import { SubmissionStatus, TeacherShiftSummary } from '.'
+import { SubmissionStatus } from '.'
 
 export interface ShiftSummary {
   id: number
@@ -35,6 +35,18 @@ export interface TeacherShift {
   name: string
   nameKana: string
   lessonTotal: number
+}
+
+export interface TeacherShiftSummary {
+  id: number
+  year: number
+  month: number
+  shiftStatus: ShiftStatus
+  submissionStatus: SubmissionStatus
+  openAt: string
+  endAt: string
+  createdAt: string
+  updatedAt: string
 }
 
 export interface TeacherSubmissionDetail {
