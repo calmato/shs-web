@@ -21,8 +21,8 @@
 
 <script lang="ts">
 import { defineComponent, PropType, SetupContext } from '@nuxtjs/composition-api'
-import TheSubmissionList from '../organisms/TheSubmissionList.vue'
-import { TeacherShiftDetail, TeacherShiftSummary } from '~/types/store'
+import TheSubmissionList from '~/components/organisms/TheSubmissionList.vue'
+import { SubmissionDetail, SubmissionSummary } from '~/types/store'
 
 export default defineComponent({
   components: {
@@ -35,11 +35,11 @@ export default defineComponent({
       default: false,
     },
     summary: {
-      type: Object as PropType<TeacherShiftSummary>,
+      type: Object as PropType<SubmissionSummary>,
       default: () => {},
     },
     shifts: {
-      type: Array as PropType<TeacherShiftDetail[]>,
+      type: Array as PropType<SubmissionDetail[]>,
       default: () => [],
     },
     enabledLessonIds: {

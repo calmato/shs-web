@@ -33,13 +33,13 @@
 
 <script lang="ts">
 import { defineComponent, PropType, SetupContext } from '@nuxtjs/composition-api'
-import { SubmissionStatus, TeacherShiftSummary } from '~/types/store'
+import { SubmissionStatus, SubmissionSummary } from '~/types/store'
 import dayjs from '~/plugins/dayjs'
 
 export default defineComponent({
   props: {
     summaries: {
-      type: Array as PropType<TeacherShiftSummary[]>,
+      type: Array as PropType<SubmissionSummary[]>,
       default: () => [],
     },
   },
@@ -101,7 +101,7 @@ export default defineComponent({
       }
     }
 
-    const onClickShow = (summary: TeacherShiftSummary): void => {
+    const onClickShow = (summary: SubmissionSummary): void => {
       emit('click:show', summary)
     }
 

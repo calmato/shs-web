@@ -31,7 +31,7 @@
 <script lang="ts">
 import { defineComponent, PropType, SetupContext } from '@nuxtjs/composition-api'
 import dayjs from '~/plugins/dayjs'
-import { TeacherShiftDetail } from '~/types/store'
+import { SubmissionDetail } from '~/types/store'
 
 export default defineComponent({
   props: {
@@ -40,7 +40,7 @@ export default defineComponent({
       default: false,
     },
     shifts: {
-      type: Array as PropType<TeacherShiftDetail[]>,
+      type: Array as PropType<SubmissionDetail[]>,
       default: () => [],
     },
     selectedItems: {
