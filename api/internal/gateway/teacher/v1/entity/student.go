@@ -62,8 +62,8 @@ func NewSchoolTypeFromUser(schoolType user.SchoolType) SchoolType {
 	}
 }
 
-func (s SchoolType) UserSchoolType() (user.SchoolType, error) {
-	switch s {
+func (t SchoolType) UserSchoolType() (user.SchoolType, error) {
+	switch t {
 	case SchoolTypeElementarySchool:
 		return user.SchoolType_SCHOOL_TYPE_ELEMENTARY_SCHOOL, nil
 	case SchoolTypeJuniorHighSchool:
