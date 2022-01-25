@@ -108,6 +108,8 @@ components:
       $ref: './components/schemas/v1/teachers.request.yaml#/updateTeacherRoleRequest'
     v1UpdateTeacherSubjectsRequest:
       $ref: './components/schemas/v1/teachers.request.yaml#/updateTeacherSubjectsRequest'
+    v1CreateStudentRequest:
+      $ref: './components/schemas/v1/students.request.yaml#/createStudentRequest'
     v1CreateSubjectRequest:
       $ref: './components/schemas/v1/subjects.request.yaml#/createSubjectRequest'
     v1UpdateSubjectRequest:
