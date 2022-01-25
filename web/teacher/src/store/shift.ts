@@ -29,6 +29,7 @@ import {
   TeacherSubmissionDetail,
   StudentSubmissionDetail,
   SuggestedLesson,
+  SubmissionStatus,
 } from '~/types/store'
 import { ErrorResponse } from '~/types/api/exception'
 import { ApiError } from '~/types/exception'
@@ -59,7 +60,8 @@ const initialState: ShiftState = {
       id: 0,
       year: 0,
       month: 0,
-      status: ShiftStatus.UNKNOWN,
+      shiftStatus: ShiftStatus.UNKNOWN,
+      submissionStatus: SubmissionStatus.UNKNOWN,
       openAt: '',
       endAt: '',
       createdAt: '',
@@ -76,7 +78,8 @@ const initialState: ShiftState = {
       id: 0,
       year: 0,
       month: 0,
-      status: ShiftStatus.UNKNOWN,
+      shiftStatus: ShiftStatus.UNKNOWN,
+      submissionStatus: SubmissionStatus.UNKNOWN,
       openAt: '',
       endAt: '',
       createdAt: '',
