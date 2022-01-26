@@ -29,7 +29,7 @@ createStudentRequest:
       description: パスワード
     passwordConfirmation:
       type: string
-      description: パスワード
+      description: パスワード(確認用)
   example:
     lastName: '中村'
     firstName: '広大'
