@@ -29,6 +29,11 @@ export interface ITeacherEditRoleParams {
   role: number
 }
 
+export interface ITeacherUpdatePasswordParams {
+  updatePassword: string
+  updatePasswordConfirmaion: string
+}
+
 /**
  * ---------------------------
  * interface - options
@@ -56,6 +61,11 @@ export interface ITeacherEditRoleOptions {
 
 export interface ITeacherUpdateMailOptions {
   mail: ITextField
+}
+
+export interface ITeacherUpdatePasswordOptions {
+  updatePassword: ITextField
+  updatePasswordConfirmation: ITextField
 }
 
 /**
@@ -120,6 +130,11 @@ export const TeacherEditRoleParams: ITeacherEditRoleParams = {
 
 export const TeacherUpdateMailParams: ITeacherUpdateMailParams = {
   updateMail: '',
+}
+
+export const TeacherUpdatePasswordParams: ITeacherUpdatePasswordParams = {
+  updatePassword: '',
+  updatePasswordConfirmaion: '',
 }
 
 /**
@@ -195,6 +210,25 @@ export const TeacherUpdateMailOptions: ITeacherUpdateMailOptions = {
     rules: {
       required: true,
       email: true,
+    },
+  } as ITextField,
+}
+
+export const TeacherUpdatePasswordOptions: ITeacherUpdatePasswordOptions = {
+  updatePassword: {
+    label: '変更後パスワード',
+    rules: {
+      required: true,
+      password: true,
+      min: 6,
+      max: 32,
+    },
+  } as ITextField,
+  updatePasswordConfirmation: {
+    label: 'パスワード(確認用)',
+    rules: {
+      required: true,
+      confirmed: '変更後パスワード',
     },
   } as ITextField,
 }
