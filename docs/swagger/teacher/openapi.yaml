@@ -49,6 +49,8 @@ paths:
   /v1/teachers/{teacherId}/subjects:
     $ref: './paths/v1/teachers/_teacherId/subjects.yaml'
   # Students
+  /v1/students:
+    $ref: './paths/v1/students/index.yaml'
   /v1/students/{studentId}:
     $ref: './paths/v1/students/_studentId/index.yaml'
   # Subjects
