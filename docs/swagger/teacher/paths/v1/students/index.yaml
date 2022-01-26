@@ -1,7 +1,7 @@
 post:
   summary: 生徒登録
   tags:
-  - Teacher
+  - Student
   security:
   - BearerAuth: []
   requestBody:
