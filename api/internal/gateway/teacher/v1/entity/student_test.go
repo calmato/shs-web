@@ -195,3 +195,48 @@ func TestSchoolTypeFromUser(t *testing.T) {
 		})
 	}
 }
+
+func TestUserSchoolType(t *testing.T) {
+	t.Parallel()
+	tests := []struct {
+		name       string
+		schoolType SchoolType
+		expect     user.SchoolType
+		isErr      bool
+	}{
+		{
+			name:       "success elementary school",
+			schoolType: SchoolTypeElementarySchool,
+			expect:     user.SchoolType_SCHOOL_TYPE_ELEMENTARY_SCHOOL,
+			isErr:      false,
+		},
+		{
+			name:       "sucess junior high school",
+			schoolType: SchoolTypeJuniorHighSchool,
+			expect:     user.SchoolType_SCHOOL_TYPE_JUNIOR_HIGH_SCHOOL,
+			isErr:      false,
+		},
+		{
+			name:       "success high school",
+			schoolType: SchoolTypeHighSchool,
+			expect:     user.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL,
+			isErr:      false,
+		},
+		{
+			name:       "sucess invalid schoolType",
+			schoolType: SchoolTypeUnknown,
+			expect:     user.SchoolType_SCHOOL_TYPE_UNKNOWN,
+			isErr:      true,
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			actual, err := tt.schoolType.UserSchoolType()
+			assert.Equal(t, tt.isErr, err != nil, err)
+			assert.Equal(t, tt.expect, actual)
+		})
+	}
+}
