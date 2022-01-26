@@ -57,9 +57,9 @@ export default defineComponent({
     const route = useRoute()
     const store = useStore()
 
-    const dialog = ref<boolean>(false)
     const dialogKey = ref<ShiftDialogKey>('未選択')
 
+    const dialog = computed<boolean>(() => dialogKey.value !== '未選択')
     const summary = computed<ShiftSummary>(() => store.getters['shift/getSummary'])
     const details = computed<ShiftDetail[]>(() => store.getters['shift/getDetails'])
     const rooms = computed<number>(() => store.getters['shift/getRooms'])
@@ -133,12 +133,10 @@ export default defineComponent({
     }
 
     const openDialog = (key: ShiftDialogKey): void => {
-      dialog.value = true
       dialogKey.value = key
     }
 
     const closeDialog = (): void => {
-      dialog.value = false
       dialogKey.value = '未選択'
     }
 
