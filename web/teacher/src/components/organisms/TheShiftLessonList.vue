@@ -73,20 +73,12 @@ export default defineComponent({
       })
     }
 
-    const onClickNew = ({ summaryId, room }: { summaryId: number; room: number }): void => {
-      emit('click:new', { summaryId, room })
+    const onClickNew = ({ shiftId, room }: { shiftId: number; room: number }): void => {
+      emit('click:new', { shiftId, room })
     }
 
-    const onClickEdit = ({
-      summaryId,
-      lessonId,
-      room,
-    }: {
-      summaryId: number
-      lessonId: number
-      room: number
-    }): void => {
-      emit('click:edit', { summaryId, lessonId, room })
+    const onClickEdit = ({ shiftId, lessonId, room }: { shiftId: number; lessonId: number; room: number }): void => {
+      emit('click:edit', { shiftId, lessonId, room })
     }
 
     return {

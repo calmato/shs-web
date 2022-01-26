@@ -44,7 +44,7 @@ message ListSubjectsResponse {
 }
 
 message MultiGetSubjectsRequest {
-  repeated int64 ids = 1 [(validate.rules).repeated = { min_items: 1, unique: true, items: { int64: { gt: 0 }}}];
+  repeated int64 ids = 1 [(validate.rules).repeated = { unique: true, items: { int64: { gt: 0 }}}];
 }
 
 message MultiGetSubjectsResponse {
@@ -85,7 +85,7 @@ message DeleteSubjectRequest {
 message DeleteSubjectResponse {}
 
 message MultiGetTeacherSubjectsRequest {
-  repeated string teacher_ids = 1 [(validate.rules).repeated = { min_items: 1, unique: true, items: { string: { min_len: 1 }}}];
+  repeated string teacher_ids = 1 [(validate.rules).repeated = { unique: true, items: { string: { min_len: 1 }}}];
 }
 
 message MultiGetTeacherSubjectsResponse {
@@ -111,7 +111,7 @@ message UpsertTeacherSubjectRequest {
 message UpsertTeacherSubjectResponse {}
 
 message MultiGetStudentSubjectsRequest {
-  repeated string student_ids = 1 [(validate.rules).repeated = { min_items: 1, unique: true, items: { string: { min_len: 1 }}}];
+  repeated string student_ids = 1 [(validate.rules).repeated = { unique: true, items: { string: { min_len: 1 }}}];
 }
 
 message MultiGetStudentSubjectsResponse {

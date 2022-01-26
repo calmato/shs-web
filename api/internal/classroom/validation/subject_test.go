@@ -59,13 +59,6 @@ func TestMultiGetSubjects(t *testing.T) {
 			isErr: false,
 		},
 		{
-			name: "Ids is min_items",
-			req: &classroom.MultiGetSubjectsRequest{
-				Ids: []int64{},
-			},
-			isErr: true,
-		},
-		{
 			name: "Ids is unique",
 			req: &classroom.MultiGetSubjectsRequest{
 				Ids: []int64{1, 1},

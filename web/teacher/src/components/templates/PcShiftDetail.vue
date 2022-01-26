@@ -1,67 +1,48 @@
 <template>
   <v-container class="shift">
-    <!-- 講師 提出シフト一覧ダイアログ -->
-    <v-dialog
-      :value.sync="teacherSubmissionsDialog"
-      width="600px"
-      scrollable
-      @click:outside="onCloseTeacherSubmissionsDialog"
-    >
-      <v-card>
+    <v-dialog :value.sync="dialog" width="600px" scrollable @click:outside="onCloseDialog" >
+      <!-- 講師 提出シフト一覧ダイアログ -->
+      <v-card v-if="dialogKey == '講師シフト'">
         <v-toolbar color="primary" dark>提出シフト一覧</v-toolbar>
         <v-card-text>{{ teacherSubmission }}</v-card-text>
         <v-card-actions>
           <v-spacer />
-          <v-btn color="secondary" @click="onCloseTeacherSubmissionsDialog">閉じる</v-btn>
+          <v-btn color="secondary" @click="onCloseDialog">閉じる</v-btn>
         </v-card-actions>
       </v-card>
-    </v-dialog>
-    <!-- 講師 授業一覧ダイアログ -->
-    <v-dialog :value.sync="teacherLessonsDialog" width="600px" scrollable @click:outside="onCloseTeacherLessonsDialog">
-      <v-card>
+      <!-- 講師 授業一覧ダイアログ -->
+      <v-card v-if="dialogKey == '講師授業'">
         <v-toolbar color="primary" dark>講師授業一覧</v-toolbar>
         <v-card-actions>
           <v-spacer />
-          <v-btn color="secondary" @click="onCloseTeacherLessonsDialog">閉じる</v-btn>
+          <v-btn color="secondary" @click="onCloseDialog">閉じる</v-btn>
         </v-card-actions>
       </v-card>
-    </v-dialog>
-    <!-- 生徒 授業希望一覧ダイアログ -->
-    <v-dialog
-      :value.sync="studentSubmissionsDialog"
-      width="600px"
-      scrollable
-      @click:outside="onCloseStudentSubmissionsDialog"
-    >
-      <v-card>
+      <!-- 生徒 授業希望一覧ダイアログ -->
+      <v-card v-if="dialogKey == '生徒授業希望'">
         <v-toolbar color="primary" dark>授業希望一覧</v-toolbar>
         <v-card-text>{{ studentSubmission }}</v-card-text>
         <v-card-actions>
           <v-spacer />
-          <v-btn color="secondary" @click="onCloseStudentSubmissionsDialog">閉じる</v-btn>
+          <v-btn color="secondary" @click="onCloseDialog">閉じる</v-btn>
         </v-card-actions>
       </v-card>
-    </v-dialog>
-    <!-- 生徒 授業一覧ダイアログ -->
-    <v-dialog :value.sync="studentLessonsDialog" width="600px" scrollable @click:outside="onCloseStudentLessonsDialog">
-      <v-card>
+      <!-- 生徒 授業一覧ダイアログ -->
+      <v-card v-if="dialogKey == '生徒授業'">
         <v-toolbar color="primary" dark>生徒授業一覧</v-toolbar>
         <v-card-actions>
           <v-spacer />
-          <v-btn color="secondary" @click="onCloseStudentLessonsDialog">閉じる</v-btn>
+          <v-btn color="secondary" @click="onCloseDialog">閉じる</v-btn>
         </v-card-actions>
       </v-card>
-    </v-dialog>
-    <!-- 授業登録ダイアログ -->
-    <v-dialog :value.sync="newLessonDialog" width="600px" scrollable @click:outside="onCloseNewLessonDialog">
-      <v-card>
+      <!-- 授業登録/編集ダイアログ -->
+      <v-card v-if="dialogKey == '授業登録'">
         <v-toolbar color="primary" dark>授業登録</v-toolbar>
-      </v-card>
-    </v-dialog>
-    <!-- 授業編集ダイアログ -->
-    <v-dialog :value.sync="editLessonDialog" width="600px" scrollable @click:outside="onCloseEditLessonDialog">
-      <v-card>
-        <v-toolbar color="primary" dark>授業登録</v-toolbar>
+        <v-card-text>{{ lesson }}</v-card-text>
+        <v-card-actions>
+          <v-spacer />
+          <v-btn color="secondary" @click="onCloseDialog">閉じる</v-btn>
+        </v-card-actions>
       </v-card>
     </v-dialog>
 
@@ -103,13 +84,14 @@
 import { defineComponent, PropType, SetupContext } from '@nuxtjs/composition-api'
 import {
   ShiftDetail,
+  ShiftLessonDetail,
   ShiftSummary,
   StudentShift,
   StudentSubmissionDetail,
   TeacherShift,
   TeacherSubmissionDetail,
 } from '~/types/store'
-import { LessonDetail } from '~/types/props/shift'
+import { LessonDetail, ShiftDialogKey } from '~/types/props/shift'
 import TheShiftLessonList from '~/components/organisms/TheShiftLessonList.vue'
 import TheShiftStudentTable from '~/components/organisms/TheShiftStudentTable.vue'
 import TheShiftTeacherTable from '~/components/organisms/TheShiftTeacherTable.vue'
@@ -122,6 +104,14 @@ export default defineComponent({
   },
 
   props: {
+    dialog: {
+      type: Boolean,
+      default: false,
+    },
+    dialogKey: {
+      type: String as PropType<ShiftDialogKey>,
+      default: '未選択',
+    },
     summary: {
       type: Object as PropType<ShiftSummary>,
       default: () => {},
@@ -138,6 +128,10 @@ export default defineComponent({
       type: Array as PropType<StudentShift[]>,
       default: () => [],
     },
+    lesson: {
+      type: Object as PropType<ShiftLessonDetail>,
+      default: () => {},
+    },
     lessons: {
       type: Array as PropType<LessonDetail[]>,
       default: () => [],
@@ -153,30 +147,6 @@ export default defineComponent({
     studentSubmission: {
       type: Object as PropType<StudentSubmissionDetail>,
       default: () => {},
-    },
-    teacherSubmissionsDialog: {
-      type: Boolean,
-      default: false,
-    },
-    teacherLessonsDialog: {
-      type: Boolean,
-      default: false,
-    },
-    studentSubmissionsDialog: {
-      type: Boolean,
-      default: false,
-    },
-    studentLessonsDialog: {
-      type: Boolean,
-      default: false,
-    },
-    newLessonDialog: {
-      type: Boolean,
-      default: false,
-    },
-    editLessonDialog: {
-      type: Boolean,
-      default: false,
     },
   },
 
@@ -205,44 +175,16 @@ export default defineComponent({
       emit('click:decided-lesson')
     }
 
-    const onClickNewLesson = ({ summaryId, room }: { summaryId: number; room: number }): void => {
-      emit('click:new-lesson', { summaryId, room })
+    const onClickNewLesson = ({ shiftId, room }: { shiftId: number; room: number }): void => {
+      emit('click:new-lesson', { shiftId, room })
     }
 
-    const onClickEditLesson = ({
-      summaryId,
-      lessonId,
-      room,
-    }: {
-      summaryId: number
-      lessonId: number
-      room: number
-    }): void => {
-      emit('click:edit-lesson', { summaryId, lessonId, room })
+    const onClickEditLesson = ({ shiftId, lessonId, room }: { shiftId: number; lessonId: number; room: number }): void => {
+      emit('click:edit-lesson', { shiftId, lessonId, room })
     }
 
-    const onCloseTeacherSubmissionsDialog = (): void => {
-      emit('click:close-teacher-submissions')
-    }
-
-    const onCloseTeacherLessonsDialog = (): void => {
-      emit('click:close-teacher-lessons')
-    }
-
-    const onCloseStudentSubmissionsDialog = (): void => {
-      emit('click:close-student-submissions')
-    }
-
-    const onCloseStudentLessonsDialog = (): void => {
-      emit('click:close-student-lessons')
-    }
-
-    const onCloseNewLessonDialog = (): void => {
-      emit('click:close-new-lesson')
-    }
-
-    const onCloseEditLessonDialog = (): void => {
-      emit('click:close-edit-lesson')
+    const onCloseDialog = (): void => {
+      emit('click:close')
     }
 
     return {
@@ -254,12 +196,7 @@ export default defineComponent({
       onClickDecidedLesson,
       onClickNewLesson,
       onClickEditLesson,
-      onCloseTeacherSubmissionsDialog,
-      onCloseTeacherLessonsDialog,
-      onCloseStudentSubmissionsDialog,
-      onCloseStudentLessonsDialog,
-      onCloseNewLessonDialog,
-      onCloseEditLessonDialog,
+      onCloseDialog,
     }
   },
 })

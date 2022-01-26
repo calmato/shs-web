@@ -3,20 +3,17 @@
     <!-- PCレイアウト -->
     <pc-shift-detail
       class="hidden-sm-and-down"
+      :dialog="dialog"
+      :dialog-key="dialogKey"
       :summary="summary"
       :details="details"
       :rooms="rooms"
       :teachers="teachers"
       :students="students"
+      :lesson="lesson"
       :lessons="getLessonDetails()"
       :teacher-submission="teacherSubmission"
       :student-submission="studentSubmission"
-      :teacher-submissions-dialog="teacherSubmissionsDialog"
-      :teacher-lessons-dialog="teacherLessonsDialog"
-      :student-submissions-dialog="studentSubmissionsDialog"
-      :student-lessons-dialog="studentLessonsDialog"
-      :new-lesson-dialog="newLessonDialog"
-      :edit-lesson-dialog="editLessonDialog"
       @click:show-teacher-submissions="handleClickShowTeacherSubmissions"
       @click:show-teacher-lessons="handleClickShowTeacherLessons"
       @click:show-student-submissions="handleClickShowStudentSubmissions"
@@ -24,12 +21,7 @@
       @click:decided-lesson="handleClickDecidedLesson"
       @click:new-lesson="handleClickNewLesson"
       @click:edit-lesson="handleClickEditLesson"
-      @click:close-teacher-submissions="handleCloseTeacherSubmissionsDialog"
-      @click:close-teacher-lessons="handleCloseTeacherLessonsDialog"
-      @click:close-student-submissions="handleCloseStudentSubmissionsDialog"
-      @click:close-student-lessons="handleCloseStudentLessonsDialog"
-      @click:close-new-lesson="handleCloseNewLessonDialog"
-      @click:close-edit-lesson="handleCloseEditLessonDialog"
+      @click:close="handleCloseDialog"
     />
     <!-- スマホレイアウト -->
     <mb-shift-detail class="hidden-md-and-up" @click="handleClickTop" />
@@ -44,6 +36,7 @@ import { CommonStore, ShiftStore } from '~/store'
 import {
   Lesson,
   ShiftDetail,
+  ShiftLessonDetail,
   ShiftSummary,
   StudentShift,
   StudentSubmissionDetail,
@@ -51,7 +44,7 @@ import {
   TeacherShift,
   TeacherSubmissionDetail,
 } from '~/types/store'
-import { LessonDetail } from '~/types/props/shift'
+import { LessonDetail, ShiftDialogKey } from '~/types/props/shift'
 
 export default defineComponent({
   components: {
@@ -64,18 +57,15 @@ export default defineComponent({
     const route = useRoute()
     const store = useStore()
 
-    const teacherSubmissionsDialog = ref<boolean>(false)
-    const teacherLessonsDialog = ref<boolean>(false)
-    const studentSubmissionsDialog = ref<boolean>(false)
-    const studentLessonsDialog = ref<boolean>(false)
-    const newLessonDialog = ref<boolean>(false)
-    const editLessonDialog = ref<boolean>(false)
+    const dialog = ref<boolean>(false)
+    const dialogKey = ref<ShiftDialogKey>('未選択')
 
     const summary = computed<ShiftSummary>(() => store.getters['shift/getSummary'])
     const details = computed<ShiftDetail[]>(() => store.getters['shift/getDetails'])
     const rooms = computed<number>(() => store.getters['shift/getRooms'])
     const teachers = computed<TeacherShift[]>(() => store.getters['shift/getTeachers'])
     const students = computed<StudentShift[]>(() => store.getters['shift/getStudents'])
+    const lesson = computed<ShiftLessonDetail>(() => store.getters['shift/getLessonDetail'])
     const lessons = computed<Lesson[]>(() => store.getters['shift/getLessons'])
     const subjects = computed<Subject[]>(() => store.getters['lesson/getSubjects'])
     const teacherSubmission = computed<TeacherSubmissionDetail>(() => store.getters['shift/getTeacherSubmission'])
@@ -93,6 +83,20 @@ export default defineComponent({
       await ShiftStore.listShiftDetails({ summaryId: Number(summaryId) })
         .catch((err: Error) => {
           console.log('feiled to list shift details', err)
+        })
+        .finally(() => {
+          CommonStore.endConnection()
+        })
+    }
+
+    async function listShiftLessons({ shiftId, lessonId, room }: { shiftId: number; lessonId: number; room: number }): Promise<void> {
+      CommonStore.startConnection()
+
+      const summaryId: string = route.value.params.id
+
+      await ShiftStore.listShiftLessons({ summaryId: Number(summaryId), lessonId, shiftId, room })
+        .catch((err: Error) => {
+          console.log('feiled to list shift lessons', err)
         })
         .finally(() => {
           CommonStore.endConnection()
@@ -120,6 +124,16 @@ export default defineComponent({
       return details
     }
 
+    const openDialog = (key: ShiftDialogKey): void => {
+      dialog.value = true
+      dialogKey.value = key
+    }
+
+    const closeDialog = (): void => {
+      dialog.value = false
+      dialogKey.value = '未選択'
+    }
+
     const handleClickTop = (): void => {
       router.push('/')
     }
@@ -131,7 +145,7 @@ export default defineComponent({
 
       await ShiftStore.showTeacherSubmissions({ summaryId: Number(summaryId), teacherId })
         .then(() => {
-          teacherSubmissionsDialog.value = true
+          openDialog('講師シフト')
         })
         .catch((err: Error) => {
           console.log('feiled to show teacher submissions', err)
@@ -143,7 +157,7 @@ export default defineComponent({
 
     const handleClickShowTeacherLessons = (teacherId: string): void => {
       console.log('debug', 'show teacher lessons', teacherId)
-      teacherLessonsDialog.value = true
+      openDialog('講師授業')
     }
 
     const handleClickShowStudentSubmissions = async (studentId: string): Promise<void> => {
@@ -153,7 +167,7 @@ export default defineComponent({
 
       await ShiftStore.showStudentSubmissions({ summaryId: Number(summaryId), studentId })
         .then(() => {
-          studentSubmissionsDialog.value = true
+          openDialog('生徒授業希望')
         })
         .catch((err: Error) => {
           console.log('feiled to show teacher submissions', err)
@@ -165,67 +179,38 @@ export default defineComponent({
 
     const handleClickShowStudentLessons = (studentId: string): void => {
       console.log('debug', 'show student lessons', studentId)
-      studentLessonsDialog.value = true
+      openDialog('生徒授業')
     }
 
     const handleClickDecidedLesson = (): void => {
       console.log('debug', 'decided lesson')
     }
 
-    const handleClickNewLesson = ({ summaryId, room }: { summaryId: number; room: number }): void => {
-      console.log('debug', 'new lessons', { summaryId, room })
-      newLessonDialog.value = true
+    const handleClickNewLesson = async ({ shiftId, room }: { shiftId: number; room: number }): Promise<void> => {
+      await listShiftLessons({ shiftId, room, lessonId: 0 }).then(() => {
+        openDialog('授業登録')
+      })
     }
 
-    const handleClickEditLesson = ({
-      summaryId,
-      lessonId,
-      room,
-    }: {
-      summaryId: number
-      lessonId: number
-      room: number
-    }): void => {
-      console.log('debug', 'edit lessons', { summaryId, lessonId, room })
-      editLessonDialog.value = true
+    const handleClickEditLesson = async ({ shiftId, lessonId, room }: { shiftId: number; lessonId: number; room: number }): Promise<void> => {
+      await listShiftLessons({ shiftId, room, lessonId }).then(() => {
+        openDialog('授業登録')
+      })
     }
 
-    const handleCloseTeacherSubmissionsDialog = (): void => {
-      teacherSubmissionsDialog.value = false
-    }
-
-    const handleCloseTeacherLessonsDialog = (): void => {
-      teacherLessonsDialog.value = false
-    }
-
-    const handleCloseStudentSubmissionsDialog = (): void => {
-      studentSubmissionsDialog.value = false
-    }
-
-    const handleCloseStudentLessonsDialog = (): void => {
-      studentLessonsDialog.value = false
-    }
-
-    const handleCloseNewLessonDialog = (): void => {
-      newLessonDialog.value = false
-    }
-
-    const handleCloseEditLessonDialog = (): void => {
-      editLessonDialog.value = false
+    const handleCloseDialog = (): void => {
+      closeDialog()
     }
 
     return {
-      teacherSubmissionsDialog,
-      teacherLessonsDialog,
-      studentSubmissionsDialog,
-      studentLessonsDialog,
-      newLessonDialog,
-      editLessonDialog,
+      dialog,
+      dialogKey,
       summary,
       details,
       rooms,
       teachers,
       students,
+      lesson,
       lessons,
       teacherSubmission,
       studentSubmission,
@@ -238,12 +223,7 @@ export default defineComponent({
       handleClickDecidedLesson,
       handleClickNewLesson,
       handleClickEditLesson,
-      handleCloseTeacherSubmissionsDialog,
-      handleCloseTeacherLessonsDialog,
-      handleCloseStudentSubmissionsDialog,
-      handleCloseStudentLessonsDialog,
-      handleCloseNewLessonDialog,
-      handleCloseEditLessonDialog,
+      handleCloseDialog,
     }
   },
 })

@@ -46,6 +46,20 @@ export interface ShiftDetail {
   lessons: ShiftDetailLesson[]
 }
 
+export interface ShiftLesson {
+  id: number
+  shiftId: number
+  subjectId: number
+  room: number
+  teacherId: string
+  studentId: string
+  startAt: string
+  endAt: string
+  notes: string
+  createdAt: string
+  updatedAt: string
+}
+
 export interface SuggestedLesson {
   subjectId: number
   total: number
@@ -97,6 +111,12 @@ export interface ShiftDetailsResponse {
   teachers: TeacherShift[]
   students: StudentShift[]
   lessons: Lesson[]
+}
+
+export interface ShiftLessonsResponse {
+  teachers: Teacher[]
+  students: Student[]
+  lessons: ShiftLesson[]
 }
 
 export interface TeacherShiftsResponse {

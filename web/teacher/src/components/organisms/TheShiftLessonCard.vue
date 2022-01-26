@@ -53,11 +53,11 @@ export default defineComponent({
     }
 
     const onClickNew = (): void => {
-      emit('click:new', { summaryId: props.summary.id, room: props.room })
+      emit('click:new', { shiftId: props.summary.id, room: props.room })
     }
 
     const onClickEdit = (): void => {
-      emit('click:edit', { summaryId: props.summary.id, lessonId: props.detail?.lesson.id || 0, room: props.room })
+      emit('click:edit', { shiftId: props.summary.id, lessonId: props.detail?.lesson.id || 0, room: props.room })
     }
 
     return {

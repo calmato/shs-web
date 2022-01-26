@@ -1,5 +1,6 @@
 import { Role } from './common'
-import { SubjectsMap } from './lesson'
+import { Subject, SubjectsMap } from './lesson'
+import { SchoolType } from '.'
 
 export interface Student {
   id: string
@@ -10,8 +11,9 @@ export interface Student {
   lastNameKana: string
   firstNameKana: string
   mail: string
-  type: 0 | 1 | 2 | 3
+  type: SchoolType
   grade: number
+  subjects: Subject[]
   createdAt: string
   updatedAt: string
 }

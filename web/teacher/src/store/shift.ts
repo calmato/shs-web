@@ -13,9 +13,13 @@ import {
   ShiftSummary as V1ShiftSummary,
   ShiftDetail as V1ShiftDetail,
   ShiftDetailLesson as V1ShiftDetailLesson,
+  ShiftLesson as v1ShiftLesson,
+  Student as v1Student,
   StudentShift as v1StudentShift,
   SuggestedLesson as v1SuggestedLesson,
+  Teacher as v1Teacher,
   TeacherShift as v1TeacherShift,
+  ShiftLessonsResponse,
 } from '~/types/api/v1'
 import {
   Lesson,
@@ -32,10 +36,18 @@ import {
   TeacherShift,
   TeacherShiftSummary,
   TeacherSubmissionDetail,
+  ShiftLessonDetail,
+  Teacher,
+  SubjectsMap,
+  Student,
+  Subject,
+  SchoolType,
+  ShiftLesson,
 } from '~/types/store'
 import { ErrorResponse } from '~/types/api/exception'
 import { ApiError } from '~/types/exception'
 import { ShiftsNewForm, ShiftSummaryEditScheduleForm } from '~/types/form'
+import { schoolTypeNum2schoolTypeString, subjectResponse2Subject } from '~/lib'
 
 const initialState: ShiftState = {
   summary: {
@@ -91,6 +103,16 @@ const initialState: ShiftState = {
     suggestedLessons: [],
     submissionTotal: 0,
   },
+  lessonDetail: {
+    lessonId: 0,
+    summaryId: 0,
+    shiftId: 0,
+    room: 0,
+    current: undefined,
+    teachers: [],
+    students: [],
+    lessons: [],
+  },
 }
 
 @Module({
@@ -108,6 +130,7 @@ export default class ShiftModule extends VuexModule {
   private lessons: ShiftState['lessons'] = initialState.lessons
   private teacherSubmission: ShiftState['teacherSubmission'] = initialState.teacherSubmission
   private studentSubmission: ShiftState['studentSubmission'] = initialState.studentSubmission
+  private lessonDetail: ShiftState['lessonDetail'] = initialState.lessonDetail
 
   public get getSummary(): ShiftSummary {
     return this.summary
@@ -143,6 +166,10 @@ export default class ShiftModule extends VuexModule {
 
   public get getStudentSubmission(): StudentSubmissionDetail {
     return this.studentSubmission
+  }
+
+  public get getLessonDetail(): ShiftLessonDetail {
+    return this.lessonDetail
   }
 
   @Mutation
@@ -235,6 +262,11 @@ export default class ShiftModule extends VuexModule {
     this.studentSubmission = submission
   }
 
+  @Mutation
+  private setLessonDetail(lessonDetail: ShiftLessonDetail): void {
+    this.lessonDetail = lessonDetail
+  }
+
   @Action({})
   public factory(): void {
     this.setSummaries({ summaries: initialState.summaries })
@@ -247,6 +279,8 @@ export default class ShiftModule extends VuexModule {
       lessons: initialState.lessons,
     })
     this.setTeacherSubmission(initialState.teacherSubmission)
+    this.setStudentSubmission(initialState.studentSubmission)
+    this.setLessonDetail(initialState.lessonDetail)
   }
 
   @Action({ rawError: true })
@@ -467,6 +501,65 @@ export default class ShiftModule extends VuexModule {
         throw new ApiError(res.status, res.message, res)
       })
   }
+
+  @Action({ rawError: true })
+  public async listShiftLessons({
+    summaryId,
+    shiftId,
+    lessonId,
+    room,
+  }: {
+    summaryId: number
+    shiftId: number
+    lessonId: number
+    room: number
+  }): Promise<void> {
+    await $axios
+      .$get(`/v1/shifts/${summaryId}/submissions/${shiftId}`)
+      .then((res: ShiftLessonsResponse) => {
+        let current: ShiftLesson | undefined
+        const lessons: ShiftLesson[] = res.lessons.map((lesson: v1ShiftLesson): ShiftLesson => {
+          if (lesson.room === room) {
+            current = lesson
+          }
+          return { ...lesson }
+        })
+        const teachers: Teacher[] = res.teachers.map((teacher: v1Teacher): Teacher => {
+          const subjects = teacher.subjects
+            ? {
+                小学校: teacher.subjects[1].map((i) => subjectResponse2Subject(i)),
+                中学校: teacher.subjects[2].map((i) => subjectResponse2Subject(i)),
+                高校: teacher.subjects[3].map((i) => subjectResponse2Subject(i)),
+              }
+            : initializeSubjects()
+
+          return { ...teacher, subjects }
+        })
+        const students: Student[] = res.students.map((student: v1Student): Student => {
+          const type: SchoolType = schoolTypeNum2schoolTypeString(student.schoolType)
+          const subjects: Subject[] = student.subjects.map((subject): Subject => {
+            const schoolType: SchoolType = schoolTypeNum2schoolTypeString(subject.schoolType)
+            return { ...subject, schoolType }
+          })
+          return { ...student, type, subjects }
+        })
+
+        this.setLessonDetail({
+          lessonId,
+          summaryId,
+          shiftId,
+          room,
+          current,
+          teachers,
+          students,
+          lessons,
+        })
+      })
+      .catch((err: AxiosError) => {
+        const res: ErrorResponse = { ...err.response?.data }
+        throw new ApiError(res.status, res.message, res)
+      })
+  }
 }
 
 function getName(lastName: string, firstName: string): string {
@@ -475,4 +568,12 @@ function getName(lastName: string, firstName: string): string {
 
 function replaceDate(date: string, oldVal: string, newVal: string): string {
   return date.replaceAll(oldVal, newVal)
+}
+
+function initializeSubjects(): SubjectsMap {
+  return {
+    小学校: [],
+    中学校: [],
+    高校: [],
+  }
 }

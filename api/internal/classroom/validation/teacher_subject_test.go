@@ -24,13 +24,6 @@ func TestMultiGetTeacherSubjects(t *testing.T) {
 			isErr: false,
 		},
 		{
-			name: "TeacherIds is min_items",
-			req: &classroom.MultiGetTeacherSubjectsRequest{
-				TeacherIds: []string{},
-			},
-			isErr: true,
-		},
-		{
 			name: "TeacherIds is unique",
 			req: &classroom.MultiGetTeacherSubjectsRequest{
 				TeacherIds: []string{"teacherid", "teacherid"},
