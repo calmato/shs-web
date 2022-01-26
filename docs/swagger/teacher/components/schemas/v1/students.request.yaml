@@ -19,7 +19,7 @@ createStudentRequest:
     schoolType:
       type: integer
       format: int32
-      description: 校種(0:不明, 1:小学校, 2:中学校, 3:高等学校)
+      description: 校種(1:小学校, 2:中学校, 3:高等学校)
     grade:
       type: integer
       format: int64
