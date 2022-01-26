@@ -1,6 +1,6 @@
 <template>
   <v-container class="shift">
-    <v-dialog :value.sync="dialog" width="600px" scrollable @click:outside="onCloseDialog" >
+    <v-dialog :value.sync="dialog" width="600px" scrollable @click:outside="onCloseDialog">
       <!-- 講師 提出シフト一覧ダイアログ -->
       <v-card v-if="dialogKey == '講師シフト'">
         <v-toolbar color="primary" dark>提出シフト一覧</v-toolbar>
@@ -179,7 +179,15 @@ export default defineComponent({
       emit('click:new-lesson', { shiftId, room })
     }
 
-    const onClickEditLesson = ({ shiftId, lessonId, room }: { shiftId: number; lessonId: number; room: number }): void => {
+    const onClickEditLesson = ({
+      shiftId,
+      lessonId,
+      room,
+    }: {
+      shiftId: number
+      lessonId: number
+      room: number
+    }): void => {
       emit('click:edit-lesson', { shiftId, lessonId, room })
     }
 

@@ -89,7 +89,15 @@ export default defineComponent({
         })
     }
 
-    async function listShiftLessons({ shiftId, lessonId, room }: { shiftId: number; lessonId: number; room: number }): Promise<void> {
+    async function listShiftLessons({
+      shiftId,
+      lessonId,
+      room,
+    }: {
+      shiftId: number
+      lessonId: number
+      room: number
+    }): Promise<void> {
       CommonStore.startConnection()
 
       const summaryId: string = route.value.params.id
@@ -192,7 +200,15 @@ export default defineComponent({
       })
     }
 
-    const handleClickEditLesson = async ({ shiftId, lessonId, room }: { shiftId: number; lessonId: number; room: number }): Promise<void> => {
+    const handleClickEditLesson = async ({
+      shiftId,
+      lessonId,
+      room,
+    }: {
+      shiftId: number
+      lessonId: number
+      room: number
+    }): Promise<void> => {
       await listShiftLessons({ shiftId, room, lessonId }).then(() => {
         openDialog('授業登録')
       })
