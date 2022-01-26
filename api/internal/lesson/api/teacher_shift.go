@@ -72,8 +72,10 @@ func (s *lessonService) GetTeacherShifts(
 	}
 
 	res := &lesson.GetTeacherShiftsResponse{
-		Submission: submission.Proto(),
-		Shifts:     shifts.Proto(),
+		Shifts: shifts.Proto(),
+	}
+	if submission != nil {
+		res.Submission = submission.Proto()
 	}
 	return res, nil
 }
