@@ -113,6 +113,13 @@ export interface StudentSubmissionDetail {
   submissionTotal: number
 }
 
+export interface ShiftUserLesson {
+  lessons: ShiftLesson[]
+  teachers: { [key: string]: TeacherShift }
+  students: { [key: string]: StudentShift }
+  total: number
+}
+
 export interface ShiftState {
   summary: ShiftSummary
   summaries: ShiftSummary[]
@@ -122,6 +129,8 @@ export interface ShiftState {
   students: StudentShift[]
   lessons: Lesson[]
   teacherSubmission: TeacherSubmissionDetail
+  teacherLessons: ShiftUserLesson
   studentSubmission: StudentSubmissionDetail
+  studentLessons: ShiftUserLesson
   lessonDetail: ShiftLessonDetail
 }

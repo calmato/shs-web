@@ -13,7 +13,9 @@
       :lesson="lesson"
       :lessons="getLessonDetails()"
       :teacher-submission="teacherSubmission"
+      :teacher-lessons="teacherLessons"
       :student-submission="studentSubmission"
+      :student-lessons="studentLessons"
       @click:show-teacher-submissions="handleClickShowTeacherSubmissions"
       @click:show-teacher-lessons="handleClickShowTeacherLessons"
       @click:show-student-submissions="handleClickShowStudentSubmissions"
@@ -38,6 +40,7 @@ import {
   ShiftDetail,
   ShiftLessonDetail,
   ShiftSummary,
+  ShiftUserLesson,
   StudentShift,
   StudentSubmissionDetail,
   Subject,
@@ -69,7 +72,9 @@ export default defineComponent({
     const lessons = computed<Lesson[]>(() => store.getters['shift/getLessons'])
     const subjects = computed<Subject[]>(() => store.getters['lesson/getSubjects'])
     const teacherSubmission = computed<TeacherSubmissionDetail>(() => store.getters['shift/getTeacherSubmission'])
+    const teacherLessons = computed<ShiftUserLesson>(() => store.getters['shift/getTeacherLessons'])
     const studentSubmission = computed<StudentSubmissionDetail>(() => store.getters['shift/getStudentSubmission'])
+    const studentLessons = computed<ShiftUserLesson>(() => store.getters['shift/getStudentLessons'])
 
     useAsync(async () => {
       await listShiftDetails()
@@ -161,9 +166,21 @@ export default defineComponent({
         })
     }
 
-    const handleClickShowTeacherLessons = (teacherId: string): void => {
-      console.log('debug', 'show teacher lessons', teacherId)
-      openDialog('講師授業')
+    const handleClickShowTeacherLessons = async (teacherId: string): Promise<void> => {
+      CommonStore.startConnection()
+
+      const summaryId: string = route.value.params.id
+
+      await ShiftStore.listTeacherLessons({ summaryId: Number(summaryId), teacherId })
+        .then(() => {
+          openDialog('講師授業')
+        })
+        .catch((err: Error) => {
+          console.log('feiled to list teacher lessons', err)
+        })
+        .finally(() => {
+          CommonStore.endConnection()
+        })
     }
 
     const handleClickShowStudentSubmissions = async (studentId: string): Promise<void> => {
@@ -183,9 +200,21 @@ export default defineComponent({
         })
     }
 
-    const handleClickShowStudentLessons = (studentId: string): void => {
-      console.log('debug', 'show student lessons', studentId)
-      openDialog('生徒授業')
+    const handleClickShowStudentLessons = async (studentId: string): Promise<void> => {
+      CommonStore.startConnection()
+
+      const summaryId: string = route.value.params.id
+
+      await ShiftStore.listStudentLessons({ summaryId: Number(summaryId), studentId })
+        .then(() => {
+          openDialog('生徒授業')
+        })
+        .catch((err: Error) => {
+          console.log('feiled to list student lessons', err)
+        })
+        .finally(() => {
+          CommonStore.endConnection()
+        })
     }
 
     const handleClickDecidedLesson = (): void => {
@@ -227,7 +256,9 @@ export default defineComponent({
       lesson,
       lessons,
       teacherSubmission,
+      teacherLessons,
       studentSubmission,
+      studentLessons,
       getLessonDetails,
       handleClickTop,
       handleClickShowTeacherSubmissions,

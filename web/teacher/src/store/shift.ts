@@ -20,6 +20,7 @@ import {
   Teacher as v1Teacher,
   TeacherShift as v1TeacherShift,
   ShiftLessonsResponse,
+  LessonsResponse,
 } from '~/types/api/v1'
 import {
   Lesson,
@@ -43,6 +44,7 @@ import {
   Subject,
   SchoolType,
   ShiftLesson,
+  ShiftUserLesson,
 } from '~/types/store'
 import { ErrorResponse } from '~/types/api/exception'
 import { ApiError } from '~/types/exception'
@@ -84,6 +86,12 @@ const initialState: ShiftState = {
     shifts: [],
     submissionTotal: 0,
   },
+  teacherLessons: {
+    lessons: [],
+    teachers: {},
+    students: {},
+    total: 0,
+  },
   studentSubmission: {
     id: '',
     name: '',
@@ -102,6 +110,12 @@ const initialState: ShiftState = {
     shifts: [],
     suggestedLessons: [],
     submissionTotal: 0,
+  },
+  studentLessons: {
+    lessons: [],
+    teachers: {},
+    students: {},
+    total: 0,
   },
   lessonDetail: {
     lessonId: 0,
@@ -129,7 +143,9 @@ export default class ShiftModule extends VuexModule {
   private rooms: ShiftState['rooms'] = initialState.rooms
   private lessons: ShiftState['lessons'] = initialState.lessons
   private teacherSubmission: ShiftState['teacherSubmission'] = initialState.teacherSubmission
+  private teacherLessons: ShiftState['teacherLessons'] = initialState.teacherLessons
   private studentSubmission: ShiftState['studentSubmission'] = initialState.studentSubmission
+  private studentLessons: ShiftState['studentLessons'] = initialState.studentLessons
   private lessonDetail: ShiftState['lessonDetail'] = initialState.lessonDetail
 
   public get getSummary(): ShiftSummary {
@@ -164,8 +180,16 @@ export default class ShiftModule extends VuexModule {
     return this.teacherSubmission
   }
 
+  public get getTeacherLessons(): ShiftUserLesson {
+    return this.teacherLessons
+  }
+
   public get getStudentSubmission(): StudentSubmissionDetail {
     return this.studentSubmission
+  }
+
+  public get getStudentLessons(): ShiftUserLesson {
+    return this.studentLessons
   }
 
   public get getLessonDetail(): ShiftLessonDetail {
@@ -250,6 +274,23 @@ export default class ShiftModule extends VuexModule {
   }
 
   @Mutation
+  private setTeacherLessons({ lessons, total }: { lessons: ShiftLesson[]; total: number }): void {
+    const teachers: { [key: string]: TeacherShift } = {}
+    const students: { [key: string]: StudentShift } = {}
+    lessons.forEach((lesson: ShiftLesson): void => {
+      const teacher: TeacherShift | undefined = this.teachers.find((val: TeacherShift) => val.id === lesson.teacherId)
+      const student: StudentShift | undefined = this.students.find((val: StudentShift) => val.id === lesson.studentId)
+      if (teacher) {
+        teachers[teacher.id] = teacher
+      }
+      if (student) {
+        students[student.id] = student
+      }
+    })
+    this.teacherLessons = { lessons, teachers, students, total }
+  }
+
+  @Mutation
   private setStudentSubmission(submission: StudentSubmissionDetail): void {
     const student: StudentShift | undefined = this.students.find(
       (val: StudentShift): boolean => val.id === submission.id
@@ -260,6 +301,23 @@ export default class ShiftModule extends VuexModule {
     submission.name = student.name
     submission.nameKana = student.nameKana
     this.studentSubmission = submission
+  }
+
+  @Mutation
+  private setStudentLessons({ lessons, total }: { lessons: ShiftLesson[]; total: number }): void {
+    const teachers: { [key: string]: TeacherShift } = {}
+    const students: { [key: string]: StudentShift } = {}
+    lessons.forEach((lesson: ShiftLesson): void => {
+      const teacher: TeacherShift | undefined = this.teachers.find((val: TeacherShift) => val.id === lesson.teacherId)
+      const student: StudentShift | undefined = this.students.find((val: StudentShift) => val.id === lesson.studentId)
+      if (teacher) {
+        teachers[teacher.id] = teacher
+      }
+      if (student) {
+        students[student.id] = student
+      }
+    })
+    this.studentLessons = { lessons, teachers, students, total }
   }
 
   @Mutation
@@ -554,6 +612,42 @@ export default class ShiftModule extends VuexModule {
           students,
           lessons,
         })
+      })
+      .catch((err: AxiosError) => {
+        const res: ErrorResponse = { ...err.response?.data }
+        throw new ApiError(res.status, res.message, res)
+      })
+  }
+
+  @Action({ rawError: true })
+  public async listTeacherLessons({ summaryId, teacherId }: { summaryId: number; teacherId: string }): Promise<void> {
+    await $axios
+      .$get(`/v1/shifts/${summaryId}/lessons?teacherId=${teacherId}`)
+      .then((res: LessonsResponse) => {
+        const total: number = res.total
+        const lessons: ShiftLesson[] = res.lessons.map((lesson: v1Lesson): ShiftLesson => {
+          return { ...lesson }
+        })
+
+        this.setTeacherLessons({ lessons, total })
+      })
+      .catch((err: AxiosError) => {
+        const res: ErrorResponse = { ...err.response?.data }
+        throw new ApiError(res.status, res.message, res)
+      })
+  }
+
+  @Action({ rawError: true })
+  public async listStudentLessons({ summaryId, studentId }: { summaryId: number; studentId: string }): Promise<void> {
+    await $axios
+      .$get(`/v1/shifts/${summaryId}/lessons?studentId=${studentId}`)
+      .then((res: LessonsResponse) => {
+        const total: number = res.total
+        const lessons: ShiftLesson[] = res.lessons.map((lesson: v1Lesson): ShiftLesson => {
+          return { ...lesson }
+        })
+
+        this.setStudentLessons({ lessons, total })
       })
       .catch((err: AxiosError) => {
         const res: ErrorResponse = { ...err.response?.data }

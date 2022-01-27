@@ -13,6 +13,7 @@
       <!-- 講師 授業一覧ダイアログ -->
       <v-card v-if="dialogKey == '講師授業'">
         <v-toolbar color="primary" dark>講師授業一覧</v-toolbar>
+        <v-card-text>{{ teacherLessons }}</v-card-text>
         <v-card-actions>
           <v-spacer />
           <v-btn color="secondary" @click="onCloseDialog">閉じる</v-btn>
@@ -30,6 +31,7 @@
       <!-- 生徒 授業一覧ダイアログ -->
       <v-card v-if="dialogKey == '生徒授業'">
         <v-toolbar color="primary" dark>生徒授業一覧</v-toolbar>
+        <v-card-text>{{ studentLessons }}</v-card-text>
         <v-card-actions>
           <v-spacer />
           <v-btn color="secondary" @click="onCloseDialog">閉じる</v-btn>
@@ -86,6 +88,7 @@ import {
   ShiftDetail,
   ShiftLessonDetail,
   ShiftSummary,
+  ShiftUserLesson,
   StudentShift,
   StudentSubmissionDetail,
   TeacherShift,
@@ -144,8 +147,16 @@ export default defineComponent({
       type: Object as PropType<TeacherSubmissionDetail>,
       default: () => {},
     },
+    teacherLessons: {
+      type: Object as PropType<ShiftUserLesson>,
+      default: () => {},
+    },
     studentSubmission: {
       type: Object as PropType<StudentSubmissionDetail>,
+      default: () => {},
+    },
+    studentLessons: {
+      type: Object as PropType<ShiftUserLesson>,
       default: () => {},
     },
   },
