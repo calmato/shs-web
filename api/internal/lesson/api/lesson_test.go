@@ -41,6 +41,17 @@ func TestListLessons(t *testing.T) {
 			UpdatedAt:      now,
 		},
 	}
+	shifts := entity.Shifts{
+		{
+			ID:             1,
+			ShiftSummaryID: 1,
+			Date:           jst.Date(2022, 2, 1, 0, 0, 0, 0),
+			StartTime:      "1700",
+			EndTime:        "1830",
+			CreatedAt:      now,
+			UpdatedAt:      now,
+		},
+	}
 
 	tests := []struct {
 		name   string
@@ -58,7 +69,9 @@ func TestListLessons(t *testing.T) {
 					StudentID:      "studentid",
 				}
 				mocks.validator.EXPECT().ListLessons(req).Return(nil)
-				mocks.db.Lesson.EXPECT().List(ctx, params).Return(lessons, nil)
+				mocks.db.Lesson.EXPECT().List(gomock.Any(), params).Return(lessons, nil)
+				mocks.db.Lesson.EXPECT().Count(gomock.Any(), params).Return(int64(1), nil)
+				mocks.db.Shift.EXPECT().MultiGet(ctx, []int64{1}).Return(shifts, nil)
 			},
 			req: req,
 			expect: &testResponse{
@@ -78,6 +91,18 @@ func TestListLessons(t *testing.T) {
 							UpdatedAt:      now.Unix(),
 						},
 					},
+					Shifts: []*lesson.Shift{
+						{
+							Id:             1,
+							ShiftSummaryId: 1,
+							Date:           "20220201",
+							StartTime:      "1700",
+							EndTime:        "1830",
+							CreatedAt:      now.Unix(),
+							UpdatedAt:      now.Unix(),
+						},
+					},
+					Total: 1,
 				},
 			},
 		},
@@ -102,7 +127,45 @@ func TestListLessons(t *testing.T) {
 					StudentID:      "studentid",
 				}
 				mocks.validator.EXPECT().ListLessons(req).Return(nil)
-				mocks.db.Lesson.EXPECT().List(ctx, params).Return(nil, errmock)
+				mocks.db.Lesson.EXPECT().List(gomock.Any(), params).Return(nil, errmock)
+				mocks.db.Lesson.EXPECT().Count(gomock.Any(), params).Return(int64(1), nil)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.Internal,
+			},
+		},
+		{
+			name: "failed to count lessons",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				params := &database.ListLessonsParams{
+					ShiftSummaryID: 1,
+					ShiftID:        1,
+					TeacherID:      "teacherid",
+					StudentID:      "studentid",
+				}
+				mocks.validator.EXPECT().ListLessons(req).Return(nil)
+				mocks.db.Lesson.EXPECT().List(gomock.Any(), params).Return(lessons, nil)
+				mocks.db.Lesson.EXPECT().Count(gomock.Any(), params).Return(int64(0), errmock)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.Internal,
+			},
+		},
+		{
+			name: "failed to count lessons",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				params := &database.ListLessonsParams{
+					ShiftSummaryID: 1,
+					ShiftID:        1,
+					TeacherID:      "teacherid",
+					StudentID:      "studentid",
+				}
+				mocks.validator.EXPECT().ListLessons(req).Return(nil)
+				mocks.db.Lesson.EXPECT().List(gomock.Any(), params).Return(lessons, nil)
+				mocks.db.Lesson.EXPECT().Count(gomock.Any(), params).Return(int64(1), nil)
+				mocks.db.Shift.EXPECT().MultiGet(ctx, []int64{1}).Return(nil, errmock)
 			},
 			req: req,
 			expect: &testResponse{
