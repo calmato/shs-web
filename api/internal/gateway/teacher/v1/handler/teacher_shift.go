@@ -149,8 +149,8 @@ func (h *apiV1Handler) ListEnabledTeacherShifts(ctx *gin.Context) {
 		gshifts, err = h.listShiftsBySummaryID(ectx, shiftSummaryID)
 		return
 	})
-	var submission *gentity.TeacherSubmission
-	var teacherShifts gentity.TeacherShifts
+	var gsubmission *gentity.TeacherSubmission
+	var gteacherShifts gentity.TeacherShifts
 	eg.Go(func() error {
 		in := &lesson.GetTeacherShiftsRequest{
 			TeacherId:      teacherID,
@@ -160,8 +160,8 @@ func (h *apiV1Handler) ListEnabledTeacherShifts(ctx *gin.Context) {
 		if err != nil {
 			return err
 		}
-		submission = gentity.NewTeacherSubmission(out.Submission)
-		teacherShifts = gentity.NewTeacherShifts(out.Shifts)
+		gsubmission = gentity.NewTeacherSubmission(out.Submission)
+		gteacherShifts = gentity.NewTeacherShifts(out.Shifts)
 		return nil
 	})
 	if err := eg.Wait(); err != nil {
@@ -176,8 +176,8 @@ func (h *apiV1Handler) ListEnabledTeacherShifts(ctx *gin.Context) {
 	}
 
 	res := &response.TeacherShiftsResponse{
-		Summary: entity.NewTeacherSubmission(gsummary, submission),
-		Shifts:  entity.NewEnabledTeacherShiftDetails(summary, shifts, teacherShifts.MapByShiftID()),
+		Summary: entity.NewTeacherSubmission(gsummary, gsubmission),
+		Shifts:  entity.NewEnabledTeacherShiftDetails(summary, shifts, gteacherShifts.MapByShiftID()),
 	}
 	ctx.JSON(http.StatusOK, res)
 }

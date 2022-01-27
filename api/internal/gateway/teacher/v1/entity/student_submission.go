@@ -126,8 +126,8 @@ func NewStudentSubmissionStatus(
 	if summary == nil {
 		return StudentSubmissionStatusUnknown
 	}
-	if submission == nil || !submission.Decided {
-		return StudentSubmissionStatusWaiting
+	if submission != nil && submission.Decided {
+		return StudentSubmissionStatusSubmitted
 	}
-	return StudentSubmissionStatusSubmitted
+	return StudentSubmissionStatusWaiting
 }
