@@ -242,8 +242,6 @@ export default class UserModule extends VuexModule {
     const req: UpdateTeacherMailRequest = {
       mail: form.params.mail,
     }
-    console.log('test')
-    console.log(teacherId)
 
     await $axios.$patch(`/v1/teachers/${teacherId}/mail`, req).catch((err: AxiosError) => {
       const res: ErrorResponse = { ...err.response?.data }

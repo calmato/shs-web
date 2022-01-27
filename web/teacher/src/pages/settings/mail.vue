@@ -22,7 +22,6 @@ import TheFormGroup from '~/components/atoms/TheFormGroup.vue'
 import TheTextField from '~/components/atoms/TheTextField.vue'
 import { CommonStore, UserStore } from '~/store'
 import { TeacherUpdateMailOptions, TeacherUpdateMailParams } from '~/types/form'
-import { PromiseState } from '~/types/store'
 
 export default defineComponent({
   components: {
@@ -36,11 +35,6 @@ export default defineComponent({
     const updateMailForm = reactive({
       params: TeacherUpdateMailParams,
       options: TeacherUpdateMailOptions,
-    })
-
-
-    const loading = computed<boolean>(() => {
-      return store.getters['common/getPromiseState'] === PromiseState.LOADING
     })
 
     const handleSubmit = async (): Promise<void> => {
@@ -60,7 +54,6 @@ export default defineComponent({
 
     return {
       updateMailForm,
-      loading,
       handleSubmit,
     }
   },
