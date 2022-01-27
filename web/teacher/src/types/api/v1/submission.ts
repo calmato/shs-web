@@ -3,7 +3,7 @@
  * Request
  * ---------------------------
  */
-export interface SubmitTeacherShiftRequest {
+export interface SubmissionRequest {
   shiftIds: number[]
 }
 
@@ -12,7 +12,7 @@ export interface SubmitTeacherShiftRequest {
  * Response
  * ---------------------------
  */
-export interface TeacherShiftSummary {
+export interface SubmissionSummary {
   id: number
   year: number
   month: number
@@ -24,24 +24,24 @@ export interface TeacherShiftSummary {
   updatedAt: string
 }
 
-export interface TeacherShiftDetailLesson {
+export interface SubmissionDetailLesson {
   id: number
   enabled: boolean
   startTime: string
   endTime: string
 }
 
-export interface TeacherShiftDetail {
+export interface SubmissionDetail {
   date: string
   isClosed: boolean
-  lessons: TeacherShiftDetailLesson[]
+  lessons: SubmissionDetailLesson[]
 }
 
-export interface TeacherSubmissionsResponse {
-  summaries: TeacherShiftSummary[]
+export interface SubmissionResponse {
+  summary: SubmissionSummary
+  shifts: SubmissionDetail[]
 }
 
-export interface TeacherShiftsResponse {
-  summary: TeacherShiftSummary
-  shifts: TeacherShiftDetail[]
+export interface SubmissionsResponse {
+  summaries: SubmissionSummary[]
 }

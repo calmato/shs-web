@@ -1,6 +1,6 @@
 import { ShiftStatus, SubmissionStatus } from './common'
 
-export interface TeacherShiftSummary {
+export interface SubmissionSummary {
   id: number
   year: number
   month: number
@@ -12,23 +12,23 @@ export interface TeacherShiftSummary {
   updatedAt: string
 }
 
-export interface TeacherShiftDetailLesson {
+export interface SubmissionDetailLesson {
   id: number
   enabled: boolean
   startTime: string
   endTime: string
 }
 
-export interface TeacherShiftDetail {
+export interface SubmissionDetail {
   date: string
   isClosed: boolean
-  lessons: TeacherShiftDetailLesson[]
+  lessons: SubmissionDetailLesson[]
 }
 
 export interface SubmissionState {
-  summary: TeacherShiftSummary
-  summaries: TeacherShiftSummary[]
-  shifts: TeacherShiftDetail[]
+  summary: SubmissionSummary
+  summaries: SubmissionSummary[]
+  shifts: SubmissionDetail[]
 }
 
 export interface SummaryParams {

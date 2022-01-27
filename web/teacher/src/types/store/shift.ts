@@ -1,5 +1,6 @@
 import { Lesson } from './lesson'
 import { ShiftStatus } from './common'
+import { Student, SubmissionStatus, Teacher } from '.'
 
 export interface ShiftSummary {
   id: number
@@ -24,6 +25,36 @@ export interface ShiftDetail {
   lessons: ShiftDetailLesson[]
 }
 
+export interface SuggestedLesson {
+  subjectId: number
+  total: number
+}
+
+export interface ShiftLesson {
+  id: number
+  shiftId: number
+  subjectId: number
+  room: number
+  teacherId: string
+  studentId: string
+  startAt: string
+  endAt: string
+  notes: string
+  createdAt: string
+  updatedAt: string
+}
+
+export interface ShiftLessonDetail {
+  lessonId: number
+  summaryId: number
+  shiftId: number
+  room: number
+  current?: ShiftLesson
+  teachers: Teacher[]
+  students: Student[]
+  lessons: ShiftLesson[]
+}
+
 export interface TeacherShift {
   id: string
   name: string
@@ -31,12 +62,62 @@ export interface TeacherShift {
   lessonTotal: number
 }
 
+export interface TeacherShiftSummary {
+  id: number
+  year: number
+  month: number
+  shiftStatus: ShiftStatus
+  submissionStatus: SubmissionStatus
+  openAt: string
+  endAt: string
+  createdAt: string
+  updatedAt: string
+}
+
+export interface TeacherSubmissionDetail {
+  id: string
+  name: string
+  nameKana: string
+  summary: TeacherShiftSummary
+  shifts: ShiftDetail[]
+  submissionTotal: number
+}
+
 export interface StudentShift {
   id: string
   name: string
   nameKana: string
   lessonTotal: number
-  suggestedClassesTotal: number
+  suggestedLessonsTotal: number
+}
+
+export interface StudentShiftSummary {
+  id: number
+  year: number
+  month: number
+  shiftStatus: ShiftStatus
+  submissionStatus: SubmissionStatus
+  openAt: string
+  endAt: string
+  createdAt: string
+  updatedAt: string
+}
+
+export interface StudentSubmissionDetail {
+  id: string
+  name: string
+  nameKana: string
+  summary: StudentShiftSummary
+  shifts: ShiftDetail[]
+  suggestedLessons: SuggestedLesson[]
+  submissionTotal: number
+}
+
+export interface ShiftUserLesson {
+  lessons: ShiftLesson[]
+  teachers: { [key: string]: TeacherShift }
+  students: { [key: string]: StudentShift }
+  total: number
 }
 
 export interface ShiftState {
@@ -47,4 +128,9 @@ export interface ShiftState {
   teachers: TeacherShift[]
   students: StudentShift[]
   lessons: Lesson[]
+  teacherSubmission: TeacherSubmissionDetail
+  teacherLessons: ShiftUserLesson
+  studentSubmission: StudentSubmissionDetail
+  studentLessons: ShiftUserLesson
+  lessonDetail: ShiftLessonDetail
 }

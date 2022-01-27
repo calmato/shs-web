@@ -5,6 +5,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/calmato/shs-web/api/internal/lesson/database"
 	"github.com/calmato/shs-web/api/internal/lesson/entity"
 	"github.com/calmato/shs-web/api/internal/lesson/validation"
 	"github.com/calmato/shs-web/api/pkg/jst"
@@ -236,6 +237,43 @@ func TestGetTeacherShifts(t *testing.T) {
 						TeacherId:      "teacherid",
 						ShiftSummaryId: 1,
 						Decided:        true,
+						CreatedAt:      time.Time{}.Unix(),
+						UpdatedAt:      time.Time{}.Unix(),
+					},
+					Shifts: []*lesson.TeacherShift{
+						{
+							TeacherId:      "teacherid",
+							ShiftSummaryId: 1,
+							ShiftId:        1,
+							CreatedAt:      time.Time{}.Unix(),
+							UpdatedAt:      time.Time{}.Unix(),
+						},
+						{
+							TeacherId:      "teacherid",
+							ShiftSummaryId: 1,
+							ShiftId:        2,
+							CreatedAt:      time.Time{}.Unix(),
+							UpdatedAt:      time.Time{}.Unix(),
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "success to submission is not found",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				mocks.validator.EXPECT().GetTeacherShifts(req).Return(nil)
+				mocks.db.TeacherSubmission.EXPECT().Get(gomock.Any(), "teacherid", int64(1)).Return(nil, database.ErrNotFound)
+				mocks.db.TeacherShift.EXPECT().ListByShiftSummaryID(gomock.Any(), []string{"teacherid"}, int64(1)).Return(shifts, nil)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.OK,
+				body: &lesson.GetTeacherShiftsResponse{
+					Submission: &lesson.TeacherSubmission{
+						TeacherId:      "",
+						ShiftSummaryId: 0,
+						Decided:        false,
 						CreatedAt:      time.Time{}.Unix(),
 						UpdatedAt:      time.Time{}.Unix(),
 					},

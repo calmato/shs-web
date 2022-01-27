@@ -29,3 +29,8 @@ export interface Subject {
 export interface SubjectsResponse {
   subjects: Subject[]
 }
+
+export interface LessonsResponse {
+  lessons: Lesson[]
+  total: number
+}

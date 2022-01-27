@@ -52,7 +52,7 @@ export default defineComponent({
     }
 
     const getRemainingLesson = (student: StudentShift): number => {
-      return student.suggestedClassesTotal - student.lessonTotal
+      return student.suggestedLessonsTotal - student.lessonTotal
     }
 
     const getRemainingLessonTotal = (): number => {

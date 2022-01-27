@@ -3,10 +3,10 @@
     <h2>{{ getTime(summary.startTime) }} ~ {{ getTime(summary.endTime) }}</h2>
     <div class="d-flex align-center justify-center mt-2">
       <a v-if="detail" class="d-block" @click="onClickEdit">
-        <div class="info--text text--darken-2 text-subtitle-2 text-decoration-underline">
+        <div class="info--text text--darken-2 text-subtitle-2">
           {{ getSubjectName(detail) }}
         </div>
-        <div class="info--text text--darken-2 text-subtitle-2 text-decoration-underline">{{ getUserName(detail) }}</div>
+        <div class="info--text text--darken-2 text-subtitle-2">{{ getUserName(detail) }}</div>
       </a>
       <v-btn v-else icon color="primary" class="my-1" @click="onClickNew">
         <v-icon>mdi-pencil</v-icon>
@@ -31,6 +31,10 @@ export default defineComponent({
       type: Object as PropType<LessonDetail | undefined>,
       default: () => undefined,
     },
+    room: {
+      type: Number,
+      default: 0,
+    },
   },
 
   setup(props, { emit }: SetupContext) {
@@ -49,11 +53,11 @@ export default defineComponent({
     }
 
     const onClickNew = (): void => {
-      emit('click:new', { summaryId: props.summary.id })
+      emit('click:new', { shiftId: props.summary.id, room: props.room })
     }
 
     const onClickEdit = (): void => {
-      emit('click:edit', { summaryId: props.summary.id, lessonId: props.detail?.lesson.id || 0 })
+      emit('click:edit', { shiftId: props.summary.id, lessonId: props.detail?.lesson.id || 0, room: props.room })
     }
 
     return {
