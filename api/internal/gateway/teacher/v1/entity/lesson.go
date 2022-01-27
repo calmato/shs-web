@@ -15,7 +15,7 @@ type Lesson struct {
 	Room      int32     `json:"room"`      // 教室番号
 	TeacherID string    `json:"teacherId"` // 講師ID
 	StudentID string    `json:"studentId"` // 生徒ID
-	StartAt   time.Time `json:"startAt"`   // 受賞開始日時
+	StartAt   time.Time `json:"startAt"`   // 授業開始日時
 	EndAt     time.Time `json:"endAt"`     // 授業終了日時
 	Notes     string    `json:"notes"`     // 備考
 	CreatedAt time.Time `json:"createdAt"` // 登録日時

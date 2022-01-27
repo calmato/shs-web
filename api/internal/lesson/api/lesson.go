@@ -24,13 +24,30 @@ func (s *lessonService) ListLessons(
 		TeacherID:      req.TeacherId,
 		StudentID:      req.StudentId,
 	}
-	lessons, err := s.db.Lesson.List(ctx, params)
+	eg, ectx := errgroup.WithContext(ctx)
+	var lessons entity.Lessons
+	eg.Go(func() (err error) {
+		lessons, err = s.db.Lesson.List(ectx, params)
+		return
+	})
+	var total int64
+	eg.Go(func() (err error) {
+		total, err = s.db.Lesson.Count(ectx, params)
+		return
+	})
+	if err := eg.Wait(); err != nil {
+		return nil, gRPCError(err)
+	}
+
+	shifts, err := s.db.Shift.MultiGet(ctx, lessons.ShiftIDs())
 	if err != nil {
 		return nil, gRPCError(err)
 	}
 
 	res := &lesson.ListLessonsResponse{
 		Lessons: lessons.Proto(),
+		Shifts:  shifts.Proto(),
+		Total:   total,
 	}
 	return res, nil
 }

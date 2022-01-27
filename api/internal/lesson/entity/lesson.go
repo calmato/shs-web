@@ -3,6 +3,7 @@ package entity
 import (
 	"time"
 
+	"github.com/calmato/shs-web/api/pkg/set"
 	"github.com/calmato/shs-web/api/proto/lesson"
 )
 
@@ -34,6 +35,14 @@ func (l *Lesson) Proto() *lesson.Lesson {
 		CreatedAt:      l.CreatedAt.Unix(),
 		UpdatedAt:      l.CreatedAt.Unix(),
 	}
+}
+
+func (ls Lessons) ShiftIDs() []int64 {
+	set := set.New(len(ls))
+	for i := range ls {
+		set.Add(ls[i].ShiftID)
+	}
+	return set.Int64s()
 }
 
 func (ls Lessons) Proto() []*lesson.Lesson {

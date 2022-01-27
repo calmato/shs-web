@@ -57,6 +57,7 @@ type Lesson interface {
 	Create(ctx context.Context, lesson *entity.Lesson) error
 	Update(ctx context.Context, lessonID int64, lesson *entity.Lesson) error
 	Delete(ctx context.Context, lessonID int64) error
+	Count(ctx context.Context, p *ListLessonsParams) (int64, error)
 }
 
 type ShiftSummary interface {

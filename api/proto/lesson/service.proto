@@ -45,6 +45,8 @@ message ListLessonsRequest {
 
 message ListLessonsResponse {
   repeated Lesson lessons = 1;
+  repeated Shift  shifts  = 2;
+  int64           total   = 3;
 }
 
 message CreateLessonRequest {

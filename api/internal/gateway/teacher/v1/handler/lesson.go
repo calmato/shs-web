@@ -13,6 +13,42 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+func (h *apiV1Handler) ListLessons(ctx *gin.Context) {
+	c := util.SetMetadata(ctx)
+
+	summaryID, err := strconv.ParseInt(ctx.Param("shiftId"), 10, 64)
+	if err != nil {
+		badRequest(ctx, err)
+		return
+	}
+	teacherID := ctx.Query("teacherId")
+	studentID := ctx.Query("studentId")
+
+	in := &lesson.ListLessonsRequest{
+		ShiftSummaryId: summaryID,
+		TeacherId:      teacherID,
+		StudentId:      studentID,
+	}
+	out, err := h.lesson.ListLessons(c, in)
+	if err != nil {
+		httpError(ctx, err)
+		return
+	}
+	glessons := gentity.NewLessons(out.Lessons)
+	gshifts := gentity.NewShifts(out.Shifts)
+
+	lessons, err := entity.NewLessons(glessons, gshifts.Map())
+	if err != nil {
+		httpError(ctx, err)
+		return
+	}
+	res := &response.LessonsResponse{
+		Lessons: lessons,
+		Total:   out.Total,
+	}
+	ctx.JSON(http.StatusOK, res)
+}
+
 func (h *apiV1Handler) CreateLesson(ctx *gin.Context) {
 	c := util.SetMetadata(ctx)
 

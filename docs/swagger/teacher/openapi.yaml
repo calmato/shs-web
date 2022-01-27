@@ -157,5 +157,7 @@ components:
       $ref: './components/schemas/v1/rooms.response.yaml#/roomsTotalResponse'
     v1LessonResponse:
       $ref: './components/schemas/v1/lessons.response.yaml#/lessonResponse'
+    v1LessonsResponse:
+      $ref: './components/schemas/v1/lessons.response.yaml#/lessonsResponse'
     v1StudentResponse:
       $ref: './components/schemas/v1/students.response.yaml#/studentResponse'

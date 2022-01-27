@@ -51,3 +51,68 @@ lessonResponse:
     notes: '授業メモです。'
     createdAt: '2021-12-12T12:12:30.100Z'
     updatedAt: '2021-12-12T12:12:30.100Z'
+lessonsResponse:
+  type: object
+  properties:
+    lessons:
+      type: array
+      description: 授業一覧
+      items:
+        type: object
+        properties:
+          id:
+            type: integer
+            format: int64
+            description: 授業ID
+          shiftId:
+            type: integer
+            format: int64
+            description: 授業スケジュールID
+          subjectId:
+            type: integer
+            format: int64
+            description: 授業科目ID
+          room:
+            type: integer
+            format: int32
+            description: 教室番号
+          teacherId:
+            type: string
+            description: 講師ID
+          studentId:
+            type: string
+            description: 生徒ID
+          startAt:
+            type: string
+            description: 授業開始日時
+          endAt:
+            type: string
+            format: 'HHMM'
+            description: 授業終了日時
+          notes:
+            type: string
+            description: 備考
+          createdAt:
+            type: string
+            description: 登録日時
+          updatedAt:
+            type: string
+            description: 更新日時
+    total:
+      type: integer
+      format: int64
+      description: 授業合計数
+  example:
+    lessons:
+    - id: 1
+      shiftId: 1
+      subjectId: 1
+      room: 1
+      teacherId: 'kSByoE6FetnPs5Byk3a9Zx'
+      studentId: 'kSByoE6FetnPs5Byk3a9Zx'
+      startAt: '2022-02-02T17:00:00.100Z'
+      endAt: '2022-02-02T18:30:00.100Z'
+      notes: '授業メモです。'
+      createdAt: '2021-12-12T12:12:30.100Z'
+      updatedAt: '2021-12-12T12:12:30.100Z'
+    total: 1
