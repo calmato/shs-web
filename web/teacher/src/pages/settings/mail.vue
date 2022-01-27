@@ -3,23 +3,26 @@
     <p class="text-h5 mb-0">メールアドレス変更</p>
     <the-form-group class="pa-2">
       <the-text-field
-        :label="form.options.mail.label"
-        :rules="form.options.mail.rules"
-        :value.sync="form.params.updateMail"
+        :label="updateMailForm.options.mail.label"
+        :rules="updateMailForm.options.mail.rules"
+        :value.sync="updateMailForm.params.mail"
         type="email"
       />
     </the-form-group>
     <div class="d-flex justify-end pr-4">
-      <v-btn color="primary"> 保存する </v-btn>
+      <v-btn color="primary" @click="handleSubmit"> 保存する </v-btn>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from '@vue/composition-api'
+import { computed } from '@nuxtjs/composition-api'
+import { defineComponent, reactive } from '@vue/composition-api'
 import TheFormGroup from '~/components/atoms/TheFormGroup.vue'
 import TheTextField from '~/components/atoms/TheTextField.vue'
+import { CommonStore, UserStore } from '~/store'
 import { TeacherUpdateMailOptions, TeacherUpdateMailParams } from '~/types/form'
+import { PromiseState } from '~/types/store'
 
 export default defineComponent({
   components: {
@@ -27,14 +30,38 @@ export default defineComponent({
     TheTextField,
   },
 
-  setup() {
-    const form = {
+  setup(_, { root }) {
+    const store = root.$store
+    const teacherId = computed<string>(() => store.getters['auth/getUid'])
+    const updateMailForm = reactive({
       params: TeacherUpdateMailParams,
       options: TeacherUpdateMailOptions,
+    })
+
+
+    const loading = computed<boolean>(() => {
+      return store.getters['common/getPromiseState'] === PromiseState.LOADING
+    })
+
+    const handleSubmit = async (): Promise<void> => {
+      CommonStore.startConnection()
+
+      await UserStore.updateMail({ teacherId: teacherId.value, form: updateMailForm })
+        .then(() => {
+          CommonStore.showSnackbar({ color: 'success', message: 'メールアドレスを更新しました。' })
+        })
+        .catch((err: Error) => {
+          CommonStore.showErrorInSnackbar(err)
+        })
+        .finally(() => {
+          CommonStore.endConnection()
+        })
     }
 
     return {
-      form,
+      updateMailForm,
+      loading,
+      handleSubmit,
     }
   },
 })

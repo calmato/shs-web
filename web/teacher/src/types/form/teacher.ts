@@ -17,7 +17,7 @@ export interface ITeacherNewParams {
 }
 
 export interface ITeacherUpdateMailParams {
-  updateMail: string
+  mail: string
 }
 
 export interface ITeacherEditSubjectParams {
@@ -129,7 +129,7 @@ export const TeacherEditRoleParams: ITeacherEditRoleParams = {
 }
 
 export const TeacherUpdateMailParams: ITeacherUpdateMailParams = {
-  updateMail: '',
+  mail: '',
 }
 
 export const TeacherUpdatePasswordParams: ITeacherUpdatePasswordParams = {

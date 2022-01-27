@@ -23,6 +23,10 @@ export interface UpdateTeacherRoleRequest {
   role: number
 }
 
+export interface UpdateTeacherMailRequest {
+  mail: string
+}
+
 /**
  * ---------------------------
  * Response
