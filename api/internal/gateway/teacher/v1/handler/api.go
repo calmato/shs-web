@@ -105,6 +105,7 @@ func (h *apiV1Handler) AdminRoutes(rg *gin.RouterGroup) {
 	rg.GET("/v1/shifts/:shiftId/submissions/:submissionId", h.ListShiftSubmissions)
 	rg.GET("/v1/shifts/:shiftId/teachers/:teacherId", h.ListEnabledTeacherShifts)
 	rg.GET("/v1/shifts/:shiftId/students/:studentId", h.ListEnabledStudentShifts)
+	rg.GET("/v1/shifts/:shiftId/lessons", h.ListLessons)
 	rg.POST("/v1/shifts/:shiftId/lessons", h.CreateLesson)
 }
 
