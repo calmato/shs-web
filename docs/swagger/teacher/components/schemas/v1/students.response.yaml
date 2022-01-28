@@ -109,6 +109,5 @@ studentsResponse:
       grade: 2
       createdAt: '2021-12-12T12:12:30.100Z'
       updatedAt: '2021-12-12T12:12:30.100Z'
-      subjects:
 
     total: 2
