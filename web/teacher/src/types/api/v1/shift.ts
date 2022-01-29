@@ -84,8 +84,9 @@ export interface TeacherShiftSummary {
 
 export interface StudentShift {
   student: Student
-  lessonTotal: number
+  suggestedLessons: SuggestedLesson[]
   suggestedLessonsTotal: number
+  lessonTotal: number
 }
 
 export interface StudentShiftSummary {

@@ -29,5 +29,5 @@ export interface SubjectMap {
 }
 
 export type SubjectsMap = {
-  [key in Exclude<SchoolType, 'その他'>]: Subject[]
+  [key in SchoolType]: Subject[]
 }

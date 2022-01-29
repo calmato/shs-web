@@ -17,6 +17,7 @@ const subjects = {
       updatedAt: '2021-12-02T18:30:00+09:00',
     },
   ],
+  その他: [],
 }
 
 describe('store/auth', () => {
@@ -54,6 +55,7 @@ describe('store/auth', () => {
           小学校: [],
           中学校: [],
           高校: [],
+          その他: [],
         },
       })
     })

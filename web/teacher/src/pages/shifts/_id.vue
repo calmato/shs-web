@@ -123,7 +123,7 @@ export default defineComponent({
       await ShiftStore.listShiftLessons({ summaryId: Number(summaryId), lessonId, shiftId, room })
         .then(() => {
           if (lesson.value.current) {
-            form.params = { ...lesson.value.current }
+            form.params = { ...lesson.value.current, summaryId: 0 }
           } else {
             form.params = { ...ShiftLessonParams }
           }

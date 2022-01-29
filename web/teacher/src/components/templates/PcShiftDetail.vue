@@ -42,6 +42,7 @@
         v-if="dialogKey == '授業登録'"
         :lesson="lesson"
         :teachers="teachers"
+        :students="students"
         :subjects="subjects"
         :selected-teacher.sync="form.params.teacherId"
         :selected-student.sync="form.params.studentId"

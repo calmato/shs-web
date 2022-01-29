@@ -51,11 +51,9 @@ export default class LessonModule extends VuexModule {
       小学校: [],
       中学校: [],
       高校: [],
+      その他: [],
     }
     this.subjects.forEach((subject: Subject) => {
-      if (subject.schoolType === 'その他') {
-        return
-      }
       subjects[subject.schoolType].push(subject)
     })
     return subjects

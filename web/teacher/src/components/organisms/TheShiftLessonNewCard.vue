@@ -14,9 +14,11 @@
         <v-col cols="3" align="center">
           <v-chip-group rounded color="success" tag="v-row" column :value="selectedStudent" @change="onClickStudent">
             <v-chip
-              v-for="student in lesson.students"
+              v-for="student in getStudents()"
               :key="student.id"
               :value="student.id"
+              :disabled="!student.enabled"
+              :outlined="student.enabled"
               class="col col-12 justify-center"
             >
               {{ student.name }}
@@ -29,6 +31,8 @@
               v-for="subject in getSubjects()"
               :key="subject.id"
               :value="subject.id"
+              :disabled="!subject.enabled"
+              :outlined="subject.enabled"
               class="col col-12 justify-center"
             >
               {{ subject.name }}
@@ -41,6 +45,8 @@
               v-for="teacher in getTeachers()"
               :key="teacher.id"
               :value="teacher.id"
+              :disabled="!teacher.enabled"
+              :outlined="teacher.enabled"
               class="col col-12 justify-center"
             >
               {{ teacher.name }}
@@ -60,7 +66,17 @@
 <script lang="ts">
 import { defineComponent, PropType, ref, SetupContext } from '@nuxtjs/composition-api'
 import dayjs from '~/plugins/dayjs'
-import { ShiftLessonDetail, Student, Subject, Teacher, TeacherShift } from '~/types/store'
+import { LessonFormItemTeacher, LessonFormItemStudent, LessonFormItemSubject } from '~/types/props/shift'
+import {
+  ShiftLesson,
+  ShiftLessonDetail,
+  Student,
+  StudentShift,
+  Subject,
+  SuggestedLesson,
+  Teacher,
+  TeacherShift,
+} from '~/types/store'
 
 export default defineComponent({
   props: {
@@ -70,6 +86,10 @@ export default defineComponent({
     },
     teachers: {
       type: Array as PropType<TeacherShift[]>,
+      default: () => [],
+    },
+    students: {
+      type: Array as PropType<StudentShift[]>,
       default: () => [],
     },
     subjects: {
@@ -101,56 +121,114 @@ export default defineComponent({
       return dayjs(props.lesson.date).tz().format('DD(ddd)')
     }
 
-    const getSubjects = (): Subject[] => {
-      const student: Student | undefined = props.lesson.students.find(
-        (student: Student): boolean => student.id === props.selectedStudent
-      )
-      return student ? student.subjects : []
+    const getStudents = (): LessonFormItemStudent[] => {
+      const students: LessonFormItemStudent[] = []
+      // 授業を希望する生徒一覧を取得
+      props.lesson.students.forEach((val: Student): void => {
+        const student: StudentShift | undefined = props.students.find((s: StudentShift): boolean => s.id === val.id)
+        if (!student) {
+          return
+        }
+        // すでに希望している授業数になっている場合はボタンをdisabledにできるように
+        if (student.suggestedLessonsTotal - student.lessonTotal <= 0) {
+          students.push({ id: student.id, name: student.name, enabled: false })
+          return
+        }
+        // 同じ時間の他の教室の授業に含まれているか確認 (含まれていたらボタンをdisabledにできるように)
+        const lesson: ShiftLesson | undefined = props.lesson.lessons.find(
+          (val: ShiftLesson): boolean => val.studentId === student.id
+        )
+        if (!lesson) {
+          // 含まれていない -> enabled: true
+          students.push({ id: student.id, name: student.name, enabled: true })
+          return
+        }
+        // 含まれている && 今の教室 -> enabled: true, 含まれている && 別の教室 -> enabled: false
+        const disabled: boolean = props.lesson.current?.studentId !== lesson.studentId
+        students.push({ id: student.id, name: student.name, enabled: !disabled })
+      })
+      console.table(props.lesson.lessons)
+      return students
     }
 
-    const addableTeacher = (teachers: Teacher[], teacherId: string): TeacherShift | undefined => {
+    const getSubjects = (): LessonFormItemSubject[] => {
+      const subjects: LessonFormItemSubject[] = []
+      if (props.selectedStudent === '') {
+        return subjects
+      }
+      // 選択した生徒の情報を取得
+      const student: StudentShift | undefined = props.students.find(
+        (student: StudentShift): boolean => student.id === props.selectedStudent
+      )
+      if (!student) {
+        return subjects
+      }
+      // 生徒が希望する授業科目情報一覧を取得
+      student?.suggestedLessons.forEach((lesson: SuggestedLesson): void => {
+        const subject: Subject | undefined = props.subjects.find((val: Subject): boolean => val.id === lesson.subjectId)
+        if (subject) {
+          const enabled: boolean = lesson.total > 0 // TODO: カウントできるように
+          subjects.push({ id: subject.id, name: subject.name, enabled })
+        }
+      })
+      return subjects
+    }
+
+    const addableTeacher = (teachers: LessonFormItemTeacher[], teacherId: string): TeacherShift | undefined => {
       if (teacherId === '') {
         return
       }
-      const index: number = teachers.findIndex((teacher: Teacher): boolean => teacher.id === teacherId)
+      const index: number = teachers.findIndex((teacher: LessonFormItemTeacher): boolean => teacher.id === teacherId)
       if (index >= 0) {
         return
       }
       return props.teachers.find((teacher: TeacherShift): boolean => teacher.id === teacherId)
     }
 
-    const getTeachers = (): Teacher[] => {
-      const teachers: Teacher[] = []
+    const getTeachers = (): LessonFormItemTeacher[] => {
+      const teachers: LessonFormItemTeacher[] = []
       if (props.selectedSubject === 0) {
         return teachers
       }
-      // 選択された科目に対して、授業可能な講師一覧を取得
+      // 授業科目情報を取得
       const subject: Subject | undefined = props.subjects.find(
         (subject: Subject): boolean => subject.id === props.selectedSubject
       )
       if (!subject) {
         return teachers
       }
+      // 授業可能な講師一覧を取得
       props.lesson.teachers.forEach((teacher: Teacher): void => {
         const index: number = teacher.subjects[subject.schoolType].findIndex(
           (val: Subject): boolean => val.id === subject.id
         )
-        if (index >= 0) {
-          teachers.unshift(teacher)
+        if (index < 0) {
+          teachers.push({ id: teacher.id, name: teacher.name || '', enabled: false })
+          return
         }
+        // 同じ時間の他の教室の授業に含まれているか確認 (含まれていたらボタンをdisabledにできるように)
+        const lesson: ShiftLesson | undefined = props.lesson.lessons.find(
+          (val: ShiftLesson): boolean => val.teacherId === teacher.id
+        )
+        if (!lesson) {
+          // 含まれていない -> enabled: true
+          teachers.push({ id: teacher.id, name: teacher.name || '', enabled: true })
+          return
+        }
+        // 含まれている && 今の教室 -> enabled: true, 含まれている && 別の教室 -> enabled: false
+        const disabled: boolean = props.lesson.current?.teacherId !== lesson.teacherId
+        teachers.push({ id: teacher.id, name: teacher.name || '', enabled: !disabled })
       })
-
       // シフト提出していないが、授業可能な講師一覧に追加された講師を取得
       let teacher: TeacherShift | undefined
       teacher = addableTeacher(teachers, addedTeacherId.value)
       if (teacher) {
-        teachers.push({ ...teacher })
+        teachers.push({ id: teacher.id, name: teacher.name, enabled: true })
       }
-
-      // シフト提出していないが、授業登録された講師を取得
+      // 選択された講師を取得
       teacher = addableTeacher(teachers, props.selectedTeacher)
       if (teacher) {
-        teachers.push({ ...teacher })
+        teachers.push({ id: teacher.id, name: teacher.name, enabled: true })
         addedTeacherId.value = teacher.id
       }
 
@@ -181,8 +259,9 @@ export default defineComponent({
     return {
       addedTeacherId,
       getDay,
-      getSubjects,
       getTeachers,
+      getStudents,
+      getSubjects,
       showAddTeacherButton,
       onClickTeacher,
       onClickStudent,

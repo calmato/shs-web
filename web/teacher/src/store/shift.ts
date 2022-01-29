@@ -491,12 +491,18 @@ export default class ShiftModule extends VuexModule {
         const students: StudentShift[] = res.students.map((val: v1StudentShift): StudentShift => {
           const name: string = getName(val.student.lastName, val.student.firstName)
           const nameKana: string = getName(val.student.lastNameKana, val.student.firstNameKana)
+          const suggestedLessons: SuggestedLesson[] = val.suggestedLessons.map(
+            (lesson: v1SuggestedLesson): SuggestedLesson => {
+              return { ...lesson }
+            }
+          )
           return {
             id: val.student.id,
             name,
             nameKana,
-            lessonTotal: val.lessonTotal,
+            suggestedLessons,
             suggestedLessonsTotal: val.suggestedLessonsTotal,
+            lessonTotal: val.lessonTotal,
           }
         })
         const lessons: Lesson[] = res.lessons.map((val: v1Lesson): Lesson => {
@@ -610,6 +616,7 @@ export default class ShiftModule extends VuexModule {
                 小学校: teacher.subjects[1].map((i) => subjectResponse2Subject(i)),
                 中学校: teacher.subjects[2].map((i) => subjectResponse2Subject(i)),
                 高校: teacher.subjects[3].map((i) => subjectResponse2Subject(i)),
+                その他: [],
               }
             : initializeSubjects()
 
@@ -692,5 +699,6 @@ function initializeSubjects(): SubjectsMap {
     小学校: [],
     中学校: [],
     高校: [],
+    その他: [],
   }
 }

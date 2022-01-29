@@ -13,6 +13,7 @@ export function authResponse2Auth(authResponse: AuthResponse): Auth {
       小学校: authResponse.subjects[1].map((item) => subjectResponse2Subject(item)),
       中学校: authResponse.subjects[2].map((item) => subjectResponse2Subject(item)),
       高校: authResponse.subjects[3].map((item) => subjectResponse2Subject(item)),
+      その他: [],
     },
   }
   return auth

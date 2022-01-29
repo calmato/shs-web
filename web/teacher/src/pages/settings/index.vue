@@ -107,9 +107,6 @@ export default defineComponent({
     onMounted(() => {
       const defaultSubjects = auth.value.subjects
       SchoolTypeArray.forEach((schoolType) => {
-        if (schoolType === 'その他') {
-          return
-        }
         const values: number[] = defaultSubjects[schoolType].map((itme) => itme.id)
         switch (schoolType) {
           case '小学校':

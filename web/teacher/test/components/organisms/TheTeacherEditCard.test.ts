@@ -89,6 +89,7 @@ describe('components/organisms/TheTeacherEditCard', () => {
               小学校: [],
               中学校: [],
               高校: [],
+              その他: [],
             },
             createdAt: '',
             updatedAt: '',
@@ -104,6 +105,7 @@ describe('components/organisms/TheTeacherEditCard', () => {
             小学校: [],
             中学校: [],
             高校: [],
+            その他: [],
           })
         })
 
@@ -112,6 +114,7 @@ describe('components/organisms/TheTeacherEditCard', () => {
             小学校: [],
             中学校: [],
             高校: [],
+            その他: [],
           }
           await wrapper.setProps({ subjects })
           expect(wrapper.props().subjects).toBe(subjects)
@@ -228,6 +231,7 @@ describe('components/organisms/TheTeacherEditCard', () => {
               小学校: [],
               中学校: [],
               高校: [],
+              その他: [],
             },
             createdAt: '',
             updatedAt: '',
@@ -270,6 +274,7 @@ describe('components/organisms/TheTeacherEditCard', () => {
                 updatedAt: '',
               },
             ],
+            その他: [],
           }
           await wrapper.setProps({ subjects })
           expect(wrapper.vm.getElementarySchoolSubjects()).toEqual([
@@ -318,6 +323,7 @@ describe('components/organisms/TheTeacherEditCard', () => {
                 updatedAt: '',
               },
             ],
+            その他: [],
           }
           await wrapper.setProps({ subjects })
           expect(wrapper.vm.getJuniorHighSchoolSubjects()).toEqual([
@@ -366,6 +372,7 @@ describe('components/organisms/TheTeacherEditCard', () => {
                 updatedAt: '',
               },
             ],
+            その他: [],
           }
           await wrapper.setProps({ subjects })
           expect(wrapper.vm.getHighSchoolSubjects()).toEqual([
