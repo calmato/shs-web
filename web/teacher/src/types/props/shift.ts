@@ -22,3 +22,21 @@ export interface SubmissionTableItem {
   date: string
   lessons: ShiftDetailLesson[]
 }
+
+export interface LessonFormItemTeacher {
+  id: string
+  name: string
+  enabled: boolean
+}
+
+export interface LessonFormItemStudent {
+  id: string
+  name: string
+  enabled: boolean
+}
+
+export interface LessonFormItemSubject {
+  id: number
+  name: string
+  enabled: boolean
+}

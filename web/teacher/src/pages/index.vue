@@ -49,6 +49,7 @@ export default defineComponent({
             小学校: [],
             中学校: [],
             高校: [],
+            その他: [],
           },
           createdAt: '',
           updatedAt: '',

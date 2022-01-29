@@ -175,6 +175,7 @@ export default class UserModule extends VuexModule {
           小学校: res.subjects[1].map((i) => subjectResponse2Subject(i)),
           中学校: res.subjects[2].map((i) => subjectResponse2Subject(i)),
           高校: res.subjects[3].map((i) => subjectResponse2Subject(i)),
+          その他: [],
         }
         this.setTeacher({ ...res, subjects })
       })
@@ -196,6 +197,7 @@ export default class UserModule extends VuexModule {
               小学校: res.subjects[1].map((i) => subjectResponse2Subject(i)),
               中学校: res.subjects[2].map((i) => subjectResponse2Subject(i)),
               高校: res.subjects[3].map((i) => subjectResponse2Subject(i)),
+              その他: [],
             }
           : initializeSubjects()
         this.addTeacher({ ...res, subjects })
@@ -256,6 +258,7 @@ function initializeSubjects(): SubjectsMap {
     小学校: [],
     中学校: [],
     高校: [],
+    その他: [],
   }
 }
 

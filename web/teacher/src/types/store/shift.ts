@@ -88,8 +88,9 @@ export interface StudentShift {
   id: string
   name: string
   nameKana: string
-  lessonTotal: number
+  suggestedLessons: SuggestedLesson[]
   suggestedLessonsTotal: number
+  lessonTotal: number
 }
 
 export interface StudentShiftSummary {
