@@ -383,3 +383,47 @@ func TestCreateStudent(t *testing.T) {
 		})
 	}
 }
+
+func TestDeleteStudent(t *testing.T) {
+	t.Parallel()
+	tests := []struct {
+		name      string
+		setup     func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller)
+		studentID string
+		expect    *testResponse
+	}{
+		{
+			name: "success",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
+				in := &user.DeleteStudentRequest{Id: idmock}
+				out := &user.DeleteStudentResponse{}
+				mocks.user.EXPECT().DeleteStudent(gomock.Any(), in).Return(out, nil)
+			},
+			studentID: idmock,
+			expect: &testResponse{
+				code: http.StatusNoContent,
+			},
+		},
+		{
+			name: "failed to delete student",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
+				in := &user.DeleteStudentRequest{Id: idmock}
+				mocks.user.EXPECT().DeleteStudent(gomock.Any(), in).Return(nil, errmock)
+			},
+			studentID: idmock,
+			expect: &testResponse{
+				code: http.StatusInternalServerError,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			path := fmt.Sprintf("/v1/students/%s", tt.studentID)
+			req := newHTTPRequest(t, http.MethodDelete, path, nil)
+			testHTTP(t, tt.setup, tt.expect, req)
+		})
+	}
+}
