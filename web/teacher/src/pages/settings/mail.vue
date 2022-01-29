@@ -16,7 +16,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, SetupContext } from '@vue/composition-api'
+import { useRouter } from '@nuxtjs/composition-api'
+import { defineComponent, reactive } from '@vue/composition-api'
 import TheFormGroup from '~/components/atoms/TheFormGroup.vue'
 import TheTextField from '~/components/atoms/TheTextField.vue'
 import { CommonStore, UserStore } from '~/store'
@@ -28,8 +29,8 @@ export default defineComponent({
     TheTextField,
   },
 
-  setup(_, { root }: SetupContext) {
-    const router = root.$router
+  setup() {
+    const router = useRouter()
     const updateMailForm = reactive({
       params: TeacherUpdateMailParams,
       options: TeacherUpdateMailOptions,
