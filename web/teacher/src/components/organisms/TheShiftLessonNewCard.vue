@@ -125,7 +125,12 @@ export default defineComponent({
         return teachers
       }
       // 選択された科目に対して、授業可能な講師一覧を取得
-      const subject: Subject = props.subjects.find((subject: Subject): boolean => subject.id === props.selectedSubject)
+      const subject: Subject | undefined = props.subjects.find(
+        (subject: Subject): boolean => subject.id === props.selectedSubject
+      )
+      if (!subject) {
+        return teachers
+      }
       props.lesson.teachers.forEach((teacher: Teacher): void => {
         const index: number = teacher.subjects[subject.schoolType].findIndex(
           (val: Subject): boolean => val.id === subject.id
