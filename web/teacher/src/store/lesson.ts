@@ -1,9 +1,11 @@
 import { Module, VuexModule, Mutation, Action } from 'vuex-module-decorators'
-import { subjectResponse2Subject } from '~/lib'
+import Axios from 'axios'
+import { schoolTypeString2schoolTypeNum, subjectResponse2Subject } from '~/lib'
 import { $axios } from '~/plugins/axios'
 import { ErrorResponse } from '~/types/api/exception'
 import { SubjectsResponse, Subject as v1Subject } from '~/types/api/v1'
 import { ApiError } from '~/types/exception'
+import { SubjectNewForm } from '~/types/form'
 import { Lesson, LessonState, Subject, SubjectMap, SubjectsMap } from '~/types/store'
 
 const initialState: LessonState = {
@@ -91,7 +93,23 @@ export default class LessonModule extends VuexModule {
       this.setSubjects(subjects)
       return
     } catch (err) {
-      if ($axios.isAxiosError(err)) {
+      if (Axios.isAxiosError(err)) {
+        const res: ErrorResponse = { ...err.response?.data }
+        throw new ApiError(res.status, res.message, res)
+      }
+      throw new Error('internal server error')
+    }
+  }
+
+  @Action({ rawError: true })
+  public async createSubject(payload: SubjectNewForm): Promise<void> {
+    try {
+      const request = { ...payload, schoolType: schoolTypeString2schoolTypeNum(payload.schoolType) }
+      console.log(request)
+      await $axios.$post('/v1/subjects', request)
+      await this.getAllSubjects()
+    } catch (err) {
+      if (Axios.isAxiosError(err)) {
         const res: ErrorResponse = { ...err.response?.data }
         throw new ApiError(res.status, res.message, res)
       }

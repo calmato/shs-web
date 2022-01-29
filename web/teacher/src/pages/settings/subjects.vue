@@ -26,7 +26,7 @@
       </v-chip>
     </div>
 
-    <v-dialog v-model="isOpen">
+    <v-dialog v-model="isOpen" @click:outside="handleDialogOutsideClick">
       <v-card>
         <v-card-title class="primary white--text"> 開講科目追加（{{ formData.schoolType }}） </v-card-title>
         <v-card-text class="pt-4">
@@ -53,13 +53,9 @@
 
 <script lang="ts">
 import { defineComponent, ref, computed, useStore, reactive } from '@nuxtjs/composition-api'
-import { SchoolType, Subject } from '~/types/store'
-
-interface SubjectNewForm {
-  name: string
-  schoolType: SchoolType
-  color: string
-}
+import { CommonStore, LessonStore } from '~/store'
+import { SubjectNewForm } from '~/types/form'
+import { Subject } from '~/types/store'
 
 export default defineComponent({
   setup() {
@@ -85,12 +81,20 @@ export default defineComponent({
       }
     })
 
+    const handleDialogOutsideClick = () => {
+      formData.name = ''
+      formData.color = swatches[0][0]
+    }
+
     const handleAddButton = (schoolType: '小学校' | '中学校' | '高校') => {
       isOpen.value = true
       formData.schoolType = schoolType
     }
 
-    const handleSubmitButton = () => {
+    const handleSubmitButton = async () => {
+      await LessonStore.createSubject(formData).catch((err) => {
+        CommonStore.showErrorInSnackbar(err)
+      })
       isOpen.value = false
       formData.name = ''
       formData.color = swatches[0][0]
@@ -102,6 +106,7 @@ export default defineComponent({
       isOpen,
       formData,
       subjectsMap,
+      handleDialogOutsideClick,
       handleAddButton,
       handleSubmitButton,
     }
