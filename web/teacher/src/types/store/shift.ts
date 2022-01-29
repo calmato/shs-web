@@ -49,6 +49,7 @@ export interface ShiftLessonDetail {
   summaryId: number
   shiftId: number
   room: number
+  date: string
   current?: ShiftLesson
   teachers: Teacher[]
   students: Student[]

@@ -12,10 +12,12 @@
       :students="students"
       :lesson="lesson"
       :lessons="getLessonDetails()"
+      :subjects="subjects"
       :teacher-submission="teacherSubmission"
       :teacher-lessons="teacherLessons"
       :student-submission="studentSubmission"
       :student-lessons="studentLessons"
+      :form="form"
       @click:show-teacher-submissions="handleClickShowTeacherSubmissions"
       @click:show-teacher-lessons="handleClickShowTeacherLessons"
       @click:show-student-submissions="handleClickShowStudentSubmissions"
@@ -31,7 +33,16 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref, useAsync, useRoute, useRouter, useStore } from '@nuxtjs/composition-api'
+import {
+  computed,
+  defineComponent,
+  reactive,
+  ref,
+  useAsync,
+  useRoute,
+  useRouter,
+  useStore,
+} from '@nuxtjs/composition-api'
 import MbShiftDetail from '~/components/templates/MbShiftDetail.vue'
 import PcShiftDetail from '~/components/templates/PcShiftDetail.vue'
 import { CommonStore, ShiftStore } from '~/store'
@@ -48,6 +59,7 @@ import {
   TeacherSubmissionDetail,
 } from '~/types/store'
 import { LessonDetail, ShiftDialogKey } from '~/types/props/shift'
+import { ShiftLessonForm, ShiftLessonParams } from '~/types/form'
 
 export default defineComponent({
   components: {
@@ -61,6 +73,7 @@ export default defineComponent({
     const store = useStore()
 
     const dialogKey = ref<ShiftDialogKey>('未選択')
+    const form = reactive<ShiftLessonForm>({ params: { ...ShiftLessonParams } })
 
     const dialog = computed<boolean>(() => dialogKey.value !== '未選択')
     const summary = computed<ShiftSummary>(() => store.getters['shift/getSummary'])
@@ -108,6 +121,13 @@ export default defineComponent({
       const summaryId: string = route.value.params.id
 
       await ShiftStore.listShiftLessons({ summaryId: Number(summaryId), lessonId, shiftId, room })
+        .then(() => {
+          if (lesson.value.current) {
+            form.params = { ...lesson.value.current }
+          } else {
+            form.params = { ...ShiftLessonParams }
+          }
+        })
         .catch((err: Error) => {
           console.log('feiled to list shift lessons', err)
         })
@@ -255,10 +275,12 @@ export default defineComponent({
       students,
       lesson,
       lessons,
+      subjects,
       teacherSubmission,
       teacherLessons,
       studentSubmission,
       studentLessons,
+      form,
       getLessonDetails,
       handleClickTop,
       handleClickShowTeacherSubmissions,

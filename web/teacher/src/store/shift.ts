@@ -122,6 +122,7 @@ const initialState: ShiftState = {
     summaryId: 0,
     shiftId: 0,
     room: 0,
+    date: '',
     current: undefined,
     teachers: [],
     students: [],
@@ -322,6 +323,27 @@ export default class ShiftModule extends VuexModule {
 
   @Mutation
   private setLessonDetail(lessonDetail: ShiftLessonDetail): void {
+    let date: string = ''
+    for (const detail of this.details) {
+      for (const lesson of detail.lessons) {
+        if (lesson.id === lessonDetail.shiftId) {
+          date = detail.date
+          break
+        }
+      }
+      if (date !== '') break
+    }
+    lessonDetail.date = date
+    lessonDetail.teachers = lessonDetail.teachers.map((teacher: Teacher): Teacher => {
+      const name = getName(teacher.lastName, teacher.firstName)
+      const nameKana = getName(teacher.lastNameKana, teacher.firstNameKana)
+      return { ...teacher, name, nameKana }
+    })
+    lessonDetail.students = lessonDetail.students.map((student: Student): Student => {
+      const name = getName(student.lastName, student.firstName)
+      const nameKana = getName(student.lastNameKana, student.firstNameKana)
+      return { ...student, name, nameKana }
+    })
     this.lessonDetail = lessonDetail
   }
 
@@ -607,6 +629,7 @@ export default class ShiftModule extends VuexModule {
           summaryId,
           shiftId,
           room,
+          date: '',
           current,
           teachers,
           students,

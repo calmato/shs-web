@@ -1049,8 +1049,12 @@ func TestListShifts(t *testing.T) {
 									},
 								},
 							},
-							LessonTotal:           1,
+							SuggestedLessons: entity.StudentSuggestedLessons{
+								{SubjectID: 1, Total: 4},
+								{SubjectID: 2, Total: 4},
+							},
 							SuggestedLessonsTotal: 8,
+							LessonTotal:           1,
 						},
 					},
 					Lessons: entity.Lessons{

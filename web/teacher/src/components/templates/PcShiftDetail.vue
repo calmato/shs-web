@@ -1,15 +1,17 @@
 <template>
   <v-container class="shift">
-    <v-dialog :value.sync="dialog" width="600px" scrollable @click:outside="onCloseDialog">
+    <v-dialog
+      :value.sync="dialog"
+      :width="dialogKey == '授業登録' ? '800px' : '600px'"
+      scrollable
+      @click:outside="onCloseDialog"
+    >
       <!-- 講師 提出シフト一覧ダイアログ -->
-      <v-card v-if="dialogKey == '講師シフト'">
-        <v-toolbar color="primary" dark>提出シフト一覧</v-toolbar>
-        <v-card-text>{{ teacherSubmission }}</v-card-text>
-        <v-card-actions>
-          <v-spacer />
-          <v-btn color="secondary" @click="onCloseDialog">閉じる</v-btn>
-        </v-card-actions>
-      </v-card>
+      <the-shift-teacher-submission-card
+        v-if="dialogKey == '講師シフト'"
+        :submission="teacherSubmission"
+        @click:close="onCloseDialog"
+      />
       <!-- 講師 授業一覧ダイアログ -->
       <v-card v-if="dialogKey == '講師授業'">
         <v-toolbar color="primary" dark>講師授業一覧</v-toolbar>
@@ -20,14 +22,12 @@
         </v-card-actions>
       </v-card>
       <!-- 生徒 授業希望一覧ダイアログ -->
-      <v-card v-if="dialogKey == '生徒授業希望'">
-        <v-toolbar color="primary" dark>授業希望一覧</v-toolbar>
-        <v-card-text>{{ studentSubmission }}</v-card-text>
-        <v-card-actions>
-          <v-spacer />
-          <v-btn color="secondary" @click="onCloseDialog">閉じる</v-btn>
-        </v-card-actions>
-      </v-card>
+      <the-shift-student-submission-card
+        v-if="dialogKey == '生徒授業希望'"
+        :submission="studentSubmission"
+        :subjects="subjects"
+        @click:close="onCloseDialog"
+      />
       <!-- 生徒 授業一覧ダイアログ -->
       <v-card v-if="dialogKey == '生徒授業'">
         <v-toolbar color="primary" dark>生徒授業一覧</v-toolbar>
@@ -38,14 +38,16 @@
         </v-card-actions>
       </v-card>
       <!-- 授業登録/編集ダイアログ -->
-      <v-card v-if="dialogKey == '授業登録'">
-        <v-toolbar color="primary" dark>授業登録</v-toolbar>
-        <v-card-text>{{ lesson }}</v-card-text>
-        <v-card-actions>
-          <v-spacer />
-          <v-btn color="secondary" @click="onCloseDialog">閉じる</v-btn>
-        </v-card-actions>
-      </v-card>
+      <the-shift-lesson-new-card
+        v-if="dialogKey == '授業登録'"
+        :lesson="lesson"
+        :teachers="teachers"
+        :subjects="subjects"
+        :selected-teacher.sync="form.params.teacherId"
+        :selected-student.sync="form.params.studentId"
+        :selected-subject.sync="form.params.subjectId"
+        @click:close="onCloseDialog"
+      />
     </v-dialog>
 
     <section class="shift-header">
@@ -91,18 +93,26 @@ import {
   ShiftUserLesson,
   StudentShift,
   StudentSubmissionDetail,
+  Subject,
   TeacherShift,
   TeacherSubmissionDetail,
 } from '~/types/store'
 import { LessonDetail, ShiftDialogKey } from '~/types/props/shift'
 import TheShiftLessonList from '~/components/organisms/TheShiftLessonList.vue'
+import TheShiftLessonNewCard from '~/components/organisms/TheShiftLessonNewCard.vue'
+import TheShiftStudentSubmissionCard from '~/components/organisms/TheShiftStudentSubmissionCard.vue'
 import TheShiftStudentTable from '~/components/organisms/TheShiftStudentTable.vue'
+import TheShiftTeacherSubmissionCard from '~/components/organisms/TheShiftTeacherSubmissionCard.vue'
 import TheShiftTeacherTable from '~/components/organisms/TheShiftTeacherTable.vue'
+import { ShiftLessonForm, ShiftLessonParams } from '~/types/form'
 
 export default defineComponent({
   components: {
     TheShiftLessonList,
+    TheShiftLessonNewCard,
+    TheShiftStudentSubmissionCard,
     TheShiftStudentTable,
+    TheShiftTeacherSubmissionCard,
     TheShiftTeacherTable,
   },
 
@@ -143,6 +153,10 @@ export default defineComponent({
       type: Number,
       default: 0,
     },
+    subjects: {
+      type: Array as PropType<Subject[]>,
+      default: () => [],
+    },
     teacherSubmission: {
       type: Object as PropType<TeacherSubmissionDetail>,
       default: () => {},
@@ -158,6 +172,12 @@ export default defineComponent({
     studentLessons: {
       type: Object as PropType<ShiftUserLesson>,
       default: () => {},
+    },
+    form: {
+      type: Object as PropType<ShiftLessonForm>,
+      default: () => ({
+        params: ShiftLessonParams,
+      }),
     },
   },
 
