@@ -161,3 +161,5 @@ components:
       $ref: './components/schemas/v1/lessons.response.yaml#/lessonsResponse'
     v1StudentResponse:
       $ref: './components/schemas/v1/students.response.yaml#/studentResponse'
+    v1StudentsResponse:
+      $ref: './components/schemas/v1/students.response.yaml#/studentsResponse'

@@ -1,3 +1,37 @@
+get:
+  summary: 生徒一覧取得
+  tags:
+  - Student
+  security:
+  - BearerAuth: []
+  parameters:
+  - in: query
+    name: limit
+    schema:
+      type: integer
+      format: int64
+    description: 取得上限 (デフォルト:30)
+    example: 30
+  - in: query
+    name: offset
+    schema:
+      type: integer
+      format: int64
+    description: 取得開始位置 (デフォルト:0)
+    example: 0
+  responses:
+    200:
+      description: A successful response.
+      content:
+        application/json:
+          schema:
+            $ref: './../../../openapi.yaml#/components/schemas/v1StudentsResponse'
+    default:
+      description: An unexpected error response.
+      content:
+        application/json:
+          schema:
+            $ref: './../../../openapi.yaml#/components/schemas/errorResponse'
 post:
   summary: 生徒登録
   tags:
