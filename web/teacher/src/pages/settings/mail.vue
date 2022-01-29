@@ -16,8 +16,7 @@
 </template>
 
 <script lang="ts">
-import { computed } from '@nuxtjs/composition-api'
-import { defineComponent, reactive } from '@vue/composition-api'
+import { defineComponent, reactive, SetupContext } from '@vue/composition-api'
 import TheFormGroup from '~/components/atoms/TheFormGroup.vue'
 import TheTextField from '~/components/atoms/TheTextField.vue'
 import { CommonStore, UserStore } from '~/store'
@@ -29,9 +28,8 @@ export default defineComponent({
     TheTextField,
   },
 
-  setup(_, { root }) {
-    const store = root.$store
-    const teacherId = computed<string>(() => store.getters['auth/getUid'])
+  setup(_, { root }: SetupContext) {
+    const router = root.$router
     const updateMailForm = reactive({
       params: TeacherUpdateMailParams,
       options: TeacherUpdateMailOptions,
@@ -40,8 +38,9 @@ export default defineComponent({
     const handleSubmit = async (): Promise<void> => {
       CommonStore.startConnection()
 
-      await UserStore.updateMail({ teacherId: teacherId.value, form: updateMailForm })
+      await UserStore.updateMail({ form: updateMailForm })
         .then(() => {
+          router.push('/settings')
           CommonStore.showSnackbar({ color: 'success', message: 'メールアドレスを更新しました。' })
         })
         .catch((err: Error) => {

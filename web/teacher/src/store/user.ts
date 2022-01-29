@@ -238,12 +238,12 @@ export default class UserModule extends VuexModule {
   }
 
   @Action({ rawError: true })
-  public async updateMail({ teacherId, form }: { teacherId: string; form: TeacherUpdateMailForm }): Promise<void> {
+  public async updateMail({ form }: { form: TeacherUpdateMailForm }): Promise<void> {
     const req: UpdateTeacherMailRequest = {
       mail: form.params.mail,
     }
 
-    await $axios.$patch(`/v1/teachers/${teacherId}/mail`, req).catch((err: AxiosError) => {
+    await $axios.$patch(`/v1/me/mail`, req).catch((err: AxiosError) => {
       const res: ErrorResponse = { ...err.response?.data }
       throw new ApiError(res.status, res.message, res)
     })
