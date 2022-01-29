@@ -123,7 +123,9 @@ func (s *classroomService) CreateSubject(
 		return nil, gRPCError(err)
 	}
 
-	res := &classroom.CreateSubjectResponse{}
+	res := &classroom.CreateSubjectResponse{
+		Subject: subject.Proto(),
+	}
 	return res, nil
 }
 
