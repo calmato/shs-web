@@ -30,9 +30,10 @@ type StudentSuggestedLesson struct {
 type StudentSuggestedLessons []*StudentSuggestedLesson
 
 type StudentSubmissionDetail struct {
-	Student               *Student `json:"student"`               // 生徒情報
-	LessonTotal           int64    `json:"lessonTotal"`           // 登録受講授業数
-	SuggestedLessonsTotal int64    `json:"suggestedLessonsTotal"` // 希望受講授業数
+	Student               *Student                `json:"student"`               // 生徒情報
+	SuggestedLessons      StudentSuggestedLessons `json:"suggestedLessons"`      // 希望受講授業一覧
+	SuggestedLessonsTotal int64                   `json:"suggestedLessonsTotal"` // 希望受講授業数
+	LessonTotal           int64                   `json:"lessonTotal"`           // 登録受講授業数
 }
 
 type StudentSubmissionDetails []*StudentSubmissionDetail
@@ -78,6 +79,9 @@ func NewStudentSuggestedLesson(suggestedLesson *lesson.SuggestedLesson) *Student
 }
 
 func NewStudentSuggestedLessons(submission *entity.StudentSubmission) StudentSuggestedLessons {
+	if submission == nil {
+		return StudentSuggestedLessons{}
+	}
 	ls := make(StudentSuggestedLessons, len(submission.SuggestedLessons))
 	for i := range submission.SuggestedLessons {
 		ls[i] = NewStudentSuggestedLesson(submission.SuggestedLessons[i])
@@ -99,8 +103,9 @@ func NewStudentSubmissionDetail(
 	}
 	return &StudentSubmissionDetail{
 		Student:               NewStudent(student, subjects),
-		LessonTotal:           int64(len(lessons)),
+		SuggestedLessons:      NewStudentSuggestedLessons(submission),
 		SuggestedLessonsTotal: suggestedLessonsTotal,
+		LessonTotal:           int64(len(lessons)),
 	}
 }
 

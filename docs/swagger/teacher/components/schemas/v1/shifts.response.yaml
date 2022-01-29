@@ -683,14 +683,28 @@ shiftsResponse:
                     updatedAt:
                       type: string
                       description: 更新日時
-          lessonTotal:
-            type: integer
-            format: int64
-            description: 担当授業数
+          suggestedLessons:
+            type: array
+            description: 受講希望授業一覧
+            items:
+              type: object
+              properties:
+                subjectId:
+                  type: integer
+                  format: int64
+                  description: 授業科目ID
+                total:
+                  type: integer
+                  format: int64
+                  description: 希望数
           suggestedLessonsTotal:
             type: integer
             format: int64
             description: 受講希望数合計
+          lessonTotal:
+            type: integer
+            format: int64
+            description: 担当授業数
     lessons:
       type: array
       description: 授業一覧
@@ -855,8 +869,13 @@ shiftsResponse:
           schoolType: 1
           createdAt: '2021-12-12T12:12:30.100Z'
           updatedAt: '2021-12-12T12:12:30.100Z'
-      lessonTotal: 4
+      suggestedLessons:
+      - subjectId: 1
+        total: 2
+      - subjectId: 2
+        total: 4
       suggestedLessonsTotal: 8
+      lessonTotal: 4
     - student:
         id: 'kSByoE6FetnPs5Byk3a9Zx'
         lastName: '山田'
@@ -881,8 +900,13 @@ shiftsResponse:
           schoolType: 1
           createdAt: '2021-12-12T12:12:30.100Z'
           updatedAt: '2021-12-12T12:12:30.100Z'
-      lessonTotal: 2
+      suggestedLessons:
+      - subjectId: 1
+        total: 2
+      - subjectId: 2
+        total: 4
       suggestedLessonsTotal: 4
+      lessonTotal: 2
     lessons:
     - id: 1
       shiftId: 1
