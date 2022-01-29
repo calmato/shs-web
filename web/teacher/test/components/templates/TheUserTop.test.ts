@@ -53,6 +53,7 @@ describe('components/templates/TheUserTop', () => {
             小学校: [],
             中学校: [],
             高校: [],
+            その他: [],
           })
         })
         it('値が代入されること', async () => {
@@ -121,6 +122,7 @@ describe('components/templates/TheUserTop', () => {
                 updatedAt: '',
               },
             ],
+            その他: [],
           })
         })
       })
