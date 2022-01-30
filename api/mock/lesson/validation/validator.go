@@ -272,6 +272,20 @@ func (mr *MockRequestValidationMockRecorder) UpdateLesson(req interface{}) *gomo
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateLesson", reflect.TypeOf((*MockRequestValidation)(nil).UpdateLesson), req)
 }
 
+// UpdateShiftSummaryDecided mocks base method.
+func (m *MockRequestValidation) UpdateShiftSummaryDecided(req *lesson.UpdateShiftSummaryDecidedRequest) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateShiftSummaryDecided", req)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateShiftSummaryDecided indicates an expected call of UpdateShiftSummaryDecided.
+func (mr *MockRequestValidationMockRecorder) UpdateShiftSummaryDecided(req interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateShiftSummaryDecided", reflect.TypeOf((*MockRequestValidation)(nil).UpdateShiftSummaryDecided), req)
+}
+
 // UpdateShiftSummarySchedule mocks base method.
 func (m *MockRequestValidation) UpdateShiftSummarySchedule(req *lesson.UpdateShiftSummaryScheduleRequest) error {
 	m.ctrl.T.Helper()

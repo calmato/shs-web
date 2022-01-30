@@ -171,6 +171,43 @@ func TestUpdateShiftSummarySchedule(t *testing.T) {
 	}
 }
 
+func TestUpdateShiftSummaryDecided(t *testing.T) {
+	t.Parallel()
+	validator := NewRequestValidation()
+
+	tests := []struct {
+		name  string
+		req   *lesson.UpdateShiftSummaryDecidedRequest
+		isErr bool
+	}{
+		{
+			name: "success",
+			req: &lesson.UpdateShiftSummaryDecidedRequest{
+				Id:      1,
+				Decided: true,
+			},
+			isErr: false,
+		},
+		{
+			name: "Id is gt",
+			req: &lesson.UpdateShiftSummaryDecidedRequest{
+				Id:      0,
+				Decided: true,
+			},
+			isErr: true,
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			err := validator.UpdateShiftSummaryDecided(tt.req)
+			assert.Equal(t, tt.isErr, err != nil, err)
+		})
+	}
+}
+
 func TestDeleteShift(t *testing.T) {
 	t.Parallel()
 	validator := NewRequestValidation()

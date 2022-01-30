@@ -269,7 +269,7 @@ func TestUpdateShiftSummarySchedule(t *testing.T) {
 			},
 		},
 		{
-			name: "invalid argument",
+			name: "failed to update schedule",
 			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
 				mocks.validator.EXPECT().UpdateShiftSummarySchedule(req).Return(nil)
 				mocks.db.ShiftSummary.EXPECT().UpdateSchedule(ctx, int64(1), now, now).Return(errmock)
@@ -285,6 +285,64 @@ func TestUpdateShiftSummarySchedule(t *testing.T) {
 		tt := tt
 		t.Run(tt.name, testGRPC(tt.setup, tt.expect, func(ctx context.Context, service *lessonService) (proto.Message, error) {
 			return service.UpdateShiftSummarySchedule(ctx, tt.req)
+		}))
+	}
+}
+
+func TestUpdateShiftSummaryDecided(t *testing.T) {
+	t.Parallel()
+
+	req := &lesson.UpdateShiftSummaryDecidedRequest{
+		Id:      1,
+		Decided: true,
+	}
+
+	tests := []struct {
+		name   string
+		setup  func(ctx context.Context, t *testing.T, mocks *mocks)
+		req    *lesson.UpdateShiftSummaryDecidedRequest
+		expect *testResponse
+	}{
+		{
+			name: "success",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				mocks.validator.EXPECT().UpdateShiftSummaryDecided(req).Return(nil)
+				mocks.db.ShiftSummary.EXPECT().UpdateDecided(ctx, int64(1), true).Return(nil)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.OK,
+				body: &lesson.UpdateShiftSummaryDecidedResponse{},
+			},
+		},
+		{
+			name: "invalid argument",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				req := &lesson.UpdateShiftSummaryDecidedRequest{}
+				mocks.validator.EXPECT().UpdateShiftSummaryDecided(req).Return(validation.ErrRequestValidation)
+			},
+			req: &lesson.UpdateShiftSummaryDecidedRequest{},
+			expect: &testResponse{
+				code: codes.InvalidArgument,
+			},
+		},
+		{
+			name: "failed to update decided",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				mocks.validator.EXPECT().UpdateShiftSummaryDecided(req).Return(nil)
+				mocks.db.ShiftSummary.EXPECT().UpdateDecided(ctx, int64(1), true).Return(errmock)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.Internal,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, testGRPC(tt.setup, tt.expect, func(ctx context.Context, service *lessonService) (proto.Message, error) {
+			return service.UpdateShiftSummaryDecided(ctx, tt.req)
 		}))
 	}
 }

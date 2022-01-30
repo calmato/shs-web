@@ -29,6 +29,15 @@ func (v *requestValidation) UpdateShiftSummarySchedule(req *lesson.UpdateShiftSu
 	return nil
 }
 
+func (v *requestValidation) UpdateShiftSummaryDecided(req *lesson.UpdateShiftSummaryDecidedRequest) error {
+	if err := req.Validate(); err != nil {
+		validate := err.(lesson.UpdateShiftSummaryDecidedRequestValidationError)
+		return validationError(validate.Error())
+	}
+
+	return nil
+}
+
 func (v *requestValidation) DeleteShiftSummary(req *lesson.DeleteShiftSummaryRequest) error {
 	if err := req.Validate(); err != nil {
 		validate := err.(lesson.DeleteShiftSummaryRequestValidationError)

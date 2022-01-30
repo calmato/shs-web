@@ -65,6 +65,7 @@ type ShiftSummary interface {
 	MultiGet(ctx context.Context, ids []int64, fields ...string) (entity.ShiftSummaries, error)
 	Get(ctx context.Context, id int64, fields ...string) (*entity.ShiftSummary, error)
 	UpdateSchedule(ctx context.Context, id int64, openAt, endAt time.Time) error
+	UpdateDecided(ctx context.Context, id int64, decided bool) error
 	Delete(ctx context.Context, id int64) error
 	Count(ctx context.Context) (int64, error)
 }
