@@ -49,3 +49,22 @@ export function schoolTypeNum2schoolTypeString(schoolType: number): SchoolType {
       return 'その他'
   }
 }
+
+/**
+ * SchoolTypeを数値に変換する関数
+ * @param schoolType
+ * @returns
+ */
+export function schoolTypeString2schoolTypeNum(schoolType: SchoolType) {
+  switch (schoolType) {
+    case '小学校':
+      return 1
+    case '中学校':
+      return 2
+    case '高校':
+      return 3
+    case 'その他':
+    default:
+      return 0
+  }
+}

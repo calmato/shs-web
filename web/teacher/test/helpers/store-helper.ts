@@ -44,6 +44,10 @@ function setSafetyMode(mode: boolean): void {
   isSafetyMode = mode
 }
 
+jest.mock('axios', () => ({
+  isAxiosError: jest.fn(() => (_: Error) => isSafetyMode),
+}))
+
 jest.mock('~/plugins/axios', () => ({
   $axios: {
     $get: (key: string) => (isSafetyMode ? Promise.resolve(response['get'][key]) : Promise.reject(response['error'])),
@@ -53,7 +57,6 @@ jest.mock('~/plugins/axios', () => ({
     // $put: (key: string) => (isSafetyMode ? Promise.resolve(response['put'][key]) : Promise.reject(response['error'])),
     $delete: (key: string) =>
       isSafetyMode ? Promise.resolve(response['delete'][key]) : Promise.reject(response['error']),
-    isAxiosError: (_: Error) => true,
   },
 }))
 
