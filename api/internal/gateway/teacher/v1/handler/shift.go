@@ -410,6 +410,42 @@ func (h *apiV1Handler) CreateShifts(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, res)
 }
 
+func (h *apiV1Handler) ListShiftLessons(ctx *gin.Context) {
+	c := util.SetMetadata(ctx)
+
+	summaryID, err := strconv.ParseInt(ctx.Param("shiftId"), 10, 64)
+	if err != nil {
+		badRequest(ctx, err)
+		return
+	}
+	teacherID := ctx.Query("teacherId")
+	studentID := ctx.Query("studentId")
+
+	in := &lesson.ListLessonsRequest{
+		ShiftSummaryId: summaryID,
+		TeacherId:      teacherID,
+		StudentId:      studentID,
+	}
+	out, err := h.lesson.ListLessons(c, in)
+	if err != nil {
+		httpError(ctx, err)
+		return
+	}
+	glessons := gentity.NewLessons(out.Lessons)
+	gshifts := gentity.NewShifts(out.Shifts)
+
+	lessons, err := entity.NewLessons(glessons, gshifts.Map())
+	if err != nil {
+		httpError(ctx, err)
+		return
+	}
+	res := &response.ShiftLessonsResponse{
+		Lessons: lessons,
+		Total:   out.Total,
+	}
+	ctx.JSON(http.StatusOK, res)
+}
+
 func (h *apiV1Handler) getShiftSummary(ctx context.Context, summaryID int64) (*gentity.ShiftSummary, error) {
 	in := &lesson.GetShiftSummaryRequest{
 		Id: summaryID,

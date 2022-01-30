@@ -11,6 +11,7 @@ import (
 	"github.com/calmato/shs-web/api/internal/gateway/teacher/v1/response"
 	"github.com/calmato/shs-web/api/pkg/jst"
 	"github.com/calmato/shs-web/api/proto/lesson"
+	"github.com/calmato/shs-web/api/proto/user"
 	"github.com/golang/mock/gomock"
 )
 
@@ -42,31 +43,60 @@ func TestListLessons(t *testing.T) {
 			UpdatedAt:      now.Unix(),
 		},
 	}
-
+	teachers := []*user.Teacher{
+		{
+			Id:            "teacherid",
+			LastName:      "中村",
+			FirstName:     "広大",
+			LastNameKana:  "なかむら",
+			FirstNameKana: "こうだい",
+			Mail:          "teacher-test001@calmato.jp",
+			Role:          user.Role_ROLE_TEACHER,
+			CreatedAt:     now.Unix(),
+			UpdatedAt:     now.Unix(),
+		},
+	}
+	students := []*user.Student{
+		{
+			Id:            "studentid",
+			LastName:      "中村",
+			FirstName:     "広大",
+			LastNameKana:  "なかむら",
+			FirstNameKana: "こうだい",
+			Mail:          "student-test001@calmato.jp",
+			SchoolType:    user.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL,
+			Grade:         3,
+			CreatedAt:     now.Unix(),
+			UpdatedAt:     now.Unix(),
+		},
+	}
 	tests := []struct {
-		name    string
-		setup   func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller)
-		shiftID string
-		query   string
-		expect  *testResponse
+		name   string
+		setup  func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller)
+		query  string
+		expect *testResponse
 	}{
 		{
 			name: "success",
 			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
-				in := &lesson.ListLessonsRequest{
-					ShiftSummaryId: 1,
-					TeacherId:      "teacherid",
-					StudentId:      "studentid",
+				lessonsIn := &lesson.ListLessonsByDurationRequest{
+					TeacherId: idmock,
+					Since:     "20220101",
+					Until:     "20220131",
 				}
-				out := &lesson.ListLessonsResponse{
+				lessonsOut := &lesson.ListLessonsByDurationResponse{
 					Lessons: lessons,
 					Shifts:  shifts,
-					Total:   1,
 				}
-				mocks.lesson.EXPECT().ListLessons(gomock.Any(), in).Return(out, nil)
+				teachersIn := &user.MultiGetTeachersRequest{Ids: []string{"teacherid"}}
+				teachersOut := &user.MultiGetTeachersResponse{Teachers: teachers}
+				studentsIn := &user.MultiGetStudentsRequest{Ids: []string{"studentid"}}
+				studentsOut := &user.MultiGetStudentsResponse{Students: students}
+				mocks.lesson.EXPECT().ListLessonsByDuration(gomock.Any(), lessonsIn).Return(lessonsOut, nil)
+				mocks.user.EXPECT().MultiGetTeachers(gomock.Any(), teachersIn).Return(teachersOut, nil)
+				mocks.user.EXPECT().MultiGetStudents(gomock.Any(), studentsIn).Return(studentsOut, nil)
 			},
-			shiftID: "1",
-			query:   "?teacherId=teacherid&studentId=studentid",
+			query: "",
 			expect: &testResponse{
 				code: http.StatusOK,
 				body: &response.LessonsResponse{
@@ -85,31 +115,126 @@ func TestListLessons(t *testing.T) {
 							UpdatedAt: now,
 						},
 					},
-					Total: 1,
+					Teachers: entity.Teachers{
+						{
+							ID:            "teacherid",
+							LastName:      "中村",
+							FirstName:     "広大",
+							LastNameKana:  "なかむら",
+							FirstNameKana: "こうだい",
+							Mail:          "teacher-test001@calmato.jp",
+							Role:          entity.RoleTeacher,
+							Subjects: map[entity.SchoolType]entity.Subjects{
+								entity.SchoolTypeElementarySchool: {},
+								entity.SchoolTypeJuniorHighSchool: {},
+								entity.SchoolTypeHighSchool:       {},
+							},
+							CreatedAt: now,
+							UpdatedAt: now,
+						},
+					},
+					Students: entity.Students{
+						{
+							ID:            "studentid",
+							LastName:      "中村",
+							FirstName:     "広大",
+							LastNameKana:  "なかむら",
+							FirstNameKana: "こうだい",
+							Mail:          "student-test001@calmato.jp",
+							SchoolType:    entity.SchoolTypeHighSchool,
+							Grade:         3,
+							Subjects:      entity.Subjects{},
+							CreatedAt:     now,
+							UpdatedAt:     now,
+						},
+					},
 				},
-			},
-		},
-		{
-			name:    "failed to invalid shift summary id",
-			setup:   func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {},
-			shiftID: "a",
-			query:   "",
-			expect: &testResponse{
-				code: http.StatusBadRequest,
 			},
 		},
 		{
 			name: "failed to list lessons",
 			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
-				in := &lesson.ListLessonsRequest{
-					ShiftSummaryId: 1,
-					TeacherId:      "teacherid",
-					StudentId:      "studentid",
+				lessonsIn := &lesson.ListLessonsByDurationRequest{
+					TeacherId: idmock,
+					Since:     "20220101",
+					Until:     "20220107",
 				}
-				mocks.lesson.EXPECT().ListLessons(gomock.Any(), in).Return(nil, errmock)
+				mocks.lesson.EXPECT().ListLessonsByDuration(gomock.Any(), lessonsIn).Return(nil, errmock)
 			},
-			shiftID: "1",
-			query:   "?teacherId=teacherid&studentId=studentid",
+			query: "?since=20220101&until=20220107",
+			expect: &testResponse{
+				code: http.StatusInternalServerError,
+			},
+		},
+		{
+			name: "failed to multi get teachers",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
+				lessonsIn := &lesson.ListLessonsByDurationRequest{
+					TeacherId: idmock,
+					Since:     "20220101",
+					Until:     "20220131",
+				}
+				lessonsOut := &lesson.ListLessonsByDurationResponse{
+					Lessons: lessons,
+					Shifts:  shifts,
+				}
+				teachersIn := &user.MultiGetTeachersRequest{Ids: []string{"teacherid"}}
+				studentsIn := &user.MultiGetStudentsRequest{Ids: []string{"studentid"}}
+				studentsOut := &user.MultiGetStudentsResponse{Students: students}
+				mocks.lesson.EXPECT().ListLessonsByDuration(gomock.Any(), lessonsIn).Return(lessonsOut, nil)
+				mocks.user.EXPECT().MultiGetTeachers(gomock.Any(), teachersIn).Return(nil, errmock)
+				mocks.user.EXPECT().MultiGetStudents(gomock.Any(), studentsIn).Return(studentsOut, nil)
+			},
+			query: "",
+			expect: &testResponse{
+				code: http.StatusInternalServerError,
+			},
+		},
+		{
+			name: "failed to multi get students",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
+				lessonsIn := &lesson.ListLessonsByDurationRequest{
+					TeacherId: idmock,
+					Since:     "20220101",
+					Until:     "20220131",
+				}
+				lessonsOut := &lesson.ListLessonsByDurationResponse{
+					Lessons: lessons,
+					Shifts:  shifts,
+				}
+				teachersIn := &user.MultiGetTeachersRequest{Ids: []string{"teacherid"}}
+				teachersOut := &user.MultiGetTeachersResponse{Teachers: teachers}
+				studentsIn := &user.MultiGetStudentsRequest{Ids: []string{"studentid"}}
+				mocks.lesson.EXPECT().ListLessonsByDuration(gomock.Any(), lessonsIn).Return(lessonsOut, nil)
+				mocks.user.EXPECT().MultiGetTeachers(gomock.Any(), teachersIn).Return(teachersOut, nil)
+				mocks.user.EXPECT().MultiGetStudents(gomock.Any(), studentsIn).Return(nil, errmock)
+			},
+			query: "",
+			expect: &testResponse{
+				code: http.StatusInternalServerError,
+			},
+		},
+		{
+			name: "failed to new lessons",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
+				lessonsIn := &lesson.ListLessonsByDurationRequest{
+					TeacherId: idmock,
+					Since:     "20220101",
+					Until:     "20220131",
+				}
+				lessonsOut := &lesson.ListLessonsByDurationResponse{
+					Lessons: lessons,
+					Shifts:  []*lesson.Shift{},
+				}
+				teachersIn := &user.MultiGetTeachersRequest{Ids: []string{"teacherid"}}
+				teachersOut := &user.MultiGetTeachersResponse{Teachers: teachers}
+				studentsIn := &user.MultiGetStudentsRequest{Ids: []string{"studentid"}}
+				studentsOut := &user.MultiGetStudentsResponse{Students: students}
+				mocks.lesson.EXPECT().ListLessonsByDuration(gomock.Any(), lessonsIn).Return(lessonsOut, nil)
+				mocks.user.EXPECT().MultiGetTeachers(gomock.Any(), teachersIn).Return(teachersOut, nil)
+				mocks.user.EXPECT().MultiGetStudents(gomock.Any(), studentsIn).Return(studentsOut, nil)
+			},
+			query: "",
 			expect: &testResponse{
 				code: http.StatusInternalServerError,
 			},
@@ -120,7 +245,7 @@ func TestListLessons(t *testing.T) {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			path := fmt.Sprintf("/v1/shifts/%s/lessons%s", tt.shiftID, tt.query)
+			path := fmt.Sprintf("/v1/lessons%s", tt.query)
 			req := newHTTPRequest(t, http.MethodGet, path, nil)
 			testHTTP(t, tt.setup, tt.expect, req)
 		})
