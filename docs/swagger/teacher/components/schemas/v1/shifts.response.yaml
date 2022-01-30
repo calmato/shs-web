@@ -19,6 +19,9 @@ shiftSummariesResponse:
             type: integer
             format: int32
             description: 月
+          decided:
+            type: boolean
+            description: 授業スケジュール確定フラグ
           status:
             type: integer
             format: int32
@@ -40,6 +43,7 @@ shiftSummariesResponse:
     - id: 1
       year: 2022
       month: 2
+      decided: true
       status: 2
       openAt: '2022-01-01T00:00:00Z'
       endAt: '2022-01-14T23:59:59Z'
@@ -48,6 +52,7 @@ shiftSummariesResponse:
     - id: 2
       year: 2022
       month: 3
+      decided: false
       status: 2
       openAt: '2022-01-01T00:00:00Z'
       endAt: '2022-01-14T23:59:59Z'
@@ -437,6 +442,9 @@ shiftsResponse:
           type: integer
           format: int32
           description: 月
+        decided:
+          type: boolean
+          description: 授業スケジュール確定フラグ
         status:
           type: integer
           format: int32
@@ -753,6 +761,7 @@ shiftsResponse:
     summary:
       year: 2022
       month: 2
+      decided: false
       status: 2
       openAt: '2022-01-01T00:00:00Z'
       endAt: '2022-01-14T23:59:59Z'
