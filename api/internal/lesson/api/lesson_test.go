@@ -454,3 +454,256 @@ func TestCreateLesson(t *testing.T) {
 		}))
 	}
 }
+
+func TestUpdateLesson(t *testing.T) {
+	t.Parallel()
+
+	now := jst.Date(2022, 1, 15, 0, 0, 0, 0)
+	req := &lesson.UpdateLessonRequest{
+		LessonId:       1,
+		ShiftSummaryId: 1,
+		ShiftId:        1,
+		SubjectId:      1,
+		RoomId:         1,
+		TeacherId:      "teacherid",
+		StudentId:      "studentid",
+		Notes:          "",
+	}
+	summary := &entity.ShiftSummary{ID: 1}
+	shift := &entity.Shift{
+		ID:             1,
+		ShiftSummaryID: 1,
+		Date:           jst.Date(2022, 2, 2, 0, 0, 0, 0),
+		StartTime:      "1700",
+		EndTime:        "1830",
+		CreatedAt:      now,
+		UpdatedAt:      now,
+	}
+	l := &entity.Lesson{
+		ID:             1,
+		ShiftSummaryID: 1,
+		ShiftID:        1,
+		SubjectID:      1,
+		RoomID:         1,
+		TeacherID:      "teacherid",
+		StudentID:      "studentid",
+		Notes:          "",
+	}
+
+	tests := []struct {
+		name   string
+		setup  func(ctx context.Context, t *testing.T, mocks *mocks)
+		req    *lesson.UpdateLessonRequest
+		expect *testResponse
+	}{
+		{
+			name: "success",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				subjectIn := &classroom.GetSubjectRequest{Id: 1}
+				subjectOut := &classroom.GetSubjectResponse{Subject: &classroom.Subject{Id: 1}}
+				roomIn := &classroom.GetRoomRequest{Id: 1}
+				roomOut := &classroom.GetRoomResponse{Room: &classroom.Room{Id: 1}}
+				teacherIn := &user.GetTeacherRequest{Id: "teacherid"}
+				teacherOut := &user.GetTeacherResponse{Teacher: &user.Teacher{Id: "teacherid"}}
+				studentIn := &user.GetStudentRequest{Id: "studentid"}
+				studentOut := &user.GetStudentResponse{Student: &user.Student{Id: "studentid"}}
+				mocks.validator.EXPECT().UpdateLesson(req).Return(nil)
+				mocks.classroom.EXPECT().GetSubject(gomock.Any(), subjectIn).Return(subjectOut, nil)
+				mocks.classroom.EXPECT().GetRoom(gomock.Any(), roomIn).Return(roomOut, nil)
+				mocks.user.EXPECT().GetTeacher(gomock.Any(), teacherIn).Return(teacherOut, nil)
+				mocks.user.EXPECT().GetStudent(gomock.Any(), studentIn).Return(studentOut, nil)
+				mocks.db.ShiftSummary.EXPECT().Get(gomock.Any(), int64(1), "id").Return(summary, nil)
+				mocks.db.Shift.EXPECT().Get(gomock.Any(), int64(1)).Return(shift, nil)
+				mocks.db.Lesson.EXPECT().Update(ctx, int64(1), l).Return(nil)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.OK,
+				body: &lesson.UpdateLessonResponse{},
+			},
+		},
+		{
+			name: "invalid argument",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				req := &lesson.UpdateLessonRequest{}
+				mocks.validator.EXPECT().UpdateLesson(req).Return(validation.ErrRequestValidation)
+			},
+			req: &lesson.UpdateLessonRequest{},
+			expect: &testResponse{
+				code: codes.InvalidArgument,
+			},
+		},
+		{
+			name: "failed to get subject",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				subjectIn := &classroom.GetSubjectRequest{Id: 1}
+				roomIn := &classroom.GetRoomRequest{Id: 1}
+				roomOut := &classroom.GetRoomResponse{Room: &classroom.Room{Id: 1}}
+				teacherIn := &user.GetTeacherRequest{Id: "teacherid"}
+				teacherOut := &user.GetTeacherResponse{Teacher: &user.Teacher{Id: "teacherid"}}
+				studentIn := &user.GetStudentRequest{Id: "studentid"}
+				studentOut := &user.GetStudentResponse{Student: &user.Student{Id: "studentid"}}
+				mocks.validator.EXPECT().UpdateLesson(req).Return(nil)
+				mocks.classroom.EXPECT().GetSubject(gomock.Any(), subjectIn).Return(nil, errmock)
+				mocks.classroom.EXPECT().GetRoom(gomock.Any(), roomIn).Return(roomOut, nil)
+				mocks.user.EXPECT().GetTeacher(gomock.Any(), teacherIn).Return(teacherOut, nil)
+				mocks.user.EXPECT().GetStudent(gomock.Any(), studentIn).Return(studentOut, nil)
+				mocks.db.ShiftSummary.EXPECT().Get(gomock.Any(), int64(1), "id").Return(summary, nil)
+				mocks.db.Shift.EXPECT().Get(gomock.Any(), int64(1)).Return(shift, nil)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.Internal,
+			},
+		},
+		{
+			name: "failed to get room",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				subjectIn := &classroom.GetSubjectRequest{Id: 1}
+				subjectOut := &classroom.GetSubjectResponse{Subject: &classroom.Subject{Id: 1}}
+				roomIn := &classroom.GetRoomRequest{Id: 1}
+				teacherIn := &user.GetTeacherRequest{Id: "teacherid"}
+				teacherOut := &user.GetTeacherResponse{Teacher: &user.Teacher{Id: "teacherid"}}
+				studentIn := &user.GetStudentRequest{Id: "studentid"}
+				studentOut := &user.GetStudentResponse{Student: &user.Student{Id: "studentid"}}
+				mocks.validator.EXPECT().UpdateLesson(req).Return(nil)
+				mocks.classroom.EXPECT().GetSubject(gomock.Any(), subjectIn).Return(subjectOut, nil)
+				mocks.classroom.EXPECT().GetRoom(gomock.Any(), roomIn).Return(nil, errmock)
+				mocks.user.EXPECT().GetTeacher(gomock.Any(), teacherIn).Return(teacherOut, nil)
+				mocks.user.EXPECT().GetStudent(gomock.Any(), studentIn).Return(studentOut, nil)
+				mocks.db.ShiftSummary.EXPECT().Get(gomock.Any(), int64(1), "id").Return(summary, nil)
+				mocks.db.Shift.EXPECT().Get(gomock.Any(), int64(1)).Return(shift, nil)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.Internal,
+			},
+		},
+		{
+			name: "failed to get teacher",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				subjectIn := &classroom.GetSubjectRequest{Id: 1}
+				subjectOut := &classroom.GetSubjectResponse{Subject: &classroom.Subject{Id: 1}}
+				roomIn := &classroom.GetRoomRequest{Id: 1}
+				roomOut := &classroom.GetRoomResponse{Room: &classroom.Room{Id: 1}}
+				teacherIn := &user.GetTeacherRequest{Id: "teacherid"}
+				studentIn := &user.GetStudentRequest{Id: "studentid"}
+				studentOut := &user.GetStudentResponse{Student: &user.Student{Id: "studentid"}}
+				mocks.validator.EXPECT().UpdateLesson(req).Return(nil)
+				mocks.classroom.EXPECT().GetSubject(gomock.Any(), subjectIn).Return(subjectOut, nil)
+				mocks.classroom.EXPECT().GetRoom(gomock.Any(), roomIn).Return(roomOut, nil)
+				mocks.user.EXPECT().GetTeacher(gomock.Any(), teacherIn).Return(nil, errmock)
+				mocks.user.EXPECT().GetStudent(gomock.Any(), studentIn).Return(studentOut, nil)
+				mocks.db.ShiftSummary.EXPECT().Get(gomock.Any(), int64(1), "id").Return(summary, nil)
+				mocks.db.Shift.EXPECT().Get(gomock.Any(), int64(1)).Return(shift, nil)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.Internal,
+			},
+		},
+		{
+			name: "failed to get student",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				subjectIn := &classroom.GetSubjectRequest{Id: 1}
+				subjectOut := &classroom.GetSubjectResponse{Subject: &classroom.Subject{Id: 1}}
+				roomIn := &classroom.GetRoomRequest{Id: 1}
+				roomOut := &classroom.GetRoomResponse{Room: &classroom.Room{Id: 1}}
+				teacherIn := &user.GetTeacherRequest{Id: "teacherid"}
+				teacherOut := &user.GetTeacherResponse{Teacher: &user.Teacher{Id: "teacherid"}}
+				studentIn := &user.GetStudentRequest{Id: "studentid"}
+				mocks.validator.EXPECT().UpdateLesson(req).Return(nil)
+				mocks.classroom.EXPECT().GetSubject(gomock.Any(), subjectIn).Return(subjectOut, nil)
+				mocks.classroom.EXPECT().GetRoom(gomock.Any(), roomIn).Return(roomOut, nil)
+				mocks.user.EXPECT().GetTeacher(gomock.Any(), teacherIn).Return(teacherOut, nil)
+				mocks.user.EXPECT().GetStudent(gomock.Any(), studentIn).Return(nil, errmock)
+				mocks.db.ShiftSummary.EXPECT().Get(gomock.Any(), int64(1), "id").Return(summary, nil)
+				mocks.db.Shift.EXPECT().Get(gomock.Any(), int64(1)).Return(shift, nil)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.Internal,
+			},
+		},
+		{
+			name: "failed to get shift summary",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				subjectIn := &classroom.GetSubjectRequest{Id: 1}
+				subjectOut := &classroom.GetSubjectResponse{Subject: &classroom.Subject{Id: 1}}
+				roomIn := &classroom.GetRoomRequest{Id: 1}
+				roomOut := &classroom.GetRoomResponse{Room: &classroom.Room{Id: 1}}
+				teacherIn := &user.GetTeacherRequest{Id: "teacherid"}
+				teacherOut := &user.GetTeacherResponse{Teacher: &user.Teacher{Id: "teacherid"}}
+				studentIn := &user.GetStudentRequest{Id: "studentid"}
+				studentOut := &user.GetStudentResponse{Student: &user.Student{Id: "studentid"}}
+				mocks.validator.EXPECT().UpdateLesson(req).Return(nil)
+				mocks.classroom.EXPECT().GetSubject(gomock.Any(), subjectIn).Return(subjectOut, nil)
+				mocks.classroom.EXPECT().GetRoom(gomock.Any(), roomIn).Return(roomOut, nil)
+				mocks.user.EXPECT().GetTeacher(gomock.Any(), teacherIn).Return(teacherOut, nil)
+				mocks.user.EXPECT().GetStudent(gomock.Any(), studentIn).Return(studentOut, nil)
+				mocks.db.ShiftSummary.EXPECT().Get(gomock.Any(), int64(1), "id").Return(summary, nil)
+				mocks.db.Shift.EXPECT().Get(gomock.Any(), int64(1)).Return(nil, errmock)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.Internal,
+			},
+		},
+		{
+			name: "failed to get shift",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				subjectIn := &classroom.GetSubjectRequest{Id: 1}
+				subjectOut := &classroom.GetSubjectResponse{Subject: &classroom.Subject{Id: 1}}
+				roomIn := &classroom.GetRoomRequest{Id: 1}
+				roomOut := &classroom.GetRoomResponse{Room: &classroom.Room{Id: 1}}
+				teacherIn := &user.GetTeacherRequest{Id: "teacherid"}
+				teacherOut := &user.GetTeacherResponse{Teacher: &user.Teacher{Id: "teacherid"}}
+				studentIn := &user.GetStudentRequest{Id: "studentid"}
+				studentOut := &user.GetStudentResponse{Student: &user.Student{Id: "studentid"}}
+				mocks.validator.EXPECT().UpdateLesson(req).Return(nil)
+				mocks.classroom.EXPECT().GetSubject(gomock.Any(), subjectIn).Return(subjectOut, nil)
+				mocks.classroom.EXPECT().GetRoom(gomock.Any(), roomIn).Return(roomOut, nil)
+				mocks.user.EXPECT().GetTeacher(gomock.Any(), teacherIn).Return(teacherOut, nil)
+				mocks.user.EXPECT().GetStudent(gomock.Any(), studentIn).Return(studentOut, nil)
+				mocks.db.ShiftSummary.EXPECT().Get(gomock.Any(), int64(1), "id").Return(summary, nil)
+				mocks.db.Shift.EXPECT().Get(gomock.Any(), int64(1)).Return(nil, errmock)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.Internal,
+			},
+		},
+		{
+			name: "failed to create lesson",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				subjectIn := &classroom.GetSubjectRequest{Id: 1}
+				subjectOut := &classroom.GetSubjectResponse{Subject: &classroom.Subject{Id: 1}}
+				roomIn := &classroom.GetRoomRequest{Id: 1}
+				roomOut := &classroom.GetRoomResponse{Room: &classroom.Room{Id: 1}}
+				teacherIn := &user.GetTeacherRequest{Id: "teacherid"}
+				teacherOut := &user.GetTeacherResponse{Teacher: &user.Teacher{Id: "teacherid"}}
+				studentIn := &user.GetStudentRequest{Id: "studentid"}
+				studentOut := &user.GetStudentResponse{Student: &user.Student{Id: "studentid"}}
+				mocks.validator.EXPECT().UpdateLesson(req).Return(nil)
+				mocks.classroom.EXPECT().GetSubject(gomock.Any(), subjectIn).Return(subjectOut, nil)
+				mocks.classroom.EXPECT().GetRoom(gomock.Any(), roomIn).Return(roomOut, nil)
+				mocks.user.EXPECT().GetTeacher(gomock.Any(), teacherIn).Return(teacherOut, nil)
+				mocks.user.EXPECT().GetStudent(gomock.Any(), studentIn).Return(studentOut, nil)
+				mocks.db.ShiftSummary.EXPECT().Get(gomock.Any(), int64(1), "id").Return(summary, nil)
+				mocks.db.Shift.EXPECT().Get(gomock.Any(), int64(1)).Return(shift, nil)
+				mocks.db.Lesson.EXPECT().Update(ctx, int64(1), l).Return(errmock)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.Internal,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, testGRPC(tt.setup, tt.expect, func(ctx context.Context, service *lessonService) (proto.Message, error) {
+			return service.UpdateLesson(ctx, tt.req)
+		}))
+	}
+}

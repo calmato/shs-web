@@ -177,3 +177,150 @@ func TestCreateLesson(t *testing.T) {
 		})
 	}
 }
+
+func TestUpdateLesson(t *testing.T) {
+	t.Parallel()
+	validator := NewRequestValidation()
+
+	tests := []struct {
+		name  string
+		req   *lesson.UpdateLessonRequest
+		isErr bool
+	}{
+		{
+			name: "success",
+			req: &lesson.UpdateLessonRequest{
+				LessonId:       1,
+				ShiftSummaryId: 1,
+				ShiftId:        1,
+				SubjectId:      1,
+				RoomId:         1,
+				TeacherId:      "teacherid",
+				StudentId:      "studentid",
+				Notes:          "",
+			},
+			isErr: false,
+		},
+		{
+			name: "LessonId is gt",
+			req: &lesson.UpdateLessonRequest{
+				LessonId:       0,
+				ShiftSummaryId: 1,
+				ShiftId:        1,
+				SubjectId:      1,
+				RoomId:         1,
+				TeacherId:      "teacherid",
+				StudentId:      "studentid",
+				Notes:          "",
+			},
+			isErr: true,
+		},
+		{
+			name: "ShiftSummaryId is gt",
+			req: &lesson.UpdateLessonRequest{
+				LessonId:       1,
+				ShiftSummaryId: 0,
+				ShiftId:        1,
+				SubjectId:      1,
+				RoomId:         1,
+				TeacherId:      "teacherid",
+				StudentId:      "studentid",
+				Notes:          "",
+			},
+			isErr: true,
+		},
+		{
+			name: "ShiftId is gt",
+			req: &lesson.UpdateLessonRequest{
+				LessonId:       1,
+				ShiftSummaryId: 1,
+				ShiftId:        0,
+				SubjectId:      1,
+				RoomId:         1,
+				TeacherId:      "teacherid",
+				StudentId:      "studentid",
+				Notes:          "",
+			},
+			isErr: true,
+		},
+		{
+			name: "SubjectId is gt",
+			req: &lesson.UpdateLessonRequest{
+				LessonId:       1,
+				ShiftSummaryId: 1,
+				ShiftId:        1,
+				SubjectId:      0,
+				RoomId:         1,
+				TeacherId:      "teacherid",
+				StudentId:      "studentid",
+				Notes:          "",
+			},
+			isErr: true,
+		},
+		{
+			name: "RoomId is gt",
+			req: &lesson.UpdateLessonRequest{
+				LessonId:       1,
+				ShiftSummaryId: 1,
+				ShiftId:        1,
+				SubjectId:      1,
+				RoomId:         0,
+				TeacherId:      "teacherid",
+				StudentId:      "studentid",
+				Notes:          "",
+			},
+			isErr: true,
+		},
+		{
+			name: "TeacherId is min_len",
+			req: &lesson.UpdateLessonRequest{
+				LessonId:       1,
+				ShiftSummaryId: 1,
+				ShiftId:        1,
+				SubjectId:      1,
+				RoomId:         1,
+				TeacherId:      "",
+				StudentId:      "studentid",
+				Notes:          "",
+			},
+			isErr: true,
+		},
+		{
+			name: "StudentId is min_len",
+			req: &lesson.UpdateLessonRequest{
+				LessonId:       1,
+				ShiftSummaryId: 1,
+				ShiftId:        1,
+				SubjectId:      1,
+				RoomId:         1,
+				TeacherId:      "teacherid",
+				StudentId:      "",
+				Notes:          "",
+			},
+			isErr: true,
+		},
+		{
+			name: "Notes is max_len",
+			req: &lesson.UpdateLessonRequest{
+				LessonId:       1,
+				ShiftSummaryId: 1,
+				ShiftId:        1,
+				SubjectId:      1,
+				RoomId:         1,
+				TeacherId:      "teacherid",
+				StudentId:      "studentid",
+				Notes:          strings.Repeat("x", 201),
+			},
+			isErr: true,
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			err := validator.UpdateLesson(tt.req)
+			assert.Equal(t, tt.isErr, err != nil, err)
+		})
+	}
+}

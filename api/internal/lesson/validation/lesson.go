@@ -19,3 +19,12 @@ func (v *requestValidation) CreateLesson(req *lesson.CreateLessonRequest) error 
 
 	return nil
 }
+
+func (v *requestValidation) UpdateLesson(req *lesson.UpdateLessonRequest) error {
+	if err := req.Validate(); err != nil {
+		validate := err.(lesson.UpdateLessonRequestValidationError)
+		return validationError(validate.Error())
+	}
+
+	return nil
+}

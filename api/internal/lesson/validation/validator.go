@@ -14,6 +14,7 @@ var ErrRequestValidation = errors.New("validation: invalid argument")
 type RequestValidation interface {
 	ListLessons(req *lesson.ListLessonsRequest) error
 	CreateLesson(req *lesson.CreateLessonRequest) error
+	UpdateLesson(req *lesson.UpdateLessonRequest) error
 	ListShiftSummaries(req *lesson.ListShiftSummariesRequest) error
 	GetShiftSummary(req *lesson.GetShiftSummaryRequest) error
 	UpdateShiftSummarySchedule(req *lesson.UpdateShiftSummaryScheduleRequest) error
