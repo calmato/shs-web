@@ -41,6 +41,18 @@ func TestListLessons(t *testing.T) {
 			UpdatedAt:      now,
 		},
 	}
+	summaries := entity.ShiftSummaries{
+		{
+			ID:        1,
+			YearMonth: 202202,
+			Decided:   true,
+			Status:    entity.ShiftStatusAccepting,
+			OpenAt:    jst.Date(2022, 1, 1, 0, 0, 0, 0),
+			EndAt:     jst.Date(2022, 1, 15, 0, 0, 0, 0),
+			CreatedAt: now,
+			UpdatedAt: now,
+		},
+	}
 	shifts := entity.Shifts{
 		{
 			ID:             1,
@@ -71,9 +83,70 @@ func TestListLessons(t *testing.T) {
 				mocks.validator.EXPECT().ListLessons(req).Return(nil)
 				mocks.db.Lesson.EXPECT().List(gomock.Any(), params).Return(lessons, nil)
 				mocks.db.Lesson.EXPECT().Count(gomock.Any(), params).Return(int64(1), nil)
-				mocks.db.Shift.EXPECT().MultiGet(ctx, []int64{1}).Return(shifts, nil)
+				mocks.db.Shift.EXPECT().MultiGet(gomock.Any(), []int64{1}).Return(shifts, nil)
 			},
 			req: req,
+			expect: &testResponse{
+				code: codes.OK,
+				body: &lesson.ListLessonsResponse{
+					Lessons: []*lesson.Lesson{
+						{
+							Id:             1,
+							ShiftSummaryId: 1,
+							ShiftId:        1,
+							SubjectId:      1,
+							RoomId:         1,
+							TeacherId:      "teacherid",
+							StudentId:      "studentid",
+							Notes:          "",
+							CreatedAt:      now.Unix(),
+							UpdatedAt:      now.Unix(),
+						},
+					},
+					Shifts: []*lesson.Shift{
+						{
+							Id:             1,
+							ShiftSummaryId: 1,
+							Date:           "20220201",
+							StartTime:      "1700",
+							EndTime:        "1830",
+							CreatedAt:      now.Unix(),
+							UpdatedAt:      now.Unix(),
+						},
+					},
+					Total: 1,
+				},
+			},
+		},
+		{
+			name: "success to only decided",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				req := &lesson.ListLessonsRequest{
+					ShiftSummaryId: 1,
+					ShiftId:        1,
+					TeacherId:      "teacherid",
+					StudentId:      "studentid",
+					OnlyDecided:    true,
+				}
+				params := &database.ListLessonsParams{
+					ShiftSummaryID: 1,
+					ShiftID:        1,
+					TeacherID:      "teacherid",
+					StudentID:      "studentid",
+				}
+				mocks.validator.EXPECT().ListLessons(req).Return(nil)
+				mocks.db.Lesson.EXPECT().List(gomock.Any(), params).Return(lessons, nil)
+				mocks.db.Lesson.EXPECT().Count(gomock.Any(), params).Return(int64(1), nil)
+				mocks.db.ShiftSummary.EXPECT().MultiGet(gomock.Any(), []int64{1}).Return(summaries, nil)
+				mocks.db.Shift.EXPECT().MultiGet(gomock.Any(), []int64{1}).Return(shifts, nil)
+			},
+			req: &lesson.ListLessonsRequest{
+				ShiftSummaryId: 1,
+				ShiftId:        1,
+				TeacherId:      "teacherid",
+				StudentId:      "studentid",
+				OnlyDecided:    true,
+			},
 			expect: &testResponse{
 				code: codes.OK,
 				body: &lesson.ListLessonsResponse{
@@ -154,7 +227,40 @@ func TestListLessons(t *testing.T) {
 			},
 		},
 		{
-			name: "failed to count lessons",
+			name: "failed to multi get shift summaries",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				req := &lesson.ListLessonsRequest{
+					ShiftSummaryId: 1,
+					ShiftId:        1,
+					TeacherId:      "teacherid",
+					StudentId:      "studentid",
+					OnlyDecided:    true,
+				}
+				params := &database.ListLessonsParams{
+					ShiftSummaryID: 1,
+					ShiftID:        1,
+					TeacherID:      "teacherid",
+					StudentID:      "studentid",
+				}
+				mocks.validator.EXPECT().ListLessons(req).Return(nil)
+				mocks.db.Lesson.EXPECT().List(gomock.Any(), params).Return(lessons, nil)
+				mocks.db.Lesson.EXPECT().Count(gomock.Any(), params).Return(int64(1), nil)
+				mocks.db.ShiftSummary.EXPECT().MultiGet(gomock.Any(), []int64{1}).Return(nil, errmock)
+				mocks.db.Shift.EXPECT().MultiGet(gomock.Any(), []int64{1}).Return(shifts, nil)
+			},
+			req: &lesson.ListLessonsRequest{
+				ShiftSummaryId: 1,
+				ShiftId:        1,
+				TeacherId:      "teacherid",
+				StudentId:      "studentid",
+				OnlyDecided:    true,
+			},
+			expect: &testResponse{
+				code: codes.Internal,
+			},
+		},
+		{
+			name: "failed to multi get shifts",
 			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
 				params := &database.ListLessonsParams{
 					ShiftSummaryID: 1,
@@ -165,9 +271,42 @@ func TestListLessons(t *testing.T) {
 				mocks.validator.EXPECT().ListLessons(req).Return(nil)
 				mocks.db.Lesson.EXPECT().List(gomock.Any(), params).Return(lessons, nil)
 				mocks.db.Lesson.EXPECT().Count(gomock.Any(), params).Return(int64(1), nil)
-				mocks.db.Shift.EXPECT().MultiGet(ctx, []int64{1}).Return(nil, errmock)
+				mocks.db.Shift.EXPECT().MultiGet(gomock.Any(), []int64{1}).Return(nil, errmock)
 			},
 			req: req,
+			expect: &testResponse{
+				code: codes.Internal,
+			},
+		},
+		{
+			name: "failed to filter lessons",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				req := &lesson.ListLessonsRequest{
+					ShiftSummaryId: 1,
+					ShiftId:        1,
+					TeacherId:      "teacherid",
+					StudentId:      "studentid",
+					OnlyDecided:    true,
+				}
+				params := &database.ListLessonsParams{
+					ShiftSummaryID: 1,
+					ShiftID:        1,
+					TeacherID:      "teacherid",
+					StudentID:      "studentid",
+				}
+				mocks.validator.EXPECT().ListLessons(req).Return(nil)
+				mocks.db.Lesson.EXPECT().List(gomock.Any(), params).Return(lessons, nil)
+				mocks.db.Lesson.EXPECT().Count(gomock.Any(), params).Return(int64(1), nil)
+				mocks.db.ShiftSummary.EXPECT().MultiGet(gomock.Any(), []int64{1}).Return(entity.ShiftSummaries{}, nil)
+				mocks.db.Shift.EXPECT().MultiGet(gomock.Any(), []int64{1}).Return(shifts, nil)
+			},
+			req: &lesson.ListLessonsRequest{
+				ShiftSummaryId: 1,
+				ShiftId:        1,
+				TeacherId:      "teacherid",
+				StudentId:      "studentid",
+				OnlyDecided:    true,
+			},
 			expect: &testResponse{
 				code: codes.Internal,
 			},

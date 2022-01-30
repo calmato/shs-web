@@ -39,9 +39,30 @@ func (s *lessonService) ListLessons(
 		return nil, gRPCError(err)
 	}
 
-	shifts, err := s.db.Shift.MultiGet(ctx, lessons.ShiftIDs())
-	if err != nil {
+	eg, ectx = errgroup.WithContext(ctx)
+	var summaries entity.ShiftSummaries
+	eg.Go(func() (err error) {
+		if !req.OnlyDecided {
+			return
+		}
+		summaries, err = s.db.ShiftSummary.MultiGet(ectx, lessons.ShiftSummaryIDs())
+		return
+	})
+	var shifts entity.Shifts
+	eg.Go(func() (err error) {
+		shifts, err = s.db.Shift.MultiGet(ctx, lessons.ShiftIDs())
+		return
+	})
+	if err := eg.Wait(); err != nil {
 		return nil, gRPCError(err)
+	}
+
+	if req.OnlyDecided {
+		var err error
+		lessons, err = lessons.Decided(summaries.Map())
+		if err != nil {
+			return nil, gRPCError(err)
+		}
 	}
 
 	res := &lesson.ListLessonsResponse{

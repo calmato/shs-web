@@ -62,6 +62,7 @@ type Lesson interface {
 
 type ShiftSummary interface {
 	List(ctx context.Context, p *ListShiftSummariesParams, fields ...string) (entity.ShiftSummaries, error)
+	MultiGet(ctx context.Context, ids []int64, fields ...string) (entity.ShiftSummaries, error)
 	Get(ctx context.Context, id int64, fields ...string) (*entity.ShiftSummary, error)
 	UpdateSchedule(ctx context.Context, id int64, openAt, endAt time.Time) error
 	Delete(ctx context.Context, id int64) error

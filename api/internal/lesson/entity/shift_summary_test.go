@@ -150,6 +150,7 @@ func TestShiftSummary_Fill(t *testing.T) {
 			summary: &ShiftSummary{
 				ID:        1,
 				YearMonth: 202202,
+				Decided:   false,
 				Status:    ShiftStatusUnknown,
 				OpenAt:    jst.Date(2022, 1, 1, 0, 0, 0, 0),
 				EndAt:     jst.Date(2022, 1, 15, 0, 0, 0, 0),
@@ -164,6 +165,7 @@ func TestShiftSummary_Fill(t *testing.T) {
 			summary: &ShiftSummary{
 				ID:        1,
 				YearMonth: 202201,
+				Decided:   false,
 				Status:    ShiftStatusUnknown,
 				OpenAt:    jst.Date(2021, 12, 1, 0, 0, 0, 0),
 				EndAt:     jst.Date(2021, 12, 15, 0, 0, 0, 0),
@@ -178,6 +180,7 @@ func TestShiftSummary_Fill(t *testing.T) {
 			summary: &ShiftSummary{
 				ID:        1,
 				YearMonth: 202112,
+				Decided:   true,
 				Status:    ShiftStatusUnknown,
 				OpenAt:    jst.Date(2021, 11, 1, 0, 0, 0, 0),
 				EndAt:     jst.Date(2021, 11, 15, 0, 0, 0, 0),
@@ -213,6 +216,7 @@ func TestShiftSummary_Proto(t *testing.T) {
 			summary: &ShiftSummary{
 				ID:        1,
 				YearMonth: 202201,
+				Decided:   true,
 				Status:    ShiftStatusAccepting,
 				OpenAt:    jst.Date(2021, 12, 1, 0, 0, 0, 0),
 				EndAt:     jst.Date(2021, 12, 15, 0, 0, 0, 0),
@@ -222,6 +226,7 @@ func TestShiftSummary_Proto(t *testing.T) {
 			expect: &lesson.ShiftSummary{
 				Id:        1,
 				YearMonth: 202201,
+				Decided:   true,
 				Status:    lesson.ShiftStatus_SHIFT_STATUS_ACCEPTING,
 				OpenAt:    jst.Date(2021, 12, 1, 0, 0, 0, 0).Unix(),
 				EndAt:     jst.Date(2021, 12, 15, 0, 0, 0, 0).Unix(),
@@ -256,6 +261,7 @@ func TestShiftSummaries_Map(t *testing.T) {
 				{
 					ID:        1,
 					YearMonth: 202201,
+					Decided:   true,
 					Status:    ShiftStatusAccepting,
 					OpenAt:    jst.Date(2021, 12, 1, 0, 0, 0, 0),
 					EndAt:     jst.Date(2021, 12, 15, 0, 0, 0, 0),
@@ -267,6 +273,7 @@ func TestShiftSummaries_Map(t *testing.T) {
 				1: {
 					ID:        1,
 					YearMonth: 202201,
+					Decided:   true,
 					Status:    ShiftStatusAccepting,
 					OpenAt:    jst.Date(2021, 12, 1, 0, 0, 0, 0),
 					EndAt:     jst.Date(2021, 12, 15, 0, 0, 0, 0),
@@ -302,6 +309,7 @@ func TestShiftSummaries_Fill(t *testing.T) {
 				{
 					ID:        1,
 					YearMonth: 202201,
+					Decided:   true,
 					Status:    ShiftStatusUnknown,
 					OpenAt:    jst.Date(2021, 12, 1, 0, 0, 0, 0),
 					EndAt:     jst.Date(2021, 12, 15, 0, 0, 0, 0),
@@ -313,6 +321,7 @@ func TestShiftSummaries_Fill(t *testing.T) {
 				{
 					ID:        1,
 					YearMonth: 202201,
+					Decided:   true,
 					Status:    ShiftStatusAccepting,
 					OpenAt:    jst.Date(2021, 12, 1, 0, 0, 0, 0),
 					EndAt:     jst.Date(2021, 12, 15, 0, 0, 0, 0),
@@ -349,6 +358,7 @@ func TestShiftSummaries_Proto(t *testing.T) {
 				{
 					ID:        1,
 					YearMonth: 202201,
+					Decided:   true,
 					Status:    ShiftStatusAccepting,
 					OpenAt:    jst.Date(2021, 12, 1, 0, 0, 0, 0),
 					EndAt:     jst.Date(2021, 12, 15, 0, 0, 0, 0),
@@ -360,6 +370,7 @@ func TestShiftSummaries_Proto(t *testing.T) {
 				{
 					Id:        1,
 					YearMonth: 202201,
+					Decided:   true,
 					Status:    lesson.ShiftStatus_SHIFT_STATUS_ACCEPTING,
 					OpenAt:    jst.Date(2021, 12, 1, 0, 0, 0, 0).Unix(),
 					EndAt:     jst.Date(2021, 12, 15, 0, 0, 0, 0).Unix(),

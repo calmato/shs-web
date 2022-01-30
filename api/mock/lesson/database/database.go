@@ -206,6 +206,26 @@ func (mr *MockShiftSummaryMockRecorder) List(ctx, p interface{}, fields ...inter
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "List", reflect.TypeOf((*MockShiftSummary)(nil).List), varargs...)
 }
 
+// MultiGet mocks base method.
+func (m *MockShiftSummary) MultiGet(ctx context.Context, ids []int64, fields ...string) (entity.ShiftSummaries, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, ids}
+	for _, a := range fields {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "MultiGet", varargs...)
+	ret0, _ := ret[0].(entity.ShiftSummaries)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// MultiGet indicates an expected call of MultiGet.
+func (mr *MockShiftSummaryMockRecorder) MultiGet(ctx, ids interface{}, fields ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, ids}, fields...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MultiGet", reflect.TypeOf((*MockShiftSummary)(nil).MultiGet), varargs...)
+}
+
 // UpdateSchedule mocks base method.
 func (m *MockShiftSummary) UpdateSchedule(ctx context.Context, id int64, openAt, endAt time.Time) error {
 	m.ctrl.T.Helper()
