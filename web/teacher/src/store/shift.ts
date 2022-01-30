@@ -24,6 +24,7 @@ import {
   LessonsResponse,
   CreateShiftLessonRequest,
   UpdateShiftLessonRequest,
+  UpdateShiftSummaryDecidedRequest,
 } from '~/types/api/v1'
 import {
   Lesson,
@@ -59,6 +60,7 @@ const initialState: ShiftState = {
     id: 0,
     year: 0,
     month: 0,
+    decided: false,
     status: ShiftStatus.UNKNOWN,
     openAt: '',
     endAt: '',
@@ -200,6 +202,11 @@ export default class ShiftModule extends VuexModule {
 
   public get getLessonDetail(): ShiftLessonDetail {
     return this.lessonDetail
+  }
+
+  @Mutation
+  private updateSummaryDecided(decided: boolean): void {
+    this.summary.decided = decided
   }
 
   @Mutation
@@ -484,6 +491,29 @@ export default class ShiftModule extends VuexModule {
         const endAt: string = dayjs(form.params.endDate).tz().format(format)
 
         this.replaceSummariesSchedule({ summaryId, openAt, endAt })
+      })
+      .catch((err: AxiosError) => {
+        const res: ErrorResponse = { ...err.response?.data }
+        throw new ApiError(res.status, res.message, res)
+      })
+  }
+
+  @Action({ rawError: true })
+  public async updateShiftSummaryDecided({
+    summaryId,
+    decided,
+  }: {
+    summaryId: number
+    decided: boolean
+  }): Promise<void> {
+    const req: UpdateShiftSummaryDecidedRequest = {
+      decided,
+    }
+
+    await $axios
+      .$patch(`/v1/shifts/${summaryId}/decided`, req)
+      .then(() => {
+        this.updateSummaryDecided(decided)
       })
       .catch((err: AxiosError) => {
         const res: ErrorResponse = { ...err.response?.data }
