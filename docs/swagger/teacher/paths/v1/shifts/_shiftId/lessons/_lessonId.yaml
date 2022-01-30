@@ -38,3 +38,37 @@ patch:
         application/json:
           schema:
             $ref: './../../../../../openapi.yaml#/components/schemas/errorResponse'
+delete:
+  summary: 授業削除
+  tags:
+  - Shift
+  security:
+  - BearerAuth: []
+  parameters:
+  - in: path
+    name: shiftId
+    required: true
+    schema:
+      type: integer
+      format: int64
+    description: シフト募集ID
+    example: 1
+  - in: path
+    name: lessonId
+    required: true
+    schema:
+      type: integer
+      format: int64
+    description: 授業ID
+    example: 1
+  responses:
+    204:
+      description: A successful response.
+      content:
+        application/json: {}
+    default:
+      description: An unexpected error response.
+      content:
+        application/json:
+          schema:
+            $ref: './../../../../../openapi.yaml#/components/schemas/errorResponse'
