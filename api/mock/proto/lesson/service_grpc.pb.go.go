@@ -376,6 +376,26 @@ func (mr *MockLessonServiceClientMockRecorder) UpdateLesson(ctx, in interface{},
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateLesson", reflect.TypeOf((*MockLessonServiceClient)(nil).UpdateLesson), varargs...)
 }
 
+// UpdateShiftSummaryDecided mocks base method.
+func (m *MockLessonServiceClient) UpdateShiftSummaryDecided(ctx context.Context, in *lesson.UpdateShiftSummaryDecidedRequest, opts ...grpc.CallOption) (*lesson.UpdateShiftSummaryDecidedResponse, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "UpdateShiftSummaryDecided", varargs...)
+	ret0, _ := ret[0].(*lesson.UpdateShiftSummaryDecidedResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UpdateShiftSummaryDecided indicates an expected call of UpdateShiftSummaryDecided.
+func (mr *MockLessonServiceClientMockRecorder) UpdateShiftSummaryDecided(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateShiftSummaryDecided", reflect.TypeOf((*MockLessonServiceClient)(nil).UpdateShiftSummaryDecided), varargs...)
+}
+
 // UpdateShiftSummarySchedule mocks base method.
 func (m *MockLessonServiceClient) UpdateShiftSummarySchedule(ctx context.Context, in *lesson.UpdateShiftSummaryScheduleRequest, opts ...grpc.CallOption) (*lesson.UpdateShiftSummaryShceduleResponse, error) {
 	m.ctrl.T.Helper()
@@ -712,6 +732,21 @@ func (m *MockLessonServiceServer) UpdateLesson(arg0 context.Context, arg1 *lesso
 func (mr *MockLessonServiceServerMockRecorder) UpdateLesson(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateLesson", reflect.TypeOf((*MockLessonServiceServer)(nil).UpdateLesson), arg0, arg1)
+}
+
+// UpdateShiftSummaryDecided mocks base method.
+func (m *MockLessonServiceServer) UpdateShiftSummaryDecided(arg0 context.Context, arg1 *lesson.UpdateShiftSummaryDecidedRequest) (*lesson.UpdateShiftSummaryDecidedResponse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateShiftSummaryDecided", arg0, arg1)
+	ret0, _ := ret[0].(*lesson.UpdateShiftSummaryDecidedResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UpdateShiftSummaryDecided indicates an expected call of UpdateShiftSummaryDecided.
+func (mr *MockLessonServiceServerMockRecorder) UpdateShiftSummaryDecided(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateShiftSummaryDecided", reflect.TypeOf((*MockLessonServiceServer)(nil).UpdateShiftSummaryDecided), arg0, arg1)
 }
 
 // UpdateShiftSummarySchedule mocks base method.

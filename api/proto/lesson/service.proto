@@ -23,6 +23,7 @@ service LessonService {
   rpc ListShiftSummaries(ListShiftSummariesRequest) returns (ListShiftSummariesResponse);
   rpc GetShiftSummary(GetShiftSummaryRequest) returns (GetShiftSummaryResponse);
   rpc UpdateShiftSummarySchedule(UpdateShiftSummaryScheduleRequest) returns (UpdateShiftSummaryShceduleResponse);
+  rpc UpdateShiftSummaryDecided(UpdateShiftSummaryDecidedRequest) returns (UpdateShiftSummaryDecidedResponse);
   rpc DeleteShiftSummary(DeleteShiftSummaryRequest) returns (DeleteShiftSummaryResponse);
   rpc ListShifts(ListShiftsRequest) returns (ListShiftsResponse);
   rpc CreateShifts(CreateShiftsRequest) returns (CreateShiftsResponse);
@@ -118,6 +119,13 @@ message UpdateShiftSummaryScheduleRequest {
 }
 
 message UpdateShiftSummaryShceduleResponse {}
+
+message UpdateShiftSummaryDecidedRequest {
+  int64 id      = 1 [(validate.rules).int64 = { gt: 0 }];
+  bool  decided = 2;
+}
+
+message UpdateShiftSummaryDecidedResponse {}
 
 message DeleteShiftSummaryRequest {
   int64 id = 1 [(validate.rules).int64 = { gt: 0 }];

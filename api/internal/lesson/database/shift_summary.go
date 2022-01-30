@@ -110,10 +110,47 @@ func (s *shiftSummary) UpdateSchedule(ctx context.Context, id int64, openAt, end
 	}
 	defer s.db.Close(tx)
 
+	var summary *entity.ShiftSummary
+	err = tx.Table(shiftSummaryTable).Select([]string{"id"}).
+		Where("id = ?", id).
+		First(&summary).Error
+	if err != nil {
+		return dbError(err)
+	}
+
 	params := map[string]interface{}{
 		"id":         id,
 		"open_at":    openAt,
 		"end_at":     endAt,
+		"updated_at": s.now(),
+	}
+
+	err = tx.Table(shiftSummaryTable).Where("id = ?", id).Updates(params).Error
+	if err != nil {
+		tx.Rollback()
+		return dbError(err)
+	}
+	return dbError(tx.Commit().Error)
+}
+
+func (s *shiftSummary) UpdateDecided(ctx context.Context, id int64, decided bool) error {
+	tx, err := s.db.Begin()
+	if err != nil {
+		return dbError(err)
+	}
+	defer s.db.Close(tx)
+
+	var summary *entity.ShiftSummary
+	err = tx.Table(shiftSummaryTable).Select([]string{"id"}).
+		Where("id = ?", id).
+		First(&summary).Error
+	if err != nil {
+		return dbError(err)
+	}
+
+	params := map[string]interface{}{
+		"id":         id,
+		"decided":    decided,
 		"updated_at": s.now(),
 	}
 

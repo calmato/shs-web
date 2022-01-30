@@ -226,6 +226,20 @@ func (mr *MockShiftSummaryMockRecorder) MultiGet(ctx, ids interface{}, fields ..
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MultiGet", reflect.TypeOf((*MockShiftSummary)(nil).MultiGet), varargs...)
 }
 
+// UpdateDecided mocks base method.
+func (m *MockShiftSummary) UpdateDecided(ctx context.Context, id int64, decided bool) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateDecided", ctx, id, decided)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateDecided indicates an expected call of UpdateDecided.
+func (mr *MockShiftSummaryMockRecorder) UpdateDecided(ctx, id, decided interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateDecided", reflect.TypeOf((*MockShiftSummary)(nil).UpdateDecided), ctx, id, decided)
+}
+
 // UpdateSchedule mocks base method.
 func (m *MockShiftSummary) UpdateSchedule(ctx context.Context, id int64, openAt, endAt time.Time) error {
 	m.ctrl.T.Helper()
