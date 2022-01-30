@@ -90,6 +90,7 @@ const initialState: ShiftState = {
     submissionTotal: 0,
   },
   teacherLessons: {
+    current: '',
     lessons: [],
     teachers: {},
     students: {},
@@ -115,6 +116,7 @@ const initialState: ShiftState = {
     submissionTotal: 0,
   },
   studentLessons: {
+    current: '',
     lessons: [],
     teachers: {},
     students: {},
@@ -431,7 +433,9 @@ export default class ShiftModule extends VuexModule {
       lessons: initialState.lessons,
     })
     this.setTeacherSubmission(initialState.teacherSubmission)
+    this.setTeacherLessons(initialState.teacherLessons)
     this.setStudentSubmission(initialState.studentSubmission)
+    this.setStudentLessons(initialState.studentLessons)
     this.setLessonDetail(initialState.lessonDetail)
   }
 
@@ -734,7 +738,7 @@ export default class ShiftModule extends VuexModule {
           return { ...lesson }
         })
 
-        this.setTeacherLessons({ lessons, total })
+        this.setTeacherLessons({ current: teacherId, lessons, total })
       })
       .catch((err: AxiosError) => {
         const res: ErrorResponse = { ...err.response?.data }
