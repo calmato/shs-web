@@ -246,3 +246,102 @@ func TestCreateLesson(t *testing.T) {
 		})
 	}
 }
+
+func TestUpdateLesson(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name     string
+		setup    func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller)
+		shiftID  string
+		lessonID string
+		req      *request.UpdateLessonRequest
+		expect   *testResponse
+	}{
+		{
+			name: "success",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
+				in := &lesson.UpdateLessonRequest{
+					LessonId:       1,
+					ShiftSummaryId: 1,
+					ShiftId:        1,
+					SubjectId:      1,
+					RoomId:         1,
+					TeacherId:      "teacherid",
+					StudentId:      "studentid",
+				}
+				out := &lesson.UpdateLessonResponse{}
+				mocks.lesson.EXPECT().UpdateLesson(gomock.Any(), in).Return(out, nil)
+			},
+			shiftID:  "1",
+			lessonID: "1",
+			req: &request.UpdateLessonRequest{
+				ShiftID:   1,
+				SubjectID: 1,
+				Room:      1,
+				TeacherID: "teacherid",
+				StudentID: "studentid",
+			},
+			expect: &testResponse{
+				code: http.StatusNoContent,
+			},
+		},
+		{
+			name:     "failed to invalid shift summary id",
+			setup:    func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {},
+			shiftID:  "a",
+			lessonID: "1",
+			req:      &request.UpdateLessonRequest{},
+			expect: &testResponse{
+				code: http.StatusBadRequest,
+			},
+		},
+		{
+			name:     "failed to invalid lesson id",
+			setup:    func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {},
+			shiftID:  "1",
+			lessonID: "a",
+			req:      &request.UpdateLessonRequest{},
+			expect: &testResponse{
+				code: http.StatusBadRequest,
+			},
+		},
+		{
+			name: "failed to update lesson",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
+				in := &lesson.UpdateLessonRequest{
+					LessonId:       1,
+					ShiftSummaryId: 1,
+					ShiftId:        1,
+					SubjectId:      1,
+					RoomId:         1,
+					TeacherId:      "teacherid",
+					StudentId:      "studentid",
+				}
+				mocks.lesson.EXPECT().UpdateLesson(gomock.Any(), in).Return(nil, errmock)
+			},
+			shiftID:  "1",
+			lessonID: "1",
+			req: &request.UpdateLessonRequest{
+				ShiftID:   1,
+				SubjectID: 1,
+				Room:      1,
+				TeacherID: "teacherid",
+				StudentID: "studentid",
+			},
+			expect: &testResponse{
+				code: http.StatusInternalServerError,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			path := fmt.Sprintf("/v1/shifts/%s/lessons/%s", tt.shiftID, tt.lessonID)
+			req := newHTTPRequest(t, http.MethodPatch, path, tt.req)
+			testHTTP(t, tt.setup, tt.expect, req)
+		})
+	}
+}

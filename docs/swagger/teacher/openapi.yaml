@@ -70,6 +70,8 @@ paths:
     $ref: './paths/v1/shifts/_shiftId/schedule.yaml'
   /v1/shifts/{shiftId}/lessons:
     $ref: './paths/v1/shifts/_shiftId/lessons/index.yaml'
+  /v1/shifts/{shiftId}/lessons/{lessonId}:
+    $ref: './paths/v1/shifts/_shiftId/lessons/_lessonId.yaml'
   /v1/shifts/{shiftId}/submissions/{submissionId}:
     $ref: './paths/v1/shifts/_shiftId/submissions/_submissionId.yaml'
   /v1/shifts/{shiftId}/teachers/{teacherId}:
@@ -128,6 +130,8 @@ components:
       $ref: './components/schemas/v1/rooms.request.yaml#/updateRoomsTotalRequest'
     v1CreateLessonRequest:
       $ref: './components/schemas/v1/lessons.request.yaml#/createLessonRequest'
+    v1UpdateLessonRequest:
+      $ref: './components/schemas/v1/lessons.request.yaml#/updateLessonRequest'
     # Response
     v1AuthResponse:
       $ref: './components/schemas/v1/auth.response.yaml#/authResponse'

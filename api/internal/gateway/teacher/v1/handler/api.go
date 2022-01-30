@@ -109,6 +109,7 @@ func (h *apiV1Handler) AdminRoutes(rg *gin.RouterGroup) {
 	rg.GET("/v1/shifts/:shiftId/students/:studentId", h.ListEnabledStudentShifts)
 	rg.GET("/v1/shifts/:shiftId/lessons", h.ListLessons)
 	rg.POST("/v1/shifts/:shiftId/lessons", h.CreateLesson)
+	rg.PATCH("/v1/shifts/:shiftId/lessons/:lessonId", h.UpdateLesson)
 }
 
 func (h *apiV1Handler) NoAuthRoutes(rg *gin.RouterGroup) {}
