@@ -96,6 +96,7 @@ func (h *apiV1Handler) AdminRoutes(rg *gin.RouterGroup) {
 	rg.PATCH("/v1/teachers/:teacherId/role", h.UpdateTeacherRole)
 	rg.PATCH("/v1/teachers/:teacherId/subjects", h.UpdateTeacherSubject)
 	rg.POST("/v1/students", h.CreateStudent)
+	rg.DELETE("v1/students/:studentId", h.DeleteStudent)
 	rg.POST("/v1/subjects", h.CreateSubject)
 	rg.PATCH("/v1/subjects/:subjectId", h.UpdateSubject)
 	rg.DELETE("/v1/subjects/:subjectId", h.DeleteSubject)

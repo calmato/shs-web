@@ -144,3 +144,20 @@ func (h *apiV1Handler) getStudent(ctx context.Context, studentID string) (*genti
 	}
 	return gentity.NewStudent(out.Student), nil
 }
+
+func (h *apiV1Handler) DeleteStudent(ctx *gin.Context) {
+	c := util.SetMetadata(ctx)
+
+	studentID := ctx.Param("studentId")
+	in := &user.DeleteStudentRequest{
+		Id: studentID,
+	}
+
+	_, err := h.user.DeleteStudent(c, in)
+	if err != nil {
+		httpError(ctx, err)
+		return
+	}
+
+	ctx.JSON(http.StatusNoContent, gin.H{})
+}
