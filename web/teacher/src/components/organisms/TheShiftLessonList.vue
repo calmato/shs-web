@@ -25,6 +25,7 @@
               :room="num"
               :summary="lesson"
               :detail="getLesson(lesson, num)"
+              :decided="decided"
               @click:new="onClickNew"
               @click:edit="onClickEdit"
             />
@@ -59,6 +60,10 @@ export default defineComponent({
     lessons: {
       type: Array as PropType<LessonDetail[]>,
       default: () => [],
+    },
+    decided: {
+      type: Boolean,
+      default: false,
     },
   },
 

@@ -71,15 +71,19 @@
       <!-- シフトタイトル -->
       <div class="d-flex align-center py-2">
         <h3>{{ getTitle() }}</h3>
-        <v-btn color="primary" class="ml-auto" @click="onClickDecidedLesson">授業を確定する</v-btn>
+        <v-btn v-if="summary.decided" color="warning" class="ml-auto" @click="onClickDecidedLesson">修正する</v-btn>
+        <v-btn v-else color="primary" class="ml-auto" @click="onClickDecidedLesson">授業を確定する</v-btn>
       </div>
     </section>
     <section class="shift-content">
       <!-- 授業タイムテーブル -->
+      <v-skeleton-loader v-if="overlay" type="table" />
       <the-shift-lesson-list
+        v-else
         :rooms="rooms"
         :shifts="details"
         :lessons="lessons"
+        :decided="summary.decided"
         @click:new="onClickNewLesson"
         @click:edit="onClickEditLesson"
       />

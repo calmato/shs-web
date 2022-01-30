@@ -253,8 +253,23 @@ export default defineComponent({
         })
     }
 
-    const handleClickDecidedLesson = (): void => {
-      console.log('debug', 'decided lesson')
+    const handleClickDecidedLesson = async (): Promise<void> => {
+      CommonStore.startConnection()
+
+      const decided: boolean = !summary.value.decided
+
+      await ShiftStore.updateShiftSummaryDecided({ summaryId, decided })
+        .then(() => {
+          if (decided) {
+            CommonStore.showSnackbar({ color: 'success', message: '授業スケジュールを確定しました。' })
+          }
+        })
+        .catch((err: Error) => {
+          CommonStore.showErrorInSnackbar(err)
+        })
+        .finally(() => {
+          CommonStore.endConnection()
+        })
     }
 
     const handleClickNewLesson = async ({ shiftId, room }: { shiftId: number; room: number }): Promise<void> => {

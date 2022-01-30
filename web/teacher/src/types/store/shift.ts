@@ -6,6 +6,7 @@ export interface ShiftSummary {
   id: number
   year: number
   month: number
+  decided: boolean
   status: ShiftStatus
   openAt: string
   endAt: string
