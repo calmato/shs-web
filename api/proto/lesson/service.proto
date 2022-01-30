@@ -19,6 +19,7 @@ service LessonService {
   rpc ListLessons(ListLessonsRequest) returns (ListLessonsResponse);
   rpc CreateLesson(CreateLessonRequest) returns (CreateLessonResponse);
   rpc UpdateLesson(UpdateLessonRequest) returns (UpdateLessonResponse);
+  rpc DeleteLesson(DeleteLessonRequest) returns (DeleteLessonResponse);
   rpc ListShiftSummaries(ListShiftSummariesRequest) returns (ListShiftSummariesResponse);
   rpc GetShiftSummary(GetShiftSummaryRequest) returns (GetShiftSummaryResponse);
   rpc UpdateShiftSummarySchedule(UpdateShiftSummaryScheduleRequest) returns (UpdateShiftSummaryShceduleResponse);
@@ -77,6 +78,12 @@ message UpdateLessonRequest {
 }
 
 message UpdateLessonResponse {}
+
+message DeleteLessonRequest {
+  int64 lesson_id = 1 [(validate.rules).int64 = { gt: 0 }];
+}
+
+message DeleteLessonResponse {}
 
 message ListShiftSummariesRequest {
   enum OrderBy {

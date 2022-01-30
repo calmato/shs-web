@@ -172,3 +172,19 @@ func (s *lessonService) UpdateLesson(
 	res := &lesson.UpdateLessonResponse{}
 	return res, nil
 }
+
+func (s *lessonService) DeleteLesson(
+	ctx context.Context, req *lesson.DeleteLessonRequest,
+) (*lesson.DeleteLessonResponse, error) {
+	if err := s.validator.DeleteLesson(req); err != nil {
+		return nil, gRPCError(err)
+	}
+
+	err := s.db.Lesson.Delete(ctx, req.LessonId)
+	if err != nil {
+		return nil, gRPCError(err)
+	}
+
+	res := &lesson.DeleteLessonResponse{}
+	return res, nil
+}

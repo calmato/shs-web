@@ -76,6 +76,26 @@ func (mr *MockLessonServiceClientMockRecorder) CreateShifts(ctx, in interface{},
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateShifts", reflect.TypeOf((*MockLessonServiceClient)(nil).CreateShifts), varargs...)
 }
 
+// DeleteLesson mocks base method.
+func (m *MockLessonServiceClient) DeleteLesson(ctx context.Context, in *lesson.DeleteLessonRequest, opts ...grpc.CallOption) (*lesson.DeleteLessonResponse, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "DeleteLesson", varargs...)
+	ret0, _ := ret[0].(*lesson.DeleteLessonResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// DeleteLesson indicates an expected call of DeleteLesson.
+func (mr *MockLessonServiceClientMockRecorder) DeleteLesson(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteLesson", reflect.TypeOf((*MockLessonServiceClient)(nil).DeleteLesson), varargs...)
+}
+
 // DeleteShiftSummary mocks base method.
 func (m *MockLessonServiceClient) DeleteShiftSummary(ctx context.Context, in *lesson.DeleteShiftSummaryRequest, opts ...grpc.CallOption) (*lesson.DeleteShiftSummaryResponse, error) {
 	m.ctrl.T.Helper()
@@ -467,6 +487,21 @@ func (m *MockLessonServiceServer) CreateShifts(arg0 context.Context, arg1 *lesso
 func (mr *MockLessonServiceServerMockRecorder) CreateShifts(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateShifts", reflect.TypeOf((*MockLessonServiceServer)(nil).CreateShifts), arg0, arg1)
+}
+
+// DeleteLesson mocks base method.
+func (m *MockLessonServiceServer) DeleteLesson(arg0 context.Context, arg1 *lesson.DeleteLessonRequest) (*lesson.DeleteLessonResponse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteLesson", arg0, arg1)
+	ret0, _ := ret[0].(*lesson.DeleteLessonResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// DeleteLesson indicates an expected call of DeleteLesson.
+func (mr *MockLessonServiceServerMockRecorder) DeleteLesson(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteLesson", reflect.TypeOf((*MockLessonServiceServer)(nil).DeleteLesson), arg0, arg1)
 }
 
 // DeleteShiftSummary mocks base method.
