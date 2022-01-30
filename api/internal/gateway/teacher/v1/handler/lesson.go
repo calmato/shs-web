@@ -89,3 +89,40 @@ func (h *apiV1Handler) CreateLesson(ctx *gin.Context) {
 	}
 	ctx.JSON(http.StatusOK, res)
 }
+
+func (h *apiV1Handler) UpdateLesson(ctx *gin.Context) {
+	c := util.SetMetadata(ctx)
+
+	req := &request.UpdateLessonRequest{}
+	if err := ctx.BindJSON(req); err != nil {
+		badRequest(ctx, err)
+		return
+	}
+	summaryID, err := strconv.ParseInt(ctx.Param("shiftId"), 10, 64)
+	if err != nil {
+		badRequest(ctx, err)
+		return
+	}
+	lessonID, err := strconv.ParseInt(ctx.Param("lessonId"), 10, 64)
+	if err != nil {
+		badRequest(ctx, err)
+		return
+	}
+
+	in := &lesson.UpdateLessonRequest{
+		LessonId:       lessonID,
+		ShiftSummaryId: summaryID,
+		ShiftId:        req.ShiftID,
+		SubjectId:      req.SubjectID,
+		RoomId:         req.Room,
+		TeacherId:      req.TeacherID,
+		StudentId:      req.StudentID,
+	}
+	_, err = h.lesson.UpdateLesson(c, in)
+	if err != nil {
+		httpError(ctx, err)
+		return
+	}
+
+	ctx.JSON(http.StatusNoContent, gin.H{})
+}
