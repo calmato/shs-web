@@ -3,6 +3,8 @@
     <!-- PCレイアウト -->
     <pc-shift-detail
       class="hidden-sm-and-down"
+      :loading="loading"
+      :lesson-loading="lessonLoading"
       :dialog="dialog"
       :dialog-key="dialogKey"
       :summary="summary"
@@ -18,6 +20,7 @@
       :student-submission="studentSubmission"
       :student-lessons="studentLessons"
       :form="form"
+      @click:lesson-student="handleClickLessonStudent"
       @click:show-teacher-submissions="handleClickShowTeacherSubmissions"
       @click:show-teacher-lessons="handleClickShowTeacherLessons"
       @click:show-student-submissions="handleClickShowStudentSubmissions"
@@ -25,6 +28,8 @@
       @click:decided-lesson="handleClickDecidedLesson"
       @click:new-lesson="handleClickNewLesson"
       @click:edit-lesson="handleClickEditLesson"
+      @click:submit-lesson="handleClickSubmitLesson"
+      @click:delete-lesson="handleClickDeleteLesson"
       @click:close="handleCloseDialog"
     />
     <!-- スマホレイアウト -->
@@ -48,6 +53,7 @@ import PcShiftDetail from '~/components/templates/PcShiftDetail.vue'
 import { CommonStore, ShiftStore } from '~/store'
 import {
   Lesson,
+  PromiseState,
   ShiftDetail,
   ShiftLessonDetail,
   ShiftSummary,
@@ -72,7 +78,9 @@ export default defineComponent({
     const route = useRoute()
     const store = useStore()
 
+    const summaryId = Number(route.value.params.id)
     const dialogKey = ref<ShiftDialogKey>('未選択')
+    const lessonLoading = ref<boolean>(false)
     const form = reactive<ShiftLessonForm>({ params: { ...ShiftLessonParams } })
 
     const dialog = computed<boolean>(() => dialogKey.value !== '未選択')
@@ -88,6 +96,9 @@ export default defineComponent({
     const teacherLessons = computed<ShiftUserLesson>(() => store.getters['shift/getTeacherLessons'])
     const studentSubmission = computed<StudentSubmissionDetail>(() => store.getters['shift/getStudentSubmission'])
     const studentLessons = computed<ShiftUserLesson>(() => store.getters['shift/getStudentLessons'])
+    const loading = computed<boolean>(() => {
+      return store.getters['common/getPromiseState'] === PromiseState.LOADING
+    })
 
     useAsync(async () => {
       await listShiftDetails()
@@ -96,11 +107,9 @@ export default defineComponent({
     async function listShiftDetails(): Promise<void> {
       CommonStore.startConnection()
 
-      const summaryId: string = route.value.params.id
-
-      await ShiftStore.listShiftDetails({ summaryId: Number(summaryId) })
+      await ShiftStore.listShiftDetails({ summaryId })
         .catch((err: Error) => {
-          console.log('feiled to list shift details', err)
+          CommonStore.showErrorInSnackbar(err)
         })
         .finally(() => {
           CommonStore.endConnection()
@@ -118,18 +127,16 @@ export default defineComponent({
     }): Promise<void> {
       CommonStore.startConnection()
 
-      const summaryId: string = route.value.params.id
-
-      await ShiftStore.listShiftLessons({ summaryId: Number(summaryId), lessonId, shiftId, room })
+      await ShiftStore.listShiftLessons({ summaryId, lessonId, shiftId, room })
         .then(() => {
           if (lesson.value.current) {
-            form.params = { ...lesson.value.current, summaryId: 0 }
+            form.params = { ...lesson.value.current, summaryId, lessonId, shiftId, room }
           } else {
-            form.params = { ...ShiftLessonParams }
+            form.params = { ...ShiftLessonParams, summaryId, lessonId, shiftId, room }
           }
         })
         .catch((err: Error) => {
-          console.log('feiled to list shift lessons', err)
+          CommonStore.showErrorInSnackbar(err)
         })
         .finally(() => {
           CommonStore.endConnection()
@@ -169,17 +176,28 @@ export default defineComponent({
       router.push('/')
     }
 
+    const handleClickLessonStudent = async (studentId: string): Promise<void> => {
+      lessonLoading.value = true
+
+      await ShiftStore.listStudentLessons({ summaryId, studentId })
+        .catch((err: Error) => {
+          CommonStore.showErrorInSnackbar(err)
+        })
+        .finally(() => {
+          lessonLoading.value = false
+          form.params.studentId = studentId
+        })
+    }
+
     const handleClickShowTeacherSubmissions = async (teacherId: string): Promise<void> => {
       CommonStore.startConnection()
 
-      const summaryId: string = route.value.params.id
-
-      await ShiftStore.showTeacherSubmissions({ summaryId: Number(summaryId), teacherId })
+      await ShiftStore.showTeacherSubmissions({ summaryId, teacherId })
         .then(() => {
           openDialog('講師シフト')
         })
         .catch((err: Error) => {
-          console.log('feiled to show teacher submissions', err)
+          CommonStore.showErrorInSnackbar(err)
         })
         .finally(() => {
           CommonStore.endConnection()
@@ -189,14 +207,12 @@ export default defineComponent({
     const handleClickShowTeacherLessons = async (teacherId: string): Promise<void> => {
       CommonStore.startConnection()
 
-      const summaryId: string = route.value.params.id
-
-      await ShiftStore.listTeacherLessons({ summaryId: Number(summaryId), teacherId })
+      await ShiftStore.listTeacherLessons({ summaryId, teacherId })
         .then(() => {
           openDialog('講師授業')
         })
         .catch((err: Error) => {
-          console.log('feiled to list teacher lessons', err)
+          CommonStore.showErrorInSnackbar(err)
         })
         .finally(() => {
           CommonStore.endConnection()
@@ -206,14 +222,12 @@ export default defineComponent({
     const handleClickShowStudentSubmissions = async (studentId: string): Promise<void> => {
       CommonStore.startConnection()
 
-      const summaryId: string = route.value.params.id
-
-      await ShiftStore.showStudentSubmissions({ summaryId: Number(summaryId), studentId })
+      await ShiftStore.showStudentSubmissions({ summaryId, studentId })
         .then(() => {
           openDialog('生徒授業希望')
         })
         .catch((err: Error) => {
-          console.log('feiled to show teacher submissions', err)
+          CommonStore.showErrorInSnackbar(err)
         })
         .finally(() => {
           CommonStore.endConnection()
@@ -223,14 +237,12 @@ export default defineComponent({
     const handleClickShowStudentLessons = async (studentId: string): Promise<void> => {
       CommonStore.startConnection()
 
-      const summaryId: string = route.value.params.id
-
-      await ShiftStore.listStudentLessons({ summaryId: Number(summaryId), studentId })
+      await ShiftStore.listStudentLessons({ summaryId, studentId })
         .then(() => {
           openDialog('生徒授業')
         })
         .catch((err: Error) => {
-          console.log('feiled to list student lessons', err)
+          CommonStore.showErrorInSnackbar(err)
         })
         .finally(() => {
           CommonStore.endConnection()
@@ -261,11 +273,45 @@ export default defineComponent({
       })
     }
 
+    const handleClickSubmitLesson = async (): Promise<void> => {
+      CommonStore.startConnection()
+
+      await ShiftStore.upsertLesson({ summaryId, form })
+        .then(() => {
+          closeDialog()
+          CommonStore.showSnackbar({ color: 'success', message: '授業を登録しました。' })
+        })
+        .catch((err: Error) => {
+          CommonStore.showErrorInSnackbar(err)
+        })
+        .finally(() => {
+          CommonStore.endConnection()
+        })
+    }
+
+    const handleClickDeleteLesson = async (): Promise<void> => {
+      CommonStore.startConnection()
+
+      await ShiftStore.deleteLesson({ summaryId, form })
+        .then(() => {
+          closeDialog()
+          CommonStore.showSnackbar({ color: 'success', message: '授業を削除しました。' })
+        })
+        .catch((err: Error) => {
+          CommonStore.showErrorInSnackbar(err)
+        })
+        .finally(() => {
+          CommonStore.endConnection()
+        })
+    }
+
     const handleCloseDialog = (): void => {
       closeDialog()
     }
 
     return {
+      loading,
+      lessonLoading,
       dialog,
       dialogKey,
       summary,
@@ -283,6 +329,7 @@ export default defineComponent({
       form,
       getLessonDetails,
       handleClickTop,
+      handleClickLessonStudent,
       handleClickShowTeacherSubmissions,
       handleClickShowTeacherLessons,
       handleClickShowStudentSubmissions,
@@ -290,6 +337,8 @@ export default defineComponent({
       handleClickDecidedLesson,
       handleClickNewLesson,
       handleClickEditLesson,
+      handleClickSubmitLesson,
+      handleClickDeleteLesson,
       handleCloseDialog,
     }
   },

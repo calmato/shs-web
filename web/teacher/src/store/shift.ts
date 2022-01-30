@@ -19,8 +19,11 @@ import {
   SuggestedLesson as v1SuggestedLesson,
   Teacher as v1Teacher,
   TeacherShift as v1TeacherShift,
+  ShiftLessonResponse,
   ShiftLessonsResponse,
   LessonsResponse,
+  CreateShiftLessonRequest,
+  UpdateShiftLessonRequest,
 } from '~/types/api/v1'
 import {
   Lesson,
@@ -48,7 +51,7 @@ import {
 } from '~/types/store'
 import { ErrorResponse } from '~/types/api/exception'
 import { ApiError } from '~/types/exception'
-import { ShiftsNewForm, ShiftSummaryEditScheduleForm } from '~/types/form'
+import { ShiftLessonForm, ShiftsNewForm, ShiftSummaryEditScheduleForm } from '~/types/form'
 import { schoolTypeNum2schoolTypeString, subjectResponse2Subject } from '~/lib'
 
 const initialState: ShiftState = {
@@ -203,30 +206,6 @@ export default class ShiftModule extends VuexModule {
   }
 
   @Mutation
-  private setDetails({
-    summary,
-    details,
-    teachers,
-    students,
-    rooms,
-    lessons,
-  }: {
-    summary: ShiftSummary
-    details: ShiftDetail[]
-    teachers: TeacherShift[]
-    students: StudentShift[]
-    rooms: number
-    lessons: Lesson[]
-  }): void {
-    this.summary = summary
-    this.details = details
-    this.teachers = teachers
-    this.students = students
-    this.rooms = rooms
-    this.lessons = lessons
-  }
-
-  @Mutation
   private addSummaries({ summary }: { summary: ShiftSummary }): void {
     this.summaries.unshift(summary)
   }
@@ -252,13 +231,90 @@ export default class ShiftModule extends VuexModule {
 
   @Mutation
   private removeSummaries({ summaryId }: { summaryId: number }): void {
-    const index: number = this.summaries.findIndex((val: ShiftSummary) => {
-      return val.id === summaryId
-    })
+    const index: number = this.summaries.findIndex((val: ShiftSummary): boolean => val.id === summaryId)
     if (index === -1) {
       return
     }
     this.summaries.splice(index, 1)
+  }
+
+  @Mutation
+  private setDetails({
+    summary,
+    details,
+    teachers,
+    students,
+    rooms,
+    lessons,
+  }: {
+    summary: ShiftSummary
+    details: ShiftDetail[]
+    teachers: TeacherShift[]
+    students: StudentShift[]
+    rooms: number
+    lessons: Lesson[]
+  }): void {
+    this.summary = summary
+    this.details = details
+    this.teachers = teachers
+    this.students = students
+    this.rooms = rooms
+    this.lessons = lessons
+  }
+
+  @Mutation
+  private addLesson(lesson: Lesson): void {
+    const teacherIndex: number = this.teachers.findIndex((val: TeacherShift): boolean => val.id === lesson.teacherId)
+    if (teacherIndex >= 0) {
+      const lessonTotal: number = this.teachers[teacherIndex].lessonTotal + 1
+      this.teachers.splice(teacherIndex, 1, { ...this.teachers[teacherIndex], lessonTotal })
+    }
+    const studentIndex: number = this.students.findIndex((val: StudentShift): boolean => val.id === lesson.studentId)
+    if (studentIndex >= 0) {
+      const lessonTotal: number = this.students[studentIndex].lessonTotal + 1
+      this.students.splice(studentIndex, 1, { ...this.students[studentIndex], lessonTotal })
+    }
+    this.lessons.push(lesson)
+  }
+
+  @Mutation
+  private replaceLesson(lesson: Lesson): void {
+    const index: number = this.lessons.findIndex((val: Lesson): boolean => val.id === lesson.id)
+    if (index === -1) {
+      return
+    }
+    this.lessons.splice(index, 1, {
+      ...this.lessons[index],
+      subjectId: lesson.subjectId,
+      teacherId: lesson.teacherId,
+      studentId: lesson.studentId,
+    })
+  }
+
+  @Mutation
+  private removeLesson({
+    lessonId,
+    teacherId,
+    studentId,
+  }: {
+    lessonId: number
+    teacherId: string
+    studentId: string
+  }): void {
+    const teacherIndex: number = this.teachers.findIndex((val: TeacherShift): boolean => val.id === teacherId)
+    if (teacherIndex >= 0) {
+      const lessonTotal: number = this.teachers[teacherIndex].lessonTotal - 1
+      this.teachers.splice(teacherIndex, 1, { ...this.teachers[teacherIndex], lessonTotal })
+    }
+    const studentIndex: number = this.students.findIndex((val: StudentShift): boolean => val.id === studentId)
+    if (studentIndex >= 0) {
+      const lessonTotal: number = this.students[studentIndex].lessonTotal - 1
+      this.students.splice(studentIndex, 1, { ...this.students[studentIndex], lessonTotal })
+    }
+    const lessonIndex: number = this.lessons.findIndex((val: Lesson): boolean => val.id === lessonId)
+    if (lessonIndex >= 0) {
+      this.lessons.splice(lessonIndex, 1)
+    }
   }
 
   @Mutation
@@ -651,6 +707,9 @@ export default class ShiftModule extends VuexModule {
 
   @Action({ rawError: true })
   public async listTeacherLessons({ summaryId, teacherId }: { summaryId: number; teacherId: string }): Promise<void> {
+    if (teacherId === '') {
+      return
+    }
     await $axios
       .$get(`/v1/shifts/${summaryId}/lessons?teacherId=${teacherId}`)
       .then((res: LessonsResponse) => {
@@ -669,6 +728,9 @@ export default class ShiftModule extends VuexModule {
 
   @Action({ rawError: true })
   public async listStudentLessons({ summaryId, studentId }: { summaryId: number; studentId: string }): Promise<void> {
+    if (studentId === '') {
+      return
+    }
     await $axios
       .$get(`/v1/shifts/${summaryId}/lessons?studentId=${studentId}`)
       .then((res: LessonsResponse) => {
@@ -678,6 +740,70 @@ export default class ShiftModule extends VuexModule {
         })
 
         this.setStudentLessons({ lessons, total })
+      })
+      .catch((err: AxiosError) => {
+        const res: ErrorResponse = { ...err.response?.data }
+        throw new ApiError(res.status, res.message, res)
+      })
+  }
+
+  @Action({ rawError: true })
+  private async createLesson({ summaryId, form }: { summaryId: number; form: ShiftLessonForm }): Promise<void> {
+    const req: CreateShiftLessonRequest = {
+      shiftId: form.params.shiftId,
+      room: form.params.room,
+      subjectId: form.params.subjectId,
+      teacherId: form.params.teacherId,
+      studentId: form.params.studentId,
+    }
+
+    await $axios
+      .$post(`/v1/shifts/${summaryId}/lessons`, req)
+      .then((res: ShiftLessonResponse) => {
+        this.addLesson({ ...res })
+      })
+      .catch((err: AxiosError) => {
+        const res: ErrorResponse = { ...err.response?.data }
+        throw new ApiError(res.status, res.message, res)
+      })
+  }
+
+  @Action({ rawError: true })
+  private async updateLesson({ summaryId, form }: { summaryId: number; form: ShiftLessonForm }): Promise<void> {
+    const req: UpdateShiftLessonRequest = {
+      shiftId: form.params.shiftId,
+      room: form.params.room,
+      subjectId: form.params.subjectId,
+      teacherId: form.params.teacherId,
+      studentId: form.params.studentId,
+    }
+
+    await $axios
+      .$patch(`/v1/shifts/${summaryId}/lessons/${form.params.lessonId}`, req)
+      .then((res: ShiftLessonResponse) => {
+        this.replaceLesson({ ...res })
+      })
+      .catch((err: AxiosError) => {
+        const res: ErrorResponse = { ...err.response?.data }
+        throw new ApiError(res.status, res.message, res)
+      })
+  }
+
+  @Action({ rawError: true })
+  public async upsertLesson({ summaryId, form }: { summaryId: number; form: ShiftLessonForm }): Promise<void> {
+    if (form.params.lessonId === 0) {
+      await this.createLesson({ summaryId, form })
+    } else {
+      await this.updateLesson({ summaryId, form })
+    }
+  }
+
+  @Action({ rawError: true })
+  public async deleteLesson({ summaryId, form }: { summaryId: number; form: ShiftLessonForm }): Promise<void> {
+    await $axios
+      .$delete(`/v1/shifts/${summaryId}/lessons/${form.params.lessonId}`)
+      .then(() => {
+        this.removeLesson({ ...form.params })
       })
       .catch((err: AxiosError) => {
         const res: ErrorResponse = { ...err.response?.data }
