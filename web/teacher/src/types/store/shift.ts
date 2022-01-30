@@ -49,6 +49,7 @@ export interface ShiftLessonDetail {
   summaryId: number
   shiftId: number
   room: number
+  date: string
   current?: ShiftLesson
   teachers: Teacher[]
   students: Student[]
@@ -87,8 +88,9 @@ export interface StudentShift {
   id: string
   name: string
   nameKana: string
-  lessonTotal: number
+  suggestedLessons: SuggestedLesson[]
   suggestedLessonsTotal: number
+  lessonTotal: number
 }
 
 export interface StudentShiftSummary {

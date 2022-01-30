@@ -53,6 +53,7 @@ describe('components/templates/TheUserTop', () => {
             小学校: [],
             中学校: [],
             高校: [],
+            その他: [],
           })
         })
         it('値が代入されること', async () => {
@@ -87,6 +88,7 @@ describe('components/templates/TheUserTop', () => {
                 updatedAt: '',
               },
             ],
+            その他: [],
           }
           await wrapper.setProps({ subjects })
           expect(wrapper.props().subjects).toEqual({
@@ -120,6 +122,7 @@ describe('components/templates/TheUserTop', () => {
                 updatedAt: '',
               },
             ],
+            その他: [],
           })
         })
       })
@@ -183,6 +186,7 @@ describe('components/templates/TheUserTop', () => {
               小学校: [],
               中学校: [],
               高校: [],
+              その他: [],
             },
             createdAt: '',
             updatedAt: '',
@@ -224,6 +228,7 @@ describe('components/templates/TheUserTop', () => {
                 小学校: [],
                 中学校: [],
                 高校: [],
+                その他: [],
               },
               createdAt: '',
               updatedAt: '',
@@ -393,6 +398,7 @@ describe('components/templates/TheUserTop', () => {
               小学校: [],
               中学校: [],
               高校: [],
+              その他: [],
             },
             createdAt: '',
             updatedAt: '',

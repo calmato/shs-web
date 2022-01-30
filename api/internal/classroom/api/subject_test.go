@@ -3,6 +3,7 @@ package api
 import (
 	"context"
 	"testing"
+	"time"
 
 	"github.com/calmato/shs-web/api/internal/classroom/database"
 	"github.com/calmato/shs-web/api/internal/classroom/entity"
@@ -345,7 +346,15 @@ func TestCreateSubject(t *testing.T) {
 			req: req,
 			expect: &testResponse{
 				code: codes.OK,
-				body: &classroom.CreateSubjectResponse{},
+				body: &classroom.CreateSubjectResponse{
+					Subject: &classroom.Subject{
+						Name:       "国語",
+						Color:      "#F8BBD0",
+						SchoolType: classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL,
+						CreatedAt:  time.Time{}.Unix(),
+						UpdatedAt:  time.Time{}.Unix(),
+					},
+				},
 			},
 		},
 		{
