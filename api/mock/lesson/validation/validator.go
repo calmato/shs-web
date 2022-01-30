@@ -244,6 +244,20 @@ func (mr *MockRequestValidationMockRecorder) ListTeacherSubmissionsByShiftSummar
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListTeacherSubmissionsByShiftSummaryIDs", reflect.TypeOf((*MockRequestValidation)(nil).ListTeacherSubmissionsByShiftSummaryIDs), req)
 }
 
+// UpdateLesson mocks base method.
+func (m *MockRequestValidation) UpdateLesson(req *lesson.UpdateLessonRequest) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateLesson", req)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateLesson indicates an expected call of UpdateLesson.
+func (mr *MockRequestValidationMockRecorder) UpdateLesson(req interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateLesson", reflect.TypeOf((*MockRequestValidation)(nil).UpdateLesson), req)
+}
+
 // UpdateShiftSummarySchedule mocks base method.
 func (m *MockRequestValidation) UpdateShiftSummarySchedule(req *lesson.UpdateShiftSummaryScheduleRequest) error {
 	m.ctrl.T.Helper()

@@ -113,3 +113,62 @@ func (s *lessonService) CreateLesson(
 	}
 	return res, nil
 }
+
+func (s *lessonService) UpdateLesson(
+	ctx context.Context, req *lesson.UpdateLessonRequest,
+) (*lesson.UpdateLessonResponse, error) {
+	if err := s.validator.UpdateLesson(req); err != nil {
+		return nil, gRPCError(err)
+	}
+
+	eg, ectx := errgroup.WithContext(ctx)
+	eg.Go(func() error {
+		in := &classroom.GetSubjectRequest{Id: req.SubjectId}
+		_, err := s.classroom.GetSubject(ectx, in)
+		return err
+	})
+	eg.Go(func() error {
+		in := &classroom.GetRoomRequest{Id: req.RoomId}
+		_, err := s.classroom.GetRoom(ectx, in)
+		return err
+	})
+	eg.Go(func() error {
+		in := &user.GetTeacherRequest{Id: req.TeacherId}
+		_, err := s.user.GetTeacher(ectx, in)
+		return err
+	})
+	eg.Go(func() error {
+		in := &user.GetStudentRequest{Id: req.StudentId}
+		_, err := s.user.GetStudent(ectx, in)
+		return err
+	})
+	eg.Go(func() error {
+		_, err := s.db.ShiftSummary.Get(ectx, req.ShiftSummaryId, "id")
+		return err
+	})
+	eg.Go(func() error {
+		_, err := s.db.Shift.Get(ectx, req.ShiftId)
+		return err
+	})
+	if err := eg.Wait(); err != nil {
+		return nil, gRPCError(err)
+	}
+
+	l := &entity.Lesson{
+		ID:             req.LessonId,
+		ShiftSummaryID: req.ShiftSummaryId,
+		ShiftID:        req.ShiftId,
+		SubjectID:      req.SubjectId,
+		RoomID:         req.RoomId,
+		TeacherID:      req.TeacherId,
+		StudentID:      req.StudentId,
+		Notes:          req.Notes,
+	}
+	err := s.db.Lesson.Update(ctx, req.LessonId, l)
+	if err != nil {
+		return nil, gRPCError(err)
+	}
+
+	res := &lesson.UpdateLessonResponse{}
+	return res, nil
+}

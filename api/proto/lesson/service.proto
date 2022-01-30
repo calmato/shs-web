@@ -18,6 +18,7 @@ import "lesson/student_shift.proto";
 service LessonService {
   rpc ListLessons(ListLessonsRequest) returns (ListLessonsResponse);
   rpc CreateLesson(CreateLessonRequest) returns (CreateLessonResponse);
+  rpc UpdateLesson(UpdateLessonRequest) returns (UpdateLessonResponse);
   rpc ListShiftSummaries(ListShiftSummariesRequest) returns (ListShiftSummariesResponse);
   rpc GetShiftSummary(GetShiftSummaryRequest) returns (GetShiftSummaryResponse);
   rpc UpdateShiftSummarySchedule(UpdateShiftSummaryScheduleRequest) returns (UpdateShiftSummaryShceduleResponse);
@@ -63,6 +64,19 @@ message CreateLessonResponse {
   Lesson lesson = 1;
   Shift  shift  = 2;
 }
+
+message UpdateLessonRequest {
+  int64  lesson_id        = 1 [(validate.rules).int64 = { gt: 0 }];
+  int64  shift_summary_id = 2 [(validate.rules).int64 = { gt: 0 }];
+  int64  shift_id         = 3 [(validate.rules).int64 = { gt: 0 }];
+  int64  subject_id       = 4 [(validate.rules).int64 = { gt: 0 }];
+  int32  room_id          = 5 [(validate.rules).int32 = { gt: 0 }];
+  string teacher_id       = 6 [(validate.rules).string = { min_len: 1 }];
+  string student_id       = 7 [(validate.rules).string = { min_len: 1 }];
+  string notes            = 8 [(validate.rules).string = { max_len: 200 }];
+}
+
+message UpdateLessonResponse {}
 
 message ListShiftSummariesRequest {
   enum OrderBy {
