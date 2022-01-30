@@ -1,5 +1,9 @@
 <template>
   <div>
+    <!-- 初回ロード (初回の画面描画に時間がかかるため) -->
+    <v-overlay :value="overlay">
+      <v-progress-circular indeterminate size="64" />
+    </v-overlay>
     <!-- PCレイアウト -->
     <pc-shift-detail
       class="hidden-sm-and-down"
@@ -79,6 +83,8 @@ export default defineComponent({
     const store = useStore()
 
     const summaryId = Number(route.value.params.id)
+
+    const overlay = ref<boolean>(true)
     const dialogKey = ref<ShiftDialogKey>('未選択')
     const lessonLoading = ref<boolean>(false)
     const form = reactive<ShiftLessonForm>({ params: { ...ShiftLessonParams } })
@@ -102,6 +108,7 @@ export default defineComponent({
 
     useAsync(async () => {
       await listShiftDetails()
+      overlay.value = false
     })
 
     async function listShiftDetails(): Promise<void> {
@@ -310,6 +317,7 @@ export default defineComponent({
     }
 
     return {
+      overlay,
       loading,
       lessonLoading,
       dialog,
