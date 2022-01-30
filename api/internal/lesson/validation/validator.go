@@ -15,6 +15,7 @@ type RequestValidation interface {
 	ListLessons(req *lesson.ListLessonsRequest) error
 	CreateLesson(req *lesson.CreateLessonRequest) error
 	UpdateLesson(req *lesson.UpdateLessonRequest) error
+	DeleteLesson(req *lesson.DeleteLessonRequest) error
 	ListShiftSummaries(req *lesson.ListShiftSummariesRequest) error
 	GetShiftSummary(req *lesson.GetShiftSummaryRequest) error
 	UpdateShiftSummarySchedule(req *lesson.UpdateShiftSummaryScheduleRequest) error

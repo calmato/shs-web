@@ -707,3 +707,58 @@ func TestUpdateLesson(t *testing.T) {
 		}))
 	}
 }
+
+func TestDeleteLesson(t *testing.T) {
+	t.Parallel()
+	req := &lesson.DeleteLessonRequest{
+		LessonId: 1,
+	}
+
+	tests := []struct {
+		name   string
+		setup  func(ctx context.Context, t *testing.T, mocks *mocks)
+		req    *lesson.DeleteLessonRequest
+		expect *testResponse
+	}{
+		{
+			name: "success",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				mocks.validator.EXPECT().DeleteLesson(req).Return(nil)
+				mocks.db.Lesson.EXPECT().Delete(ctx, int64(1)).Return(nil)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.OK,
+			},
+		},
+		{
+			name: "invalid argument",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				req := &lesson.DeleteLessonRequest{}
+				mocks.validator.EXPECT().DeleteLesson(req).Return(validation.ErrRequestValidation)
+			},
+			req: &lesson.DeleteLessonRequest{},
+			expect: &testResponse{
+				code: codes.InvalidArgument,
+			},
+		},
+		{
+			name: "failed to delete lesson",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				mocks.validator.EXPECT().DeleteLesson(req).Return(nil)
+				mocks.db.Lesson.EXPECT().Delete(ctx, int64(1)).Return(errmock)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.Internal,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, testGRPC(tt.setup, tt.expect, func(ctx context.Context, service *lessonService) (proto.Message, error) {
+			return service.DeleteLesson(ctx, tt.req)
+		}))
+	}
+}

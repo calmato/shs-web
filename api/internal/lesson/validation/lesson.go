@@ -28,3 +28,12 @@ func (v *requestValidation) UpdateLesson(req *lesson.UpdateLessonRequest) error 
 
 	return nil
 }
+
+func (v *requestValidation) DeleteLesson(req *lesson.DeleteLessonRequest) error {
+	if err := req.Validate(); err != nil {
+		validate := err.(lesson.DeleteLessonRequestValidationError)
+		return validationError(validate.Error())
+	}
+
+	return nil
+}
