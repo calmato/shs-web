@@ -718,6 +718,75 @@ func TestUpdateShiftSummarySchedule(t *testing.T) {
 	}
 }
 
+func TestUpdateShiftSummaryDecided(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name    string
+		setup   func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller)
+		shiftID string
+		req     *request.UpdateShiftSummaryDecidedRequest
+		expect  *testResponse
+	}{
+		{
+			name: "success",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
+				in := &lesson.UpdateShiftSummaryDecidedRequest{
+					Id:      1,
+					Decided: true,
+				}
+				out := &lesson.UpdateShiftSummaryDecidedResponse{}
+				mocks.lesson.EXPECT().UpdateShiftSummaryDecided(gomock.Any(), in).Return(out, nil)
+			},
+			shiftID: "1",
+			req: &request.UpdateShiftSummaryDecidedRequest{
+				Decided: true,
+			},
+			expect: &testResponse{
+				code: http.StatusNoContent,
+			},
+		},
+		{
+			name:    "failed to parse shift id",
+			setup:   func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {},
+			shiftID: "aaa",
+			req: &request.UpdateShiftSummaryDecidedRequest{
+				Decided: true,
+			},
+			expect: &testResponse{
+				code: http.StatusBadRequest,
+			},
+		},
+		{
+			name: "failed to update shift summary decided",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
+				in := &lesson.UpdateShiftSummaryDecidedRequest{
+					Id:      1,
+					Decided: true,
+				}
+				mocks.lesson.EXPECT().UpdateShiftSummaryDecided(gomock.Any(), in).Return(nil, errmock)
+			},
+			shiftID: "1",
+			req: &request.UpdateShiftSummaryDecidedRequest{
+				Decided: true,
+			},
+			expect: &testResponse{
+				code: http.StatusInternalServerError,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			path := fmt.Sprintf("/v1/shifts/%s/decided", tt.shiftID)
+			req := newHTTPRequest(t, http.MethodPatch, path, tt.req)
+			testHTTP(t, tt.setup, tt.expect, req)
+		})
+	}
+}
+
 func TestDeleteShiftSummary(t *testing.T) {
 	t.Parallel()
 

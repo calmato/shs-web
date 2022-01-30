@@ -100,6 +100,33 @@ func (h *apiV1Handler) UpdateShiftSummarySchedule(ctx *gin.Context) {
 	ctx.JSON(http.StatusNoContent, gin.H{})
 }
 
+func (h *apiV1Handler) UpdateShiftSummaryDecided(ctx *gin.Context) {
+	c := util.SetMetadata(ctx)
+
+	req := &request.UpdateShiftSummaryDecidedRequest{}
+	if err := ctx.BindJSON(req); err != nil {
+		badRequest(ctx, err)
+		return
+	}
+	shiftSummaryID, err := strconv.ParseInt(ctx.Param("shiftId"), 10, 64)
+	if err != nil {
+		badRequest(ctx, err)
+		return
+	}
+
+	in := &lesson.UpdateShiftSummaryDecidedRequest{
+		Id:      shiftSummaryID,
+		Decided: req.Decided,
+	}
+	_, err = h.lesson.UpdateShiftSummaryDecided(c, in)
+	if err != nil {
+		httpError(ctx, err)
+		return
+	}
+
+	ctx.JSON(http.StatusNoContent, gin.H{})
+}
+
 func (h *apiV1Handler) DeleteShiftSummary(ctx *gin.Context) {
 	c := util.SetMetadata(ctx)
 
