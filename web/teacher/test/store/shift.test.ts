@@ -221,6 +221,7 @@ describe('store/shift', () => {
               id: 1,
               year: 2022,
               month: 2,
+              decided: false,
               status: ShiftStatus.FINISHED,
               openAt: '2021-01-01T00:00:00+09:00',
               endAt: '2021-01-15T00:00:00+09:00',
