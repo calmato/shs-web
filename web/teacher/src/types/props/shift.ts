@@ -23,6 +23,20 @@ export interface SubmissionTableItem {
   lessons: ShiftDetailLesson[]
 }
 
+export interface TeacherLessonTableItem {
+  date: string
+  duration: string
+  subjectId: number
+  studentId: string
+}
+
+export interface StudentLessonTableItem {
+  date: string
+  duration: string
+  subjectId: number
+  teacherId: string
+}
+
 export interface LessonFormItemTeacher {
   id: string
   name: string

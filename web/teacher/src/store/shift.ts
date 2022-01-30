@@ -331,7 +331,15 @@ export default class ShiftModule extends VuexModule {
   }
 
   @Mutation
-  private setTeacherLessons({ lessons, total }: { lessons: ShiftLesson[]; total: number }): void {
+  private setTeacherLessons({
+    current,
+    lessons,
+    total,
+  }: {
+    current: string
+    lessons: ShiftLesson[]
+    total: number
+  }): void {
     const teachers: { [key: string]: TeacherShift } = {}
     const students: { [key: string]: StudentShift } = {}
     lessons.forEach((lesson: ShiftLesson): void => {
@@ -344,7 +352,7 @@ export default class ShiftModule extends VuexModule {
         students[student.id] = student
       }
     })
-    this.teacherLessons = { lessons, teachers, students, total }
+    this.teacherLessons = { current, lessons, teachers, students, total }
   }
 
   @Mutation
@@ -361,7 +369,15 @@ export default class ShiftModule extends VuexModule {
   }
 
   @Mutation
-  private setStudentLessons({ lessons, total }: { lessons: ShiftLesson[]; total: number }): void {
+  private setStudentLessons({
+    current,
+    lessons,
+    total,
+  }: {
+    current: string
+    lessons: ShiftLesson[]
+    total: number
+  }): void {
     const teachers: { [key: string]: TeacherShift } = {}
     const students: { [key: string]: StudentShift } = {}
     lessons.forEach((lesson: ShiftLesson): void => {
@@ -374,7 +390,7 @@ export default class ShiftModule extends VuexModule {
         students[student.id] = student
       }
     })
-    this.studentLessons = { lessons, teachers, students, total }
+    this.studentLessons = { current, lessons, teachers, students, total }
   }
 
   @Mutation
@@ -739,7 +755,7 @@ export default class ShiftModule extends VuexModule {
           return { ...lesson }
         })
 
-        this.setStudentLessons({ lessons, total })
+        this.setStudentLessons({ current: studentId, lessons, total })
       })
       .catch((err: AxiosError) => {
         const res: ErrorResponse = { ...err.response?.data }

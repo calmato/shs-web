@@ -116,6 +116,7 @@ export interface StudentSubmissionDetail {
 }
 
 export interface ShiftUserLesson {
+  current: string
   lessons: ShiftLesson[]
   teachers: { [key: string]: TeacherShift }
   students: { [key: string]: StudentShift }

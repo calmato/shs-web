@@ -1,11 +1,6 @@
 <template>
   <v-container class="shift">
-    <v-dialog
-      :value.sync="dialog"
-      :width="dialogKey == '授業登録' ? '800px' : '600px'"
-      scrollable
-      @click:outside="onCloseDialog"
-    >
+    <v-dialog :value.sync="dialog" :width="dialogWidth(dialogKey)" scrollable @click:outside="onCloseDialog">
       <!-- 講師 提出シフト一覧ダイアログ -->
       <the-shift-teacher-submission-card
         v-if="dialogKey == '講師シフト'"
@@ -13,14 +8,12 @@
         @click:close="onCloseDialog"
       />
       <!-- 講師 授業一覧ダイアログ -->
-      <v-card v-if="dialogKey == '講師授業'">
-        <v-toolbar color="primary" dark>講師授業一覧</v-toolbar>
-        <v-card-text>{{ teacherLessons }}</v-card-text>
-        <v-card-actions>
-          <v-spacer />
-          <v-btn color="secondary" @click="onCloseDialog">閉じる</v-btn>
-        </v-card-actions>
-      </v-card>
+      <the-shift-teacher-lesson-card
+        v-if="dialogKey == '講師授業'"
+        :lesson="teacherLessons"
+        :subjects="subjects"
+        @click:close="onCloseDialog"
+      />
       <!-- 生徒 授業希望一覧ダイアログ -->
       <the-shift-student-submission-card
         v-if="dialogKey == '生徒授業希望'"
@@ -29,14 +22,12 @@
         @click:close="onCloseDialog"
       />
       <!-- 生徒 授業一覧ダイアログ -->
-      <v-card v-if="dialogKey == '生徒授業'">
-        <v-toolbar color="primary" dark>生徒授業一覧</v-toolbar>
-        <v-card-text>{{ studentLessons }}</v-card-text>
-        <v-card-actions>
-          <v-spacer />
-          <v-btn color="secondary" @click="onCloseDialog">閉じる</v-btn>
-        </v-card-actions>
-      </v-card>
+      <the-shift-student-lesson-card
+        v-if="dialogKey == '生徒授業'"
+        :lesson="studentLessons"
+        :subjects="subjects"
+        @click:close="onCloseDialog"
+      />
       <!-- 授業登録/編集ダイアログ -->
       <the-shift-lesson-new-card
         v-if="dialogKey == '授業登録'"
@@ -60,20 +51,23 @@
     </v-dialog>
 
     <section class="shift-header">
-      <!-- 講師情報一覧 -->
-      <the-shift-teacher-table
-        :teachers="teachers"
-        class="py-2"
-        @click:show-submissions="onClickTeacherSubmissions"
-        @click:show-lessons="onClickTeacherLessons"
-      />
-      <!-- 生徒情報一覧 -->
-      <the-shift-student-table
-        :students="students"
-        class="py-2"
-        @click:show-submissions="onClickStudentSubmissions"
-        @click:show-lessons="onClickStudentLessons"
-      />
+      <v-skeleton-loader v-if="overlay" type="table-row-divider@4" />
+      <div v-else>
+        <!-- 講師情報一覧 -->
+        <the-shift-teacher-table
+          :teachers="teachers"
+          class="py-2"
+          @click:show-submissions="onClickTeacherSubmissions"
+          @click:show-lessons="onClickTeacherLessons"
+        />
+        <!-- 生徒情報一覧 -->
+        <the-shift-student-table
+          :students="students"
+          class="py-2"
+          @click:show-submissions="onClickStudentSubmissions"
+          @click:show-lessons="onClickStudentLessons"
+        />
+      </div>
       <!-- シフトタイトル -->
       <div class="d-flex align-center py-2">
         <h3>{{ getTitle() }}</h3>
@@ -109,8 +103,10 @@ import {
 import { LessonDetail, ShiftDialogKey } from '~/types/props/shift'
 import TheShiftLessonList from '~/components/organisms/TheShiftLessonList.vue'
 import TheShiftLessonNewCard from '~/components/organisms/TheShiftLessonNewCard.vue'
+import TheShiftStudentLessonCard from '~/components/organisms/TheShiftStudentLessonCard.vue'
 import TheShiftStudentSubmissionCard from '~/components/organisms/TheShiftStudentSubmissionCard.vue'
 import TheShiftStudentTable from '~/components/organisms/TheShiftStudentTable.vue'
+import TheShiftTeacherLessonCard from '~/components/organisms/TheShiftTeacherLessonCard.vue'
 import TheShiftTeacherSubmissionCard from '~/components/organisms/TheShiftTeacherSubmissionCard.vue'
 import TheShiftTeacherTable from '~/components/organisms/TheShiftTeacherTable.vue'
 import { ShiftLessonForm, ShiftLessonParams } from '~/types/form'
@@ -119,13 +115,19 @@ export default defineComponent({
   components: {
     TheShiftLessonList,
     TheShiftLessonNewCard,
+    TheShiftStudentLessonCard,
     TheShiftStudentSubmissionCard,
     TheShiftStudentTable,
+    TheShiftTeacherLessonCard,
     TheShiftTeacherSubmissionCard,
     TheShiftTeacherTable,
   },
 
   props: {
+    overlay: {
+      type: Boolean,
+      default: false,
+    },
     loading: {
       type: Boolean,
       default: false,
@@ -199,6 +201,20 @@ export default defineComponent({
   },
 
   setup(props, { emit }: SetupContext) {
+    const dialogWidth = (key: ShiftDialogKey): string => {
+      switch (key) {
+        case '講師シフト':
+        case '生徒授業希望':
+          return '600px'
+        case '講師授業':
+        case '生徒授業':
+        case '授業登録':
+          return '800px'
+        default:
+          return '600px'
+      }
+    }
+
     const getTitle = (): string => {
       return `授業登録 ${props.summary?.year}年${props.summary?.month}月`
     }
@@ -257,6 +273,7 @@ export default defineComponent({
 
     return {
       getTitle,
+      dialogWidth,
       onClickLessonStudent,
       onClickTeacherSubmissions,
       onClickTeacherLessons,
