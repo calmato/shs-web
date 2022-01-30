@@ -13,6 +13,7 @@ var ErrRequestValidation = errors.New("validation: invalid argument")
 
 type RequestValidation interface {
 	ListLessons(req *lesson.ListLessonsRequest) error
+	ListLessonsByDuration(req *lesson.ListLessonsByDurationRequest) error
 	CreateLesson(req *lesson.CreateLessonRequest) error
 	UpdateLesson(req *lesson.UpdateLessonRequest) error
 	DeleteLesson(req *lesson.DeleteLessonRequest) error

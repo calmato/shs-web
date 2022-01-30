@@ -2,13 +2,17 @@ package api
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/calmato/shs-web/api/internal/lesson/database"
 	"github.com/calmato/shs-web/api/internal/lesson/entity"
+	"github.com/calmato/shs-web/api/pkg/jst"
 	"github.com/calmato/shs-web/api/proto/classroom"
 	"github.com/calmato/shs-web/api/proto/lesson"
 	"github.com/calmato/shs-web/api/proto/user"
 	"golang.org/x/sync/errgroup"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 func (s *lessonService) ListLessons(
@@ -69,6 +73,54 @@ func (s *lessonService) ListLessons(
 		Lessons: lessons.Proto(),
 		Shifts:  shifts.Proto(),
 		Total:   total,
+	}
+	return res, nil
+}
+
+func (s *lessonService) ListLessonsByDuration(
+	ctx context.Context, req *lesson.ListLessonsByDurationRequest,
+) (*lesson.ListLessonsByDurationResponse, error) {
+	if err := s.validator.ListLessonsByDuration(req); err != nil {
+		return nil, gRPCError(err)
+	}
+	since, err := jst.ParseFromYYYYMMDD(req.Since)
+	if err != nil {
+		err = fmt.Errorf("failed to parse error: %w", err)
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+	until, err := jst.ParseFromYYYYMMDD(req.Until)
+	if err != nil {
+		err = fmt.Errorf("failed to parse error: %w", err)
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+
+	shifts, err := s.db.Shift.ListByDuration(ctx, jst.BeginningOfDay(since), jst.EndOfDay(until))
+	if err != nil {
+		return nil, gRPCError(err)
+	}
+
+	params := &database.ListLessonsParams{
+		ShiftIDs:  shifts.IDs(),
+		TeacherID: req.TeacherId,
+		StudentID: req.StudentId,
+	}
+	lessons, err := s.db.Lesson.List(ctx, params)
+	if err != nil {
+		return nil, gRPCError(err)
+	}
+
+	summaries, err := s.db.ShiftSummary.MultiGet(ctx, lessons.ShiftSummaryIDs())
+	if err != nil {
+		return nil, gRPCError(err)
+	}
+	lessons, err = lessons.Decided(summaries.Map())
+	if err != nil {
+		return nil, gRPCError(err)
+	}
+
+	res := &lesson.ListLessonsByDurationResponse{
+		Lessons: lessons.Proto(),
+		Shifts:  shifts.Proto(),
 	}
 	return res, nil
 }

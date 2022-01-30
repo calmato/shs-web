@@ -93,6 +93,14 @@ func (s *Shift) Proto() *lesson.Shift {
 	}
 }
 
+func (ss Shifts) IDs() []int64 {
+	res := make([]int64, len(ss))
+	for i := range ss {
+		res[i] = ss[i].ID
+	}
+	return res
+}
+
 func (ss Shifts) GroupByShiftSummaryID() map[int64]Shifts {
 	shifts := make(map[int64]Shifts)
 	for _, s := range ss {

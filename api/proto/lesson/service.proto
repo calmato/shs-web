@@ -17,6 +17,7 @@ import "lesson/student_shift.proto";
 
 service LessonService {
   rpc ListLessons(ListLessonsRequest) returns (ListLessonsResponse);
+  rpc ListLessonsByDuration(ListLessonsByDurationRequest) returns (ListLessonsByDurationResponse);
   rpc CreateLesson(CreateLessonRequest) returns (CreateLessonResponse);
   rpc UpdateLesson(UpdateLessonRequest) returns (UpdateLessonResponse);
   rpc DeleteLesson(DeleteLessonRequest) returns (DeleteLessonResponse);
@@ -51,6 +52,18 @@ message ListLessonsResponse {
   repeated Lesson lessons = 1;
   repeated Shift  shifts  = 2;
   int64           total   = 3;
+}
+
+message ListLessonsByDurationRequest {
+  string since      = 1 [(validate.rules).string = { len: 8, pattern: "^[0-9]*$" }];
+  string until      = 2 [(validate.rules).string = { len: 8, pattern: "^[0-9]*$" }];
+  string teacher_id = 3;
+  string student_id = 4;
+}
+
+message ListLessonsByDurationResponse {
+  repeated Lesson lessons = 1;
+  repeated Shift  shifts  = 2;
 }
 
 message CreateLessonRequest {

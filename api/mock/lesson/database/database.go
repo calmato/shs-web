@@ -317,6 +317,26 @@ func (mr *MockShiftMockRecorder) List(ctx, p interface{}, fields ...interface{})
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "List", reflect.TypeOf((*MockShift)(nil).List), varargs...)
 }
 
+// ListByDuration mocks base method.
+func (m *MockShift) ListByDuration(ctx context.Context, since, until time.Time, fields ...string) (entity.Shifts, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, since, until}
+	for _, a := range fields {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "ListByDuration", varargs...)
+	ret0, _ := ret[0].(entity.Shifts)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListByDuration indicates an expected call of ListByDuration.
+func (mr *MockShiftMockRecorder) ListByDuration(ctx, since, until interface{}, fields ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, since, until}, fields...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListByDuration", reflect.TypeOf((*MockShift)(nil).ListByDuration), varargs...)
+}
+
 // MultiGet mocks base method.
 func (m *MockShift) MultiGet(ctx context.Context, ids []int64, fields ...string) (entity.Shifts, error) {
 	m.ctrl.T.Helper()

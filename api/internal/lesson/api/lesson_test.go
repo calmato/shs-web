@@ -321,6 +321,227 @@ func TestListLessons(t *testing.T) {
 	}
 }
 
+func TestListLessonsByDurations(t *testing.T) {
+	t.Parallel()
+	now := jst.Date(2022, 1, 15, 0, 0, 0, 0)
+	req := &lesson.ListLessonsByDurationRequest{
+		TeacherId: "teacherid",
+		Since:     "20220201",
+		Until:     "20220201",
+	}
+	lessons := entity.Lessons{
+		{
+			ID:             1,
+			ShiftSummaryID: 1,
+			ShiftID:        1,
+			SubjectID:      1,
+			RoomID:         1,
+			TeacherID:      "teacherid",
+			StudentID:      "studentid",
+			Notes:          "",
+			CreatedAt:      now,
+			UpdatedAt:      now,
+		},
+	}
+	summaries := entity.ShiftSummaries{
+		{
+			ID:        1,
+			YearMonth: 202202,
+			Decided:   true,
+			Status:    entity.ShiftStatusAccepting,
+			OpenAt:    jst.Date(2022, 1, 1, 0, 0, 0, 0),
+			EndAt:     jst.Date(2022, 1, 15, 0, 0, 0, 0),
+			CreatedAt: now,
+			UpdatedAt: now,
+		},
+	}
+	shifts := entity.Shifts{
+		{
+			ID:             1,
+			ShiftSummaryID: 1,
+			Date:           jst.Date(2022, 2, 1, 0, 0, 0, 0),
+			StartTime:      "1700",
+			EndTime:        "1830",
+			CreatedAt:      now,
+			UpdatedAt:      now,
+		},
+	}
+	tests := []struct {
+		name   string
+		setup  func(ctx context.Context, t *testing.T, mocks *mocks)
+		req    *lesson.ListLessonsByDurationRequest
+		expect *testResponse
+	}{
+		{
+			name: "success",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				params := &database.ListLessonsParams{
+					ShiftIDs:  []int64{1},
+					TeacherID: "teacherid",
+				}
+				since := jst.BeginningOfDay(jst.Date(2022, 2, 1, 0, 0, 0, 0))
+				until := jst.EndOfDay(jst.Date(2022, 2, 1, 0, 0, 0, 0))
+				mocks.validator.EXPECT().ListLessonsByDuration(req).Return(nil)
+				mocks.db.Shift.EXPECT().ListByDuration(ctx, since, until).Return(shifts, nil)
+				mocks.db.Lesson.EXPECT().List(ctx, params).Return(lessons, nil)
+				mocks.db.ShiftSummary.EXPECT().MultiGet(ctx, []int64{1}).Return(summaries, nil)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.OK,
+				body: &lesson.ListLessonsByDurationResponse{
+					Lessons: []*lesson.Lesson{
+						{
+							Id:             1,
+							ShiftSummaryId: 1,
+							ShiftId:        1,
+							SubjectId:      1,
+							RoomId:         1,
+							TeacherId:      "teacherid",
+							StudentId:      "studentid",
+							Notes:          "",
+							CreatedAt:      now.Unix(),
+							UpdatedAt:      now.Unix(),
+						},
+					},
+					Shifts: []*lesson.Shift{
+						{
+							Id:             1,
+							ShiftSummaryId: 1,
+							Date:           "20220201",
+							StartTime:      "1700",
+							EndTime:        "1830",
+							CreatedAt:      now.Unix(),
+							UpdatedAt:      now.Unix(),
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "invalid argument",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				req := &lesson.ListLessonsByDurationRequest{}
+				mocks.validator.EXPECT().ListLessonsByDuration(req).Return(validation.ErrRequestValidation)
+			},
+			req: &lesson.ListLessonsByDurationRequest{},
+			expect: &testResponse{
+				code: codes.InvalidArgument,
+			},
+		},
+		{
+			name: "failed to parse error for since",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				req := &lesson.ListLessonsByDurationRequest{
+					Since: "20220100",
+					Until: "20220107",
+				}
+				mocks.validator.EXPECT().ListLessonsByDuration(req).Return(nil)
+			},
+			req: &lesson.ListLessonsByDurationRequest{
+				Since: "20220100",
+				Until: "20220107",
+			},
+			expect: &testResponse{
+				code: codes.InvalidArgument,
+			},
+		},
+		{
+			name: "failed to parse error for until",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				req := &lesson.ListLessonsByDurationRequest{
+					Since: "20220101",
+					Until: "20220100",
+				}
+				mocks.validator.EXPECT().ListLessonsByDuration(req).Return(nil)
+			},
+			req: &lesson.ListLessonsByDurationRequest{
+				Since: "20220101",
+				Until: "20220100",
+			},
+			expect: &testResponse{
+				code: codes.InvalidArgument,
+			},
+		},
+		{
+			name: "failed to list shifts",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				since := jst.BeginningOfDay(jst.Date(2022, 2, 1, 0, 0, 0, 0))
+				until := jst.EndOfDay(jst.Date(2022, 2, 1, 0, 0, 0, 0))
+				mocks.validator.EXPECT().ListLessonsByDuration(req).Return(nil)
+				mocks.db.Shift.EXPECT().ListByDuration(ctx, since, until).Return(nil, errmock)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.Internal,
+			},
+		},
+		{
+			name: "failed to list lessons",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				params := &database.ListLessonsParams{
+					ShiftIDs:  []int64{1},
+					TeacherID: "teacherid",
+				}
+				since := jst.BeginningOfDay(jst.Date(2022, 2, 1, 0, 0, 0, 0))
+				until := jst.EndOfDay(jst.Date(2022, 2, 1, 0, 0, 0, 0))
+				mocks.validator.EXPECT().ListLessonsByDuration(req).Return(nil)
+				mocks.db.Shift.EXPECT().ListByDuration(ctx, since, until).Return(shifts, nil)
+				mocks.db.Lesson.EXPECT().List(ctx, params).Return(nil, errmock)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.Internal,
+			},
+		},
+		{
+			name: "failed to list shift summaries",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				params := &database.ListLessonsParams{
+					ShiftIDs:  []int64{1},
+					TeacherID: "teacherid",
+				}
+				since := jst.BeginningOfDay(jst.Date(2022, 2, 1, 0, 0, 0, 0))
+				until := jst.EndOfDay(jst.Date(2022, 2, 1, 0, 0, 0, 0))
+				mocks.validator.EXPECT().ListLessonsByDuration(req).Return(nil)
+				mocks.db.Shift.EXPECT().ListByDuration(ctx, since, until).Return(shifts, nil)
+				mocks.db.Lesson.EXPECT().List(ctx, params).Return(lessons, nil)
+				mocks.db.ShiftSummary.EXPECT().MultiGet(ctx, []int64{1}).Return(nil, errmock)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.Internal,
+			},
+		},
+		{
+			name: "failed to filter lessons",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				params := &database.ListLessonsParams{
+					ShiftIDs:  []int64{1},
+					TeacherID: "teacherid",
+				}
+				since := jst.BeginningOfDay(jst.Date(2022, 2, 1, 0, 0, 0, 0))
+				until := jst.EndOfDay(jst.Date(2022, 2, 1, 0, 0, 0, 0))
+				mocks.validator.EXPECT().ListLessonsByDuration(req).Return(nil)
+				mocks.db.Shift.EXPECT().ListByDuration(ctx, since, until).Return(shifts, nil)
+				mocks.db.Lesson.EXPECT().List(ctx, params).Return(lessons, nil)
+				mocks.db.ShiftSummary.EXPECT().MultiGet(ctx, []int64{1}).Return(entity.ShiftSummaries{}, nil)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.Internal,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, testGRPC(tt.setup, tt.expect, func(ctx context.Context, service *lessonService) (proto.Message, error) {
+			return service.ListLessonsByDuration(ctx, tt.req)
+		}))
+	}
+}
+
 func TestCreateLesson(t *testing.T) {
 	t.Parallel()
 

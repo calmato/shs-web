@@ -54,6 +54,77 @@ func TestListLessons(t *testing.T) {
 	}
 }
 
+func TestListLessonsByDuration(t *testing.T) {
+	t.Parallel()
+	validator := NewRequestValidation()
+
+	tests := []struct {
+		name  string
+		req   *lesson.ListLessonsByDurationRequest
+		isErr bool
+	}{
+		{
+			name: "success",
+			req: &lesson.ListLessonsByDurationRequest{
+				TeacherId: "teacherid",
+				StudentId: "studentid",
+				Since:     "20220101",
+				Until:     "20220107",
+			},
+			isErr: false,
+		},
+		{
+			name: "Since is len",
+			req: &lesson.ListLessonsByDurationRequest{
+				TeacherId: "teacherid",
+				StudentId: "studentid",
+				Since:     "",
+				Until:     "20220107",
+			},
+			isErr: true,
+		},
+		{
+			name: "Since is pattern",
+			req: &lesson.ListLessonsByDurationRequest{
+				TeacherId: "teacherid",
+				StudentId: "studentid",
+				Since:     "abcdefgh",
+				Until:     "20220107",
+			},
+			isErr: true,
+		},
+		{
+			name: "Until is len",
+			req: &lesson.ListLessonsByDurationRequest{
+				TeacherId: "teacherid",
+				StudentId: "studentid",
+				Since:     "20220101",
+				Until:     "",
+			},
+			isErr: true,
+		},
+		{
+			name: "Until is pattern",
+			req: &lesson.ListLessonsByDurationRequest{
+				TeacherId: "teacherid",
+				StudentId: "studentid",
+				Since:     "20220101",
+				Until:     "abcdefgh",
+			},
+			isErr: true,
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			err := validator.ListLessonsByDuration(tt.req)
+			assert.Equal(t, tt.isErr, err != nil, err)
+		})
+	}
+}
+
 func TestCreateLesson(t *testing.T) {
 	t.Parallel()
 	validator := NewRequestValidation()

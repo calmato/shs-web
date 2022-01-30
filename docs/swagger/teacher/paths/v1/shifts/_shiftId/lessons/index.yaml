@@ -33,7 +33,7 @@ get:
       content:
         application/json:
           schema:
-            $ref: './../../../../../openapi.yaml#/components/schemas/v1LessonsResponse'
+            $ref: './../../../../../openapi.yaml#/components/schemas/v1ShiftLessonsResponse'
     default:
       description: An unexpected error response.
       content:

@@ -116,17 +116,20 @@ func (l *lesson) Count(ctx context.Context, params *ListLessonsParams) (int64, e
 }
 
 func (p *ListLessonsParams) Statement(tx *gorm.DB) {
+	if p.TeacherID != "" {
+		tx.Where("teacher_id = ?", p.TeacherID)
+	}
+	if p.StudentID != "" {
+		tx.Where("student_id = ?", p.StudentID)
+	}
 	if p.ShiftSummaryID > 0 {
 		tx.Where("shift_summary_id = ?", p.ShiftSummaryID)
 	}
 	if p.ShiftID > 0 {
 		tx.Where("shift_id = ?", p.ShiftID)
 	}
-	if p.TeacherID != "" {
-		tx.Where("teacher_id = ?", p.TeacherID)
-	}
-	if p.StudentID != "" {
-		tx.Where("student_id = ?", p.StudentID)
+	if len(p.ShiftIDs) > 0 {
+		tx.Where("shift_id IN (?)", p.ShiftIDs)
 	}
 	if p.Limit > 0 {
 		tx.Limit(p.Limit)

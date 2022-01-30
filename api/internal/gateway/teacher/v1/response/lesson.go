@@ -7,6 +7,7 @@ type LessonResponse struct {
 }
 
 type LessonsResponse struct {
-	Lessons entity.Lessons `json:"lessons"` // 授業一覧
-	Total   int64          `json:"total"`   // 授業合計数
+	Lessons  entity.Lessons  `json:"lessons"`  // 授業一覧
+	Teachers entity.Teachers `json:"teachers"` // 講師一覧
+	Students entity.Students `json:"students"` // 生徒一覧
 }
