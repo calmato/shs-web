@@ -54,6 +54,138 @@ func TestLesson_Proto(t *testing.T) {
 	}
 }
 
+func TestLessons_ShiftSummaryIDs(t *testing.T) {
+	t.Parallel()
+	now := jst.Now()
+	tests := []struct {
+		name    string
+		lessons Lessons
+		expect  []int64
+	}{
+		{
+			name: "success",
+			lessons: Lessons{
+				{
+					ID:             1,
+					ShiftSummaryID: 1,
+					ShiftID:        1,
+					SubjectID:      1,
+					RoomID:         1,
+					TeacherID:      "teacherid",
+					StudentID:      "studentid",
+					Notes:          "",
+					CreatedAt:      now,
+					UpdatedAt:      now,
+				},
+			},
+			expect: []int64{1},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tt.expect, tt.lessons.ShiftSummaryIDs())
+		})
+	}
+}
+
+func TestLessons_ShiftIDs(t *testing.T) {
+	t.Parallel()
+	now := jst.Now()
+	tests := []struct {
+		name    string
+		lessons Lessons
+		expect  []int64
+	}{
+		{
+			name: "success",
+			lessons: Lessons{
+				{
+					ID:             1,
+					ShiftSummaryID: 1,
+					ShiftID:        1,
+					SubjectID:      1,
+					RoomID:         1,
+					TeacherID:      "teacherid",
+					StudentID:      "studentid",
+					Notes:          "",
+					CreatedAt:      now,
+					UpdatedAt:      now,
+				},
+			},
+			expect: []int64{1},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tt.expect, tt.lessons.ShiftIDs())
+		})
+	}
+}
+
+func TestLessons_Decided(t *testing.T) {
+	t.Parallel()
+	now := jst.Now()
+	tests := []struct {
+		name      string
+		lessons   Lessons
+		summaries map[int64]*ShiftSummary
+		expect    Lessons
+		isErr     bool
+	}{
+		{
+			name: "success",
+			lessons: Lessons{
+				{
+					ID:             1,
+					ShiftSummaryID: 1,
+					ShiftID:        1,
+					SubjectID:      1,
+					RoomID:         1,
+					TeacherID:      "teacherid",
+					StudentID:      "studentid",
+					Notes:          "",
+					CreatedAt:      now,
+					UpdatedAt:      now,
+				},
+			},
+			summaries: map[int64]*ShiftSummary{
+				1: {Decided: true},
+			},
+			expect: Lessons{
+				{
+					ID:             1,
+					ShiftSummaryID: 1,
+					ShiftID:        1,
+					SubjectID:      1,
+					RoomID:         1,
+					TeacherID:      "teacherid",
+					StudentID:      "studentid",
+					Notes:          "",
+					CreatedAt:      now,
+					UpdatedAt:      now,
+				},
+			},
+			isErr: false,
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			actual, err := tt.lessons.Decided(tt.summaries)
+			assert.Equal(t, tt.isErr, err != nil, err)
+			assert.Equal(t, tt.expect, actual)
+		})
+	}
+}
+
 func TestLessons_Proto(t *testing.T) {
 	t.Parallel()
 	now := jst.Now()

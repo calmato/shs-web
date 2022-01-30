@@ -24,6 +24,7 @@ func TestListLessons(t *testing.T) {
 				ShiftId:        1,
 				TeacherId:      "teacherid",
 				StudentId:      "studentid",
+				OnlyDecided:    false,
 			},
 			isErr: false,
 		},

@@ -23,6 +23,7 @@ const (
 type ShiftSummary struct {
 	ID        int64       `gorm:"primaryKey;autoIncrement;<-:create"`
 	YearMonth int32       `gorm:""`
+	Decided   bool        `gorm:""`
 	Status    ShiftStatus `gorm:"-"`
 	OpenAt    time.Time   `gorm:""`
 	EndAt     time.Time   `gorm:""`
@@ -75,6 +76,7 @@ func (s *ShiftSummary) Proto() *lesson.ShiftSummary {
 	return &lesson.ShiftSummary{
 		Id:        s.ID,
 		YearMonth: s.YearMonth,
+		Decided:   s.Decided,
 		Status:    lesson.ShiftStatus(s.Status),
 		OpenAt:    s.OpenAt.Unix(),
 		EndAt:     s.EndAt.Unix(),

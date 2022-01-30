@@ -43,6 +43,7 @@ message ListLessonsRequest {
   int64  shift_id         = 2 [(validate.rules).int64 = { gte: 0 }];
   string teacher_id       = 3;
   string student_id       = 4;
+  bool   only_decided     = 5;
 }
 
 message ListLessonsResponse {

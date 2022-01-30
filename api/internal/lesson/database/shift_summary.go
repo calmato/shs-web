@@ -12,7 +12,7 @@ import (
 const shiftSummaryTable = "shift_summaries"
 
 var shiftSummaryFields = []string{
-	"id", "year_month", "open_at", "end_at", "created_at", "updated_at",
+	"id", "year_month", "decided", "open_at", "end_at", "created_at", "updated_at",
 }
 
 type shiftSummary struct {
@@ -66,6 +66,23 @@ func (s *shiftSummary) List(
 		return nil, dbError(err)
 	}
 	summaries.Fill(now)
+	return summaries, nil
+}
+
+func (s *shiftSummary) MultiGet(ctx context.Context, ids []int64, fields ...string) (entity.ShiftSummaries, error) {
+	var summaries entity.ShiftSummaries
+	if len(fields) == 0 {
+		fields = shiftSummaryFields
+	}
+
+	stmt := s.db.DB.Table(shiftSummaryTable).Select(fields).
+		Where("id IN (?)", ids)
+
+	err := stmt.Find(&summaries).Error
+	if err != nil {
+		return nil, dbError(err)
+	}
+	summaries.Fill(s.now())
 	return summaries, nil
 }
 
