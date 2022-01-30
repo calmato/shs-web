@@ -196,6 +196,26 @@ func (mr *MockLessonServiceClientMockRecorder) ListLessons(ctx, in interface{}, 
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListLessons", reflect.TypeOf((*MockLessonServiceClient)(nil).ListLessons), varargs...)
 }
 
+// ListLessonsByDuration mocks base method.
+func (m *MockLessonServiceClient) ListLessonsByDuration(ctx context.Context, in *lesson.ListLessonsByDurationRequest, opts ...grpc.CallOption) (*lesson.ListLessonsByDurationResponse, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "ListLessonsByDuration", varargs...)
+	ret0, _ := ret[0].(*lesson.ListLessonsByDurationResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListLessonsByDuration indicates an expected call of ListLessonsByDuration.
+func (mr *MockLessonServiceClientMockRecorder) ListLessonsByDuration(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListLessonsByDuration", reflect.TypeOf((*MockLessonServiceClient)(nil).ListLessonsByDuration), varargs...)
+}
+
 // ListShiftSummaries mocks base method.
 func (m *MockLessonServiceClient) ListShiftSummaries(ctx context.Context, in *lesson.ListShiftSummariesRequest, opts ...grpc.CallOption) (*lesson.ListShiftSummariesResponse, error) {
 	m.ctrl.T.Helper()
@@ -597,6 +617,21 @@ func (m *MockLessonServiceServer) ListLessons(arg0 context.Context, arg1 *lesson
 func (mr *MockLessonServiceServerMockRecorder) ListLessons(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListLessons", reflect.TypeOf((*MockLessonServiceServer)(nil).ListLessons), arg0, arg1)
+}
+
+// ListLessonsByDuration mocks base method.
+func (m *MockLessonServiceServer) ListLessonsByDuration(arg0 context.Context, arg1 *lesson.ListLessonsByDurationRequest) (*lesson.ListLessonsByDurationResponse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ListLessonsByDuration", arg0, arg1)
+	ret0, _ := ret[0].(*lesson.ListLessonsByDurationResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListLessonsByDuration indicates an expected call of ListLessonsByDuration.
+func (mr *MockLessonServiceServerMockRecorder) ListLessonsByDuration(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListLessonsByDuration", reflect.TypeOf((*MockLessonServiceServer)(nil).ListLessonsByDuration), arg0, arg1)
 }
 
 // ListShiftSummaries mocks base method.

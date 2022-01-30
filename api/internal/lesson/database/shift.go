@@ -52,6 +52,20 @@ func (s *shift) List(ctx context.Context, params *ListShiftsParams, fields ...st
 	return shifts, dbError(err)
 }
 
+func (s *shift) ListByDuration(ctx context.Context, since, until time.Time, fields ...string) (entity.Shifts, error) {
+	var shifts entity.Shifts
+	if len(fields) == 0 {
+		fields = shiftFields
+	}
+
+	stmt := s.db.DB.Table(shiftTable).Select(fields).
+		Where("date >= ?", since).
+		Where("date < ?", until)
+
+	err := stmt.Find(&shifts).Error
+	return shifts, dbError(err)
+}
+
 func (s *shift) ListBySummaryID(ctx context.Context, summaryID int64, fields ...string) (entity.Shifts, error) {
 	var shifts entity.Shifts
 	if len(fields) == 0 {
