@@ -15,6 +15,7 @@ type ShiftSummary struct {
 	ID        int64       `json:"id"`        // シフト募集ID
 	Year      int32       `json:"year"`      // 年
 	Month     int32       `json:"month"`     // 月
+	Decided   bool        `json:"decided"`   // 授業スケジュール確定フラグ
 	Status    ShiftStatus `json:"status"`    // シフト募集ステータス
 	OpenAt    time.Time   `json:"openAt"`    // 募集開始日時
 	EndAt     time.Time   `json:"endAt"`     // 募集締切日時
@@ -38,6 +39,7 @@ func NewShiftSummary(summary *entity.ShiftSummary) *ShiftSummary {
 		ID:        summary.Id,
 		Year:      summary.YearMonth / 100,
 		Month:     summary.YearMonth % 100,
+		Decided:   summary.Decided,
 		Status:    NewShiftStatus(summary.Status),
 		OpenAt:    jst.ParseFromUnix(summary.OpenAt),
 		EndAt:     jst.ParseFromUnix(summary.EndAt),

@@ -21,6 +21,7 @@ func TestShiftSummary(t *testing.T) {
 			summary: &lesson.ShiftSummary{
 				Id:        1,
 				YearMonth: 202201,
+				Decided:   true,
 				Status:    lesson.ShiftStatus_SHIFT_STATUS_ACCEPTING,
 				OpenAt:    jst.Date(2021, 12, 1, 0, 0, 0, 0).Unix(),
 				EndAt:     jst.Date(2021, 12, 15, 0, 0, 0, 0).Unix(),
@@ -31,6 +32,7 @@ func TestShiftSummary(t *testing.T) {
 				ShiftSummary: &lesson.ShiftSummary{
 					Id:        1,
 					YearMonth: 202201,
+					Decided:   true,
 					Status:    lesson.ShiftStatus_SHIFT_STATUS_ACCEPTING,
 					OpenAt:    jst.Date(2021, 12, 1, 0, 0, 0, 0).Unix(),
 					EndAt:     jst.Date(2021, 12, 15, 0, 0, 0, 0).Unix(),
@@ -64,6 +66,7 @@ func TestShiftSummaries(t *testing.T) {
 				{
 					Id:        1,
 					YearMonth: 202201,
+					Decided:   true,
 					Status:    lesson.ShiftStatus_SHIFT_STATUS_ACCEPTING,
 					OpenAt:    jst.Date(2021, 12, 1, 0, 0, 0, 0).Unix(),
 					EndAt:     jst.Date(2021, 12, 15, 0, 0, 0, 0).Unix(),
@@ -76,6 +79,7 @@ func TestShiftSummaries(t *testing.T) {
 					ShiftSummary: &lesson.ShiftSummary{
 						Id:        1,
 						YearMonth: 202201,
+						Decided:   true,
 						Status:    lesson.ShiftStatus_SHIFT_STATUS_ACCEPTING,
 						OpenAt:    jst.Date(2021, 12, 1, 0, 0, 0, 0).Unix(),
 						EndAt:     jst.Date(2021, 12, 15, 0, 0, 0, 0).Unix(),
@@ -111,6 +115,7 @@ func TestShiftSummaries_IDs(t *testing.T) {
 					ShiftSummary: &lesson.ShiftSummary{
 						Id:        1,
 						YearMonth: 202201,
+						Decided:   true,
 						Status:    lesson.ShiftStatus_SHIFT_STATUS_ACCEPTING,
 						OpenAt:    jst.Date(2021, 12, 1, 0, 0, 0, 0).Unix(),
 						EndAt:     jst.Date(2021, 12, 15, 0, 0, 0, 0).Unix(),
@@ -122,6 +127,7 @@ func TestShiftSummaries_IDs(t *testing.T) {
 					ShiftSummary: &lesson.ShiftSummary{
 						Id:        2,
 						YearMonth: 202202,
+						Decided:   true,
 						Status:    lesson.ShiftStatus_SHIFT_STATUS_WAITING,
 						OpenAt:    jst.Date(2022, 1, 1, 0, 0, 0, 0).Unix(),
 						EndAt:     jst.Date(2022, 1, 15, 0, 0, 0, 0).Unix(),
