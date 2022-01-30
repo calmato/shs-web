@@ -30,6 +30,7 @@ export default defineComponent({
         id: 0,
         year: 0,
         month: 0,
+        decided: false,
         status: ShiftStatus.UNKNOWN,
         openAt: '',
         endAt: '',
