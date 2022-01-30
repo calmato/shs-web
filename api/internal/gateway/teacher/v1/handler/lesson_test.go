@@ -345,3 +345,61 @@ func TestUpdateLesson(t *testing.T) {
 		})
 	}
 }
+
+func TestDeleteLesson(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name     string
+		setup    func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller)
+		shiftID  string
+		lessonID string
+		expect   *testResponse
+	}{
+		{
+			name: "success",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
+				in := &lesson.DeleteLessonRequest{LessonId: 1}
+				out := &lesson.DeleteLessonResponse{}
+				mocks.lesson.EXPECT().DeleteLesson(gomock.Any(), in).Return(out, nil)
+			},
+			shiftID:  "1",
+			lessonID: "1",
+			expect: &testResponse{
+				code: http.StatusNoContent,
+			},
+		},
+		{
+			name: "failed to invalid lesson id",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
+			},
+			shiftID:  "1",
+			lessonID: "a",
+			expect: &testResponse{
+				code: http.StatusBadRequest,
+			},
+		},
+		{
+			name: "failed to delete lesson",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
+				in := &lesson.DeleteLessonRequest{LessonId: 1}
+				mocks.lesson.EXPECT().DeleteLesson(gomock.Any(), in).Return(nil, errmock)
+			},
+			shiftID:  "1",
+			lessonID: "1",
+			expect: &testResponse{
+				code: http.StatusInternalServerError,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			path := fmt.Sprintf("/v1/shifts/%s/lessons/%s", tt.shiftID, tt.lessonID)
+			req := newHTTPRequest(t, http.MethodDelete, path, nil)
+			testHTTP(t, tt.setup, tt.expect, req)
+		})
+	}
+}

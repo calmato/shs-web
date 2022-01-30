@@ -126,3 +126,24 @@ func (h *apiV1Handler) UpdateLesson(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusNoContent, gin.H{})
 }
+
+func (h *apiV1Handler) DeleteLesson(ctx *gin.Context) {
+	c := util.SetMetadata(ctx)
+
+	lessonID, err := strconv.ParseInt(ctx.Param("lessonId"), 10, 64)
+	if err != nil {
+		badRequest(ctx, err)
+		return
+	}
+
+	in := &lesson.DeleteLessonRequest{
+		LessonId: lessonID,
+	}
+	_, err = h.lesson.DeleteLesson(c, in)
+	if err != nil {
+		httpError(ctx, err)
+		return
+	}
+
+	ctx.JSON(http.StatusNoContent, gin.H{})
+}
