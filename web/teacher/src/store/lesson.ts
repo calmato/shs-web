@@ -1,5 +1,5 @@
 import { Module, VuexModule, Mutation, Action } from 'vuex-module-decorators'
-import Axios from 'axios'
+import axios from 'axios'
 import { schoolTypeString2schoolTypeNum, subjectResponse2Subject } from '~/lib'
 import { $axios } from '~/plugins/axios'
 import { ErrorResponse } from '~/types/api/exception'
@@ -91,7 +91,7 @@ export default class LessonModule extends VuexModule {
       this.setSubjects(subjects)
       return
     } catch (err) {
-      if (Axios.isAxiosError(err)) {
+      if (axios.isAxiosError(err)) {
         const res: ErrorResponse = { ...err.response?.data }
         throw new ApiError(res.status, res.message, res)
       }
@@ -103,11 +103,10 @@ export default class LessonModule extends VuexModule {
   public async createSubject(payload: SubjectNewForm): Promise<void> {
     try {
       const request = { ...payload, schoolType: schoolTypeString2schoolTypeNum(payload.schoolType) }
-      console.log(request)
       await $axios.$post('/v1/subjects', request)
       await this.getAllSubjects()
     } catch (err) {
-      if (Axios.isAxiosError(err)) {
+      if (axios.isAxiosError(err)) {
         const res: ErrorResponse = { ...err.response?.data }
         throw new ApiError(res.status, res.message, res)
       }
