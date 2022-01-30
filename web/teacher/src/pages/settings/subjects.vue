@@ -92,12 +92,15 @@ export default defineComponent({
     }
 
     const handleSubmitButton = async () => {
-      await LessonStore.createSubject(formData).catch((err) => {
+      try {
+        await LessonStore.createSubject(formData)
+        CommonStore.showSuccessInSnackbar(`「${formData.name}」を作成しました。`)
+        isOpen.value = false
+        formData.name = ''
+        formData.color = swatches[0][0]
+      } catch (err) {
         CommonStore.showErrorInSnackbar(err)
-      })
-      isOpen.value = false
-      formData.name = ''
-      formData.color = swatches[0][0]
+      }
     }
 
     return {
