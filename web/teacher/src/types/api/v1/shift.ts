@@ -18,6 +18,22 @@ export interface CreateShiftsRequest {
   closedDates: string[]
 }
 
+export interface CreateShiftLessonRequest {
+  shiftId: number
+  room: number
+  subjectId: number
+  teacherId: string
+  studentId: string
+}
+
+export interface UpdateShiftLessonRequest {
+  shiftId: number
+  room: number
+  subjectId: number
+  teacherId: string
+  studentId: string
+}
+
 /**
  * ---------------------------
  * Response
@@ -112,6 +128,20 @@ export interface ShiftDetailsResponse {
   teachers: TeacherShift[]
   students: StudentShift[]
   lessons: Lesson[]
+}
+
+export interface ShiftLessonResponse {
+  id: number
+  shiftId: number
+  subjectId: number
+  room: number
+  teacherId: string
+  studentId: string
+  startAt: string
+  endAt: string
+  notes: string
+  createdAt: string
+  updatedAt: string
 }
 
 export interface ShiftLessonsResponse {

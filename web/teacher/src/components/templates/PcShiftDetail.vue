@@ -40,14 +40,22 @@
       <!-- 授業登録/編集ダイアログ -->
       <the-shift-lesson-new-card
         v-if="dialogKey == '授業登録'"
+        :loading="loading"
+        :lesson-loading="lessonLoading"
         :lesson="lesson"
+        :student-lessons="studentLessons"
         :teachers="teachers"
         :students="students"
         :subjects="subjects"
+        :lesson-id="form.params.lessonId"
         :selected-teacher.sync="form.params.teacherId"
-        :selected-student.sync="form.params.studentId"
+        :selected-student="form.params.studentId"
         :selected-subject.sync="form.params.subjectId"
+        @click:student="onClickStudentLessons"
+        @click:submit="onClickSubmitLesson"
+        @click:delete="onClickDeleteLesson"
         @click:close="onCloseDialog"
+        @update:selected-student="onClickLessonStudent"
       />
     </v-dialog>
 
@@ -118,6 +126,14 @@ export default defineComponent({
   },
 
   props: {
+    loading: {
+      type: Boolean,
+      default: false,
+    },
+    lessonLoading: {
+      type: Boolean,
+      default: false,
+    },
     dialog: {
       type: Boolean,
       default: false,
@@ -187,6 +203,10 @@ export default defineComponent({
       return `授業登録 ${props.summary?.year}年${props.summary?.month}月`
     }
 
+    const onClickLessonStudent = (studentId: string): void => {
+      emit('click:lesson-student', studentId)
+    }
+
     const onClickTeacherSubmissions = (teacherId: string): void => {
       emit('click:show-teacher-submissions', teacherId)
     }
@@ -223,12 +243,21 @@ export default defineComponent({
       emit('click:edit-lesson', { shiftId, lessonId, room })
     }
 
+    const onClickSubmitLesson = (): void => {
+      emit('click:submit-lesson')
+    }
+
+    const onClickDeleteLesson = (): void => {
+      emit('click:delete-lesson')
+    }
+
     const onCloseDialog = (): void => {
       emit('click:close')
     }
 
     return {
       getTitle,
+      onClickLessonStudent,
       onClickTeacherSubmissions,
       onClickTeacherLessons,
       onClickStudentSubmissions,
@@ -236,6 +265,8 @@ export default defineComponent({
       onClickDecidedLesson,
       onClickNewLesson,
       onClickEditLesson,
+      onClickSubmitLesson,
+      onClickDeleteLesson,
       onCloseDialog,
     }
   },

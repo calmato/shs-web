@@ -19,6 +19,7 @@ export interface IShiftsNewParams {
 }
 
 export interface IShiftLessonParams {
+  lessonId: number
   summaryId: number
   shiftId: number
   room: number
@@ -83,6 +84,7 @@ export const ShiftsNewParams: IShiftsNewParams = {
 }
 
 export const ShiftLessonParams: IShiftLessonParams = {
+  lessonId: 0,
   summaryId: 0,
   shiftId: 0,
   room: 0,
