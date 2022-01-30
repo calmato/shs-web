@@ -1,12 +1,9 @@
 <template>
   <div>
-    <!-- 初回ロード (初回の画面描画に時間がかかるため) -->
-    <v-overlay :value="overlay">
-      <v-progress-circular indeterminate size="64" />
-    </v-overlay>
     <!-- PCレイアウト -->
     <pc-shift-detail
       class="hidden-sm-and-down"
+      :overlay="overlay"
       :loading="loading"
       :lesson-loading="lessonLoading"
       :dialog="dialog"
