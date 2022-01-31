@@ -84,7 +84,7 @@ export default defineComponent({
 
     const focus = ref<string>('')
     const type = ref<String>('month')
-    const today = ref<String>(props.now.tz().format('YYYY-MM-DD HH:mm:ss'))
+    const today = ref<String>(props.now?.tz().format('YYYY-MM-DD HH:mm:ss'))
     const dialog = ref<boolean>(false)
 
     const startAt = computed({
