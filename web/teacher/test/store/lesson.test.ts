@@ -165,6 +165,29 @@ describe('store/lesson', () => {
             expect(e).toEqual(err)
           }
         })
+
+        it('not called getAllSubject', async () => {
+          const mockGetAllSubjects = jest.spyOn(LessonStore, 'getAllSubjects')
+
+          const invalidPayload: SubjectNewForm = {
+            name: '',
+            color: '',
+            schoolType: '小学校',
+          }
+
+          const err = new ApiError(400, 'api error', {
+            status: 400,
+            message: 'api error',
+            details: 'some error',
+          } as ErrorResponse)
+
+          try {
+            await LessonStore.createSubject(invalidPayload)
+          } catch (e) {
+            expect(e).toEqual(err)
+            expect(mockGetAllSubjects).toBeCalledTimes(0)
+          }
+        })
       })
     })
 
@@ -231,6 +254,27 @@ describe('store/lesson', () => {
             expect(e).toEqual(err)
           }
         })
+
+        it('notcalled getAllSubject', async () => {
+          const invalidPayload: SubjectEditForm = {
+            subjectId: 1,
+            name: '算数',
+            color: '#DBD0E6',
+            schoolType: '小学校',
+          }
+
+          const err = new ApiError(400, 'api error', {
+            status: 400,
+            message: 'api error',
+            details: 'some error',
+          } as ErrorResponse)
+
+          try {
+            await LessonStore.createSubject(invalidPayload)
+          } catch (e) {
+            expect(e).toEqual(err)
+          }
+        })
       })
     })
 
@@ -273,6 +317,23 @@ describe('store/lesson', () => {
             await LessonStore.deleteSubject(-1)
           } catch (e) {
             expect(e).toEqual(err)
+          }
+        })
+
+        it('not called getAllSubject', async () => {
+          const mockGetAllSubjects = jest.spyOn(LessonStore, 'getAllSubjects')
+
+          const err = new ApiError(400, 'api error', {
+            status: 400,
+            message: 'api error',
+            details: 'some error',
+          } as ErrorResponse)
+
+          try {
+            await LessonStore.deleteSubject(-1)
+          } catch (e) {
+            expect(e).toEqual(err)
+            expect(mockGetAllSubjects).toBeCalledTimes(0)
           }
         })
       })
