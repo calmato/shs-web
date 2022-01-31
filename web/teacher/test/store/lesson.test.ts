@@ -95,6 +95,7 @@ describe('store/lesson', () => {
       describe('failure', () => {
         beforeEach(() => {
           setSafetyMode(false)
+          setIsAxiosMockValue(true)
         })
 
         it('return reject', async () => {
@@ -103,6 +104,13 @@ describe('store/lesson', () => {
             message: 'api error',
             details: 'some error',
           } as ErrorResponse)
+          await expect(LessonStore.getAllSubjects()).rejects.toThrow(err)
+        })
+
+        it('throw internal server error', async () => {
+          setIsAxiosMockValue(false)
+
+          const err = new Error('internal server error')
           await expect(LessonStore.getAllSubjects()).rejects.toThrow(err)
         })
       })
