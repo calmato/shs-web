@@ -24,7 +24,7 @@
         />
       </v-dialog>
       <v-col cols="12" align="center">
-        <v-btn color="primary" @click="onClickNewShift">
+        <v-btn color="info" @click="onClickNewShift">
           <v-icon>mdi-plus</v-icon>
           <span>シフトを募集する</span>
         </v-btn>
