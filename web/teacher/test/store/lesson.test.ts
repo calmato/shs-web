@@ -2,7 +2,7 @@ import { setup, refresh, setSafetyMode } from '~~/test/helpers/store-helper'
 import { LessonStore } from '~/store'
 import { ErrorResponse } from '~/types/api/exception'
 import { ApiError } from '~/types/exception'
-import { SubjectNewForm } from '~/types/form'
+import { SubjectEditForm, SubjectNewForm } from '~/types/form'
 
 describe('store/lesson', () => {
   beforeEach(() => {
@@ -114,6 +114,10 @@ describe('store/lesson', () => {
           setSafetyMode(true)
         })
 
+        afterEach(() => {
+          jest.clearAllMocks()
+        })
+
         it('return resolve', async () => {
           const payload: SubjectNewForm = {
             name: '算数',
@@ -146,6 +150,72 @@ describe('store/lesson', () => {
           const invalidPayload: SubjectNewForm = {
             name: '',
             color: '',
+            schoolType: '小学校',
+          }
+
+          const err = new ApiError(400, 'api error', {
+            status: 400,
+            message: 'api error',
+            details: 'some error',
+          } as ErrorResponse)
+
+          try {
+            await LessonStore.createSubject(invalidPayload)
+          } catch (e) {
+            expect(e).toEqual(err)
+          }
+        })
+      })
+    })
+
+    describe('editSubject', () => {
+      describe('success', () => {
+        beforeEach(() => {
+          setSafetyMode(true)
+        })
+
+        afterEach(() => {
+          jest.clearAllMocks()
+        })
+
+        it('return resolve', async () => {
+          const payload: SubjectEditForm = {
+            subjectId: 1,
+            name: '算数',
+            color: '#DBD0E6',
+            schoolType: '小学校',
+          }
+
+          await expect(LessonStore.editSubject(payload)).resolves.toBeUndefined()
+        })
+
+        it('called getAllSubject', async () => {
+          const mockGetAllSubjects = jest.spyOn(LessonStore, 'getAllSubjects')
+
+          const payload: SubjectEditForm = {
+            subjectId: 1,
+            name: '算数',
+            color: '#DBD0E6',
+            schoolType: '小学校',
+          }
+
+          await expect(LessonStore.editSubject(payload)).resolves.toBeUndefined()
+
+          expect(mockGetAllSubjects).toBeCalled()
+          expect(mockGetAllSubjects).toBeCalledTimes(1)
+        })
+      })
+
+      describe('failure', () => {
+        beforeEach(() => {
+          setSafetyMode(false)
+        })
+
+        it('return reject', async () => {
+          const invalidPayload: SubjectEditForm = {
+            subjectId: 1,
+            name: '算数',
+            color: '#DBD0E6',
             schoolType: '小学校',
           }
 
