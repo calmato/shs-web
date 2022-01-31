@@ -144,6 +144,7 @@ describe('store/lesson', () => {
       describe('failure', () => {
         beforeEach(() => {
           setSafetyMode(false)
+          setIsAxiosMockValue(true)
         })
 
         it('return reject', async () => {
@@ -186,6 +187,24 @@ describe('store/lesson', () => {
           } catch (e) {
             expect(e).toEqual(err)
             expect(mockGetAllSubjects).toBeCalledTimes(0)
+          }
+        })
+
+        it('throw internal server error', async () => {
+          setIsAxiosMockValue(false)
+
+          const invalidPayload: SubjectNewForm = {
+            name: '',
+            color: '',
+            schoolType: '小学校',
+          }
+
+          const err = new Error('internal server error')
+
+          try {
+            await LessonStore.createSubject(invalidPayload)
+          } catch (e) {
+            expect(e).toEqual(err)
           }
         })
       })
