@@ -233,5 +233,49 @@ describe('store/lesson', () => {
         })
       })
     })
+
+    describe('deleteSubject', () => {
+      describe('success', () => {
+        beforeEach(() => {
+          setSafetyMode(true)
+        })
+
+        afterEach(() => {
+          jest.clearAllMocks()
+        })
+
+        it('return resolve', async () => {
+          await expect(LessonStore.deleteSubject(1)).resolves.toBeUndefined()
+        })
+
+        it('called getAllSubject', async () => {
+          const mockGetAllSubjects = jest.spyOn(LessonStore, 'getAllSubjects')
+
+          await expect(LessonStore.deleteSubject(1)).resolves.toBeUndefined()
+          expect(mockGetAllSubjects).toBeCalled()
+          expect(mockGetAllSubjects).toBeCalledTimes(1)
+        })
+      })
+
+      describe('failure', () => {
+        beforeEach(() => {
+          setSafetyMode(false)
+        })
+
+        it('return reject', async () => {
+          const err = new ApiError(400, 'api error', {
+            status: 400,
+            message: 'api error',
+            details: 'some error',
+          } as ErrorResponse)
+
+          try {
+            await LessonStore.deleteSubject(-1)
+          } catch (e) {
+            expect(e).toEqual(err)
+          }
+        })
+      })
+    })
   })
 })
