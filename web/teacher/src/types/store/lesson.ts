@@ -1,5 +1,6 @@
 import { BaseSubject } from '../api/v1'
 import { SchoolType } from './common'
+import { Student, Teacher } from '.'
 
 export interface Subject extends BaseSubject {
   schoolType: SchoolType
@@ -22,6 +23,8 @@ export interface Lesson {
 export interface LessonState {
   subjects: Subject[]
   lessons: Lesson[]
+  teachers: Teacher[]
+  students: Student[]
 }
 
 export interface SubjectMap {
