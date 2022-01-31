@@ -247,7 +247,7 @@ func TestListLessons(t *testing.T) {
 			t.Parallel()
 			path := fmt.Sprintf("/v1/lessons%s", tt.query)
 			req := newHTTPRequest(t, http.MethodGet, path, nil)
-			testHTTP(t, tt.setup, tt.expect, req)
+			testHTTP(t, tt.setup, tt.expect, req, withNow(now))
 		})
 	}
 }

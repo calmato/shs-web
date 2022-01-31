@@ -1,11 +1,13 @@
 <template>
-  <the-top :events="getEvents()" :detail="detail" @click="handleClick" />
+  <the-top :events="getEvents()" :now="now" :start.sync="start" :end.sync="end" :detail="detail" @click="handleClick" />
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref, SetupContext } from '@nuxtjs/composition-api'
+import { computed, defineComponent, ref, useStore, watch } from '@nuxtjs/composition-api'
 import TheTop from '~/components/templates/TheTop.vue'
-import { Event, EventDetail } from '~/types/props/calendar'
+import dayjs from '~/plugins/dayjs'
+import { CommonStore, LessonStore } from '~/store'
+import { Date, Event, EventDetail } from '~/types/props/calendar'
 import { Student, StudentMap, Teacher, TeacherMap } from '~/types/store'
 import { Lesson, Subject, SubjectMap } from '~/types/store/lesson'
 
@@ -14,9 +16,13 @@ export default defineComponent({
     TheTop,
   },
 
-  setup(_, { root }: SetupContext) {
-    const store = root.$store
+  setup() {
+    const store = useStore()
 
+    const now = dayjs()
+
+    const start = ref<Date>()
+    const end = ref<Date>()
     const detail = ref<EventDetail>({
       lessonId: 0,
       subject: '',
@@ -29,33 +35,28 @@ export default defineComponent({
 
     const lessons = computed<Lesson[]>(() => store.getters['lesson/getLessons'])
     const subjects = computed<SubjectMap>(() => store.getters['lesson/getSubjectMap'])
-    const students = computed<StudentMap>(() => store.getters['user/getStudentMap'])
-    // const teachers = computed<TeacherMap>(() => store.getters['user/getTeacherMap'])
+    const teachers = computed<TeacherMap>(() => store.getters['lesson/getTeacherMap'])
+    const students = computed<StudentMap>(() => store.getters['lesson/getStudentMap'])
 
-    // mock
-    const teachers = computed<TeacherMap>(() => {
-      return {
-        '000000000000000000001': {
-          id: '000000000000000000001',
-          name: '中村 太郎',
-          nameKana: 'なかむら たろう',
-          lastName: '中村',
-          firstName: '太郎',
-          lastNameKana: 'なかむら',
-          firstNameKana: 'たろう',
-          mail: 'teacher-001@calmato.jp',
-          role: 0,
-          subjects: {
-            小学校: [],
-            中学校: [],
-            高校: [],
-            その他: [],
-          },
-          createdAt: '',
-          updatedAt: '',
-        },
-      }
+    watch(start, (): void => {
+      listLessons()
     })
+
+    async function listLessons(): Promise<void> {
+      CommonStore.startConnection()
+
+      const format: string = 'YYYYMMDD'
+      const since: string = dayjs(start.value?.date).tz().format(format)
+      const until: string = dayjs(end.value?.date).tz().format(format)
+
+      await LessonStore.listLessons({ since, until })
+        .catch((err: Error) => {
+          console.log('feiled to list lessons', err)
+        })
+        .finally(() => {
+          CommonStore.endConnection()
+        })
+    }
 
     const getEvents = (): Event[] => {
       const events: Event[] = lessons.value.map((lesson: Lesson): Event => {
@@ -103,6 +104,9 @@ export default defineComponent({
     }
 
     return {
+      now,
+      start,
+      end,
       detail,
       getEvents,
       handleClick,

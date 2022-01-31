@@ -419,6 +419,20 @@ func TestListLessonsByDurations(t *testing.T) {
 			},
 		},
 		{
+			name: "success to shifts is length 0",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				since := jst.BeginningOfDay(jst.Date(2022, 2, 1, 0, 0, 0, 0))
+				until := jst.EndOfDay(jst.Date(2022, 2, 1, 0, 0, 0, 0))
+				mocks.validator.EXPECT().ListLessonsByDuration(req).Return(nil)
+				mocks.db.Shift.EXPECT().ListByDuration(ctx, since, until).Return(entity.Shifts{}, nil)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.OK,
+				body: &lesson.ListLessonsByDurationResponse{},
+			},
+		},
+		{
 			name: "invalid argument",
 			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
 				req := &lesson.ListLessonsByDurationRequest{}

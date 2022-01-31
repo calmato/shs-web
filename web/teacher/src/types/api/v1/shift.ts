@@ -150,6 +150,11 @@ export interface ShiftLessonResponse {
 }
 
 export interface ShiftLessonsResponse {
+  lessons: Lesson[]
+  total: number
+}
+
+export interface ShiftSubmissionsResponse {
   teachers: Teacher[]
   students: Student[]
   lessons: ShiftLesson[]

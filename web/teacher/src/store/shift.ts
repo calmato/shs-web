@@ -20,8 +20,8 @@ import {
   Teacher as v1Teacher,
   TeacherShift as v1TeacherShift,
   ShiftLessonResponse,
+  ShiftSubmissionsResponse,
   ShiftLessonsResponse,
-  LessonsResponse,
   CreateShiftLessonRequest,
   UpdateShiftLessonRequest,
   UpdateShiftSummaryDecidedRequest,
@@ -708,7 +708,7 @@ export default class ShiftModule extends VuexModule {
   }): Promise<void> {
     await $axios
       .$get(`/v1/shifts/${summaryId}/submissions/${shiftId}`)
-      .then((res: ShiftLessonsResponse) => {
+      .then((res: ShiftSubmissionsResponse) => {
         let current: ShiftLesson | undefined
         const lessons: ShiftLesson[] = res.lessons.map((lesson: v1ShiftLesson): ShiftLesson => {
           if (lesson.room === room) {
@@ -762,7 +762,7 @@ export default class ShiftModule extends VuexModule {
     }
     await $axios
       .$get(`/v1/shifts/${summaryId}/lessons?teacherId=${teacherId}`)
-      .then((res: LessonsResponse) => {
+      .then((res: ShiftLessonsResponse) => {
         const total: number = res.total
         const lessons: ShiftLesson[] = res.lessons.map((lesson: v1Lesson): ShiftLesson => {
           return { ...lesson }
@@ -783,7 +783,7 @@ export default class ShiftModule extends VuexModule {
     }
     await $axios
       .$get(`/v1/shifts/${summaryId}/lessons?studentId=${studentId}`)
-      .then((res: LessonsResponse) => {
+      .then((res: ShiftLessonsResponse) => {
         const total: number = res.total
         const lessons: ShiftLesson[] = res.lessons.map((lesson: v1Lesson): ShiftLesson => {
           return { ...lesson }

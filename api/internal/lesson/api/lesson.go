@@ -98,6 +98,9 @@ func (s *lessonService) ListLessonsByDuration(
 	if err != nil {
 		return nil, gRPCError(err)
 	}
+	if len(shifts) == 0 {
+		return &lesson.ListLessonsByDurationResponse{}, nil
+	}
 
 	params := &database.ListLessonsParams{
 		ShiftIDs:  shifts.IDs(),
@@ -109,6 +112,7 @@ func (s *lessonService) ListLessonsByDuration(
 		return nil, gRPCError(err)
 	}
 
+	// 確定しているスケジュール飲みに絞り込み
 	summaries, err := s.db.ShiftSummary.MultiGet(ctx, lessons.ShiftSummaryIDs())
 	if err != nil {
 		return nil, gRPCError(err)

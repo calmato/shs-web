@@ -32,21 +32,7 @@ describe('store/lesson', () => {
     })
 
     it('getLessons', () => {
-      expect(LessonStore.getLessons).toEqual([
-        {
-          id: 1,
-          shiftId: 0,
-          room: 1,
-          teacherId: '000000000000000000001',
-          studentId: '123456789012345678901',
-          subjectId: 1,
-          startAt: '2021-12-10T18:30:00+09:00',
-          endAt: '2021-12-10T20:00:00+09:00',
-          notes: '',
-          createdAt: '',
-          updatedAt: '',
-        },
-      ])
+      expect(LessonStore.getLessons).toEqual([])
     })
   })
 
