@@ -1,12 +1,9 @@
 <template>
   <div>
-    <!-- 初回ロード (初回の画面描画に時間がかかるため) -->
-    <v-overlay :value="overlay">
-      <v-progress-circular indeterminate size="64" />
-    </v-overlay>
     <!-- PCレイアウト -->
     <pc-shift-detail
       class="hidden-sm-and-down"
+      :overlay="overlay"
       :loading="loading"
       :lesson-loading="lessonLoading"
       :dialog="dialog"
@@ -256,8 +253,23 @@ export default defineComponent({
         })
     }
 
-    const handleClickDecidedLesson = (): void => {
-      console.log('debug', 'decided lesson')
+    const handleClickDecidedLesson = async (): Promise<void> => {
+      CommonStore.startConnection()
+
+      const decided: boolean = !summary.value.decided
+
+      await ShiftStore.updateShiftSummaryDecided({ summaryId, decided })
+        .then(() => {
+          if (decided) {
+            CommonStore.showSnackbar({ color: 'success', message: '授業スケジュールを確定しました。' })
+          }
+        })
+        .catch((err: Error) => {
+          CommonStore.showErrorInSnackbar(err)
+        })
+        .finally(() => {
+          CommonStore.endConnection()
+        })
     }
 
     const handleClickNewLesson = async ({ shiftId, room }: { shiftId: number; room: number }): Promise<void> => {

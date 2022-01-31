@@ -1,7 +1,15 @@
 <template>
   <v-card-text class="d-flex flex-column align-stretch">
     <h2>{{ getTime(summary.startTime) }} ~ {{ getTime(summary.endTime) }}</h2>
-    <div class="d-flex align-center justify-center mt-2">
+    <div v-if="decided" class="d-flex align-center justify-center mt-2">
+      <div v-if="detail" class="d-block">
+        <div class="info--text text--darken-2 text-subtitle-2">
+          {{ getSubjectName(detail) }}
+        </div>
+        <div class="info--text text--darken-2 text-subtitle-2">{{ getUserName(detail) }}</div>
+      </div>
+    </div>
+    <div v-else class="d-flex align-center justify-center mt-2">
       <a v-if="detail" class="d-block" @click="onClickEdit">
         <div class="info--text text--darken-2 text-subtitle-2">
           {{ getSubjectName(detail) }}
@@ -34,6 +42,10 @@ export default defineComponent({
     room: {
       type: Number,
       default: 0,
+    },
+    decided: {
+      type: Boolean,
+      default: false,
     },
   },
 

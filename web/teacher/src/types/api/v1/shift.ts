@@ -11,6 +11,10 @@ export interface UpdateShiftSummaryScheduleRequest {
   endDate: string
 }
 
+export interface UpdateShiftSummaryDecidedRequest {
+  decided: boolean
+}
+
 export interface CreateShiftsRequest {
   yearMonth: string
   openDate: string
@@ -43,6 +47,7 @@ export interface ShiftSummary {
   id: number
   year: number
   month: number
+  decided: boolean
   status: number
   openAt: string
   endAt: string

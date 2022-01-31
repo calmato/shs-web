@@ -62,14 +62,17 @@ type Lesson interface {
 
 type ShiftSummary interface {
 	List(ctx context.Context, p *ListShiftSummariesParams, fields ...string) (entity.ShiftSummaries, error)
+	MultiGet(ctx context.Context, ids []int64, fields ...string) (entity.ShiftSummaries, error)
 	Get(ctx context.Context, id int64, fields ...string) (*entity.ShiftSummary, error)
 	UpdateSchedule(ctx context.Context, id int64, openAt, endAt time.Time) error
+	UpdateDecided(ctx context.Context, id int64, decided bool) error
 	Delete(ctx context.Context, id int64) error
 	Count(ctx context.Context) (int64, error)
 }
 
 type Shift interface {
 	List(ctx context.Context, p *ListShiftsParams, fields ...string) (entity.Shifts, error)
+	ListByDuration(ctx context.Context, since, until time.Time, fields ...string) (entity.Shifts, error)
 	MultiGet(ctx context.Context, ids []int64, fields ...string) (entity.Shifts, error)
 	Get(ctx context.Context, id int64, fields ...string) (*entity.Shift, error)
 	MultipleCreate(ctx context.Context, summary *entity.ShiftSummary, shifts entity.Shifts) error
@@ -124,6 +127,7 @@ type ListLessonsParams struct {
 	Offset         int
 	ShiftSummaryID int64
 	ShiftID        int64
+	ShiftIDs       []int64
 	TeacherID      string
 	StudentID      string
 }

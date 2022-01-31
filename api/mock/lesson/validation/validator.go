@@ -62,6 +62,20 @@ func (mr *MockRequestValidationMockRecorder) CreateShifts(req interface{}) *gomo
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateShifts", reflect.TypeOf((*MockRequestValidation)(nil).CreateShifts), req)
 }
 
+// DeleteLesson mocks base method.
+func (m *MockRequestValidation) DeleteLesson(req *lesson.DeleteLessonRequest) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteLesson", req)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeleteLesson indicates an expected call of DeleteLesson.
+func (mr *MockRequestValidationMockRecorder) DeleteLesson(req interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteLesson", reflect.TypeOf((*MockRequestValidation)(nil).DeleteLesson), req)
+}
+
 // DeleteShiftSummary mocks base method.
 func (m *MockRequestValidation) DeleteShiftSummary(req *lesson.DeleteShiftSummaryRequest) error {
 	m.ctrl.T.Helper()
@@ -130,6 +144,20 @@ func (m *MockRequestValidation) ListLessons(req *lesson.ListLessonsRequest) erro
 func (mr *MockRequestValidationMockRecorder) ListLessons(req interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListLessons", reflect.TypeOf((*MockRequestValidation)(nil).ListLessons), req)
+}
+
+// ListLessonsByDuration mocks base method.
+func (m *MockRequestValidation) ListLessonsByDuration(req *lesson.ListLessonsByDurationRequest) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ListLessonsByDuration", req)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// ListLessonsByDuration indicates an expected call of ListLessonsByDuration.
+func (mr *MockRequestValidationMockRecorder) ListLessonsByDuration(req interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListLessonsByDuration", reflect.TypeOf((*MockRequestValidation)(nil).ListLessonsByDuration), req)
 }
 
 // ListShiftSummaries mocks base method.
@@ -242,6 +270,34 @@ func (m *MockRequestValidation) ListTeacherSubmissionsByShiftSummaryIDs(req *les
 func (mr *MockRequestValidationMockRecorder) ListTeacherSubmissionsByShiftSummaryIDs(req interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListTeacherSubmissionsByShiftSummaryIDs", reflect.TypeOf((*MockRequestValidation)(nil).ListTeacherSubmissionsByShiftSummaryIDs), req)
+}
+
+// UpdateLesson mocks base method.
+func (m *MockRequestValidation) UpdateLesson(req *lesson.UpdateLessonRequest) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateLesson", req)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateLesson indicates an expected call of UpdateLesson.
+func (mr *MockRequestValidationMockRecorder) UpdateLesson(req interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateLesson", reflect.TypeOf((*MockRequestValidation)(nil).UpdateLesson), req)
+}
+
+// UpdateShiftSummaryDecided mocks base method.
+func (m *MockRequestValidation) UpdateShiftSummaryDecided(req *lesson.UpdateShiftSummaryDecidedRequest) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateShiftSummaryDecided", req)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateShiftSummaryDecided indicates an expected call of UpdateShiftSummaryDecided.
+func (mr *MockRequestValidationMockRecorder) UpdateShiftSummaryDecided(req interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateShiftSummaryDecided", reflect.TypeOf((*MockRequestValidation)(nil).UpdateShiftSummaryDecided), req)
 }
 
 // UpdateShiftSummarySchedule mocks base method.

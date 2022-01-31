@@ -12,6 +12,14 @@ updateShiftSummaryScheduleRequest:
   example:
     openDate: '20210101'
     endDate: '20210114'
+updateShiftSummaryDecidedRequest:
+  type: object
+  properties:
+    decided:
+      type: boolean
+      description: 授業スケジュール確定フラグ
+  example:
+    decided: true
 createShiftsRequest:
   type: object
   properties:

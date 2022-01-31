@@ -1,0 +1,32 @@
+patch:
+  summary: 授業スケジュール確定フラグの更新
+  tags:
+  - Shift
+  security:
+  - BearerAuth: []
+  parameters:
+  - in: path
+    name: shiftId
+    required: true
+    schema:
+      type: integer
+      format: int64
+    description: シフト募集ID
+    example: 1
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: './../../../../openapi.yaml#/components/schemas/v1UpdateShiftSummaryDecidedRequest'
+  responses:
+    204:
+      description: A successful response.
+      content:
+        application/json: {}
+    default:
+      description: An unexpected error response.
+      content:
+        application/json:
+          schema:
+            $ref: './../../../../openapi.yaml#/components/schemas/errorResponse'

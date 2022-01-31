@@ -68,8 +68,12 @@ paths:
     $ref: './paths/v1/shifts/_shiftId/index.yaml'
   /v1/shifts/{shiftId}/schedule:
     $ref: './paths/v1/shifts/_shiftId/schedule.yaml'
+  /v1/shifts/{shiftId}/decided:
+    $ref: './paths/v1/shifts/_shiftId/decided.yaml'
   /v1/shifts/{shiftId}/lessons:
     $ref: './paths/v1/shifts/_shiftId/lessons/index.yaml'
+  /v1/shifts/{shiftId}/lessons/{lessonId}:
+    $ref: './paths/v1/shifts/_shiftId/lessons/_lessonId.yaml'
   /v1/shifts/{shiftId}/submissions/{submissionId}:
     $ref: './paths/v1/shifts/_shiftId/submissions/_submissionId.yaml'
   /v1/shifts/{shiftId}/teachers/{teacherId}:
@@ -81,6 +85,9 @@ paths:
     $ref: './paths/v1/teachers/_teacherId/submissions/index.yaml'
   /v1/teachers/{teacherId}/submissions/{summaryId}:
     $ref: './paths/v1/teachers/_teacherId/submissions/_summaryId.yaml'
+  # Lessons
+  /v1/lessons:
+    $ref: './paths/v1/lessons/index.yaml'
   # Other
   /v1/rooms:
     $ref: './paths/v1/rooms/index.yaml'
@@ -120,6 +127,8 @@ components:
       $ref: './components/schemas/v1/schedules.request.yaml#/updateSchedulesRequest'
     v1UpdateShiftSummaryScheduleRequest:
       $ref: './components/schemas/v1/shifts.request.yaml#/updateShiftSummaryScheduleRequest'
+    v1UpdateShiftSummaryDecidedRequest:
+      $ref: './components/schemas/v1/shifts.request.yaml#/updateShiftSummaryDecidedRequest'
     v1CreateShiftsRequest:
       $ref: './components/schemas/v1/shifts.request.yaml#/createShiftsRequest'
     v1UpsertTeacherShiftsRequest:
@@ -128,6 +137,8 @@ components:
       $ref: './components/schemas/v1/rooms.request.yaml#/updateRoomsTotalRequest'
     v1CreateLessonRequest:
       $ref: './components/schemas/v1/lessons.request.yaml#/createLessonRequest'
+    v1UpdateLessonRequest:
+      $ref: './components/schemas/v1/lessons.request.yaml#/updateLessonRequest'
     # Response
     v1AuthResponse:
       $ref: './components/schemas/v1/auth.response.yaml#/authResponse'
@@ -145,6 +156,8 @@ components:
       $ref: './components/schemas/v1/shifts.response.yaml#/shiftSummariesResponse'
     v1ShiftSubmissionsResponse:
       $ref: './components/schemas/v1/shifts.response.yaml#/shiftSubmissionsResponse'
+    v1ShiftLessonsResponse:
+      $ref: './components/schemas/v1/shifts.response.yaml#/shiftLessonsResponse'
     v1ShiftsResponse:
       $ref: './components/schemas/v1/shifts.response.yaml#/shiftsResponse'
     v1TeacherSubmissionsResponse:

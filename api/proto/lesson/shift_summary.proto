@@ -14,4 +14,5 @@ message ShiftSummary {
   int64       end_at     = 5; // 募集締切日時
   int64       created_at = 6; // 登録日時
   int64       updated_at = 7; // 更新日時
+  bool        decided    = 8; // 授業スケジュール確定フラグ
 }

@@ -72,7 +72,6 @@ export default defineComponent({
 
     const getDuration = (start: string, end: string): string => {
       const format: string = 'HH:mm'
-      console.table({ start, end })
       const startTime: string = dayjs(`2000-01-01 ${start}:00`).tz().format(format)
       const endTime: string = dayjs(`2000-01-01 ${end}:00`).tz().format(format)
       return `${startTime}~${endTime}`

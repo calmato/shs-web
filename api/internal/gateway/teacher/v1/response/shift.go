@@ -12,6 +12,11 @@ type ShiftSubmissionsResponse struct {
 	Lessons  entity.Lessons  `json:"lessons"`  // 授業一覧
 }
 
+type ShiftLessonsResponse struct {
+	Lessons entity.Lessons `json:"lessons"` // 授業一覧
+	Total   int64          `json:"total"`   // 授業合計数
+}
+
 type ShiftsResponse struct {
 	Summary  *entity.ShiftSummary            `json:"summary"`  // シフト募集概要
 	Shifts   entity.ShiftDetails             `json:"shifts"`   // 募集シフト一覧

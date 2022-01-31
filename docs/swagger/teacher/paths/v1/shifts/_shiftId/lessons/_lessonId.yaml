@@ -1,5 +1,5 @@
-get:
-  summary: 授業一覧
+patch:
+  summary: 授業更新
   tags:
   - Shift
   security:
@@ -13,61 +13,59 @@ get:
       format: int64
     description: シフト募集ID
     example: 1
-  - in: query
-    name: teacherId
-    required: false
-    schema:
-      type: string
-    description: 講師ID
-    example: 'kSByoE6FetnPs5Byk3a9Zx'
-  - in: query
-    name: studentId
-    required: false
-    schema:
-      type: string
-    description: 生徒ID
-    example: 'kSByoE6FetnPs5Byk3a9Zx'
-  responses:
-    200:
-      description: A successful response.
-      content:
-        application/json:
-          schema:
-            $ref: './../../../../../openapi.yaml#/components/schemas/v1ShiftLessonsResponse'
-    default:
-      description: An unexpected error response.
-      content:
-        application/json:
-          schema:
-            $ref: './../../../../../openapi.yaml#/components/schemas/errorResponse'
-post:
-  summary: 授業登録
-  tags:
-  - Shift
-  security:
-  - BearerAuth: []
-  parameters:
   - in: path
-    name: shiftId
+    name: lessonId
     required: true
     schema:
       type: integer
       format: int64
-    description: シフト募集ID
+    description: 授業ID
     example: 1
   requestBody:
     required: true
     content:
       application/json:
         schema:
-          $ref: './../../../../../openapi.yaml#/components/schemas/v1CreateLessonRequest'
+          $ref: './../../../../../openapi.yaml#/components/schemas/v1UpdateLessonRequest'
   responses:
-    200:
+    204:
       description: A successful response.
+      content:
+        application/json: {}
+    default:
+      description: An unexpected error response.
       content:
         application/json:
           schema:
-            $ref: './../../../../../openapi.yaml#/components/schemas/v1LessonResponse'
+            $ref: './../../../../../openapi.yaml#/components/schemas/errorResponse'
+delete:
+  summary: 授業削除
+  tags:
+  - Shift
+  security:
+  - BearerAuth: []
+  parameters:
+  - in: path
+    name: shiftId
+    required: true
+    schema:
+      type: integer
+      format: int64
+    description: シフト募集ID
+    example: 1
+  - in: path
+    name: lessonId
+    required: true
+    schema:
+      type: integer
+      format: int64
+    description: 授業ID
+    example: 1
+  responses:
+    204:
+      description: A successful response.
+      content:
+        application/json: {}
     default:
       description: An unexpected error response.
       content:

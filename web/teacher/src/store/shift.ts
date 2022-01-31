@@ -24,6 +24,7 @@ import {
   LessonsResponse,
   CreateShiftLessonRequest,
   UpdateShiftLessonRequest,
+  UpdateShiftSummaryDecidedRequest,
 } from '~/types/api/v1'
 import {
   Lesson,
@@ -59,6 +60,7 @@ const initialState: ShiftState = {
     id: 0,
     year: 0,
     month: 0,
+    decided: false,
     status: ShiftStatus.UNKNOWN,
     openAt: '',
     endAt: '',
@@ -90,6 +92,7 @@ const initialState: ShiftState = {
     submissionTotal: 0,
   },
   teacherLessons: {
+    current: '',
     lessons: [],
     teachers: {},
     students: {},
@@ -115,6 +118,7 @@ const initialState: ShiftState = {
     submissionTotal: 0,
   },
   studentLessons: {
+    current: '',
     lessons: [],
     teachers: {},
     students: {},
@@ -198,6 +202,11 @@ export default class ShiftModule extends VuexModule {
 
   public get getLessonDetail(): ShiftLessonDetail {
     return this.lessonDetail
+  }
+
+  @Mutation
+  private updateSummaryDecided(decided: boolean): void {
+    this.summary.decided = decided
   }
 
   @Mutation
@@ -331,7 +340,15 @@ export default class ShiftModule extends VuexModule {
   }
 
   @Mutation
-  private setTeacherLessons({ lessons, total }: { lessons: ShiftLesson[]; total: number }): void {
+  private setTeacherLessons({
+    current,
+    lessons,
+    total,
+  }: {
+    current: string
+    lessons: ShiftLesson[]
+    total: number
+  }): void {
     const teachers: { [key: string]: TeacherShift } = {}
     const students: { [key: string]: StudentShift } = {}
     lessons.forEach((lesson: ShiftLesson): void => {
@@ -344,7 +361,7 @@ export default class ShiftModule extends VuexModule {
         students[student.id] = student
       }
     })
-    this.teacherLessons = { lessons, teachers, students, total }
+    this.teacherLessons = { current, lessons, teachers, students, total }
   }
 
   @Mutation
@@ -361,7 +378,15 @@ export default class ShiftModule extends VuexModule {
   }
 
   @Mutation
-  private setStudentLessons({ lessons, total }: { lessons: ShiftLesson[]; total: number }): void {
+  private setStudentLessons({
+    current,
+    lessons,
+    total,
+  }: {
+    current: string
+    lessons: ShiftLesson[]
+    total: number
+  }): void {
     const teachers: { [key: string]: TeacherShift } = {}
     const students: { [key: string]: StudentShift } = {}
     lessons.forEach((lesson: ShiftLesson): void => {
@@ -374,7 +399,7 @@ export default class ShiftModule extends VuexModule {
         students[student.id] = student
       }
     })
-    this.studentLessons = { lessons, teachers, students, total }
+    this.studentLessons = { current, lessons, teachers, students, total }
   }
 
   @Mutation
@@ -415,7 +440,9 @@ export default class ShiftModule extends VuexModule {
       lessons: initialState.lessons,
     })
     this.setTeacherSubmission(initialState.teacherSubmission)
+    this.setTeacherLessons(initialState.teacherLessons)
     this.setStudentSubmission(initialState.studentSubmission)
+    this.setStudentLessons(initialState.studentLessons)
     this.setLessonDetail(initialState.lessonDetail)
   }
 
@@ -464,6 +491,29 @@ export default class ShiftModule extends VuexModule {
         const endAt: string = dayjs(form.params.endDate).tz().format(format)
 
         this.replaceSummariesSchedule({ summaryId, openAt, endAt })
+      })
+      .catch((err: AxiosError) => {
+        const res: ErrorResponse = { ...err.response?.data }
+        throw new ApiError(res.status, res.message, res)
+      })
+  }
+
+  @Action({ rawError: true })
+  public async updateShiftSummaryDecided({
+    summaryId,
+    decided,
+  }: {
+    summaryId: number
+    decided: boolean
+  }): Promise<void> {
+    const req: UpdateShiftSummaryDecidedRequest = {
+      decided,
+    }
+
+    await $axios
+      .$patch(`/v1/shifts/${summaryId}/decided`, req)
+      .then(() => {
+        this.updateSummaryDecided(decided)
       })
       .catch((err: AxiosError) => {
         const res: ErrorResponse = { ...err.response?.data }
@@ -718,7 +768,7 @@ export default class ShiftModule extends VuexModule {
           return { ...lesson }
         })
 
-        this.setTeacherLessons({ lessons, total })
+        this.setTeacherLessons({ current: teacherId, lessons, total })
       })
       .catch((err: AxiosError) => {
         const res: ErrorResponse = { ...err.response?.data }
@@ -739,7 +789,7 @@ export default class ShiftModule extends VuexModule {
           return { ...lesson }
         })
 
-        this.setStudentLessons({ lessons, total })
+        this.setStudentLessons({ current: studentId, lessons, total })
       })
       .catch((err: AxiosError) => {
         const res: ErrorResponse = { ...err.response?.data }
