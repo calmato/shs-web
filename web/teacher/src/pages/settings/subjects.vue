@@ -66,7 +66,7 @@
         <v-card-actions>
           <v-spacer />
           <v-btn v-if="dialogType === '新規作成'" color="primary" @click="handleSubmitButton">追加</v-btn>
-          <v-btn v-if="dialogType === '編集'" color="primary" @click="handleEditSubmitButton">編集</v-btn>
+          <v-btn v-if="dialogType === '編集'" color="primary" @click="handleEditSubmitButton">更新</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
