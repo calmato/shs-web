@@ -44,8 +44,14 @@ function setSafetyMode(mode: boolean): void {
   isSafetyMode = mode
 }
 
+let isAxiosErrorMockValue: boolean = true
+
+function setIsAxiosMockValue(val: boolean): void {
+  isAxiosErrorMockValue = val
+}
+
 jest.mock('axios', () => ({
-  isAxiosError: jest.fn(() => (_: Error) => isSafetyMode),
+  isAxiosError: () => isAxiosErrorMockValue,
 }))
 
 jest.mock('~/plugins/axios', () => ({
@@ -60,4 +66,4 @@ jest.mock('~/plugins/axios', () => ({
   },
 }))
 
-export { localVue, setup, refresh, setSafetyMode }
+export { localVue, setup, refresh, setSafetyMode, setIsAxiosMockValue }

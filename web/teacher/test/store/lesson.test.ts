@@ -1,4 +1,4 @@
-import { setup, refresh, setSafetyMode } from '~~/test/helpers/store-helper'
+import { setup, refresh, setSafetyMode, setIsAxiosMockValue } from '~~/test/helpers/store-helper'
 import { LessonStore } from '~/store'
 import { ErrorResponse } from '~/types/api/exception'
 import { ApiError } from '~/types/exception'
@@ -232,6 +232,7 @@ describe('store/lesson', () => {
       describe('failure', () => {
         beforeEach(() => {
           setSafetyMode(false)
+          setIsAxiosMockValue(true)
         })
 
         it('return reject', async () => {
@@ -249,7 +250,7 @@ describe('store/lesson', () => {
           } as ErrorResponse)
 
           try {
-            await LessonStore.createSubject(invalidPayload)
+            await LessonStore.editSubject(invalidPayload)
           } catch (e) {
             expect(e).toEqual(err)
           }
@@ -270,7 +271,26 @@ describe('store/lesson', () => {
           } as ErrorResponse)
 
           try {
-            await LessonStore.createSubject(invalidPayload)
+            await LessonStore.editSubject(invalidPayload)
+          } catch (e) {
+            expect(e).toEqual(err)
+          }
+        })
+
+        it('throw internal server error', async () => {
+          setIsAxiosMockValue(false)
+
+          const invalidPayload: SubjectEditForm = {
+            subjectId: 1,
+            name: '算数',
+            color: '#DBD0E6',
+            schoolType: '小学校',
+          }
+
+          const err = new Error('internal server error')
+
+          try {
+            await LessonStore.editSubject(invalidPayload)
           } catch (e) {
             expect(e).toEqual(err)
           }
@@ -304,6 +324,7 @@ describe('store/lesson', () => {
       describe('failure', () => {
         beforeEach(() => {
           setSafetyMode(false)
+          setIsAxiosMockValue(true)
         })
 
         it('return reject', async () => {
@@ -334,6 +355,18 @@ describe('store/lesson', () => {
           } catch (e) {
             expect(e).toEqual(err)
             expect(mockGetAllSubjects).toBeCalledTimes(0)
+          }
+        })
+
+        it('throw internal server error', async () => {
+          setIsAxiosMockValue(false)
+
+          const err = new Error('internal server error')
+
+          try {
+            await LessonStore.deleteSubject(-1)
+          } catch (e) {
+            expect(e).toEqual(err)
           }
         })
       })
