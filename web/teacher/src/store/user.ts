@@ -9,11 +9,18 @@ import {
   UpdateTeacherSubjectsRequest,
   UpdateTeacherRoleRequest,
   UpdateTeacherMailRequest,
+  UpdateTeacherPasswordRequest,
 } from '~/types/api/v1'
 import { Role, Student, StudentMap, SubjectsMap, Teacher, TeacherMap, UserState } from '~/types/store'
 import { ErrorResponse } from '~/types/api/exception'
 import { ApiError } from '~/types/exception'
-import { TeacherEditRoleForm, TeacherEditSubjectForm, TeacherNewForm, TeacherUpdateMailForm } from '~/types/form'
+import {
+  TeacherEditRoleForm,
+  TeacherEditSubjectForm,
+  TeacherNewForm,
+  TeacherUpdateMailForm,
+  TeacherUpdatePasswordForm,
+} from '~/types/form'
 import { subjectResponse2Subject } from '~/lib'
 
 const initialState: UserState = {
@@ -247,6 +254,19 @@ export default class UserModule extends VuexModule {
     }
 
     await $axios.$patch(`/v1/me/mail`, req).catch((err: AxiosError) => {
+      const res: ErrorResponse = { ...err.response?.data }
+      throw new ApiError(res.status, res.message, res)
+    })
+  }
+
+  @Action({ rawError: true })
+  public async updatePassword({ form }: { form: TeacherUpdatePasswordForm }): Promise<void> {
+    const req: UpdateTeacherPasswordRequest = {
+      password: form.params.password,
+      passwordConfirmation: form.params.passwordConfirmaion,
+    }
+
+    await $axios.$patch(`/v1/me/password`, req).catch((err: AxiosError) => {
       const res: ErrorResponse = { ...err.response?.data }
       throw new ApiError(res.status, res.message, res)
     })

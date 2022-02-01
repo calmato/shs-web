@@ -1,18 +1,20 @@
 <template>
-  <div class="pa-2">
-    <p class="text-h5 mb-0">メールアドレス変更</p>
-    <the-form-group class="pa-2">
-      <the-text-field
-        :label="updateMailForm.options.mail.label"
-        :rules="updateMailForm.options.mail.rules"
-        :value.sync="updateMailForm.params.mail"
-        type="email"
-      />
-    </the-form-group>
-    <div class="d-flex justify-end pr-4">
-      <v-btn color="primary" @click="handleSubmit"> 保存する </v-btn>
+  <v-container class="mt-4">
+    <div class="pa-2">
+      <p class="text-h5 mb-0">メールアドレス変更</p>
+      <the-form-group class="pa-2">
+        <the-text-field
+          :label="updateMailForm.options.mail.label"
+          :rules="updateMailForm.options.mail.rules"
+          :value.sync="updateMailForm.params.mail"
+          type="email"
+        />
+      </the-form-group>
+      <div class="d-flex justify-end pr-4">
+        <v-btn color="primary" @click="handleSubmit"> 保存 </v-btn>
+      </div>
     </div>
-  </div>
+  </v-container>
 </template>
 
 <script lang="ts">
@@ -41,7 +43,7 @@ export default defineComponent({
 
       await UserStore.updateMail({ form: updateMailForm })
         .then(() => {
-          router.push('/settings')
+          router.push('/signin')
           CommonStore.showSnackbar({ color: 'success', message: 'メールアドレスを更新しました。' })
         })
         .catch((err: Error) => {

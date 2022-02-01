@@ -27,6 +27,11 @@ export interface UpdateTeacherMailRequest {
   mail: string
 }
 
+export interface UpdateTeacherPasswordRequest {
+  password: string
+  passwordConfirmation: string
+}
+
 /**
  * ---------------------------
  * Response
