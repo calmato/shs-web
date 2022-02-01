@@ -1,22 +1,17 @@
 <template>
   <v-card-text class="d-flex flex-column align-stretch">
-    <h2>{{ getTime(summary.startTime) }} ~ {{ getTime(summary.endTime) }}</h2>
-    <div v-if="decided" class="d-flex align-center justify-center mt-2">
-      <div v-if="detail" class="d-block">
-        <div class="info--text text--darken-2 text-subtitle-2">
-          {{ getSubjectName(detail) }}
-        </div>
-        <div class="info--text text--darken-2 text-subtitle-2">{{ getUserName(detail) }}</div>
-      </div>
-    </div>
-    <div v-else class="d-flex align-center justify-center mt-2">
+    <h2>
+      <v-chip v-if="detail" :color="getSubjectColor(detail)">
+        {{ getSubjectName(detail) }}
+      </v-chip>
+      <span>{{ getTime(summary.startTime) }} ~ {{ getTime(summary.endTime) }}</span>
+    </h2>
+    <div class="d-flex align-center justify-center mt-2">
       <a v-if="detail" class="d-block" @click="onClickEdit">
-        <div class="info--text text--darken-2 text-subtitle-2">
-          {{ getSubjectName(detail) }}
-        </div>
-        <div class="info--text text--darken-2 text-subtitle-2">{{ getUserName(detail) }}</div>
+        <div class="black--text text-decoration-underline">生徒: {{ getStudentName(detail) }}</div>
+        <div class="black--text text-decoration-underline">講師: {{ getTeacherName(detail) }}</div>
       </a>
-      <v-btn v-else icon color="primary" class="my-1" @click="onClickNew">
+      <v-btn v-if="!decided && !detail" icon color="primary" class="my-1" @click="onClickNew">
         <v-icon>mdi-pencil</v-icon>
       </v-btn>
     </div>
@@ -58,10 +53,16 @@ export default defineComponent({
       return detail?.subject?.name || ''
     }
 
-    const getUserName = (detail: LessonDetail | undefined): string => {
-      const teacher: string = detail?.teacher?.name || ''
-      const student: string = detail?.student?.name || ''
-      return `${student} => ${teacher}`
+    const getSubjectColor = (detail: LessonDetail | undefined): string => {
+      return detail?.subject?.color || ''
+    }
+
+    const getTeacherName = (detail: LessonDetail | undefined): string => {
+      return detail?.teacher?.name || ''
+    }
+
+    const getStudentName = (detail: LessonDetail | undefined): string => {
+      return detail?.student?.name || ''
     }
 
     const onClickNew = (): void => {
@@ -75,7 +76,10 @@ export default defineComponent({
     return {
       getTime,
       getSubjectName,
+      getSubjectColor,
       getUserName,
+      getTeacherName,
+      getStudentName,
       onClickNew,
       onClickEdit,
     }
