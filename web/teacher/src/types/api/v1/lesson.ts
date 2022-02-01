@@ -1,3 +1,5 @@
+import { Student, Teacher } from './user'
+
 /**
  * ---------------------------
  * Response
@@ -32,5 +34,6 @@ export interface SubjectsResponse {
 
 export interface LessonsResponse {
   lessons: Lesson[]
-  total: number
+  teachers: Teacher[]
+  students: Student[]
 }

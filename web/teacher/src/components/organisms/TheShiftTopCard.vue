@@ -1,6 +1,9 @@
 <template>
   <v-card>
-    <v-card-title>{{ getTitle() }}</v-card-title>
+    <v-card-title class="d-flex align-center">
+      <span>{{ getTitle() }}</span>
+      <v-icon class="ml-auto" @click="onClickEdit">mdi-pencil</v-icon>
+    </v-card-title>
     <v-card-text>
       <div v-show="isEnabledCreateLesson()">
         <span>・授業スケジュール確定状況:</span>
@@ -11,7 +14,6 @@
     </v-card-text>
     <v-card-actions>
       <v-spacer />
-      <v-btn color="secondary" @click="onClickEdit">募集期間の修正</v-btn>
       <v-btn v-show="isEnabledCreateLesson()" color="primary" @click="onClickNew">授業登録画面へ</v-btn>
     </v-card-actions>
   </v-card>

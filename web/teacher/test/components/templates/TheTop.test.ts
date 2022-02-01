@@ -74,14 +74,6 @@ describe('components/templates/TheTop', () => {
         ])
       })
 
-      it('start', () => {
-        expect(wrapper.vm.start).toBeUndefined()
-      })
-
-      it('end', () => {
-        expect(wrapper.vm.end).toBeUndefined()
-      })
-
       it('focus', () => {
         expect(wrapper.vm.focus).toBe('')
       })

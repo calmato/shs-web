@@ -1,6 +1,9 @@
 <template>
   <v-card>
-    <v-toolbar color="primary" dark>シフト募集期間の編集</v-toolbar>
+    <v-toolbar color="primary" dark class="d-flex align-center">
+      <span>シフト募集期間の編集</span>
+      <v-icon class="ml-auto" @click="onDelete">mdi-delete</v-icon>
+    </v-toolbar>
 
     <v-card-text>
       <the-form-group>
@@ -35,9 +38,8 @@
     </v-card-actions>
     <v-card-actions v-else>
       <v-spacer />
-      <v-btn color="secondary" @click="onClose">閉じる</v-btn>
-      <v-btn color="error" @click="onDelete">削除する</v-btn>
       <v-btn color="primary" :disabled="loading" @click="onSubmit">保存する</v-btn>
+      <v-btn color="secondary" @click="onClose">閉じる</v-btn>
     </v-card-actions>
   </v-card>
 </template>
