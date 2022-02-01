@@ -53,6 +53,8 @@ paths:
     $ref: './paths/v1/students/index.yaml'
   /v1/students/{studentId}:
     $ref: './paths/v1/students/_studentId/index.yaml'
+  /v1/students/{studentId}/subjects:
+    $ref: './paths/v1/students/_studentId/subjects.yaml'
   # Subjects
   /v1/subjects:
     $ref: './paths/v1/subjects/index.yaml'
@@ -119,6 +121,8 @@ components:
       $ref: './components/schemas/v1/teachers.request.yaml#/updateTeacherSubjectsRequest'
     v1CreateStudentRequest:
       $ref: './components/schemas/v1/students.request.yaml#/createStudentRequest'
+    v1UpdateStudentSubjectsRequest:
+      $ref: './components/schemas/v1/students.request.yaml#/updateStudentSubjectsRequest'
     v1CreateSubjectRequest:
       $ref: './components/schemas/v1/subjects.request.yaml#/createSubjectRequest'
     v1UpdateSubjectRequest:

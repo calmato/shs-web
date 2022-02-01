@@ -40,3 +40,17 @@ createStudentRequest:
     grade: 1
     password: '12345678'
     passwordConfirmation: '12345678'
+updateStudentSubjectsRequest:
+  type: Object
+  properties:
+    subjectIds:
+      type: array
+      description: 受講科目一覧
+      items:
+        type: integer
+        format: int64
+        description: 授業科目ID
+  example:
+    subjectIds:
+    - 1
+    - 2

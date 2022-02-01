@@ -13,3 +13,7 @@ type CreateStudentRequest struct {
 	SchoolType           entity.SchoolType `json:"schoolType,omitempty"`           // 校種
 	Grade                int64             `json:"grade,omitempty"`                // 学年
 }
+
+type UpdateStudentSubjectRequest struct {
+	SubjectIDs []int64 `json:"subjectIds,omitempty"` // 受講教科ID一覧
+}

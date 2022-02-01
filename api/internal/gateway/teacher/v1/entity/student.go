@@ -25,6 +25,7 @@ type Student struct {
 type Students []*Student
 
 func NewStudent(student *entity.Student, subjects entity.Subjects) *Student {
+	schoolType := NewSchoolTypeFromUser(student.SchoolType)
 	return &Student{
 		ID:            student.Id,
 		LastName:      student.LastName,
@@ -32,9 +33,9 @@ func NewStudent(student *entity.Student, subjects entity.Subjects) *Student {
 		LastNameKana:  student.LastNameKana,
 		FirstNameKana: student.FirstNameKana,
 		Mail:          student.Mail,
-		SchoolType:    NewSchoolTypeFromUser(student.SchoolType),
+		SchoolType:    schoolType,
 		Grade:         student.Grade,
-		Subjects:      NewSubjects(subjects),
+		Subjects:      NewSubjects(subjects).FiterBySchoolType(schoolType),
 		CreatedAt:     jst.ParseFromUnix(student.CreatedAt),
 		UpdatedAt:     jst.ParseFromUnix(student.UpdatedAt),
 	}

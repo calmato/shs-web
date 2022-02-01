@@ -131,6 +131,58 @@ func TestSchoolTypeFromClassroom(t *testing.T) {
 	}
 }
 
+func TestSubjects_FilterBySchoolType(t *testing.T) {
+	t.Parallel()
+	now := jst.Date(2022, 1, 2, 18, 30, 0, 0)
+	tests := []struct {
+		name       string
+		subjects   Subjects
+		schoolType SchoolType
+		expect     Subjects
+	}{
+		{
+			name: "success",
+			subjects: Subjects{
+				{
+					ID:         1,
+					Name:       "国語",
+					Color:      "#F8BBD0",
+					SchoolType: SchoolTypeJuniorHighSchool,
+					CreatedAt:  now,
+					UpdatedAt:  now,
+				},
+				{
+					ID:         2,
+					Name:       "数学A",
+					Color:      "#F8BBD0",
+					SchoolType: SchoolTypeHighSchool,
+					CreatedAt:  now,
+					UpdatedAt:  now,
+				},
+			},
+			schoolType: SchoolTypeHighSchool,
+			expect: Subjects{
+				{
+					ID:         2,
+					Name:       "数学A",
+					Color:      "#F8BBD0",
+					SchoolType: SchoolTypeHighSchool,
+					CreatedAt:  now,
+					UpdatedAt:  now,
+				},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tt.expect, tt.subjects.FiterBySchoolType(tt.schoolType))
+		})
+	}
+}
+
 func TestSubjects_GroupBySchoolType(t *testing.T) {
 	t.Parallel()
 	now := jst.Date(2021, 8, 2, 18, 30, 0, 0)
