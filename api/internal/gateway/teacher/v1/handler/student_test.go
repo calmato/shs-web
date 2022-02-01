@@ -384,6 +384,117 @@ func TestCreateStudent(t *testing.T) {
 	}
 }
 
+func TestUpdateStudentSubject(t *testing.T) {
+	t.Parallel()
+	now := jst.Date(2021, 8, 2, 18, 30, 0, 0)
+	student := &user.Student{
+		Id:            idmock,
+		LastName:      "中村",
+		FirstName:     "広大",
+		LastNameKana:  "なかむら",
+		FirstNameKana: "こうだい",
+		Mail:          "student-test001@calmato.jp",
+		SchoolType:    user.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL,
+		Grade:         1,
+		CreatedAt:     now.Unix(),
+		UpdatedAt:     now.Unix(),
+	}
+	tests := []struct {
+		name      string
+		setup     func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller)
+		studentID string
+		req       *request.UpdateStudentSubjectRequest
+		expect    *testResponse
+	}{
+		{
+			name: "success",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
+				studentIn := &user.GetStudentRequest{Id: idmock}
+				studentOut := &user.GetStudentResponse{Student: student}
+				subjectIn := &classroom.UpsertStudentSubjectRequest{
+					StudentId:  student.Id,
+					SubjectIds: []int64{1, 2},
+					SchoolType: classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL,
+				}
+				subjectOut := &classroom.UpsertStudentSubjectResponse{}
+				mocks.user.EXPECT().GetStudent(gomock.Any(), studentIn).Return(studentOut, nil)
+				mocks.classroom.EXPECT().UpsertStudentSubject(gomock.Any(), subjectIn).Return(subjectOut, nil)
+			},
+			studentID: idmock,
+			req: &request.UpdateStudentSubjectRequest{
+				SubjectIDs: []int64{1, 2},
+			},
+			expect: &testResponse{
+				code: http.StatusNoContent,
+			},
+		},
+		{
+			name: "failed to get student",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
+				studentIn := &user.GetStudentRequest{Id: idmock}
+				mocks.user.EXPECT().GetStudent(gomock.Any(), studentIn).Return(nil, errmock)
+			},
+			studentID: idmock,
+			req: &request.UpdateStudentSubjectRequest{
+				SubjectIDs: []int64{1, 2},
+			},
+			expect: &testResponse{
+				code: http.StatusInternalServerError,
+			},
+		},
+		{
+			name: "failed to invalid school type",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
+				studentIn := &user.GetStudentRequest{Id: idmock}
+				studentOut := &user.GetStudentResponse{
+					Student: &user.Student{
+						SchoolType: user.SchoolType_SCHOOL_TYPE_UNKNOWN,
+					},
+				}
+				mocks.user.EXPECT().GetStudent(gomock.Any(), studentIn).Return(studentOut, nil)
+			},
+			studentID: idmock,
+			req: &request.UpdateStudentSubjectRequest{
+				SubjectIDs: []int64{1, 2},
+			},
+			expect: &testResponse{
+				code: http.StatusPreconditionFailed,
+			},
+		},
+		{
+			name: "failed to upsert student subjects",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
+				studentIn := &user.GetStudentRequest{Id: idmock}
+				studentOut := &user.GetStudentResponse{Student: student}
+				subjectIn := &classroom.UpsertStudentSubjectRequest{
+					StudentId:  student.Id,
+					SubjectIds: []int64{1, 2},
+					SchoolType: classroom.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL,
+				}
+				mocks.user.EXPECT().GetStudent(gomock.Any(), studentIn).Return(studentOut, nil)
+				mocks.classroom.EXPECT().UpsertStudentSubject(gomock.Any(), subjectIn).Return(nil, errmock)
+			},
+			studentID: idmock,
+			req: &request.UpdateStudentSubjectRequest{
+				SubjectIDs: []int64{1, 2},
+			},
+			expect: &testResponse{
+				code: http.StatusInternalServerError,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			path := fmt.Sprintf("/v1/students/%s/subjects", tt.studentID)
+			req := newHTTPRequest(t, http.MethodPatch, path, tt.req)
+			testHTTP(t, tt.setup, tt.expect, req)
+		})
+	}
+}
+
 func TestDeleteStudent(t *testing.T) {
 	t.Parallel()
 	tests := []struct {

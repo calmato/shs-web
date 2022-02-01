@@ -97,7 +97,8 @@ func (h *apiV1Handler) AdminRoutes(rg *gin.RouterGroup) {
 	rg.PATCH("/v1/teachers/:teacherId/role", h.UpdateTeacherRole)
 	rg.PATCH("/v1/teachers/:teacherId/subjects", h.UpdateTeacherSubject)
 	rg.POST("/v1/students", h.CreateStudent)
-	rg.DELETE("v1/students/:studentId", h.DeleteStudent)
+	rg.DELETE("/v1/students/:studentId", h.DeleteStudent)
+	rg.PATCH("/v1/students/:studentId/subjects", h.UpdateStudentSubject)
 	rg.POST("/v1/subjects", h.CreateSubject)
 	rg.PATCH("/v1/subjects/:subjectId", h.UpdateSubject)
 	rg.DELETE("/v1/subjects/:subjectId", h.DeleteSubject)
@@ -139,6 +140,10 @@ func unauthorized(ctx *gin.Context, err error) {
 
 func forbidden(ctx *gin.Context, err error) {
 	httpError(ctx, status.Error(codes.PermissionDenied, err.Error()))
+}
+
+func preconditionFailed(ctx *gin.Context, err error) {
+	httpError(ctx, status.Error(codes.FailedPrecondition, err.Error()))
 }
 
 /**

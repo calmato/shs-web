@@ -63,6 +63,16 @@ func NewSchoolTypeFromClassroom(schoolType classroom.SchoolType) SchoolType {
 	}
 }
 
+func (ss Subjects) FiterBySchoolType(schoolType SchoolType) Subjects {
+	res := make(Subjects, 0, len(ss))
+	for i := range ss {
+		if schoolType == ss[i].SchoolType {
+			res = append(res, ss[i])
+		}
+	}
+	return res
+}
+
 func (ss Subjects) GroupBySchoolType() map[SchoolType]Subjects {
 	res := map[SchoolType]Subjects{
 		SchoolTypeElementarySchool: make(Subjects, 0),

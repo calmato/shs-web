@@ -2,6 +2,7 @@ package handler
 
 import (
 	"context"
+	"errors"
 	"net/http"
 	"strconv"
 
@@ -10,6 +11,7 @@ import (
 	"github.com/calmato/shs-web/api/internal/gateway/teacher/v1/request"
 	"github.com/calmato/shs-web/api/internal/gateway/teacher/v1/response"
 	"github.com/calmato/shs-web/api/internal/gateway/util"
+	"github.com/calmato/shs-web/api/proto/classroom"
 	"github.com/calmato/shs-web/api/proto/user"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/sync/errgroup"
@@ -121,6 +123,43 @@ func (h *apiV1Handler) CreateStudent(ctx *gin.Context) {
 		Student: entity.NewStudent(student, nil),
 	}
 	ctx.JSON(http.StatusOK, res)
+}
+
+func (h *apiV1Handler) UpdateStudentSubject(ctx *gin.Context) {
+	c := util.SetMetadata(ctx)
+
+	studentID := ctx.Param("studentId")
+
+	req := &request.UpdateStudentSubjectRequest{}
+	if err := ctx.BindJSON(req); err != nil {
+		badRequest(ctx, err)
+		return
+	}
+
+	student, err := h.getStudent(c, studentID)
+	if err != nil {
+		httpError(ctx, err)
+		return
+	}
+	schoolType := entity.NewSchoolTypeFromUser(student.SchoolType)
+	if schoolType == entity.SchoolTypeUnknown {
+		preconditionFailed(ctx, errors.New("api: school type is invalid"))
+		return
+	}
+	cschoolType, _ := schoolType.ClassroomSchoolType()
+
+	in := &classroom.UpsertStudentSubjectRequest{
+		StudentId:  student.Id,
+		SubjectIds: req.SubjectIDs,
+		SchoolType: cschoolType,
+	}
+	_, err = h.classroom.UpsertStudentSubject(c, in)
+	if err != nil {
+		httpError(ctx, err)
+		return
+	}
+
+	ctx.JSON(http.StatusNoContent, gin.H{})
 }
 
 func (h *apiV1Handler) multiGetStudents(ctx context.Context, studentIDs []string) (gentity.Students, error) {
