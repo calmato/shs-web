@@ -54,3 +54,41 @@ func TestAuth(t *testing.T) {
 		})
 	}
 }
+
+func TestSchoolTypeFromUser(t *testing.T) {
+	t.Parallel()
+	tests := []struct {
+		name       string
+		schoolType user.SchoolType
+		expect     SchoolType
+	}{
+		{
+			name:       "successl elementary school",
+			schoolType: user.SchoolType_SCHOOL_TYPE_ELEMENTARY_SCHOOL,
+			expect:     SchoolTypeElementarySchool,
+		},
+		{
+			name:       "successl junior high school",
+			schoolType: user.SchoolType_SCHOOL_TYPE_JUNIOR_HIGH_SCHOOL,
+			expect:     SchoolTypeJuniorHighSchool,
+		},
+		{
+			name:       "successl high school",
+			schoolType: user.SchoolType_SCHOOL_TYPE_HIGH_SCHOOL,
+			expect:     SchoolTypeHighSchool,
+		},
+		{
+			name:       "successl invalid school type",
+			schoolType: user.SchoolType_SCHOOL_TYPE_UNKNOWN,
+			expect:     SchoolTypeUnknown,
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tt.expect, NewSchoolTypeFromUser(tt.schoolType))
+		})
+	}
+}
