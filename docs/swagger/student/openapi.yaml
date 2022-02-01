@@ -13,6 +13,10 @@ paths:
   # Auth
   /v1/me:
     $ref: './paths/v1/me/index.yaml'
+  /v1/me/mail:
+    $ref: './paths/v1/me/mail.yaml'
+  /v1/me/password:
+    $ref: './paths/v1/me/password.yaml'
   # Students
 components:
   securitySchemes:
@@ -24,6 +28,10 @@ components:
     errorResponse:
       $ref: './components/schemas/common.yaml#/errorResponse'
     # Request
+    v1UpdateMyMailRequest:
+      $ref: './components/schemas/v1/auth.request.yaml#/updateMyMailRequest'
+    v1UpdateMyPasswordRequest:
+      $ref: './components/schemas/v1/auth.request.yaml#/updateMyPasswordRequest'
     # Response
     v1AuthResponse:
       $ref: './components/schemas/v1/auth.response.yaml#/authResponse'

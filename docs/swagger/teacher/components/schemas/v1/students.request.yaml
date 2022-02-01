@@ -61,7 +61,7 @@ updateStudentPasswordRequest:
     password: '12345678'
     passwordConfirmation: '12345678'
 updateStudentSubjectsRequest:
-  type: Object
+  type: object
   properties:
     subjectIds:
       type: array

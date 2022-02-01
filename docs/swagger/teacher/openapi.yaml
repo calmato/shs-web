@@ -1,4 +1,4 @@
-openapi: "3.0.3"
+openapi: 3.0.3
 info:
   title: SHS Web
   description: 管理者・講師用API
