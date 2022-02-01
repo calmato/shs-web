@@ -360,6 +360,123 @@ func TestCreateStudent(t *testing.T) {
 	}
 }
 
+func TestUpdateStudentMail(t *testing.T) {
+	t.Parallel()
+
+	req := &user.UpdateStudentMailRequest{
+		Id:   "kSByoE6FetnPs5Byk3a9Zx",
+		Mail: "student-test001@calmato.jp",
+	}
+
+	tests := []struct {
+		name   string
+		setup  func(ctx context.Context, t *testing.T, mocks *mocks)
+		req    *user.UpdateStudentMailRequest
+		expect *testResponse
+	}{
+		{
+			name: "success",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				mocks.validator.EXPECT().UpdateStudentMail(req).Return(nil)
+				mocks.db.Student.EXPECT().UpdateMail(ctx, "kSByoE6FetnPs5Byk3a9Zx", "student-test001@calmato.jp").Return(nil)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.OK,
+				body: &user.UpdateStudentMailResponse{},
+			},
+		},
+		{
+			name: "invalid argument",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				req := &user.UpdateStudentMailRequest{}
+				mocks.validator.EXPECT().UpdateStudentMail(req).Return(validation.ErrRequestValidation)
+			},
+			req: &user.UpdateStudentMailRequest{},
+			expect: &testResponse{
+				code: codes.InvalidArgument,
+			},
+		},
+		{
+			name: "failed to update student mail",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				mocks.validator.EXPECT().UpdateStudentMail(req).Return(nil)
+				mocks.db.Student.EXPECT().UpdateMail(ctx, "kSByoE6FetnPs5Byk3a9Zx", "student-test001@calmato.jp").Return(errmock)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.Internal,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, testGRPC(tt.setup, tt.expect, func(ctx context.Context, service *userService) (proto.Message, error) {
+			return service.UpdateStudentMail(ctx, tt.req)
+		}))
+	}
+}
+
+func TestUpdateStudentPassword(t *testing.T) {
+	t.Parallel()
+
+	req := &user.UpdateStudentPasswordRequest{
+		Id:                   "kSByoE6FetnPs5Byk3a9Zx",
+		Password:             "12345678",
+		PasswordConfirmation: "12345678",
+	}
+
+	tests := []struct {
+		name   string
+		setup  func(ctx context.Context, t *testing.T, mocks *mocks)
+		req    *user.UpdateStudentPasswordRequest
+		expect *testResponse
+	}{
+		{
+			name: "success",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				mocks.validator.EXPECT().UpdateStudentPassword(req).Return(nil)
+				mocks.db.Student.EXPECT().UpdatePassword(ctx, "kSByoE6FetnPs5Byk3a9Zx", "12345678").Return(nil)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.OK,
+				body: &user.UpdateStudentPasswordResponse{},
+			},
+		},
+		{
+			name: "invalid argument",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				req := &user.UpdateStudentPasswordRequest{}
+				mocks.validator.EXPECT().UpdateStudentPassword(req).Return(validation.ErrRequestValidation)
+			},
+			req: &user.UpdateStudentPasswordRequest{},
+			expect: &testResponse{
+				code: codes.InvalidArgument,
+			},
+		},
+		{
+			name: "failed to update student password",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				mocks.validator.EXPECT().UpdateStudentPassword(req).Return(nil)
+				mocks.db.Student.EXPECT().UpdatePassword(ctx, "kSByoE6FetnPs5Byk3a9Zx", "12345678").Return(errmock)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.Internal,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, testGRPC(tt.setup, tt.expect, func(ctx context.Context, service *userService) (proto.Message, error) {
+			return service.UpdateStudentPassword(ctx, tt.req)
+		}))
+	}
+}
+
 func TestDeleteStudent(t *testing.T) {
 	t.Parallel()
 

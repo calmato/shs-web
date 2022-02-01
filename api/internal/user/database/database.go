@@ -49,6 +49,8 @@ type Student interface {
 	MultiGet(ctx context.Context, ids []string, fields ...string) (entity.Students, error)
 	Get(ctx context.Context, id string, fields ...string) (*entity.Student, error)
 	Create(ctx context.Context, s *entity.Student) error
+	UpdateMail(ctx context.Context, studentID string, mail string) error
+	UpdatePassword(ctx context.Context, studentID string, password string) error
 	Delete(ctx context.Context, studentID string) error
 	Count(ctx context.Context) (int64, error)
 }

@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/calmato/shs-web/api/internal/user/database"
 	"github.com/calmato/shs-web/api/internal/user/entity"
@@ -9,6 +10,33 @@ import (
 	"github.com/calmato/shs-web/api/proto/user"
 	"golang.org/x/sync/errgroup"
 )
+
+func (s *userService) ListStudents(
+	ctx context.Context, req *user.ListStudentsRequest,
+) (*user.ListStudentsResponse, error) {
+	const prefixKey = "listStudents"
+	if err := s.validator.ListStudents(req); err != nil {
+		return nil, gRPCError(err)
+	}
+
+	sharedKey := fmt.Sprintf("%s:%d:%d", prefixKey, req.Limit, req.Offset)
+	res, err, _ := s.sharedGroup.Do(sharedKey, func() (interface{}, error) {
+		students, total, err := s.listStudents(ctx, req.Limit, req.Offset)
+		if err != nil {
+			return nil, err
+		}
+		res := &user.ListStudentsResponse{
+			Students: students.Proto(),
+			Total:    total,
+		}
+		return res, nil
+	})
+	if err != nil {
+		return nil, gRPCError(err)
+	}
+
+	return res.(*user.ListStudentsResponse), nil
+}
 
 func (s *userService) listStudents(ctx context.Context, limit, offset int64) (entity.Students, int64, error) {
 	eg, ectx := errgroup.WithContext(ctx)
@@ -31,24 +59,6 @@ func (s *userService) listStudents(ctx context.Context, limit, offset int64) (en
 	}
 
 	return students, total, nil
-}
-
-func (s *userService) ListStudents(
-	ctx context.Context, req *user.ListStudentsRequest,
-) (*user.ListStudentsResponse, error) {
-	if err := s.validator.ListStudents(req); err != nil {
-		return nil, gRPCError(err)
-	}
-	students, total, err := s.listStudents(ctx, req.Limit, req.Offset)
-	if err != nil {
-		return nil, gRPCError(err)
-	}
-	res := &user.ListStudentsResponse{
-		Students: students.Proto(),
-		Total:    total,
-	}
-
-	return res, nil
 }
 
 func (s *userService) MultiGetStudents(
@@ -106,6 +116,34 @@ func (s *userService) CreateStudent(
 		Student: student.Proto(),
 	}
 	return res, nil
+}
+
+func (s *userService) UpdateStudentMail(
+	ctx context.Context, req *user.UpdateStudentMailRequest,
+) (*user.UpdateStudentMailResponse, error) {
+	if err := s.validator.UpdateStudentMail(req); err != nil {
+		return nil, gRPCError(err)
+	}
+
+	err := s.db.Student.UpdateMail(ctx, req.Id, req.Mail)
+	if err != nil {
+		return nil, gRPCError(err)
+	}
+	return &user.UpdateStudentMailResponse{}, nil
+}
+
+func (s *userService) UpdateStudentPassword(
+	ctx context.Context, req *user.UpdateStudentPasswordRequest,
+) (*user.UpdateStudentPasswordResponse, error) {
+	if err := s.validator.UpdateStudentPassword(req); err != nil {
+		return nil, gRPCError(err)
+	}
+
+	err := s.db.Student.UpdatePassword(ctx, req.Id, req.Password)
+	if err != nil {
+		return nil, gRPCError(err)
+	}
+	return &user.UpdateStudentPasswordResponse{}, nil
 }
 
 func (s *userService) DeleteStudent(

@@ -174,6 +174,34 @@ func (mr *MockRequestValidationMockRecorder) MultiGetTeachers(req interface{}) *
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MultiGetTeachers", reflect.TypeOf((*MockRequestValidation)(nil).MultiGetTeachers), req)
 }
 
+// UpdateStudentMail mocks base method.
+func (m *MockRequestValidation) UpdateStudentMail(req *user.UpdateStudentMailRequest) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateStudentMail", req)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateStudentMail indicates an expected call of UpdateStudentMail.
+func (mr *MockRequestValidationMockRecorder) UpdateStudentMail(req interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateStudentMail", reflect.TypeOf((*MockRequestValidation)(nil).UpdateStudentMail), req)
+}
+
+// UpdateStudentPassword mocks base method.
+func (m *MockRequestValidation) UpdateStudentPassword(req *user.UpdateStudentPasswordRequest) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateStudentPassword", req)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateStudentPassword indicates an expected call of UpdateStudentPassword.
+func (mr *MockRequestValidationMockRecorder) UpdateStudentPassword(req interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateStudentPassword", reflect.TypeOf((*MockRequestValidation)(nil).UpdateStudentPassword), req)
+}
+
 // UpdateTeacherMail mocks base method.
 func (m *MockRequestValidation) UpdateTeacherMail(req *user.UpdateTeacherMailRequest) error {
 	m.ctrl.T.Helper()

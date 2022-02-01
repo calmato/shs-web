@@ -111,6 +111,36 @@ func (s *student) Create(ctx context.Context, student *entity.Student) error {
 	return dbError(tx.Commit().Error)
 }
 
+func (s *student) UpdateMail(ctx context.Context, studentID string, mail string) error {
+	_, err := s.auth.UpdateEmail(ctx, studentID, mail)
+	if err != nil {
+		return dbError(err)
+	}
+
+	tx, err := s.db.Begin()
+	if err != nil {
+		return dbError(err)
+	}
+	defer s.db.Close(tx)
+
+	params := map[string]interface{}{
+		"mail":       mail,
+		"updated_at": s.now(),
+	}
+
+	err = tx.Table(studentTable).Where("id = ?", studentID).Updates(params).Error
+	if err != nil {
+		tx.Rollback()
+		return dbError(err)
+	}
+	return dbError(tx.Commit().Error)
+}
+
+func (s *student) UpdatePassword(ctx context.Context, studentID string, password string) error {
+	_, err := s.auth.UpdatePassword(ctx, studentID, password)
+	return dbError(err)
+}
+
 func (s *student) Delete(ctx context.Context, studentID string) error {
 	now := s.now()
 	uid := uuid.Base58Encode(uuid.New())

@@ -26,6 +26,8 @@ type RequestValidation interface {
 	MultiGetStudents(req *user.MultiGetStudentsRequest) error
 	GetStudent(req *user.GetStudentRequest) error
 	CreateStudent(req *user.CreateStudentRequest) error
+	UpdateStudentMail(req *user.UpdateStudentMailRequest) error
+	UpdateStudentPassword(req *user.UpdateStudentPasswordRequest) error
 	DeleteStudent(req *user.DeleteStudentRequest) error
 }
 
