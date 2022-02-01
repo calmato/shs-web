@@ -9,6 +9,7 @@ import {
   UpdateTeacherSubjectsRequest,
   UpdateTeacherRoleRequest,
   UpdateTeacherMailRequest,
+  UpdateTeacherPasswordRequest,
 } from '~/types/api/v1'
 import { Role, Student, StudentMap, SubjectsMap, Teacher, TeacherMap, UserState } from '~/types/store'
 import { ErrorResponse } from '~/types/api/exception'
@@ -20,7 +21,6 @@ import {
   TeacherUpdateMailForm,
   TeacherUpdatePasswordForm,
 } from '~/types/form'
-import { TeacherEditRoleForm, TeacherEditSubjectForm, TeacherNewForm, TeacherUpdateMailForm } from '~/types/form'
 import { subjectResponse2Subject } from '~/lib'
 
 const initialState: UserState = {
