@@ -14,6 +14,15 @@ type CreateStudentRequest struct {
 	Grade                int64             `json:"grade,omitempty"`                // 学年
 }
 
+type UpdateStudentMailRequest struct {
+	Mail string `json:"mail,omitempty"` // メールアドレス
+}
+
+type UpdateStudentPasswordRequest struct {
+	Password             string `json:"password,omitempty"`             // パスワード
+	PasswordConfirmation string `json:"passwordConfirmation,omitempty"` // パスワード(確認用)
+}
+
 type UpdateStudentSubjectRequest struct {
 	SubjectIDs []int64 `json:"subjectIds,omitempty"` // 受講教科ID一覧
 }

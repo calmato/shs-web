@@ -125,6 +125,53 @@ func (h *apiV1Handler) CreateStudent(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, res)
 }
 
+func (h *apiV1Handler) UpdateStudentMail(ctx *gin.Context) {
+	c := util.SetMetadata(ctx)
+
+	studentID := ctx.Param("studentId")
+	req := &request.UpdateStudentMailRequest{}
+	if err := ctx.BindJSON(req); err != nil {
+		badRequest(ctx, err)
+		return
+	}
+
+	in := &user.UpdateStudentMailRequest{
+		Id:   studentID,
+		Mail: req.Mail,
+	}
+	_, err := h.user.UpdateStudentMail(c, in)
+	if err != nil {
+		httpError(ctx, err)
+		return
+	}
+
+	ctx.JSON(http.StatusNoContent, gin.H{})
+}
+
+func (h *apiV1Handler) UpdateStudentPassword(ctx *gin.Context) {
+	c := util.SetMetadata(ctx)
+
+	studentID := ctx.Param("studentId")
+	req := &request.UpdateStudentPasswordRequest{}
+	if err := ctx.BindJSON(req); err != nil {
+		badRequest(ctx, err)
+		return
+	}
+
+	in := &user.UpdateStudentPasswordRequest{
+		Id:                   studentID,
+		Password:             req.Password,
+		PasswordConfirmation: req.PasswordConfirmation,
+	}
+	_, err := h.user.UpdateStudentPassword(c, in)
+	if err != nil {
+		httpError(ctx, err)
+		return
+	}
+
+	ctx.JSON(http.StatusNoContent, gin.H{})
+}
+
 func (h *apiV1Handler) UpdateStudentSubject(ctx *gin.Context) {
 	c := util.SetMetadata(ctx)
 

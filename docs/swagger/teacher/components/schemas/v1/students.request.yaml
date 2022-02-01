@@ -40,6 +40,26 @@ createStudentRequest:
     grade: 1
     password: '12345678'
     passwordConfirmation: '12345678'
+updateStudentMailRequest:
+  type: object
+  properties:
+    mail:
+      type: string
+      description: メールアドレス
+  example:
+    mail: 'student-test01@calmato.jp'
+updateStudentPasswordRequest:
+  type: object
+  properties:
+    password:
+      type: string
+      description: パスワード
+    passwordConfirmation:
+      type: string
+      description: パスワード
+  example:
+    password: '12345678'
+    passwordConfirmation: '12345678'
 updateStudentSubjectsRequest:
   type: Object
   properties:

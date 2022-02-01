@@ -384,6 +384,124 @@ func TestCreateStudent(t *testing.T) {
 	}
 }
 
+func TestUpdateStudentMail(t *testing.T) {
+	t.Parallel()
+	tests := []struct {
+		name      string
+		setup     func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller)
+		studentID string
+		req       *request.UpdateStudentMailRequest
+		expect    *testResponse
+	}{
+		{
+			name: "success",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
+				in := &user.UpdateStudentMailRequest{
+					Id:   idmock,
+					Mail: "student-test001@calmato.jp",
+				}
+				out := &user.UpdateStudentMailResponse{}
+				mocks.user.EXPECT().UpdateStudentMail(gomock.Any(), in).Return(out, nil)
+			},
+			studentID: idmock,
+			req: &request.UpdateStudentMailRequest{
+				Mail: "student-test001@calmato.jp",
+			},
+			expect: &testResponse{
+				code: http.StatusNoContent,
+			},
+		},
+		{
+			name: "failed to update student mail",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
+				in := &user.UpdateStudentMailRequest{
+					Id:   idmock,
+					Mail: "student-test001@calmato.jp",
+				}
+				mocks.user.EXPECT().UpdateStudentMail(gomock.Any(), in).Return(nil, errmock)
+			},
+			studentID: idmock,
+			req: &request.UpdateStudentMailRequest{
+				Mail: "student-test001@calmato.jp",
+			},
+			expect: &testResponse{
+				code: http.StatusInternalServerError,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			path := fmt.Sprintf("/v1/students/%s/mail", tt.studentID)
+			req := newHTTPRequest(t, http.MethodPatch, path, tt.req)
+			testHTTP(t, tt.setup, tt.expect, req)
+		})
+	}
+}
+
+func TestUpdateStudentPassword(t *testing.T) {
+	t.Parallel()
+	tests := []struct {
+		name      string
+		setup     func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller)
+		studentID string
+		req       *request.UpdateStudentPasswordRequest
+		expect    *testResponse
+	}{
+		{
+			name: "success",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
+				in := &user.UpdateStudentPasswordRequest{
+					Id:                   idmock,
+					Password:             "12345678",
+					PasswordConfirmation: "12345678",
+				}
+				out := &user.UpdateStudentPasswordResponse{}
+				mocks.user.EXPECT().UpdateStudentPassword(gomock.Any(), in).Return(out, nil)
+			},
+			studentID: idmock,
+			req: &request.UpdateStudentPasswordRequest{
+				Password:             "12345678",
+				PasswordConfirmation: "12345678",
+			},
+			expect: &testResponse{
+				code: http.StatusNoContent,
+			},
+		},
+		{
+			name: "failed to update student password",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
+				in := &user.UpdateStudentPasswordRequest{
+					Id:                   idmock,
+					Password:             "12345678",
+					PasswordConfirmation: "12345678",
+				}
+				mocks.user.EXPECT().UpdateStudentPassword(gomock.Any(), in).Return(nil, errmock)
+			},
+			studentID: idmock,
+			req: &request.UpdateStudentPasswordRequest{
+				Password:             "12345678",
+				PasswordConfirmation: "12345678",
+			},
+			expect: &testResponse{
+				code: http.StatusInternalServerError,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			path := fmt.Sprintf("/v1/students/%s/password", tt.studentID)
+			req := newHTTPRequest(t, http.MethodPatch, path, tt.req)
+			testHTTP(t, tt.setup, tt.expect, req)
+		})
+	}
+}
+
 func TestUpdateStudentSubject(t *testing.T) {
 	t.Parallel()
 	now := jst.Date(2021, 8, 2, 18, 30, 0, 0)
