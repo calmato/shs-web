@@ -1,24 +1,26 @@
 <template>
-  <div class="pa-2">
-    <p class="text-h5 mb-0">パスワードの変更</p>
-    <the-form-group class="pa-2">
-      <the-text-field
-        :label="updatePasswordForm.options.password.label"
-        :rules="updatePasswordForm.options.passwordConfirmation.rules"
-        :value.sync="updatePasswordForm.params.password"
-        type="password"
-      />
-      <the-text-field
-        :label="updatePasswordForm.options.passwordConfirmation.label"
-        :rules="updatePasswordForm.options.passwordConfirmation.rules"
-        :value.sync="updatePasswordForm.params.passwordConfirmaion"
-        type="password"
-      />
-    </the-form-group>
-    <div class="d-flex justify-end pr-4">
-      <v-btn color="primary" @click="handleSubmit"> 保存する </v-btn>
+  <v-container class="mt-4">
+    <div class="pa-2">
+      <p class="text-h5 mb-0">パスワードの変更</p>
+      <the-form-group class="pa-2">
+        <the-text-field
+          :label="updatePasswordForm.options.password.label"
+          :rules="updatePasswordForm.options.passwordConfirmation.rules"
+          :value.sync="updatePasswordForm.params.password"
+          type="password"
+        />
+        <the-text-field
+          :label="updatePasswordForm.options.passwordConfirmation.label"
+          :rules="updatePasswordForm.options.passwordConfirmation.rules"
+          :value.sync="updatePasswordForm.params.passwordConfirmaion"
+          type="password"
+        />
+      </the-form-group>
+      <div class="d-flex justify-end pr-4">
+        <v-btn color="primary" @click="handleSubmit"> 保存 </v-btn>
+      </div>
     </div>
-  </div>
+  </v-container>
 </template>
 
 <script lang="ts">
@@ -47,7 +49,7 @@ export default defineComponent({
 
       await UserStore.updatePassword({ form: updatePasswordForm })
         .then(() => {
-          router.push('/settings')
+          router.push('/signin')
           CommonStore.showSnackbar({ color: 'success', message: 'パスワードを更新しました。' })
         })
         .catch((err: Error) => {
