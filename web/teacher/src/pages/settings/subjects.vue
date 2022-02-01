@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <v-container class="mt-4">
     <p class="text-h5 mb-2">開講科目設定</p>
     <div v-for="(schoolType, i) in schoolTypeArray" :key="i" class="mb-8">
       <div class="d-flex align-center mb-2">

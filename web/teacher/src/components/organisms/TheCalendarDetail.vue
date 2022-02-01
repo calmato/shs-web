@@ -34,7 +34,7 @@
 
     <v-card-actions>
       <v-spacer></v-spacer>
-      <v-btn color="secondary" @click="onClose">閉じる</v-btn>
+      <v-btn color="primary" outlined @click="onClose">閉じる</v-btn>
     </v-card-actions>
   </v-card>
 </template>

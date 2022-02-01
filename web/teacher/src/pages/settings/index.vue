@@ -1,6 +1,6 @@
 <template>
   <the-setting-top
-    class="px-2"
+    class="px-2 mt-4"
     :menu-items="menuItems"
     :user="auth"
     :elementary-school-subjects="elementarySchoolSubjects"

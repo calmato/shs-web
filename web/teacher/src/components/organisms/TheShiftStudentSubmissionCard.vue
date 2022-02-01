@@ -1,6 +1,6 @@
 <template>
   <v-card>
-    <v-toolbar color="primary" dark>提出シフト一覧 - {{ submission.name }}</v-toolbar>
+    <v-toolbar color="primary" dark elevation="0">提出シフト一覧 - {{ submission.name }}</v-toolbar>
     <v-card-text class="py-4">
       <div class="text-subtitle-1">授業希望概要</div>
       <v-data-table
@@ -29,7 +29,7 @@
     </v-card-text>
     <v-card-actions>
       <v-spacer />
-      <v-btn color="secondary" @click="onClose">閉じる</v-btn>
+      <v-btn color="primary" outlined @click="onClose">閉じる</v-btn>
     </v-card-actions>
   </v-card>
 </template>

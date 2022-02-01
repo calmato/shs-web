@@ -1,18 +1,17 @@
 <template>
   <v-container>
     <v-row class="justify-center">
-      <v-col cols="12" sm="10" md="8">
-        <v-card>
+      <v-col>
+        <div>
           <v-card-title>講師登録</v-card-title>
           <v-card-text>
             <the-teacher-new-form :form="form" />
           </v-card-text>
           <v-card-actions>
             <v-spacer />
-            <v-btn @click="onCancel">戻る</v-btn>
-            <v-btn color="primary" :loading="loading" :disabled="loading" @click="onSubmit">送信</v-btn>
+            <v-btn color="primary" :loading="loading" :disabled="loading" @click="onSubmit">登録</v-btn>
           </v-card-actions>
-        </v-card>
+        </div>
       </v-col>
     </v-row>
   </v-container>

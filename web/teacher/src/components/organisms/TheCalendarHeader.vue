@@ -1,20 +1,20 @@
 <template>
   <v-toolbar flat>
-    <v-btn outlined class="mr-4" color="grey darken-2" @click="onClickToday">今日</v-btn>
+    <v-btn outlined class="mr-4" color="grey darken-2" @click="onClickToday"><span class="grey-text">今日</span></v-btn>
     <v-btn fab text small color="grey darken-2" @click="onClickPrev">
-      <v-icon small>mdi-chevron-left</v-icon>
+      <v-icon small class="grey-text">mdi-chevron-left</v-icon>
     </v-btn>
     <v-toolbar-title>
       {{ getTitle() }}
     </v-toolbar-title>
     <v-btn fab text small color="grey darken-2" @click="onClickNext">
-      <v-icon small>mdi-chevron-right</v-icon>
+      <v-icon small class="grey-text">mdi-chevron-right</v-icon>
     </v-btn>
     <v-spacer />
     <v-menu bottom right>
       <template #activator="{ on, attrs }">
         <v-btn outlined color="grey darken-2" v-bind="attrs" v-on="on">
-          <span>{{ getTypeName(calendarType) }}</span>
+          <span class="grey-text">{{ getTypeName(calendarType) }}</span>
           <v-icon right>mdi-menu-down</v-icon>
         </v-btn>
       </template>
@@ -110,3 +110,9 @@ export default defineComponent({
   },
 })
 </script>
+
+<style lang="scss" scoped>
+.grey-text {
+  color: #3c4043 !important;
+}
+</style>

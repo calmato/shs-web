@@ -2,7 +2,7 @@
   <div>
     <p class="text-h5 mb-2">ブース数の設定</p>
     <p class="text-body-2">使用するブース数を選択してください。</p>
-    <v-select v-model="formData" type="number" :items="boothList" prepend-icon="mdi-chair-school" />
+    <v-select v-model="formData" type="number" :items="boothList" />
   </div>
 </template>
 

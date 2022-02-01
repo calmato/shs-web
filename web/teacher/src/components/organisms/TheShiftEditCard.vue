@@ -1,6 +1,6 @@
 <template>
   <v-card>
-    <v-toolbar color="primary" dark>
+    <v-toolbar color="primary" dark elevation="0">
       <span>シフト募集期間の編集</span>
       <v-spacer />
       <v-icon @click="onDelete">mdi-delete</v-icon>
@@ -14,7 +14,7 @@
         <v-row v-else class="py-8">
           <v-col cols="12">
             <h4>シフト提出可能期間</h4>
-            <div class="d-flex align-center">
+            <div class="d-flex align-center h-stack">
               <the-date-picker
                 :label="form.options.openDate.label"
                 :rules="form.options.openDate.rules"
@@ -39,8 +39,8 @@
     </v-card-actions>
     <v-card-actions v-else>
       <v-spacer />
+      <v-btn color="primary" outlined @click="onClose">閉じる</v-btn>
       <v-btn color="primary" :disabled="loading" @click="onSubmit">保存する</v-btn>
-      <v-btn color="secondary" @click="onClose">閉じる</v-btn>
     </v-card-actions>
   </v-card>
 </template>
@@ -110,3 +110,9 @@ export default defineComponent({
   },
 })
 </script>
+
+<style lang="scss" scoped>
+.h-stack {
+  gap: 1rem;
+}
+</style>

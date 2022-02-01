@@ -1,6 +1,6 @@
 <template>
   <v-card>
-    <v-toolbar color="primary" dark>
+    <v-toolbar color="primary" dark elevation="0">
       <span>講師詳細</span>
       <v-spacer />
       <v-icon @click="onDelete">mdi-delete</v-icon>
@@ -95,7 +95,7 @@
     </v-card-actions>
     <v-card-actions v-else>
       <v-spacer />
-      <v-btn color="secondary" @click="onClose">閉じる</v-btn>
+      <v-btn color="primary" outlined @click="onClose">閉じる</v-btn>
     </v-card-actions>
   </v-card>
 </template>

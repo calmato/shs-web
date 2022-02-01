@@ -1,6 +1,6 @@
 <template>
   <v-card>
-    <v-toolbar color="primary" dark>授業一覧 - {{ getStudentName(lesson.current) }}</v-toolbar>
+    <v-toolbar color="primary" dark elevation="0">授業一覧 - {{ getStudentName(lesson.current) }}</v-toolbar>
     <v-card-text class="py-4">
       <div class="d-flex align-center">
         <span class="text-subtitle-1">授業一覧</span>
@@ -17,7 +17,7 @@
     </v-card-text>
     <v-card-actions>
       <v-spacer />
-      <v-btn color="secondary" @click="onClose">閉じる</v-btn>
+      <v-btn color="primary" outlined @click="onClose">閉じる</v-btn>
     </v-card-actions>
   </v-card>
 </template>
