@@ -1,8 +1,9 @@
 <template>
   <v-card>
-    <v-toolbar color="primary" dark class="d-flex align-center">
+    <v-toolbar color="primary" dark>
       <span>シフト募集期間の編集</span>
-      <v-icon class="ml-auto" @click="onDelete">mdi-delete</v-icon>
+      <v-spacer />
+      <v-icon @click="onDelete">mdi-delete</v-icon>
     </v-toolbar>
 
     <v-card-text>
