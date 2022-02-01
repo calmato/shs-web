@@ -47,6 +47,29 @@ func (v *requestValidation) CreateStudent(req *user.CreateStudentRequest) error 
 	return nil
 }
 
+func (v *requestValidation) UpdateStudentMail(req *user.UpdateStudentMailRequest) error {
+	if err := req.Validate(); err != nil {
+		validate := err.(user.UpdateStudentMailRequestValidationError)
+		return validationError(validate.Error())
+	}
+
+	return nil
+}
+
+func (v *requestValidation) UpdateStudentPassword(req *user.UpdateStudentPasswordRequest) error {
+	if err := req.Validate(); err != nil {
+		validate := err.(user.UpdateStudentPasswordRequestValidationError)
+		return validationError(validate.Error())
+	}
+
+	if req.Password != req.PasswordConfirmation {
+		msg := fmt.Sprintf(eqFieldMessage, "PasswordConfirmation", "Password")
+		return validationError(msg)
+	}
+
+	return nil
+}
+
 func (v *requestValidation) DeleteStudent(req *user.DeleteStudentRequest) error {
 	if err := req.Validate(); err != nil {
 		validete := err.(user.DeleteStudentRequestValidationError)

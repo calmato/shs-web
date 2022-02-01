@@ -482,6 +482,142 @@ func TestCreateStudent(t *testing.T) {
 	}
 }
 
+func TestUpdateStudentMail(t *testing.T) {
+	t.Parallel()
+	validator := NewRequestValidation()
+
+	tests := []struct {
+		name  string
+		req   *user.UpdateStudentMailRequest
+		isErr bool
+	}{
+		{
+			name: "success",
+			req: &user.UpdateStudentMailRequest{
+				Id:   "cvcTyJFfgoDQrqC1KDHbRe",
+				Mail: "student-test01@calmato.jp",
+			},
+			isErr: false,
+		},
+		{
+			name: "Id is min_len",
+			req: &user.UpdateStudentMailRequest{
+				Id:   "",
+				Mail: "student-test01@calmato.jp",
+			},
+			isErr: true,
+		},
+		{
+			name: "Mail is min_len",
+			req: &user.UpdateStudentMailRequest{
+				Id:   "cvcTyJFfgoDQrqC1KDHbRe",
+				Mail: "",
+			},
+			isErr: true,
+		},
+		{
+			name: "Mail is max_len",
+			req: &user.UpdateStudentMailRequest{
+				Id:   "cvcTyJFfgoDQrqC1KDHbRe",
+				Mail: fmt.Sprintf("%s@calmato.jp", strings.Repeat("x", 245)),
+			},
+			isErr: true,
+		},
+		{
+			name: "Mail is email",
+			req: &user.UpdateStudentMailRequest{
+				Id:   "cvcTyJFfgoDQrqC1KDHbRe",
+				Mail: "student-test01",
+			},
+			isErr: true,
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			err := validator.UpdateStudentMail(tt.req)
+			assert.Equal(t, tt.isErr, err != nil, err)
+		})
+	}
+}
+
+func TestUpdateStudentPassword(t *testing.T) {
+	t.Parallel()
+	validator := NewRequestValidation()
+
+	tests := []struct {
+		name  string
+		req   *user.UpdateStudentPasswordRequest
+		isErr bool
+	}{
+		{
+			name: "success",
+			req: &user.UpdateStudentPasswordRequest{
+				Id:                   "cvcTyJFfgoDQrqC1KDHbRe",
+				Password:             "12345678",
+				PasswordConfirmation: "12345678",
+			},
+			isErr: false,
+		},
+		{
+			name: "Id is min_len",
+			req: &user.UpdateStudentPasswordRequest{
+				Id:                   "",
+				Password:             "12345678",
+				PasswordConfirmation: "12345678",
+			},
+			isErr: true,
+		},
+		{
+			name: "Password is min_len",
+			req: &user.UpdateStudentPasswordRequest{
+				Id:                   "cvcTyJFfgoDQrqC1KDHbRe",
+				Password:             strings.Repeat("x", 5),
+				PasswordConfirmation: "12345678",
+			},
+			isErr: true,
+		},
+		{
+			name: "Password is max_len",
+			req: &user.UpdateStudentPasswordRequest{
+				Id:                   "cvcTyJFfgoDQrqC1KDHbRe",
+				Password:             strings.Repeat("x", 33),
+				PasswordConfirmation: "12345678",
+			},
+			isErr: true,
+		},
+		{
+			name: "Password is pattern",
+			req: &user.UpdateStudentPasswordRequest{
+				Id:                   "cvcTyJFfgoDQrqC1KDHbRe",
+				Password:             "あいうえおあ",
+				PasswordConfirmation: "12345678",
+			},
+			isErr: true,
+		},
+		{
+			name: "Custom validation is password match",
+			req: &user.UpdateStudentPasswordRequest{
+				Id:                   "cvcTyJFfgoDQrqC1KDHbRe",
+				Password:             "12345678",
+				PasswordConfirmation: "87654321",
+			},
+			isErr: true,
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			err := validator.UpdateStudentPassword(tt.req)
+			assert.Equal(t, tt.isErr, err != nil, err)
+		})
+	}
+}
+
 func TestDeleteStudent(t *testing.T) {
 	t.Parallel()
 	validator := NewRequestValidation()

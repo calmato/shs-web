@@ -236,6 +236,46 @@ func (mr *MockUserServiceClientMockRecorder) MultiGetTeachers(ctx, in interface{
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MultiGetTeachers", reflect.TypeOf((*MockUserServiceClient)(nil).MultiGetTeachers), varargs...)
 }
 
+// UpdateStudentMail mocks base method.
+func (m *MockUserServiceClient) UpdateStudentMail(ctx context.Context, in *user.UpdateStudentMailRequest, opts ...grpc.CallOption) (*user.UpdateStudentMailResponse, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "UpdateStudentMail", varargs...)
+	ret0, _ := ret[0].(*user.UpdateStudentMailResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UpdateStudentMail indicates an expected call of UpdateStudentMail.
+func (mr *MockUserServiceClientMockRecorder) UpdateStudentMail(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateStudentMail", reflect.TypeOf((*MockUserServiceClient)(nil).UpdateStudentMail), varargs...)
+}
+
+// UpdateStudentPassword mocks base method.
+func (m *MockUserServiceClient) UpdateStudentPassword(ctx context.Context, in *user.UpdateStudentPasswordRequest, opts ...grpc.CallOption) (*user.UpdateStudentPasswordResponse, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "UpdateStudentPassword", varargs...)
+	ret0, _ := ret[0].(*user.UpdateStudentPasswordResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UpdateStudentPassword indicates an expected call of UpdateStudentPassword.
+func (mr *MockUserServiceClientMockRecorder) UpdateStudentPassword(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateStudentPassword", reflect.TypeOf((*MockUserServiceClient)(nil).UpdateStudentPassword), varargs...)
+}
+
 // UpdateTeacherMail mocks base method.
 func (m *MockUserServiceClient) UpdateTeacherMail(ctx context.Context, in *user.UpdateTeacherMailRequest, opts ...grpc.CallOption) (*user.UpdateTeacherMailResponse, error) {
 	m.ctrl.T.Helper()
@@ -467,6 +507,36 @@ func (m *MockUserServiceServer) MultiGetTeachers(arg0 context.Context, arg1 *use
 func (mr *MockUserServiceServerMockRecorder) MultiGetTeachers(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MultiGetTeachers", reflect.TypeOf((*MockUserServiceServer)(nil).MultiGetTeachers), arg0, arg1)
+}
+
+// UpdateStudentMail mocks base method.
+func (m *MockUserServiceServer) UpdateStudentMail(arg0 context.Context, arg1 *user.UpdateStudentMailRequest) (*user.UpdateStudentMailResponse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateStudentMail", arg0, arg1)
+	ret0, _ := ret[0].(*user.UpdateStudentMailResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UpdateStudentMail indicates an expected call of UpdateStudentMail.
+func (mr *MockUserServiceServerMockRecorder) UpdateStudentMail(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateStudentMail", reflect.TypeOf((*MockUserServiceServer)(nil).UpdateStudentMail), arg0, arg1)
+}
+
+// UpdateStudentPassword mocks base method.
+func (m *MockUserServiceServer) UpdateStudentPassword(arg0 context.Context, arg1 *user.UpdateStudentPasswordRequest) (*user.UpdateStudentPasswordResponse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateStudentPassword", arg0, arg1)
+	ret0, _ := ret[0].(*user.UpdateStudentPasswordResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UpdateStudentPassword indicates an expected call of UpdateStudentPassword.
+func (mr *MockUserServiceServerMockRecorder) UpdateStudentPassword(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateStudentPassword", reflect.TypeOf((*MockUserServiceServer)(nil).UpdateStudentPassword), arg0, arg1)
 }
 
 // UpdateTeacherMail mocks base method.

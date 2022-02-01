@@ -139,6 +139,34 @@ func (mr *MockStudentMockRecorder) MultiGet(ctx, ids interface{}, fields ...inte
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MultiGet", reflect.TypeOf((*MockStudent)(nil).MultiGet), varargs...)
 }
 
+// UpdateMail mocks base method.
+func (m *MockStudent) UpdateMail(ctx context.Context, studentID, mail string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateMail", ctx, studentID, mail)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateMail indicates an expected call of UpdateMail.
+func (mr *MockStudentMockRecorder) UpdateMail(ctx, studentID, mail interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateMail", reflect.TypeOf((*MockStudent)(nil).UpdateMail), ctx, studentID, mail)
+}
+
+// UpdatePassword mocks base method.
+func (m *MockStudent) UpdatePassword(ctx context.Context, studentID, password string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdatePassword", ctx, studentID, password)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdatePassword indicates an expected call of UpdatePassword.
+func (mr *MockStudentMockRecorder) UpdatePassword(ctx, studentID, password interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdatePassword", reflect.TypeOf((*MockStudent)(nil).UpdatePassword), ctx, studentID, password)
+}
+
 // MockTeacher is a mock of Teacher interface.
 type MockTeacher struct {
 	ctrl     *gomock.Controller

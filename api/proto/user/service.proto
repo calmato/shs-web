@@ -23,6 +23,8 @@ service UserService {
   rpc MultiGetStudents(MultiGetStudentsRequest) returns (MultiGetStudentsResponse);
   rpc GetStudent(GetStudentRequest) returns (GetStudentResponse);
   rpc CreateStudent(CreateStudentRequest) returns (CreateStudentResponse);
+  rpc UpdateStudentMail(UpdateStudentMailRequest) returns (UpdateStudentMailResponse);
+  rpc UpdateStudentPassword(UpdateStudentPasswordRequest) returns (UpdateStudentPasswordResponse);
   rpc DeleteStudent(DeleteStudentRequest) returns (DeleteStudentResponse);
 }
 
@@ -136,6 +138,21 @@ message CreateStudentRequest {
 message CreateStudentResponse {
   Student student = 1;
 }
+
+message UpdateStudentMailRequest {
+  string id   = 1 [(validate.rules).string = { min_len: 1 }];
+  string mail = 2 [(validate.rules).string = { min_len: 1 max_len: 256 email: true }];
+}
+
+message UpdateStudentMailResponse {}
+
+message UpdateStudentPasswordRequest {
+  string id                    = 1 [(validate.rules).string = { min_len: 1 }];
+  string password              = 2 [(validate.rules).string = { min_len: 6 max_len: 32 pattern: "^[a-zA-Z0-9_!@#$_%^&*.?()-=+]*$" }];
+  string password_confirmation = 3 [(validate.rules).string = { min_len: 1 }];
+}
+
+message UpdateStudentPasswordResponse {}
 
 message DeleteStudentRequest {
   string id = 1 [(validate.rules).string = { min_len: 1 }];
