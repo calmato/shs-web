@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"github.com/calmato/shs-web/api/pkg/set"
 	"github.com/calmato/shs-web/api/proto/lesson"
 )
 
@@ -22,6 +23,22 @@ func NewLessons(lessons []*lesson.Lesson) Lessons {
 		ls[i] = NewLesson(lessons[i])
 	}
 	return ls
+}
+
+func (ls Lessons) TeacherIDs() []string {
+	set := set.New(len(ls))
+	for i := range ls {
+		set.AddStrings(ls[i].TeacherId)
+	}
+	return set.Strings()
+}
+
+func (ls Lessons) StudentIDs() []string {
+	set := set.New(len(ls))
+	for i := range ls {
+		set.AddStrings(ls[i].StudentId)
+	}
+	return set.Strings()
 }
 
 func (ls Lessons) GroupByTeacherID() map[string]Lessons {

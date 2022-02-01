@@ -17,10 +17,14 @@ import "lesson/student_shift.proto";
 
 service LessonService {
   rpc ListLessons(ListLessonsRequest) returns (ListLessonsResponse);
+  rpc ListLessonsByDuration(ListLessonsByDurationRequest) returns (ListLessonsByDurationResponse);
   rpc CreateLesson(CreateLessonRequest) returns (CreateLessonResponse);
+  rpc UpdateLesson(UpdateLessonRequest) returns (UpdateLessonResponse);
+  rpc DeleteLesson(DeleteLessonRequest) returns (DeleteLessonResponse);
   rpc ListShiftSummaries(ListShiftSummariesRequest) returns (ListShiftSummariesResponse);
   rpc GetShiftSummary(GetShiftSummaryRequest) returns (GetShiftSummaryResponse);
   rpc UpdateShiftSummarySchedule(UpdateShiftSummaryScheduleRequest) returns (UpdateShiftSummaryShceduleResponse);
+  rpc UpdateShiftSummaryDecided(UpdateShiftSummaryDecidedRequest) returns (UpdateShiftSummaryDecidedResponse);
   rpc DeleteShiftSummary(DeleteShiftSummaryRequest) returns (DeleteShiftSummaryResponse);
   rpc ListShifts(ListShiftsRequest) returns (ListShiftsResponse);
   rpc CreateShifts(CreateShiftsRequest) returns (CreateShiftsResponse);
@@ -41,10 +45,25 @@ message ListLessonsRequest {
   int64  shift_id         = 2 [(validate.rules).int64 = { gte: 0 }];
   string teacher_id       = 3;
   string student_id       = 4;
+  bool   only_decided     = 5;
 }
 
 message ListLessonsResponse {
   repeated Lesson lessons = 1;
+  repeated Shift  shifts  = 2;
+  int64           total   = 3;
+}
+
+message ListLessonsByDurationRequest {
+  string since      = 1 [(validate.rules).string = { len: 8, pattern: "^[0-9]*$" }];
+  string until      = 2 [(validate.rules).string = { len: 8, pattern: "^[0-9]*$" }];
+  string teacher_id = 3;
+  string student_id = 4;
+}
+
+message ListLessonsByDurationResponse {
+  repeated Lesson lessons = 1;
+  repeated Shift  shifts  = 2;
 }
 
 message CreateLessonRequest {
@@ -61,6 +80,25 @@ message CreateLessonResponse {
   Lesson lesson = 1;
   Shift  shift  = 2;
 }
+
+message UpdateLessonRequest {
+  int64  lesson_id        = 1 [(validate.rules).int64 = { gt: 0 }];
+  int64  shift_summary_id = 2 [(validate.rules).int64 = { gt: 0 }];
+  int64  shift_id         = 3 [(validate.rules).int64 = { gt: 0 }];
+  int64  subject_id       = 4 [(validate.rules).int64 = { gt: 0 }];
+  int32  room_id          = 5 [(validate.rules).int32 = { gt: 0 }];
+  string teacher_id       = 6 [(validate.rules).string = { min_len: 1 }];
+  string student_id       = 7 [(validate.rules).string = { min_len: 1 }];
+  string notes            = 8 [(validate.rules).string = { max_len: 200 }];
+}
+
+message UpdateLessonResponse {}
+
+message DeleteLessonRequest {
+  int64 lesson_id = 1 [(validate.rules).int64 = { gt: 0 }];
+}
+
+message DeleteLessonResponse {}
 
 message ListShiftSummariesRequest {
   enum OrderBy {
@@ -94,6 +132,13 @@ message UpdateShiftSummaryScheduleRequest {
 }
 
 message UpdateShiftSummaryShceduleResponse {}
+
+message UpdateShiftSummaryDecidedRequest {
+  int64 id      = 1 [(validate.rules).int64 = { gt: 0 }];
+  bool  decided = 2;
+}
+
+message UpdateShiftSummaryDecidedResponse {}
 
 message DeleteShiftSummaryRequest {
   int64 id = 1 [(validate.rules).int64 = { gt: 0 }];

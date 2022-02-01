@@ -52,8 +52,8 @@
 
     <v-card-actions>
       <v-spacer />
+      <v-btn color="primary" :loading="loading" :disabled="loading" @click="onSubmit">作成する</v-btn>
       <v-btn color="secondary" @click="onClose">閉じる</v-btn>
-      <v-btn color="primary" :disabled="loading" @click="onSubmit">作成する</v-btn>
     </v-card-actions>
   </v-card>
 </template>

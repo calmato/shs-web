@@ -18,6 +18,16 @@ export interface IShiftsNewParams {
   closedDates: string[]
 }
 
+export interface IShiftLessonParams {
+  lessonId: number
+  summaryId: number
+  shiftId: number
+  room: number
+  teacherId: string
+  studentId: string
+  subjectId: number
+}
+
 /**
  * ---------------------------
  * interface - options
@@ -51,6 +61,10 @@ export interface ShiftsNewForm {
   options: IShiftsNewOptions
 }
 
+export interface ShiftLessonForm {
+  params: IShiftLessonParams
+}
+
 /**
  * ---------------------------
  * const - params
@@ -67,6 +81,16 @@ export const ShiftsNewParams: IShiftsNewParams = {
   openDate: '',
   endDate: '',
   closedDates: [],
+}
+
+export const ShiftLessonParams: IShiftLessonParams = {
+  lessonId: 0,
+  summaryId: 0,
+  shiftId: 0,
+  room: 0,
+  teacherId: '',
+  studentId: '',
+  subjectId: 0,
 }
 
 /**

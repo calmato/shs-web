@@ -1,0 +1,42 @@
+createStudentRequest:
+  type: object
+  properties:
+    lastName:
+      type: string
+      description: 姓
+    firstName:
+      type: string
+      description: 名
+    lastNameKana:
+      type: string
+      description: 姓(かな)
+    firstNameKana:
+      type: string
+      description: 名(かな)
+    mail:
+      type: string
+      description: メールアドレス
+    schoolType:
+      type: integer
+      format: int32
+      description: 校種(1:小学校, 2:中学校, 3:高等学校)
+    grade:
+      type: integer
+      format: int64
+      description: 学年
+    password:
+      type: string
+      description: パスワード
+    passwordConfirmation:
+      type: string
+      description: パスワード(確認用)
+  example:
+    lastName: '中村'
+    firstName: '広大'
+    lastNameKana: 'なかむら'
+    firstNamaKana: 'こうだい'
+    mail: 'student-test01@calmato.jp'
+    schoolType: 3
+    grade: 1
+    password: '12345678'
+    passwordConfirmation: '12345678'

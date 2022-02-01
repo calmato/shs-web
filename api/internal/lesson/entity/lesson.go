@@ -1,8 +1,10 @@
 package entity
 
 import (
+	"fmt"
 	"time"
 
+	"github.com/calmato/shs-web/api/pkg/set"
 	"github.com/calmato/shs-web/api/proto/lesson"
 )
 
@@ -34,6 +36,36 @@ func (l *Lesson) Proto() *lesson.Lesson {
 		CreatedAt:      l.CreatedAt.Unix(),
 		UpdatedAt:      l.CreatedAt.Unix(),
 	}
+}
+
+func (ls Lessons) ShiftSummaryIDs() []int64 {
+	set := set.New(len(ls))
+	for i := range ls {
+		set.Add(ls[i].ShiftSummaryID)
+	}
+	return set.Int64s()
+}
+
+func (ls Lessons) ShiftIDs() []int64 {
+	set := set.New(len(ls))
+	for i := range ls {
+		set.Add(ls[i].ShiftID)
+	}
+	return set.Int64s()
+}
+
+func (ls Lessons) Decided(summaries map[int64]*ShiftSummary) (Lessons, error) {
+	res := make(Lessons, 0, len(ls))
+	for i := range ls {
+		summary, ok := summaries[ls[i].ShiftSummaryID]
+		if !ok {
+			return nil, fmt.Errorf("shift summary is not found")
+		}
+		if summary.Decided {
+			res = append(res, ls[i])
+		}
+	}
+	return res, nil
 }
 
 func (ls Lessons) Proto() []*lesson.Lesson {

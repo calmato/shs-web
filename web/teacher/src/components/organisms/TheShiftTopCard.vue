@@ -1,13 +1,19 @@
 <template>
   <v-card>
-    <v-card-title>{{ getTitle() }}</v-card-title>
+    <v-card-title class="d-flex align-center">
+      <span>{{ getTitle() }}</span>
+      <v-icon class="ml-auto" @click="onClickEdit">mdi-pencil</v-icon>
+    </v-card-title>
     <v-card-text>
-      <div v-show="isEnabledCreateLesson()">・授業登録状況: 不明</div>
+      <div v-show="isEnabledCreateLesson()">
+        <span>・授業スケジュール確定状況:</span>
+        <span v-if="summary.decided" class="info--text">確定済み</span>
+        <span v-else class="error--text">未確定</span>
+      </div>
       <div>・シフト募集期間: {{ getDate(summary.openAt) }} ~ {{ getDate(summary.endAt) }}</div>
     </v-card-text>
     <v-card-actions>
       <v-spacer />
-      <v-btn color="secondary" @click="onClickEdit">募集期間の修正</v-btn>
       <v-btn v-show="isEnabledCreateLesson()" color="primary" @click="onClickNew">授業登録画面へ</v-btn>
     </v-card-actions>
   </v-card>
@@ -26,6 +32,7 @@ export default defineComponent({
         id: 0,
         year: 0,
         month: 0,
+        decided: false,
         status: ShiftStatus.UNKNOWN,
         openAt: '',
         endAt: '',
@@ -48,6 +55,10 @@ export default defineComponent({
       return dayjs(date).tz().format(format)
     }
 
+    const getDecided = (decided: boolean): string => {
+      return decided ? '確定済み' : '未確定'
+    }
+
     const isEnabledCreateLesson = (): boolean => {
       return props.summary?.status === ShiftStatus.FINISHED || props.summary?.status === ShiftStatus.ACCEPTING
     }
@@ -63,6 +74,7 @@ export default defineComponent({
     return {
       getTitle,
       getDate,
+      getDecided,
       isEnabledCreateLesson,
       onClickEdit,
       onClickNew,

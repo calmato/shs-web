@@ -306,8 +306,12 @@ func TestStudentSubmissionDetail(t *testing.T) {
 					CreatedAt: now,
 					UpdatedAt: now,
 				},
-				LessonTotal:           1,
+				SuggestedLessons: StudentSuggestedLessons{
+					{SubjectID: 1, Total: 4},
+					{SubjectID: 2, Total: 4},
+				},
 				SuggestedLessonsTotal: 8,
+				LessonTotal:           1,
 			},
 		},
 	}
@@ -435,8 +439,12 @@ func TestStudentSubmissionDetails(t *testing.T) {
 						CreatedAt: now,
 						UpdatedAt: now,
 					},
-					LessonTotal:           0,
+					SuggestedLessons: StudentSuggestedLessons{
+						{SubjectID: 1, Total: 4},
+						{SubjectID: 2, Total: 4},
+					},
 					SuggestedLessonsTotal: 8,
+					LessonTotal:           0,
 				},
 				{
 					Student: &Student{
@@ -452,8 +460,9 @@ func TestStudentSubmissionDetails(t *testing.T) {
 						CreatedAt:     now,
 						UpdatedAt:     now,
 					},
-					LessonTotal:           1,
+					SuggestedLessons:      StudentSuggestedLessons{},
 					SuggestedLessonsTotal: 0,
+					LessonTotal:           1,
 				},
 			},
 		},

@@ -60,6 +60,10 @@ func (s *lessonService) GetTeacherShifts(
 	var submission *entity.TeacherSubmission
 	eg.Go(func() (err error) {
 		submission, err = s.db.TeacherSubmission.Get(ectx, req.TeacherId, req.ShiftSummaryId)
+		if errors.Is(err, database.ErrNotFound) {
+			submission = &entity.TeacherSubmission{}
+			err = nil
+		}
 		return
 	})
 	var shifts entity.TeacherShifts
@@ -67,15 +71,13 @@ func (s *lessonService) GetTeacherShifts(
 		shifts, err = s.db.TeacherShift.ListByShiftSummaryID(ectx, []string{req.TeacherId}, req.ShiftSummaryId)
 		return
 	})
-	if err := eg.Wait(); err != nil && !errors.Is(err, database.ErrNotFound) {
+	if err := eg.Wait(); err != nil {
 		return nil, gRPCError(err)
 	}
 
 	res := &lesson.GetTeacherShiftsResponse{
-		Shifts: shifts.Proto(),
-	}
-	if submission != nil {
-		res.Submission = submission.Proto()
+		Submission: submission.Proto(),
+		Shifts:     shifts.Proto(),
 	}
 	return res, nil
 }

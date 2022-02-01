@@ -10,7 +10,7 @@ export interface Auth {
   mail: string
   role: Role
   subjects: {
-    [key in Exclude<SchoolType, 'その他'>]: Subject[]
+    [key in SchoolType]: Subject[]
   }
 }
 

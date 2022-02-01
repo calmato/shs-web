@@ -23,6 +23,7 @@ func TestShiftSummary(t *testing.T) {
 				ShiftSummary: &lesson.ShiftSummary{
 					Id:        1,
 					YearMonth: 202201,
+					Decided:   true,
 					Status:    lesson.ShiftStatus_SHIFT_STATUS_ACCEPTING,
 					OpenAt:    jst.Date(2021, 12, 1, 0, 0, 0, 0).Unix(),
 					EndAt:     jst.Date(2021, 12, 15, 0, 0, 0, 0).Unix(),
@@ -34,6 +35,7 @@ func TestShiftSummary(t *testing.T) {
 				ID:        1,
 				Year:      2022,
 				Month:     1,
+				Decided:   true,
 				Status:    ShiftStatusAccepting,
 				OpenAt:    jst.Date(2021, 12, 1, 0, 0, 0, 0),
 				EndAt:     jst.Date(2021, 12, 15, 0, 0, 0, 0),
@@ -67,6 +69,7 @@ func TestShiftSummaries(t *testing.T) {
 					ShiftSummary: &lesson.ShiftSummary{
 						Id:        1,
 						YearMonth: 202201,
+						Decided:   true,
 						Status:    lesson.ShiftStatus_SHIFT_STATUS_ACCEPTING,
 						OpenAt:    jst.Date(2021, 12, 1, 0, 0, 0, 0).Unix(),
 						EndAt:     jst.Date(2021, 12, 15, 0, 0, 0, 0).Unix(),
@@ -80,6 +83,7 @@ func TestShiftSummaries(t *testing.T) {
 					ID:        1,
 					Year:      2022,
 					Month:     1,
+					Decided:   true,
 					Status:    ShiftStatusAccepting,
 					OpenAt:    jst.Date(2021, 12, 1, 0, 0, 0, 0),
 					EndAt:     jst.Date(2021, 12, 15, 0, 0, 0, 0),

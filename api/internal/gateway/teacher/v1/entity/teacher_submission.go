@@ -87,8 +87,8 @@ func NewTeacherSubmissionStatus(
 	if summary == nil {
 		return TeacherSubmissionStatusUnknown
 	}
-	if submission == nil || !submission.Decided {
-		return TeacherSubmissionStatusWaiting
+	if submission != nil && submission.Decided {
+		return TeacherSubmissionStatusSubmitted
 	}
-	return TeacherSubmissionStatusSubmitted
+	return TeacherSubmissionStatusWaiting
 }

@@ -22,8 +22,10 @@
           </v-card>
           <v-card v-for="lesson in shift.lessons" :key="lesson.id" tile outlined class="shift-lessons-schedule">
             <the-shift-lesson-card
+              :room="num"
               :summary="lesson"
               :detail="getLesson(lesson, num)"
+              :decided="decided"
               @click:new="onClickNew"
               @click:edit="onClickEdit"
             />
@@ -59,6 +61,10 @@ export default defineComponent({
       type: Array as PropType<LessonDetail[]>,
       default: () => [],
     },
+    decided: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   setup(props, { emit }: SetupContext) {
@@ -72,12 +78,12 @@ export default defineComponent({
       })
     }
 
-    const onClickNew = ({ summaryId }: { summaryId: number }): void => {
-      emit('click:new', { summaryId })
+    const onClickNew = ({ shiftId, room }: { shiftId: number; room: number }): void => {
+      emit('click:new', { shiftId, room })
     }
 
-    const onClickEdit = ({ summaryId, lessonId }: { summaryId: number; lessonId: number }): void => {
-      emit('click:edit', { summaryId, lessonId })
+    const onClickEdit = ({ shiftId, lessonId, room }: { shiftId: number; lessonId: number; room: number }): void => {
+      emit('click:edit', { shiftId, lessonId, room })
     }
 
     return {

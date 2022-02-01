@@ -100,6 +100,33 @@ func (h *apiV1Handler) UpdateShiftSummarySchedule(ctx *gin.Context) {
 	ctx.JSON(http.StatusNoContent, gin.H{})
 }
 
+func (h *apiV1Handler) UpdateShiftSummaryDecided(ctx *gin.Context) {
+	c := util.SetMetadata(ctx)
+
+	req := &request.UpdateShiftSummaryDecidedRequest{}
+	if err := ctx.BindJSON(req); err != nil {
+		badRequest(ctx, err)
+		return
+	}
+	shiftSummaryID, err := strconv.ParseInt(ctx.Param("shiftId"), 10, 64)
+	if err != nil {
+		badRequest(ctx, err)
+		return
+	}
+
+	in := &lesson.UpdateShiftSummaryDecidedRequest{
+		Id:      shiftSummaryID,
+		Decided: req.Decided,
+	}
+	_, err = h.lesson.UpdateShiftSummaryDecided(c, in)
+	if err != nil {
+		httpError(ctx, err)
+		return
+	}
+
+	ctx.JSON(http.StatusNoContent, gin.H{})
+}
+
 func (h *apiV1Handler) DeleteShiftSummary(ctx *gin.Context) {
 	c := util.SetMetadata(ctx)
 
@@ -379,6 +406,42 @@ func (h *apiV1Handler) CreateShifts(ctx *gin.Context) {
 	res := &response.ShiftsResponse{
 		Summary: summary,
 		Shifts:  entity.NewShiftDetailsForMonth(summary, shiftsMap),
+	}
+	ctx.JSON(http.StatusOK, res)
+}
+
+func (h *apiV1Handler) ListShiftLessons(ctx *gin.Context) {
+	c := util.SetMetadata(ctx)
+
+	summaryID, err := strconv.ParseInt(ctx.Param("shiftId"), 10, 64)
+	if err != nil {
+		badRequest(ctx, err)
+		return
+	}
+	teacherID := ctx.Query("teacherId")
+	studentID := ctx.Query("studentId")
+
+	in := &lesson.ListLessonsRequest{
+		ShiftSummaryId: summaryID,
+		TeacherId:      teacherID,
+		StudentId:      studentID,
+	}
+	out, err := h.lesson.ListLessons(c, in)
+	if err != nil {
+		httpError(ctx, err)
+		return
+	}
+	glessons := gentity.NewLessons(out.Lessons)
+	gshifts := gentity.NewShifts(out.Shifts)
+
+	lessons, err := entity.NewLessons(glessons, gshifts.Map())
+	if err != nil {
+		httpError(ctx, err)
+		return
+	}
+	res := &response.ShiftLessonsResponse{
+		Lessons: lessons,
+		Total:   out.Total,
 	}
 	ctx.JSON(http.StatusOK, res)
 }

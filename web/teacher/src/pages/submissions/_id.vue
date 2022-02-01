@@ -13,8 +13,7 @@
 import { computed, defineComponent, ref, useAsync, useRoute, useRouter, useStore } from '@nuxtjs/composition-api'
 import TheSubmissionDetail from '~/components/templates/TheSubmissionDetail.vue'
 import { CommonStore, SubmissionStore } from '~/store'
-import { TeacherShiftDetailLesson } from '~/types/api/v1'
-import { PromiseState, TeacherShiftDetail, TeacherShiftSummary } from '~/types/store'
+import { PromiseState, SubmissionDetail, SubmissionDetailLesson, SubmissionSummary } from '~/types/store'
 
 export default defineComponent({
   components: {
@@ -29,8 +28,8 @@ export default defineComponent({
     const enabledLessonIds = ref<number[]>([])
 
     const teacherId = computed<string>(() => store.getters['auth/getUid'])
-    const summary = computed<TeacherShiftSummary>(() => store.getters['submission/getSummary'])
-    const shifts = computed<TeacherShiftDetail[]>(() => store.getters['submission/getShifts'])
+    const summary = computed<SubmissionSummary>(() => store.getters['submission/getSummary'])
+    const shifts = computed<SubmissionDetail[]>(() => store.getters['submission/getShifts'])
     const loading = computed<boolean>(() => {
       return store.getters['common/getPromiseState'] === PromiseState.LOADING
     })
@@ -46,8 +45,8 @@ export default defineComponent({
 
       await SubmissionStore.listTeacherShifts({ teacherId: teacherId.value, shiftId })
         .then(() => {
-          shifts.value.forEach((shift: TeacherShiftDetail): void => {
-            shift.lessons.forEach((lesson: TeacherShiftDetailLesson): void => {
+          shifts.value.forEach((shift: SubmissionDetail): void => {
+            shift.lessons.forEach((lesson: SubmissionDetailLesson): void => {
               if (lesson.enabled) {
                 enabledLessonIds.value.push(lesson.id)
               }

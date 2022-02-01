@@ -41,6 +41,29 @@ func TestListLessons(t *testing.T) {
 			UpdatedAt:      now,
 		},
 	}
+	summaries := entity.ShiftSummaries{
+		{
+			ID:        1,
+			YearMonth: 202202,
+			Decided:   true,
+			Status:    entity.ShiftStatusAccepting,
+			OpenAt:    jst.Date(2022, 1, 1, 0, 0, 0, 0),
+			EndAt:     jst.Date(2022, 1, 15, 0, 0, 0, 0),
+			CreatedAt: now,
+			UpdatedAt: now,
+		},
+	}
+	shifts := entity.Shifts{
+		{
+			ID:             1,
+			ShiftSummaryID: 1,
+			Date:           jst.Date(2022, 2, 1, 0, 0, 0, 0),
+			StartTime:      "1700",
+			EndTime:        "1830",
+			CreatedAt:      now,
+			UpdatedAt:      now,
+		},
+	}
 
 	tests := []struct {
 		name   string
@@ -58,7 +81,9 @@ func TestListLessons(t *testing.T) {
 					StudentID:      "studentid",
 				}
 				mocks.validator.EXPECT().ListLessons(req).Return(nil)
-				mocks.db.Lesson.EXPECT().List(ctx, params).Return(lessons, nil)
+				mocks.db.Lesson.EXPECT().List(gomock.Any(), params).Return(lessons, nil)
+				mocks.db.Lesson.EXPECT().Count(gomock.Any(), params).Return(int64(1), nil)
+				mocks.db.Shift.EXPECT().MultiGet(gomock.Any(), []int64{1}).Return(shifts, nil)
 			},
 			req: req,
 			expect: &testResponse{
@@ -78,6 +103,79 @@ func TestListLessons(t *testing.T) {
 							UpdatedAt:      now.Unix(),
 						},
 					},
+					Shifts: []*lesson.Shift{
+						{
+							Id:             1,
+							ShiftSummaryId: 1,
+							Date:           "20220201",
+							StartTime:      "1700",
+							EndTime:        "1830",
+							CreatedAt:      now.Unix(),
+							UpdatedAt:      now.Unix(),
+						},
+					},
+					Total: 1,
+				},
+			},
+		},
+		{
+			name: "success to only decided",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				req := &lesson.ListLessonsRequest{
+					ShiftSummaryId: 1,
+					ShiftId:        1,
+					TeacherId:      "teacherid",
+					StudentId:      "studentid",
+					OnlyDecided:    true,
+				}
+				params := &database.ListLessonsParams{
+					ShiftSummaryID: 1,
+					ShiftID:        1,
+					TeacherID:      "teacherid",
+					StudentID:      "studentid",
+				}
+				mocks.validator.EXPECT().ListLessons(req).Return(nil)
+				mocks.db.Lesson.EXPECT().List(gomock.Any(), params).Return(lessons, nil)
+				mocks.db.Lesson.EXPECT().Count(gomock.Any(), params).Return(int64(1), nil)
+				mocks.db.ShiftSummary.EXPECT().MultiGet(gomock.Any(), []int64{1}).Return(summaries, nil)
+				mocks.db.Shift.EXPECT().MultiGet(gomock.Any(), []int64{1}).Return(shifts, nil)
+			},
+			req: &lesson.ListLessonsRequest{
+				ShiftSummaryId: 1,
+				ShiftId:        1,
+				TeacherId:      "teacherid",
+				StudentId:      "studentid",
+				OnlyDecided:    true,
+			},
+			expect: &testResponse{
+				code: codes.OK,
+				body: &lesson.ListLessonsResponse{
+					Lessons: []*lesson.Lesson{
+						{
+							Id:             1,
+							ShiftSummaryId: 1,
+							ShiftId:        1,
+							SubjectId:      1,
+							RoomId:         1,
+							TeacherId:      "teacherid",
+							StudentId:      "studentid",
+							Notes:          "",
+							CreatedAt:      now.Unix(),
+							UpdatedAt:      now.Unix(),
+						},
+					},
+					Shifts: []*lesson.Shift{
+						{
+							Id:             1,
+							ShiftSummaryId: 1,
+							Date:           "20220201",
+							StartTime:      "1700",
+							EndTime:        "1830",
+							CreatedAt:      now.Unix(),
+							UpdatedAt:      now.Unix(),
+						},
+					},
+					Total: 1,
 				},
 			},
 		},
@@ -102,7 +200,346 @@ func TestListLessons(t *testing.T) {
 					StudentID:      "studentid",
 				}
 				mocks.validator.EXPECT().ListLessons(req).Return(nil)
+				mocks.db.Lesson.EXPECT().List(gomock.Any(), params).Return(nil, errmock)
+				mocks.db.Lesson.EXPECT().Count(gomock.Any(), params).Return(int64(1), nil)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.Internal,
+			},
+		},
+		{
+			name: "failed to count lessons",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				params := &database.ListLessonsParams{
+					ShiftSummaryID: 1,
+					ShiftID:        1,
+					TeacherID:      "teacherid",
+					StudentID:      "studentid",
+				}
+				mocks.validator.EXPECT().ListLessons(req).Return(nil)
+				mocks.db.Lesson.EXPECT().List(gomock.Any(), params).Return(lessons, nil)
+				mocks.db.Lesson.EXPECT().Count(gomock.Any(), params).Return(int64(0), errmock)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.Internal,
+			},
+		},
+		{
+			name: "failed to multi get shift summaries",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				req := &lesson.ListLessonsRequest{
+					ShiftSummaryId: 1,
+					ShiftId:        1,
+					TeacherId:      "teacherid",
+					StudentId:      "studentid",
+					OnlyDecided:    true,
+				}
+				params := &database.ListLessonsParams{
+					ShiftSummaryID: 1,
+					ShiftID:        1,
+					TeacherID:      "teacherid",
+					StudentID:      "studentid",
+				}
+				mocks.validator.EXPECT().ListLessons(req).Return(nil)
+				mocks.db.Lesson.EXPECT().List(gomock.Any(), params).Return(lessons, nil)
+				mocks.db.Lesson.EXPECT().Count(gomock.Any(), params).Return(int64(1), nil)
+				mocks.db.ShiftSummary.EXPECT().MultiGet(gomock.Any(), []int64{1}).Return(nil, errmock)
+				mocks.db.Shift.EXPECT().MultiGet(gomock.Any(), []int64{1}).Return(shifts, nil)
+			},
+			req: &lesson.ListLessonsRequest{
+				ShiftSummaryId: 1,
+				ShiftId:        1,
+				TeacherId:      "teacherid",
+				StudentId:      "studentid",
+				OnlyDecided:    true,
+			},
+			expect: &testResponse{
+				code: codes.Internal,
+			},
+		},
+		{
+			name: "failed to multi get shifts",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				params := &database.ListLessonsParams{
+					ShiftSummaryID: 1,
+					ShiftID:        1,
+					TeacherID:      "teacherid",
+					StudentID:      "studentid",
+				}
+				mocks.validator.EXPECT().ListLessons(req).Return(nil)
+				mocks.db.Lesson.EXPECT().List(gomock.Any(), params).Return(lessons, nil)
+				mocks.db.Lesson.EXPECT().Count(gomock.Any(), params).Return(int64(1), nil)
+				mocks.db.Shift.EXPECT().MultiGet(gomock.Any(), []int64{1}).Return(nil, errmock)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.Internal,
+			},
+		},
+		{
+			name: "failed to filter lessons",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				req := &lesson.ListLessonsRequest{
+					ShiftSummaryId: 1,
+					ShiftId:        1,
+					TeacherId:      "teacherid",
+					StudentId:      "studentid",
+					OnlyDecided:    true,
+				}
+				params := &database.ListLessonsParams{
+					ShiftSummaryID: 1,
+					ShiftID:        1,
+					TeacherID:      "teacherid",
+					StudentID:      "studentid",
+				}
+				mocks.validator.EXPECT().ListLessons(req).Return(nil)
+				mocks.db.Lesson.EXPECT().List(gomock.Any(), params).Return(lessons, nil)
+				mocks.db.Lesson.EXPECT().Count(gomock.Any(), params).Return(int64(1), nil)
+				mocks.db.ShiftSummary.EXPECT().MultiGet(gomock.Any(), []int64{1}).Return(entity.ShiftSummaries{}, nil)
+				mocks.db.Shift.EXPECT().MultiGet(gomock.Any(), []int64{1}).Return(shifts, nil)
+			},
+			req: &lesson.ListLessonsRequest{
+				ShiftSummaryId: 1,
+				ShiftId:        1,
+				TeacherId:      "teacherid",
+				StudentId:      "studentid",
+				OnlyDecided:    true,
+			},
+			expect: &testResponse{
+				code: codes.Internal,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, testGRPC(tt.setup, tt.expect, func(ctx context.Context, service *lessonService) (proto.Message, error) {
+			return service.ListLessons(ctx, tt.req)
+		}))
+	}
+}
+
+func TestListLessonsByDurations(t *testing.T) {
+	t.Parallel()
+	now := jst.Date(2022, 1, 15, 0, 0, 0, 0)
+	req := &lesson.ListLessonsByDurationRequest{
+		TeacherId: "teacherid",
+		Since:     "20220201",
+		Until:     "20220201",
+	}
+	lessons := entity.Lessons{
+		{
+			ID:             1,
+			ShiftSummaryID: 1,
+			ShiftID:        1,
+			SubjectID:      1,
+			RoomID:         1,
+			TeacherID:      "teacherid",
+			StudentID:      "studentid",
+			Notes:          "",
+			CreatedAt:      now,
+			UpdatedAt:      now,
+		},
+	}
+	summaries := entity.ShiftSummaries{
+		{
+			ID:        1,
+			YearMonth: 202202,
+			Decided:   true,
+			Status:    entity.ShiftStatusAccepting,
+			OpenAt:    jst.Date(2022, 1, 1, 0, 0, 0, 0),
+			EndAt:     jst.Date(2022, 1, 15, 0, 0, 0, 0),
+			CreatedAt: now,
+			UpdatedAt: now,
+		},
+	}
+	shifts := entity.Shifts{
+		{
+			ID:             1,
+			ShiftSummaryID: 1,
+			Date:           jst.Date(2022, 2, 1, 0, 0, 0, 0),
+			StartTime:      "1700",
+			EndTime:        "1830",
+			CreatedAt:      now,
+			UpdatedAt:      now,
+		},
+	}
+	tests := []struct {
+		name   string
+		setup  func(ctx context.Context, t *testing.T, mocks *mocks)
+		req    *lesson.ListLessonsByDurationRequest
+		expect *testResponse
+	}{
+		{
+			name: "success",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				params := &database.ListLessonsParams{
+					ShiftIDs:  []int64{1},
+					TeacherID: "teacherid",
+				}
+				since := jst.BeginningOfDay(jst.Date(2022, 2, 1, 0, 0, 0, 0))
+				until := jst.EndOfDay(jst.Date(2022, 2, 1, 0, 0, 0, 0))
+				mocks.validator.EXPECT().ListLessonsByDuration(req).Return(nil)
+				mocks.db.Shift.EXPECT().ListByDuration(ctx, since, until).Return(shifts, nil)
+				mocks.db.Lesson.EXPECT().List(ctx, params).Return(lessons, nil)
+				mocks.db.ShiftSummary.EXPECT().MultiGet(ctx, []int64{1}).Return(summaries, nil)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.OK,
+				body: &lesson.ListLessonsByDurationResponse{
+					Lessons: []*lesson.Lesson{
+						{
+							Id:             1,
+							ShiftSummaryId: 1,
+							ShiftId:        1,
+							SubjectId:      1,
+							RoomId:         1,
+							TeacherId:      "teacherid",
+							StudentId:      "studentid",
+							Notes:          "",
+							CreatedAt:      now.Unix(),
+							UpdatedAt:      now.Unix(),
+						},
+					},
+					Shifts: []*lesson.Shift{
+						{
+							Id:             1,
+							ShiftSummaryId: 1,
+							Date:           "20220201",
+							StartTime:      "1700",
+							EndTime:        "1830",
+							CreatedAt:      now.Unix(),
+							UpdatedAt:      now.Unix(),
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "success to shifts is length 0",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				since := jst.BeginningOfDay(jst.Date(2022, 2, 1, 0, 0, 0, 0))
+				until := jst.EndOfDay(jst.Date(2022, 2, 1, 0, 0, 0, 0))
+				mocks.validator.EXPECT().ListLessonsByDuration(req).Return(nil)
+				mocks.db.Shift.EXPECT().ListByDuration(ctx, since, until).Return(entity.Shifts{}, nil)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.OK,
+				body: &lesson.ListLessonsByDurationResponse{},
+			},
+		},
+		{
+			name: "invalid argument",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				req := &lesson.ListLessonsByDurationRequest{}
+				mocks.validator.EXPECT().ListLessonsByDuration(req).Return(validation.ErrRequestValidation)
+			},
+			req: &lesson.ListLessonsByDurationRequest{},
+			expect: &testResponse{
+				code: codes.InvalidArgument,
+			},
+		},
+		{
+			name: "failed to parse error for since",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				req := &lesson.ListLessonsByDurationRequest{
+					Since: "20220100",
+					Until: "20220107",
+				}
+				mocks.validator.EXPECT().ListLessonsByDuration(req).Return(nil)
+			},
+			req: &lesson.ListLessonsByDurationRequest{
+				Since: "20220100",
+				Until: "20220107",
+			},
+			expect: &testResponse{
+				code: codes.InvalidArgument,
+			},
+		},
+		{
+			name: "failed to parse error for until",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				req := &lesson.ListLessonsByDurationRequest{
+					Since: "20220101",
+					Until: "20220100",
+				}
+				mocks.validator.EXPECT().ListLessonsByDuration(req).Return(nil)
+			},
+			req: &lesson.ListLessonsByDurationRequest{
+				Since: "20220101",
+				Until: "20220100",
+			},
+			expect: &testResponse{
+				code: codes.InvalidArgument,
+			},
+		},
+		{
+			name: "failed to list shifts",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				since := jst.BeginningOfDay(jst.Date(2022, 2, 1, 0, 0, 0, 0))
+				until := jst.EndOfDay(jst.Date(2022, 2, 1, 0, 0, 0, 0))
+				mocks.validator.EXPECT().ListLessonsByDuration(req).Return(nil)
+				mocks.db.Shift.EXPECT().ListByDuration(ctx, since, until).Return(nil, errmock)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.Internal,
+			},
+		},
+		{
+			name: "failed to list lessons",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				params := &database.ListLessonsParams{
+					ShiftIDs:  []int64{1},
+					TeacherID: "teacherid",
+				}
+				since := jst.BeginningOfDay(jst.Date(2022, 2, 1, 0, 0, 0, 0))
+				until := jst.EndOfDay(jst.Date(2022, 2, 1, 0, 0, 0, 0))
+				mocks.validator.EXPECT().ListLessonsByDuration(req).Return(nil)
+				mocks.db.Shift.EXPECT().ListByDuration(ctx, since, until).Return(shifts, nil)
 				mocks.db.Lesson.EXPECT().List(ctx, params).Return(nil, errmock)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.Internal,
+			},
+		},
+		{
+			name: "failed to list shift summaries",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				params := &database.ListLessonsParams{
+					ShiftIDs:  []int64{1},
+					TeacherID: "teacherid",
+				}
+				since := jst.BeginningOfDay(jst.Date(2022, 2, 1, 0, 0, 0, 0))
+				until := jst.EndOfDay(jst.Date(2022, 2, 1, 0, 0, 0, 0))
+				mocks.validator.EXPECT().ListLessonsByDuration(req).Return(nil)
+				mocks.db.Shift.EXPECT().ListByDuration(ctx, since, until).Return(shifts, nil)
+				mocks.db.Lesson.EXPECT().List(ctx, params).Return(lessons, nil)
+				mocks.db.ShiftSummary.EXPECT().MultiGet(ctx, []int64{1}).Return(nil, errmock)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.Internal,
+			},
+		},
+		{
+			name: "failed to filter lessons",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				params := &database.ListLessonsParams{
+					ShiftIDs:  []int64{1},
+					TeacherID: "teacherid",
+				}
+				since := jst.BeginningOfDay(jst.Date(2022, 2, 1, 0, 0, 0, 0))
+				until := jst.EndOfDay(jst.Date(2022, 2, 1, 0, 0, 0, 0))
+				mocks.validator.EXPECT().ListLessonsByDuration(req).Return(nil)
+				mocks.db.Shift.EXPECT().ListByDuration(ctx, since, until).Return(shifts, nil)
+				mocks.db.Lesson.EXPECT().List(ctx, params).Return(lessons, nil)
+				mocks.db.ShiftSummary.EXPECT().MultiGet(ctx, []int64{1}).Return(entity.ShiftSummaries{}, nil)
 			},
 			req: req,
 			expect: &testResponse{
@@ -114,7 +551,7 @@ func TestListLessons(t *testing.T) {
 	for _, tt := range tests {
 		tt := tt
 		t.Run(tt.name, testGRPC(tt.setup, tt.expect, func(ctx context.Context, service *lessonService) (proto.Message, error) {
-			return service.ListLessons(ctx, tt.req)
+			return service.ListLessonsByDuration(ctx, tt.req)
 		}))
 	}
 }
@@ -388,6 +825,314 @@ func TestCreateLesson(t *testing.T) {
 		tt := tt
 		t.Run(tt.name, testGRPC(tt.setup, tt.expect, func(ctx context.Context, service *lessonService) (proto.Message, error) {
 			return service.CreateLesson(ctx, tt.req)
+		}))
+	}
+}
+
+func TestUpdateLesson(t *testing.T) {
+	t.Parallel()
+
+	now := jst.Date(2022, 1, 15, 0, 0, 0, 0)
+	req := &lesson.UpdateLessonRequest{
+		LessonId:       1,
+		ShiftSummaryId: 1,
+		ShiftId:        1,
+		SubjectId:      1,
+		RoomId:         1,
+		TeacherId:      "teacherid",
+		StudentId:      "studentid",
+		Notes:          "",
+	}
+	summary := &entity.ShiftSummary{ID: 1}
+	shift := &entity.Shift{
+		ID:             1,
+		ShiftSummaryID: 1,
+		Date:           jst.Date(2022, 2, 2, 0, 0, 0, 0),
+		StartTime:      "1700",
+		EndTime:        "1830",
+		CreatedAt:      now,
+		UpdatedAt:      now,
+	}
+	l := &entity.Lesson{
+		ID:             1,
+		ShiftSummaryID: 1,
+		ShiftID:        1,
+		SubjectID:      1,
+		RoomID:         1,
+		TeacherID:      "teacherid",
+		StudentID:      "studentid",
+		Notes:          "",
+	}
+
+	tests := []struct {
+		name   string
+		setup  func(ctx context.Context, t *testing.T, mocks *mocks)
+		req    *lesson.UpdateLessonRequest
+		expect *testResponse
+	}{
+		{
+			name: "success",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				subjectIn := &classroom.GetSubjectRequest{Id: 1}
+				subjectOut := &classroom.GetSubjectResponse{Subject: &classroom.Subject{Id: 1}}
+				roomIn := &classroom.GetRoomRequest{Id: 1}
+				roomOut := &classroom.GetRoomResponse{Room: &classroom.Room{Id: 1}}
+				teacherIn := &user.GetTeacherRequest{Id: "teacherid"}
+				teacherOut := &user.GetTeacherResponse{Teacher: &user.Teacher{Id: "teacherid"}}
+				studentIn := &user.GetStudentRequest{Id: "studentid"}
+				studentOut := &user.GetStudentResponse{Student: &user.Student{Id: "studentid"}}
+				mocks.validator.EXPECT().UpdateLesson(req).Return(nil)
+				mocks.classroom.EXPECT().GetSubject(gomock.Any(), subjectIn).Return(subjectOut, nil)
+				mocks.classroom.EXPECT().GetRoom(gomock.Any(), roomIn).Return(roomOut, nil)
+				mocks.user.EXPECT().GetTeacher(gomock.Any(), teacherIn).Return(teacherOut, nil)
+				mocks.user.EXPECT().GetStudent(gomock.Any(), studentIn).Return(studentOut, nil)
+				mocks.db.ShiftSummary.EXPECT().Get(gomock.Any(), int64(1), "id").Return(summary, nil)
+				mocks.db.Shift.EXPECT().Get(gomock.Any(), int64(1)).Return(shift, nil)
+				mocks.db.Lesson.EXPECT().Update(ctx, int64(1), l).Return(nil)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.OK,
+				body: &lesson.UpdateLessonResponse{},
+			},
+		},
+		{
+			name: "invalid argument",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				req := &lesson.UpdateLessonRequest{}
+				mocks.validator.EXPECT().UpdateLesson(req).Return(validation.ErrRequestValidation)
+			},
+			req: &lesson.UpdateLessonRequest{},
+			expect: &testResponse{
+				code: codes.InvalidArgument,
+			},
+		},
+		{
+			name: "failed to get subject",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				subjectIn := &classroom.GetSubjectRequest{Id: 1}
+				roomIn := &classroom.GetRoomRequest{Id: 1}
+				roomOut := &classroom.GetRoomResponse{Room: &classroom.Room{Id: 1}}
+				teacherIn := &user.GetTeacherRequest{Id: "teacherid"}
+				teacherOut := &user.GetTeacherResponse{Teacher: &user.Teacher{Id: "teacherid"}}
+				studentIn := &user.GetStudentRequest{Id: "studentid"}
+				studentOut := &user.GetStudentResponse{Student: &user.Student{Id: "studentid"}}
+				mocks.validator.EXPECT().UpdateLesson(req).Return(nil)
+				mocks.classroom.EXPECT().GetSubject(gomock.Any(), subjectIn).Return(nil, errmock)
+				mocks.classroom.EXPECT().GetRoom(gomock.Any(), roomIn).Return(roomOut, nil)
+				mocks.user.EXPECT().GetTeacher(gomock.Any(), teacherIn).Return(teacherOut, nil)
+				mocks.user.EXPECT().GetStudent(gomock.Any(), studentIn).Return(studentOut, nil)
+				mocks.db.ShiftSummary.EXPECT().Get(gomock.Any(), int64(1), "id").Return(summary, nil)
+				mocks.db.Shift.EXPECT().Get(gomock.Any(), int64(1)).Return(shift, nil)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.Internal,
+			},
+		},
+		{
+			name: "failed to get room",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				subjectIn := &classroom.GetSubjectRequest{Id: 1}
+				subjectOut := &classroom.GetSubjectResponse{Subject: &classroom.Subject{Id: 1}}
+				roomIn := &classroom.GetRoomRequest{Id: 1}
+				teacherIn := &user.GetTeacherRequest{Id: "teacherid"}
+				teacherOut := &user.GetTeacherResponse{Teacher: &user.Teacher{Id: "teacherid"}}
+				studentIn := &user.GetStudentRequest{Id: "studentid"}
+				studentOut := &user.GetStudentResponse{Student: &user.Student{Id: "studentid"}}
+				mocks.validator.EXPECT().UpdateLesson(req).Return(nil)
+				mocks.classroom.EXPECT().GetSubject(gomock.Any(), subjectIn).Return(subjectOut, nil)
+				mocks.classroom.EXPECT().GetRoom(gomock.Any(), roomIn).Return(nil, errmock)
+				mocks.user.EXPECT().GetTeacher(gomock.Any(), teacherIn).Return(teacherOut, nil)
+				mocks.user.EXPECT().GetStudent(gomock.Any(), studentIn).Return(studentOut, nil)
+				mocks.db.ShiftSummary.EXPECT().Get(gomock.Any(), int64(1), "id").Return(summary, nil)
+				mocks.db.Shift.EXPECT().Get(gomock.Any(), int64(1)).Return(shift, nil)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.Internal,
+			},
+		},
+		{
+			name: "failed to get teacher",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				subjectIn := &classroom.GetSubjectRequest{Id: 1}
+				subjectOut := &classroom.GetSubjectResponse{Subject: &classroom.Subject{Id: 1}}
+				roomIn := &classroom.GetRoomRequest{Id: 1}
+				roomOut := &classroom.GetRoomResponse{Room: &classroom.Room{Id: 1}}
+				teacherIn := &user.GetTeacherRequest{Id: "teacherid"}
+				studentIn := &user.GetStudentRequest{Id: "studentid"}
+				studentOut := &user.GetStudentResponse{Student: &user.Student{Id: "studentid"}}
+				mocks.validator.EXPECT().UpdateLesson(req).Return(nil)
+				mocks.classroom.EXPECT().GetSubject(gomock.Any(), subjectIn).Return(subjectOut, nil)
+				mocks.classroom.EXPECT().GetRoom(gomock.Any(), roomIn).Return(roomOut, nil)
+				mocks.user.EXPECT().GetTeacher(gomock.Any(), teacherIn).Return(nil, errmock)
+				mocks.user.EXPECT().GetStudent(gomock.Any(), studentIn).Return(studentOut, nil)
+				mocks.db.ShiftSummary.EXPECT().Get(gomock.Any(), int64(1), "id").Return(summary, nil)
+				mocks.db.Shift.EXPECT().Get(gomock.Any(), int64(1)).Return(shift, nil)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.Internal,
+			},
+		},
+		{
+			name: "failed to get student",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				subjectIn := &classroom.GetSubjectRequest{Id: 1}
+				subjectOut := &classroom.GetSubjectResponse{Subject: &classroom.Subject{Id: 1}}
+				roomIn := &classroom.GetRoomRequest{Id: 1}
+				roomOut := &classroom.GetRoomResponse{Room: &classroom.Room{Id: 1}}
+				teacherIn := &user.GetTeacherRequest{Id: "teacherid"}
+				teacherOut := &user.GetTeacherResponse{Teacher: &user.Teacher{Id: "teacherid"}}
+				studentIn := &user.GetStudentRequest{Id: "studentid"}
+				mocks.validator.EXPECT().UpdateLesson(req).Return(nil)
+				mocks.classroom.EXPECT().GetSubject(gomock.Any(), subjectIn).Return(subjectOut, nil)
+				mocks.classroom.EXPECT().GetRoom(gomock.Any(), roomIn).Return(roomOut, nil)
+				mocks.user.EXPECT().GetTeacher(gomock.Any(), teacherIn).Return(teacherOut, nil)
+				mocks.user.EXPECT().GetStudent(gomock.Any(), studentIn).Return(nil, errmock)
+				mocks.db.ShiftSummary.EXPECT().Get(gomock.Any(), int64(1), "id").Return(summary, nil)
+				mocks.db.Shift.EXPECT().Get(gomock.Any(), int64(1)).Return(shift, nil)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.Internal,
+			},
+		},
+		{
+			name: "failed to get shift summary",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				subjectIn := &classroom.GetSubjectRequest{Id: 1}
+				subjectOut := &classroom.GetSubjectResponse{Subject: &classroom.Subject{Id: 1}}
+				roomIn := &classroom.GetRoomRequest{Id: 1}
+				roomOut := &classroom.GetRoomResponse{Room: &classroom.Room{Id: 1}}
+				teacherIn := &user.GetTeacherRequest{Id: "teacherid"}
+				teacherOut := &user.GetTeacherResponse{Teacher: &user.Teacher{Id: "teacherid"}}
+				studentIn := &user.GetStudentRequest{Id: "studentid"}
+				studentOut := &user.GetStudentResponse{Student: &user.Student{Id: "studentid"}}
+				mocks.validator.EXPECT().UpdateLesson(req).Return(nil)
+				mocks.classroom.EXPECT().GetSubject(gomock.Any(), subjectIn).Return(subjectOut, nil)
+				mocks.classroom.EXPECT().GetRoom(gomock.Any(), roomIn).Return(roomOut, nil)
+				mocks.user.EXPECT().GetTeacher(gomock.Any(), teacherIn).Return(teacherOut, nil)
+				mocks.user.EXPECT().GetStudent(gomock.Any(), studentIn).Return(studentOut, nil)
+				mocks.db.ShiftSummary.EXPECT().Get(gomock.Any(), int64(1), "id").Return(summary, nil)
+				mocks.db.Shift.EXPECT().Get(gomock.Any(), int64(1)).Return(nil, errmock)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.Internal,
+			},
+		},
+		{
+			name: "failed to get shift",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				subjectIn := &classroom.GetSubjectRequest{Id: 1}
+				subjectOut := &classroom.GetSubjectResponse{Subject: &classroom.Subject{Id: 1}}
+				roomIn := &classroom.GetRoomRequest{Id: 1}
+				roomOut := &classroom.GetRoomResponse{Room: &classroom.Room{Id: 1}}
+				teacherIn := &user.GetTeacherRequest{Id: "teacherid"}
+				teacherOut := &user.GetTeacherResponse{Teacher: &user.Teacher{Id: "teacherid"}}
+				studentIn := &user.GetStudentRequest{Id: "studentid"}
+				studentOut := &user.GetStudentResponse{Student: &user.Student{Id: "studentid"}}
+				mocks.validator.EXPECT().UpdateLesson(req).Return(nil)
+				mocks.classroom.EXPECT().GetSubject(gomock.Any(), subjectIn).Return(subjectOut, nil)
+				mocks.classroom.EXPECT().GetRoom(gomock.Any(), roomIn).Return(roomOut, nil)
+				mocks.user.EXPECT().GetTeacher(gomock.Any(), teacherIn).Return(teacherOut, nil)
+				mocks.user.EXPECT().GetStudent(gomock.Any(), studentIn).Return(studentOut, nil)
+				mocks.db.ShiftSummary.EXPECT().Get(gomock.Any(), int64(1), "id").Return(summary, nil)
+				mocks.db.Shift.EXPECT().Get(gomock.Any(), int64(1)).Return(nil, errmock)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.Internal,
+			},
+		},
+		{
+			name: "failed to create lesson",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				subjectIn := &classroom.GetSubjectRequest{Id: 1}
+				subjectOut := &classroom.GetSubjectResponse{Subject: &classroom.Subject{Id: 1}}
+				roomIn := &classroom.GetRoomRequest{Id: 1}
+				roomOut := &classroom.GetRoomResponse{Room: &classroom.Room{Id: 1}}
+				teacherIn := &user.GetTeacherRequest{Id: "teacherid"}
+				teacherOut := &user.GetTeacherResponse{Teacher: &user.Teacher{Id: "teacherid"}}
+				studentIn := &user.GetStudentRequest{Id: "studentid"}
+				studentOut := &user.GetStudentResponse{Student: &user.Student{Id: "studentid"}}
+				mocks.validator.EXPECT().UpdateLesson(req).Return(nil)
+				mocks.classroom.EXPECT().GetSubject(gomock.Any(), subjectIn).Return(subjectOut, nil)
+				mocks.classroom.EXPECT().GetRoom(gomock.Any(), roomIn).Return(roomOut, nil)
+				mocks.user.EXPECT().GetTeacher(gomock.Any(), teacherIn).Return(teacherOut, nil)
+				mocks.user.EXPECT().GetStudent(gomock.Any(), studentIn).Return(studentOut, nil)
+				mocks.db.ShiftSummary.EXPECT().Get(gomock.Any(), int64(1), "id").Return(summary, nil)
+				mocks.db.Shift.EXPECT().Get(gomock.Any(), int64(1)).Return(shift, nil)
+				mocks.db.Lesson.EXPECT().Update(ctx, int64(1), l).Return(errmock)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.Internal,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, testGRPC(tt.setup, tt.expect, func(ctx context.Context, service *lessonService) (proto.Message, error) {
+			return service.UpdateLesson(ctx, tt.req)
+		}))
+	}
+}
+
+func TestDeleteLesson(t *testing.T) {
+	t.Parallel()
+	req := &lesson.DeleteLessonRequest{
+		LessonId: 1,
+	}
+
+	tests := []struct {
+		name   string
+		setup  func(ctx context.Context, t *testing.T, mocks *mocks)
+		req    *lesson.DeleteLessonRequest
+		expect *testResponse
+	}{
+		{
+			name: "success",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				mocks.validator.EXPECT().DeleteLesson(req).Return(nil)
+				mocks.db.Lesson.EXPECT().Delete(ctx, int64(1)).Return(nil)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.OK,
+			},
+		},
+		{
+			name: "invalid argument",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				req := &lesson.DeleteLessonRequest{}
+				mocks.validator.EXPECT().DeleteLesson(req).Return(validation.ErrRequestValidation)
+			},
+			req: &lesson.DeleteLessonRequest{},
+			expect: &testResponse{
+				code: codes.InvalidArgument,
+			},
+		},
+		{
+			name: "failed to delete lesson",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				mocks.validator.EXPECT().DeleteLesson(req).Return(nil)
+				mocks.db.Lesson.EXPECT().Delete(ctx, int64(1)).Return(errmock)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.Internal,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, testGRPC(tt.setup, tt.expect, func(ctx context.Context, service *lessonService) (proto.Message, error) {
+			return service.DeleteLesson(ctx, tt.req)
 		}))
 	}
 }

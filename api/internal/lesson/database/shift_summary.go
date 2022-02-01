@@ -12,7 +12,7 @@ import (
 const shiftSummaryTable = "shift_summaries"
 
 var shiftSummaryFields = []string{
-	"id", "year_month", "open_at", "end_at", "created_at", "updated_at",
+	"id", "year_month", "decided", "open_at", "end_at", "created_at", "updated_at",
 }
 
 type shiftSummary struct {
@@ -69,6 +69,23 @@ func (s *shiftSummary) List(
 	return summaries, nil
 }
 
+func (s *shiftSummary) MultiGet(ctx context.Context, ids []int64, fields ...string) (entity.ShiftSummaries, error) {
+	var summaries entity.ShiftSummaries
+	if len(fields) == 0 {
+		fields = shiftSummaryFields
+	}
+
+	stmt := s.db.DB.Table(shiftSummaryTable).Select(fields).
+		Where("id IN (?)", ids)
+
+	err := stmt.Find(&summaries).Error
+	if err != nil {
+		return nil, dbError(err)
+	}
+	summaries.Fill(s.now())
+	return summaries, nil
+}
+
 func (s *shiftSummary) Get(ctx context.Context, id int64, fields ...string) (*entity.ShiftSummary, error) {
 	var summary *entity.ShiftSummary
 	if len(fields) == 0 {
@@ -93,10 +110,47 @@ func (s *shiftSummary) UpdateSchedule(ctx context.Context, id int64, openAt, end
 	}
 	defer s.db.Close(tx)
 
+	var summary *entity.ShiftSummary
+	err = tx.Table(shiftSummaryTable).Select([]string{"id"}).
+		Where("id = ?", id).
+		First(&summary).Error
+	if err != nil {
+		return dbError(err)
+	}
+
 	params := map[string]interface{}{
 		"id":         id,
 		"open_at":    openAt,
 		"end_at":     endAt,
+		"updated_at": s.now(),
+	}
+
+	err = tx.Table(shiftSummaryTable).Where("id = ?", id).Updates(params).Error
+	if err != nil {
+		tx.Rollback()
+		return dbError(err)
+	}
+	return dbError(tx.Commit().Error)
+}
+
+func (s *shiftSummary) UpdateDecided(ctx context.Context, id int64, decided bool) error {
+	tx, err := s.db.Begin()
+	if err != nil {
+		return dbError(err)
+	}
+	defer s.db.Close(tx)
+
+	var summary *entity.ShiftSummary
+	err = tx.Table(shiftSummaryTable).Select([]string{"id"}).
+		Where("id = ?", id).
+		First(&summary).Error
+	if err != nil {
+		return dbError(err)
+	}
+
+	params := map[string]interface{}{
+		"id":         id,
+		"decided":    decided,
 		"updated_at": s.now(),
 	}
 

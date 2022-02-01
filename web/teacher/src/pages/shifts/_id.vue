@@ -3,12 +3,25 @@
     <!-- PCレイアウト -->
     <pc-shift-detail
       class="hidden-sm-and-down"
+      :overlay="overlay"
+      :loading="loading"
+      :lesson-loading="lessonLoading"
+      :dialog="dialog"
+      :dialog-key="dialogKey"
       :summary="summary"
       :details="details"
       :rooms="rooms"
       :teachers="teachers"
       :students="students"
+      :lesson="lesson"
       :lessons="getLessonDetails()"
+      :subjects="subjects"
+      :teacher-submission="teacherSubmission"
+      :teacher-lessons="teacherLessons"
+      :student-submission="studentSubmission"
+      :student-lessons="studentLessons"
+      :form="form"
+      @click:lesson-student="handleClickLessonStudent"
       @click:show-teacher-submissions="handleClickShowTeacherSubmissions"
       @click:show-teacher-lessons="handleClickShowTeacherLessons"
       @click:show-student-submissions="handleClickShowStudentSubmissions"
@@ -16,6 +29,9 @@
       @click:decided-lesson="handleClickDecidedLesson"
       @click:new-lesson="handleClickNewLesson"
       @click:edit-lesson="handleClickEditLesson"
+      @click:submit-lesson="handleClickSubmitLesson"
+      @click:delete-lesson="handleClickDeleteLesson"
+      @click:close="handleCloseDialog"
     />
     <!-- スマホレイアウト -->
     <mb-shift-detail class="hidden-md-and-up" @click="handleClickTop" />
@@ -23,12 +39,34 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, useAsync, useRoute, useRouter, useStore } from '@nuxtjs/composition-api'
+import {
+  computed,
+  defineComponent,
+  reactive,
+  ref,
+  useAsync,
+  useRoute,
+  useRouter,
+  useStore,
+} from '@nuxtjs/composition-api'
 import MbShiftDetail from '~/components/templates/MbShiftDetail.vue'
 import PcShiftDetail from '~/components/templates/PcShiftDetail.vue'
 import { CommonStore, ShiftStore } from '~/store'
-import { Lesson, ShiftDetail, ShiftSummary, StudentShift, Subject, TeacherShift } from '~/types/store'
-import { LessonDetail } from '~/types/props/shift'
+import {
+  Lesson,
+  PromiseState,
+  ShiftDetail,
+  ShiftLessonDetail,
+  ShiftSummary,
+  ShiftUserLesson,
+  StudentShift,
+  StudentSubmissionDetail,
+  Subject,
+  TeacherShift,
+  TeacherSubmissionDetail,
+} from '~/types/store'
+import { LessonDetail, ShiftDialogKey } from '~/types/props/shift'
+import { ShiftLessonForm, ShiftLessonParams } from '~/types/form'
 
 export default defineComponent({
   components: {
@@ -41,26 +79,68 @@ export default defineComponent({
     const route = useRoute()
     const store = useStore()
 
+    const summaryId = Number(route.value.params.id)
+
+    const overlay = ref<boolean>(true)
+    const dialogKey = ref<ShiftDialogKey>('未選択')
+    const lessonLoading = ref<boolean>(false)
+    const form = reactive<ShiftLessonForm>({ params: { ...ShiftLessonParams } })
+
+    const dialog = computed<boolean>(() => dialogKey.value !== '未選択')
     const summary = computed<ShiftSummary>(() => store.getters['shift/getSummary'])
     const details = computed<ShiftDetail[]>(() => store.getters['shift/getDetails'])
     const rooms = computed<number>(() => store.getters['shift/getRooms'])
     const teachers = computed<TeacherShift[]>(() => store.getters['shift/getTeachers'])
     const students = computed<StudentShift[]>(() => store.getters['shift/getStudents'])
+    const lesson = computed<ShiftLessonDetail>(() => store.getters['shift/getLessonDetail'])
     const lessons = computed<Lesson[]>(() => store.getters['shift/getLessons'])
     const subjects = computed<Subject[]>(() => store.getters['lesson/getSubjects'])
+    const teacherSubmission = computed<TeacherSubmissionDetail>(() => store.getters['shift/getTeacherSubmission'])
+    const teacherLessons = computed<ShiftUserLesson>(() => store.getters['shift/getTeacherLessons'])
+    const studentSubmission = computed<StudentSubmissionDetail>(() => store.getters['shift/getStudentSubmission'])
+    const studentLessons = computed<ShiftUserLesson>(() => store.getters['shift/getStudentLessons'])
+    const loading = computed<boolean>(() => {
+      return store.getters['common/getPromiseState'] === PromiseState.LOADING
+    })
 
     useAsync(async () => {
       await listShiftDetails()
+      overlay.value = false
     })
 
     async function listShiftDetails(): Promise<void> {
       CommonStore.startConnection()
 
-      const summaryId: string = route.value.params.id
-
-      await ShiftStore.listShiftDetails({ summaryId: Number(summaryId) })
+      await ShiftStore.listShiftDetails({ summaryId })
         .catch((err: Error) => {
-          console.log('feiled to list shift details', err)
+          CommonStore.showErrorInSnackbar(err)
+        })
+        .finally(() => {
+          CommonStore.endConnection()
+        })
+    }
+
+    async function listShiftLessons({
+      shiftId,
+      lessonId,
+      room,
+    }: {
+      shiftId: number
+      lessonId: number
+      room: number
+    }): Promise<void> {
+      CommonStore.startConnection()
+
+      await ShiftStore.listShiftLessons({ summaryId, lessonId, shiftId, room })
+        .then(() => {
+          if (lesson.value.current) {
+            form.params = { ...lesson.value.current, summaryId, lessonId, shiftId, room }
+          } else {
+            form.params = { ...ShiftLessonParams, summaryId, lessonId, shiftId, room }
+          }
+        })
+        .catch((err: Error) => {
+          CommonStore.showErrorInSnackbar(err)
         })
         .finally(() => {
           CommonStore.endConnection()
@@ -88,47 +168,188 @@ export default defineComponent({
       return details
     }
 
+    const openDialog = (key: ShiftDialogKey): void => {
+      dialogKey.value = key
+    }
+
+    const closeDialog = (): void => {
+      dialogKey.value = '未選択'
+    }
+
     const handleClickTop = (): void => {
       router.push('/')
     }
 
-    const handleClickShowTeacherSubmissions = (teacherId: string): void => {
-      console.log('debug', 'show teacher submissions', teacherId)
+    const handleClickLessonStudent = async (studentId: string): Promise<void> => {
+      lessonLoading.value = true
+
+      await ShiftStore.listStudentLessons({ summaryId, studentId })
+        .catch((err: Error) => {
+          CommonStore.showErrorInSnackbar(err)
+        })
+        .finally(() => {
+          lessonLoading.value = false
+          form.params.studentId = studentId
+        })
     }
 
-    const handleClickShowTeacherLessons = (teacherId: string): void => {
-      console.log('debug', 'show teacher lessons', teacherId)
+    const handleClickShowTeacherSubmissions = async (teacherId: string): Promise<void> => {
+      CommonStore.startConnection()
+
+      await ShiftStore.showTeacherSubmissions({ summaryId, teacherId })
+        .then(() => {
+          openDialog('講師シフト')
+        })
+        .catch((err: Error) => {
+          CommonStore.showErrorInSnackbar(err)
+        })
+        .finally(() => {
+          CommonStore.endConnection()
+        })
     }
 
-    const handleClickShowStudentSubmissions = (studentId: string): void => {
-      console.log('debug', 'show student submissions', studentId)
+    const handleClickShowTeacherLessons = async (teacherId: string): Promise<void> => {
+      CommonStore.startConnection()
+
+      await ShiftStore.listTeacherLessons({ summaryId, teacherId })
+        .then(() => {
+          openDialog('講師授業')
+        })
+        .catch((err: Error) => {
+          CommonStore.showErrorInSnackbar(err)
+        })
+        .finally(() => {
+          CommonStore.endConnection()
+        })
     }
 
-    const handleClickShowStudentLessons = (studentId: string): void => {
-      console.log('debug', 'show student lessons', studentId)
+    const handleClickShowStudentSubmissions = async (studentId: string): Promise<void> => {
+      CommonStore.startConnection()
+
+      await ShiftStore.showStudentSubmissions({ summaryId, studentId })
+        .then(() => {
+          openDialog('生徒授業希望')
+        })
+        .catch((err: Error) => {
+          CommonStore.showErrorInSnackbar(err)
+        })
+        .finally(() => {
+          CommonStore.endConnection()
+        })
     }
 
-    const handleClickDecidedLesson = (): void => {
-      console.log('debug', 'decided lesson')
+    const handleClickShowStudentLessons = async (studentId: string): Promise<void> => {
+      CommonStore.startConnection()
+
+      await ShiftStore.listStudentLessons({ summaryId, studentId })
+        .then(() => {
+          openDialog('生徒授業')
+        })
+        .catch((err: Error) => {
+          CommonStore.showErrorInSnackbar(err)
+        })
+        .finally(() => {
+          CommonStore.endConnection()
+        })
     }
 
-    const handleClickNewLesson = ({ summaryId }: { summaryId: number }): void => {
-      console.log('debug', 'new lessons', { summaryId })
+    const handleClickDecidedLesson = async (): Promise<void> => {
+      CommonStore.startConnection()
+
+      const decided: boolean = !summary.value.decided
+
+      await ShiftStore.updateShiftSummaryDecided({ summaryId, decided })
+        .then(() => {
+          if (decided) {
+            CommonStore.showSnackbar({ color: 'success', message: '授業スケジュールを確定しました。' })
+          }
+        })
+        .catch((err: Error) => {
+          CommonStore.showErrorInSnackbar(err)
+        })
+        .finally(() => {
+          CommonStore.endConnection()
+        })
     }
 
-    const handleClickEditLesson = ({ summaryId, lessonId }: { summaryId: number; lessonId: number }): void => {
-      console.log('debug', 'edit lessons', { summaryId, lessonId })
+    const handleClickNewLesson = async ({ shiftId, room }: { shiftId: number; room: number }): Promise<void> => {
+      await listShiftLessons({ shiftId, room, lessonId: 0 }).then(() => {
+        openDialog('授業登録')
+      })
+    }
+
+    const handleClickEditLesson = async ({
+      shiftId,
+      lessonId,
+      room,
+    }: {
+      shiftId: number
+      lessonId: number
+      room: number
+    }): Promise<void> => {
+      await listShiftLessons({ shiftId, room, lessonId }).then(() => {
+        openDialog('授業登録')
+      })
+    }
+
+    const handleClickSubmitLesson = async (): Promise<void> => {
+      CommonStore.startConnection()
+
+      await ShiftStore.upsertLesson({ summaryId, form })
+        .then(() => {
+          closeDialog()
+          CommonStore.showSnackbar({ color: 'success', message: '授業を登録しました。' })
+        })
+        .catch((err: Error) => {
+          CommonStore.showErrorInSnackbar(err)
+        })
+        .finally(() => {
+          CommonStore.endConnection()
+        })
+    }
+
+    const handleClickDeleteLesson = async (): Promise<void> => {
+      CommonStore.startConnection()
+
+      await ShiftStore.deleteLesson({ summaryId, form })
+        .then(() => {
+          closeDialog()
+          CommonStore.showSnackbar({ color: 'success', message: '授業を削除しました。' })
+        })
+        .catch((err: Error) => {
+          CommonStore.showErrorInSnackbar(err)
+        })
+        .finally(() => {
+          CommonStore.endConnection()
+        })
+    }
+
+    const handleCloseDialog = (): void => {
+      closeDialog()
     }
 
     return {
+      overlay,
+      loading,
+      lessonLoading,
+      dialog,
+      dialogKey,
       summary,
       details,
       rooms,
       teachers,
       students,
+      lesson,
       lessons,
+      subjects,
+      teacherSubmission,
+      teacherLessons,
+      studentSubmission,
+      studentLessons,
+      form,
       getLessonDetails,
       handleClickTop,
+      handleClickLessonStudent,
       handleClickShowTeacherSubmissions,
       handleClickShowTeacherLessons,
       handleClickShowStudentSubmissions,
@@ -136,6 +357,9 @@ export default defineComponent({
       handleClickDecidedLesson,
       handleClickNewLesson,
       handleClickEditLesson,
+      handleClickSubmitLesson,
+      handleClickDeleteLesson,
+      handleCloseDialog,
     }
   },
 })

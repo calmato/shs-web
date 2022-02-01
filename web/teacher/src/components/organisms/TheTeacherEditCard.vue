@@ -1,6 +1,10 @@
 <template>
   <v-card>
-    <v-toolbar color="primary" dark>講師詳細</v-toolbar>
+    <v-toolbar color="primary" dark>
+      <span>講師詳細</span>
+      <v-spacer />
+      <v-icon @click="onDelete">mdi-delete</v-icon>
+    </v-toolbar>
 
     <v-card-text>
       <v-row v-if="deleteDialog" class="py-8">
@@ -91,7 +95,6 @@
     </v-card-actions>
     <v-card-actions v-else>
       <v-spacer />
-      <v-btn v-show="isAdmin" color="error" @click="onDelete">削除する</v-btn>
       <v-btn color="secondary" @click="onClose">閉じる</v-btn>
     </v-card-actions>
   </v-card>
@@ -156,6 +159,7 @@ export default defineComponent({
         小学校: [],
         中学校: [],
         高校: [],
+        その他: [],
       }),
     },
     editTeacherElementarySchoolForm: {

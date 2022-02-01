@@ -110,6 +110,84 @@ func TestShiftSummary_List(t *testing.T) {
 	}
 }
 
+func TestShiftSummary_MultiGet(t *testing.T) {
+	m, err := newMock()
+	require.NoError(t, err)
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	_ = m.dbDelete(ctx, shiftSummaryTable)
+
+	now := jst.Now()
+
+	summaries := make(entity.ShiftSummaries, 2)
+	summaries[0] = testShiftSummary(1, 202201, now.AddDate(0, -1, 0), now.AddDate(0, -1, 1), now)
+	summaries[1] = testShiftSummary(2, 202202, now.AddDate(0, 0, -1), now.AddDate(0, 0, 1), now)
+	summaries.Fill(now)
+	err = m.db.DB.Create(&summaries).Error
+	require.NoError(t, err)
+
+	type args struct {
+		summaryIDs []int64
+	}
+	type want struct {
+		summaries entity.ShiftSummaries
+		isErr     bool
+	}
+	tests := []struct {
+		name  string
+		setup func(ctx context.Context, t *testing.T, m *mocks)
+		args  args
+		want  want
+	}{
+		{
+			name:  "success",
+			setup: func(ctx context.Context, t *testing.T, m *mocks) {},
+			args: args{
+				summaryIDs: []int64{1, 2},
+			},
+			want: want{
+				summaries: summaries,
+				isErr:     false,
+			},
+		},
+		{
+			name:  "success length is 0",
+			setup: func(ctx context.Context, t *testing.T, m *mocks) {},
+			args: args{
+				summaryIDs: []int64{-1},
+			},
+			want: want{
+				summaries: entity.ShiftSummaries{},
+				isErr:     false,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			ctx, cancel := context.WithCancel(context.Background())
+			defer cancel()
+
+			tt.setup(ctx, t, m)
+
+			db := NewShiftSummary(m.db)
+			actual, err := db.MultiGet(ctx, tt.args.summaryIDs)
+			assert.Equal(t, tt.want.isErr, err != nil, err)
+			assert.Len(t, actual, len(tt.want.summaries))
+
+			actualMap := actual.Map()
+			for _, s := range tt.want.summaries {
+				summary := actualMap[s.ID]
+				require.NotNil(t, summary)
+				assert.Equal(t, s.Status, summary.Status)
+			}
+		})
+	}
+}
+
 func TestShiftSummary_Get(t *testing.T) {
 	m, err := newMock()
 	require.NoError(t, err)
@@ -223,6 +301,18 @@ func TestShiftSummary_UpdateSchedule(t *testing.T) {
 				isErr: false,
 			},
 		},
+		{
+			name:  "failed to not found",
+			setup: func(ctx context.Context, t *testing.T, m *mocks) {},
+			args: args{
+				summaryID: 1,
+				openAt:    jst.Now(),
+				endAt:     jst.Now(),
+			},
+			want: want{
+				isErr: true,
+			},
+		},
 	}
 
 	for _, tt := range tests {
@@ -235,6 +325,72 @@ func TestShiftSummary_UpdateSchedule(t *testing.T) {
 
 			db := NewShiftSummary(m.db)
 			err := db.UpdateSchedule(ctx, tt.args.summaryID, tt.args.openAt, tt.args.endAt)
+			assert.Equal(t, tt.want.isErr, err != nil, err)
+		})
+	}
+}
+
+func TestShiftSummary_UpdateDecided(t *testing.T) {
+	m, err := newMock()
+	require.NoError(t, err)
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	_ = m.dbDelete(ctx, shiftSummaryTable)
+
+	now := jst.Now()
+	summary := testShiftSummary(1, 202202, now.AddDate(0, 0, -1), now.AddDate(0, 0, 1), now)
+
+	type args struct {
+		summaryID int64
+		decided   bool
+	}
+	type want struct {
+		isErr bool
+	}
+	tests := []struct {
+		name  string
+		setup func(ctx context.Context, t *testing.T, m *mocks)
+		args  args
+		want  want
+	}{
+		{
+			name: "success",
+			setup: func(ctx context.Context, t *testing.T, m *mocks) {
+				err = m.db.DB.Create(&summary).Error
+				require.NoError(t, err)
+			},
+			args: args{
+				summaryID: 1,
+				decided:   true,
+			},
+			want: want{
+				isErr: false,
+			},
+		},
+		{
+			name:  "failed to not found",
+			setup: func(ctx context.Context, t *testing.T, m *mocks) {},
+			args: args{
+				summaryID: 1,
+				decided:   true,
+			},
+			want: want{
+				isErr: true,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			ctx, cancel := context.WithCancel(context.Background())
+			defer cancel()
+
+			_ = m.dbDelete(ctx, shiftSummaryTable)
+			tt.setup(ctx, t, m)
+
+			db := NewShiftSummary(m.db)
+			err := db.UpdateDecided(ctx, tt.args.summaryID, tt.args.decided)
 			assert.Equal(t, tt.want.isErr, err != nil, err)
 		})
 	}

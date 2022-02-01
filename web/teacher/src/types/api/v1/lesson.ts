@@ -1,3 +1,5 @@
+import { Student, Teacher } from './user'
+
 /**
  * ---------------------------
  * Response
@@ -28,4 +30,10 @@ export interface Subject {
 
 export interface SubjectsResponse {
   subjects: Subject[]
+}
+
+export interface LessonsResponse {
+  lessons: Lesson[]
+  teachers: Teacher[]
+  students: Student[]
 }

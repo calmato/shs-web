@@ -11,11 +11,31 @@ export interface UpdateShiftSummaryScheduleRequest {
   endDate: string
 }
 
+export interface UpdateShiftSummaryDecidedRequest {
+  decided: boolean
+}
+
 export interface CreateShiftsRequest {
   yearMonth: string
   openDate: string
   endDate: string
   closedDates: string[]
+}
+
+export interface CreateShiftLessonRequest {
+  shiftId: number
+  room: number
+  subjectId: number
+  teacherId: string
+  studentId: string
+}
+
+export interface UpdateShiftLessonRequest {
+  shiftId: number
+  room: number
+  subjectId: number
+  teacherId: string
+  studentId: string
 }
 
 /**
@@ -27,6 +47,7 @@ export interface ShiftSummary {
   id: number
   year: number
   month: number
+  decided: boolean
   status: number
   openAt: string
   endAt: string
@@ -46,15 +67,59 @@ export interface ShiftDetail {
   lessons: ShiftDetailLesson[]
 }
 
+export interface ShiftLesson {
+  id: number
+  shiftId: number
+  subjectId: number
+  room: number
+  teacherId: string
+  studentId: string
+  startAt: string
+  endAt: string
+  notes: string
+  createdAt: string
+  updatedAt: string
+}
+
+export interface SuggestedLesson {
+  subjectId: number
+  total: number
+}
+
 export interface TeacherShift {
   teacher: Teacher
   lessonTotal: number
 }
 
+export interface TeacherShiftSummary {
+  id: number
+  year: number
+  month: number
+  shiftStatus: number
+  submissionStatus: number
+  openAt: string
+  endAt: string
+  createdAt: string
+  updatedAt: string
+}
+
 export interface StudentShift {
   student: Student
+  suggestedLessons: SuggestedLesson[]
+  suggestedLessonsTotal: number
   lessonTotal: number
-  suggestedClassesTotal: number
+}
+
+export interface StudentShiftSummary {
+  id: number
+  year: number
+  month: number
+  shiftStatus: number
+  submissionStatus: number
+  openAt: string
+  endAt: string
+  createdAt: string
+  updatedAt: string
 }
 
 export interface ShiftSummariesResponse {
@@ -68,4 +133,40 @@ export interface ShiftDetailsResponse {
   teachers: TeacherShift[]
   students: StudentShift[]
   lessons: Lesson[]
+}
+
+export interface ShiftLessonResponse {
+  id: number
+  shiftId: number
+  subjectId: number
+  room: number
+  teacherId: string
+  studentId: string
+  startAt: string
+  endAt: string
+  notes: string
+  createdAt: string
+  updatedAt: string
+}
+
+export interface ShiftLessonsResponse {
+  lessons: Lesson[]
+  total: number
+}
+
+export interface ShiftSubmissionsResponse {
+  teachers: Teacher[]
+  students: Student[]
+  lessons: ShiftLesson[]
+}
+
+export interface TeacherShiftsResponse {
+  summary: TeacherShiftSummary
+  shifts: ShiftDetail[]
+}
+
+export interface StudentShiftsResponse {
+  summary: StudentShiftSummary
+  shifts: ShiftDetail[]
+  suggestedLessons: SuggestedLesson[]
 }

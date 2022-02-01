@@ -7,7 +7,6 @@ import (
 	gentity "github.com/calmato/shs-web/api/internal/gateway/entity"
 	"github.com/calmato/shs-web/api/internal/gateway/teacher/v1/entity"
 	"github.com/calmato/shs-web/api/internal/gateway/teacher/v1/response"
-
 	"github.com/calmato/shs-web/api/internal/gateway/util"
 	"github.com/calmato/shs-web/api/proto/lesson"
 	"github.com/gin-gonic/gin"
@@ -35,8 +34,8 @@ func (h *apiV1Handler) ListEnabledStudentShifts(ctx *gin.Context) {
 		gshifts, err = h.listShiftsBySummaryID(ectx, shiftSummaryID)
 		return
 	})
-	var submission *gentity.StudentSubmission
-	var studentShifts gentity.StudentShifts
+	var gsubmission *gentity.StudentSubmission
+	var gstudentShifts gentity.StudentShifts
 	eg.Go(func() error {
 		in := &lesson.GetStudentShiftsRequest{
 			StudentId:      studentID,
@@ -46,8 +45,8 @@ func (h *apiV1Handler) ListEnabledStudentShifts(ctx *gin.Context) {
 		if err != nil {
 			return err
 		}
-		submission = gentity.NewStudentSubmission(out.Submission)
-		studentShifts = gentity.NewStudentShifts(out.Shifts)
+		gsubmission = gentity.NewStudentSubmission(out.Submission)
+		gstudentShifts = gentity.NewStudentShifts(out.Shifts)
 		return nil
 	})
 	if err := eg.Wait(); err != nil {
@@ -62,9 +61,9 @@ func (h *apiV1Handler) ListEnabledStudentShifts(ctx *gin.Context) {
 	}
 
 	res := &response.StudentShiftsResponse{
-		Summary:          entity.NewStudentSubmission(gsummary, submission),
-		Shifts:           entity.NewEnabledStudentShiftDetails(summary, shifts, studentShifts.MapByShiftID()),
-		SuggestedLessons: entity.NewStudentSuggestedLessons(submission),
+		Summary:          entity.NewStudentSubmission(gsummary, gsubmission),
+		Shifts:           entity.NewEnabledStudentShiftDetails(summary, shifts, gstudentShifts.MapByShiftID()),
+		SuggestedLessons: entity.NewStudentSuggestedLessons(gsubmission),
 	}
 	ctx.JSON(http.StatusOK, res)
 }

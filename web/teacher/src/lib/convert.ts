@@ -13,6 +13,7 @@ export function authResponse2Auth(authResponse: AuthResponse): Auth {
       小学校: authResponse.subjects[1].map((item) => subjectResponse2Subject(item)),
       中学校: authResponse.subjects[2].map((item) => subjectResponse2Subject(item)),
       高校: authResponse.subjects[3].map((item) => subjectResponse2Subject(item)),
+      その他: [],
     },
   }
   return auth
@@ -46,5 +47,24 @@ export function schoolTypeNum2schoolTypeString(schoolType: number): SchoolType {
       return '高校'
     default:
       return 'その他'
+  }
+}
+
+/**
+ * SchoolTypeを数値に変換する関数
+ * @param schoolType
+ * @returns
+ */
+export function schoolTypeString2schoolTypeNum(schoolType: SchoolType) {
+  switch (schoolType) {
+    case '小学校':
+      return 1
+    case '中学校':
+      return 2
+    case '高校':
+      return 3
+    case 'その他':
+    default:
+      return 0
   }
 }

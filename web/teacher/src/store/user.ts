@@ -9,7 +9,6 @@ import {
   UpdateTeacherSubjectsRequest,
   UpdateTeacherRoleRequest,
   UpdateTeacherMailRequest,
-  UpdateTeacherPasswordRequest,
 } from '~/types/api/v1'
 import { Role, Student, StudentMap, SubjectsMap, Teacher, TeacherMap, UserState } from '~/types/store'
 import { ErrorResponse } from '~/types/api/exception'
@@ -21,6 +20,7 @@ import {
   TeacherUpdateMailForm,
   TeacherUpdatePasswordForm,
 } from '~/types/form'
+import { TeacherEditRoleForm, TeacherEditSubjectForm, TeacherNewForm, TeacherUpdateMailForm } from '~/types/form'
 import { subjectResponse2Subject } from '~/lib'
 
 const initialState: UserState = {
@@ -34,8 +34,9 @@ const initialState: UserState = {
       lastNameKana: 'はまだ',
       firstNameKana: 'じろう',
       mail: 'student-001@calmato.jp',
-      type: 1,
+      type: '小学校',
       grade: 2,
+      subjects: [],
       createdAt: '',
       updatedAt: '',
     },
@@ -182,6 +183,7 @@ export default class UserModule extends VuexModule {
           小学校: res.subjects[1].map((i) => subjectResponse2Subject(i)),
           中学校: res.subjects[2].map((i) => subjectResponse2Subject(i)),
           高校: res.subjects[3].map((i) => subjectResponse2Subject(i)),
+          その他: [],
         }
         this.setTeacher({ ...res, subjects })
       })
@@ -203,6 +205,7 @@ export default class UserModule extends VuexModule {
               小学校: res.subjects[1].map((i) => subjectResponse2Subject(i)),
               中学校: res.subjects[2].map((i) => subjectResponse2Subject(i)),
               高校: res.subjects[3].map((i) => subjectResponse2Subject(i)),
+              その他: [],
             }
           : initializeSubjects()
         this.addTeacher({ ...res, subjects })
@@ -288,6 +291,7 @@ function initializeSubjects(): SubjectsMap {
     小学校: [],
     中学校: [],
     高校: [],
+    その他: [],
   }
 }
 

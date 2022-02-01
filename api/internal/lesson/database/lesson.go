@@ -7,6 +7,7 @@ import (
 	"github.com/calmato/shs-web/api/internal/lesson/entity"
 	"github.com/calmato/shs-web/api/pkg/database"
 	"github.com/calmato/shs-web/api/pkg/jst"
+	"gorm.io/gorm"
 )
 
 const lessonTable = "lessons"
@@ -35,24 +36,7 @@ func (l *lesson) List(ctx context.Context, params *ListLessonsParams, fields ...
 	}
 
 	stmt := l.db.DB.Table(lessonTable).Select(fields)
-	if params.ShiftSummaryID > 0 {
-		stmt.Where("shift_summary_id = ?", params.ShiftSummaryID)
-	}
-	if params.ShiftID > 0 {
-		stmt.Where("shift_id = ?", params.ShiftID)
-	}
-	if params.TeacherID != "" {
-		stmt.Where("teacher_id = ?", params.TeacherID)
-	}
-	if params.StudentID != "" {
-		stmt.Where("student_id = ?", params.StudentID)
-	}
-	if params.Limit > 0 {
-		stmt.Limit(params.Limit)
-	}
-	if params.Offset > 0 {
-		stmt.Limit(params.Offset)
-	}
+	params.Statement(stmt)
 
 	err := stmt.Find(&lessons).Error
 	return lessons, dbError(err)
@@ -120,4 +104,37 @@ func (l *lesson) Delete(ctx context.Context, lessonID int64) error {
 		return dbError(err)
 	}
 	return dbError(tx.Commit().Error)
+}
+
+func (l *lesson) Count(ctx context.Context, params *ListLessonsParams) (int64, error) {
+	var total int64
+	stmt := l.db.DB.Table(lessonTable)
+	params.Statement(stmt)
+
+	err := stmt.Count(&total).Error
+	return total, dbError(err)
+}
+
+func (p *ListLessonsParams) Statement(tx *gorm.DB) {
+	if p.TeacherID != "" {
+		tx.Where("teacher_id = ?", p.TeacherID)
+	}
+	if p.StudentID != "" {
+		tx.Where("student_id = ?", p.StudentID)
+	}
+	if p.ShiftSummaryID > 0 {
+		tx.Where("shift_summary_id = ?", p.ShiftSummaryID)
+	}
+	if p.ShiftID > 0 {
+		tx.Where("shift_id = ?", p.ShiftID)
+	}
+	if len(p.ShiftIDs) > 0 {
+		tx.Where("shift_id IN (?)", p.ShiftIDs)
+	}
+	if p.Limit > 0 {
+		tx.Limit(p.Limit)
+	}
+	if p.Offset > 0 {
+		tx.Limit(p.Offset)
+	}
 }

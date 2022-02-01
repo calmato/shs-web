@@ -2,28 +2,32 @@
   <table>
     <tr>
       <th class="fixed">生徒名</th>
-      <td
-        v-for="student in students"
-        :key="student.id"
-        class="text-decoration-underline"
-        @click="onClickSubmissions(student)"
-      >
-        {{ student.name }}
+      <td v-for="student in students" :key="student.id">
+        <a class="black--text text-decoration-underline" @click="onClickSubmissions(student)">
+          {{ student.name }}
+        </a>
       </td>
-      <th class="fixed-right secondary--text text--accent-4">残り</th>
+      <th class="fixed-right secondary--text text--accent-4">合計</th>
+    </tr>
+    <tr>
+      <th class="fixed">登録授業数</th>
+      <td v-for="student in students" :key="student.id">
+        <a class="black--text text-decoration-underline" @click="onClickLessons(student)">
+          {{ student.lessonTotal }}
+        </a>
+      </td>
+      <td class="fixed-right">{{ getLessonTotal() }}</td>
     </tr>
     <tr>
       <th class="fixed">残り授業数</th>
       <td
         v-for="student in students"
         :key="student.id"
-        :class="[getRemainingLesson(student) > 0 ? 'secondary--text text--accent-4' : '']"
-        class="text-decoration-underline"
-        @click="onClickLessons(student)"
+        :class="[getRemainingLesson(student) > 0 ? 'secondary--text text--accent-4' : 'black--text']"
       >
         {{ getRemainingLesson(student) }}
       </td>
-      <td class="fixed-right" :class="[getRemainingLessonTotal() > 0 ? 'secondary--text text--accent-4' : '']">
+      <td :class="[getRemainingLessonTotal() > 0 ? 'secondary--text text--accent-4' : '']" class="fixed-right">
         {{ getRemainingLessonTotal() }}
       </td>
     </tr>
@@ -52,7 +56,15 @@ export default defineComponent({
     }
 
     const getRemainingLesson = (student: StudentShift): number => {
-      return student.suggestedClassesTotal - student.lessonTotal
+      return student.suggestedLessonsTotal - student.lessonTotal
+    }
+
+    const getLessonTotal = (): number => {
+      let total: number = 0
+      props.students.forEach((student: StudentShift) => {
+        total += student.lessonTotal
+      })
+      return total
     }
 
     const getRemainingLessonTotal = (): number => {
@@ -66,6 +78,7 @@ export default defineComponent({
     return {
       onClickSubmissions,
       onClickLessons,
+      getLessonTotal,
       getRemainingLesson,
       getRemainingLessonTotal,
     }
@@ -87,7 +100,7 @@ table {
 th,
 td {
   vertical-align: middle;
-  padding: 8px 16px;
+  padding: 4px 16px;
   border: 1px solid #e5e5e5;
   text-align: center;
 }

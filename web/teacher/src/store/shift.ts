@@ -4,35 +4,63 @@ import { $axios } from '~/plugins/axios'
 import dayjs from '~/plugins/dayjs'
 import {
   CreateShiftsRequest,
+  UpdateShiftSummaryScheduleRequest,
   ShiftDetailsResponse,
   ShiftSummariesResponse,
-  ShiftSummary as ShiftSummaryResponse,
-  ShiftDetail as ShiftDetailResponse,
-  ShiftDetailLesson as LessonResponse,
-  TeacherShift as v1Teacher,
-  StudentShift as v1Student,
+  StudentShiftsResponse,
+  TeacherShiftsResponse,
   Lesson as v1Lesson,
-  UpdateShiftSummaryScheduleRequest,
+  ShiftSummary as V1ShiftSummary,
+  ShiftDetail as V1ShiftDetail,
+  ShiftDetailLesson as V1ShiftDetailLesson,
+  ShiftLesson as v1ShiftLesson,
+  Student as v1Student,
+  StudentShift as v1StudentShift,
+  SuggestedLesson as v1SuggestedLesson,
+  Teacher as v1Teacher,
+  TeacherShift as v1TeacherShift,
+  ShiftLessonResponse,
+  ShiftSubmissionsResponse,
+  ShiftLessonsResponse,
+  CreateShiftLessonRequest,
+  UpdateShiftLessonRequest,
+  UpdateShiftSummaryDecidedRequest,
 } from '~/types/api/v1'
 import {
+  Lesson,
   ShiftDetail,
+  ShiftDetailLesson,
   ShiftStatus,
   ShiftState,
   ShiftSummary,
-  ShiftDetailLesson,
-  TeacherShift,
   StudentShift,
-  Lesson,
+  StudentShiftSummary,
+  StudentSubmissionDetail,
+  SubmissionStatus,
+  SuggestedLesson,
+  TeacherShift,
+  TeacherShiftSummary,
+  TeacherSubmissionDetail,
+  ShiftLessonDetail,
+  Teacher,
+  SubjectsMap,
+  Student,
+  Subject,
+  SchoolType,
+  ShiftLesson,
+  ShiftUserLesson,
 } from '~/types/store'
 import { ErrorResponse } from '~/types/api/exception'
 import { ApiError } from '~/types/exception'
-import { ShiftsNewForm, ShiftSummaryEditScheduleForm } from '~/types/form'
+import { ShiftLessonForm, ShiftsNewForm, ShiftSummaryEditScheduleForm } from '~/types/form'
+import { schoolTypeNum2schoolTypeString, subjectResponse2Subject } from '~/lib'
 
 const initialState: ShiftState = {
   summary: {
     id: 0,
     year: 0,
     month: 0,
+    decided: false,
     status: ShiftStatus.UNKNOWN,
     openAt: '',
     endAt: '',
@@ -45,6 +73,68 @@ const initialState: ShiftState = {
   teachers: [],
   students: [],
   lessons: [],
+  teacherSubmission: {
+    id: '',
+    name: '',
+    nameKana: '',
+    summary: {
+      id: 0,
+      year: 0,
+      month: 0,
+      shiftStatus: ShiftStatus.UNKNOWN,
+      submissionStatus: SubmissionStatus.UNKNOWN,
+      openAt: '',
+      endAt: '',
+      createdAt: '',
+      updatedAt: '',
+    },
+    shifts: [],
+    submissionTotal: 0,
+  },
+  teacherLessons: {
+    current: '',
+    lessons: [],
+    teachers: {},
+    students: {},
+    total: 0,
+  },
+  studentSubmission: {
+    id: '',
+    name: '',
+    nameKana: '',
+    summary: {
+      id: 0,
+      year: 0,
+      month: 0,
+      shiftStatus: ShiftStatus.UNKNOWN,
+      submissionStatus: SubmissionStatus.UNKNOWN,
+      openAt: '',
+      endAt: '',
+      createdAt: '',
+      updatedAt: '',
+    },
+    shifts: [],
+    suggestedLessons: [],
+    submissionTotal: 0,
+  },
+  studentLessons: {
+    current: '',
+    lessons: [],
+    teachers: {},
+    students: {},
+    total: 0,
+  },
+  lessonDetail: {
+    lessonId: 0,
+    summaryId: 0,
+    shiftId: 0,
+    room: 0,
+    date: '',
+    current: undefined,
+    teachers: [],
+    students: [],
+    lessons: [],
+  },
 }
 
 @Module({
@@ -60,6 +150,11 @@ export default class ShiftModule extends VuexModule {
   private students: ShiftState['students'] = initialState.students
   private rooms: ShiftState['rooms'] = initialState.rooms
   private lessons: ShiftState['lessons'] = initialState.lessons
+  private teacherSubmission: ShiftState['teacherSubmission'] = initialState.teacherSubmission
+  private teacherLessons: ShiftState['teacherLessons'] = initialState.teacherLessons
+  private studentSubmission: ShiftState['studentSubmission'] = initialState.studentSubmission
+  private studentLessons: ShiftState['studentLessons'] = initialState.studentLessons
+  private lessonDetail: ShiftState['lessonDetail'] = initialState.lessonDetail
 
   public get getSummary(): ShiftSummary {
     return this.summary
@@ -89,33 +184,34 @@ export default class ShiftModule extends VuexModule {
     return this.lessons
   }
 
-  @Mutation
-  private setSummaries({ summaries }: { summaries: ShiftSummary[] }): void {
-    this.summaries = summaries
+  public get getTeacherSubmission(): TeacherSubmissionDetail {
+    return this.teacherSubmission
+  }
+
+  public get getTeacherLessons(): ShiftUserLesson {
+    return this.teacherLessons
+  }
+
+  public get getStudentSubmission(): StudentSubmissionDetail {
+    return this.studentSubmission
+  }
+
+  public get getStudentLessons(): ShiftUserLesson {
+    return this.studentLessons
+  }
+
+  public get getLessonDetail(): ShiftLessonDetail {
+    return this.lessonDetail
   }
 
   @Mutation
-  private setDetails({
-    summary,
-    details,
-    teachers,
-    students,
-    rooms,
-    lessons,
-  }: {
-    summary: ShiftSummary
-    details: ShiftDetail[]
-    teachers: TeacherShift[]
-    students: StudentShift[]
-    rooms: number
-    lessons: Lesson[]
-  }): void {
-    this.summary = summary
-    this.details = details
-    this.teachers = teachers
-    this.students = students
-    this.rooms = rooms
-    this.lessons = lessons
+  private updateSummaryDecided(decided: boolean): void {
+    this.summary.decided = decided
+  }
+
+  @Mutation
+  private setSummaries({ summaries }: { summaries: ShiftSummary[] }): void {
+    this.summaries = summaries
   }
 
   @Mutation
@@ -144,13 +240,192 @@ export default class ShiftModule extends VuexModule {
 
   @Mutation
   private removeSummaries({ summaryId }: { summaryId: number }): void {
-    const index: number = this.summaries.findIndex((val: ShiftSummary) => {
-      return val.id === summaryId
-    })
+    const index: number = this.summaries.findIndex((val: ShiftSummary): boolean => val.id === summaryId)
     if (index === -1) {
       return
     }
     this.summaries.splice(index, 1)
+  }
+
+  @Mutation
+  private setDetails({
+    summary,
+    details,
+    teachers,
+    students,
+    rooms,
+    lessons,
+  }: {
+    summary: ShiftSummary
+    details: ShiftDetail[]
+    teachers: TeacherShift[]
+    students: StudentShift[]
+    rooms: number
+    lessons: Lesson[]
+  }): void {
+    this.summary = summary
+    this.details = details
+    this.teachers = teachers
+    this.students = students
+    this.rooms = rooms
+    this.lessons = lessons
+  }
+
+  @Mutation
+  private addLesson(lesson: Lesson): void {
+    const teacherIndex: number = this.teachers.findIndex((val: TeacherShift): boolean => val.id === lesson.teacherId)
+    if (teacherIndex >= 0) {
+      const lessonTotal: number = this.teachers[teacherIndex].lessonTotal + 1
+      this.teachers.splice(teacherIndex, 1, { ...this.teachers[teacherIndex], lessonTotal })
+    }
+    const studentIndex: number = this.students.findIndex((val: StudentShift): boolean => val.id === lesson.studentId)
+    if (studentIndex >= 0) {
+      const lessonTotal: number = this.students[studentIndex].lessonTotal + 1
+      this.students.splice(studentIndex, 1, { ...this.students[studentIndex], lessonTotal })
+    }
+    this.lessons.push(lesson)
+  }
+
+  @Mutation
+  private replaceLesson(lesson: Lesson): void {
+    const index: number = this.lessons.findIndex((val: Lesson): boolean => val.id === lesson.id)
+    if (index === -1) {
+      return
+    }
+    this.lessons.splice(index, 1, {
+      ...this.lessons[index],
+      subjectId: lesson.subjectId,
+      teacherId: lesson.teacherId,
+      studentId: lesson.studentId,
+    })
+  }
+
+  @Mutation
+  private removeLesson({
+    lessonId,
+    teacherId,
+    studentId,
+  }: {
+    lessonId: number
+    teacherId: string
+    studentId: string
+  }): void {
+    const teacherIndex: number = this.teachers.findIndex((val: TeacherShift): boolean => val.id === teacherId)
+    if (teacherIndex >= 0) {
+      const lessonTotal: number = this.teachers[teacherIndex].lessonTotal - 1
+      this.teachers.splice(teacherIndex, 1, { ...this.teachers[teacherIndex], lessonTotal })
+    }
+    const studentIndex: number = this.students.findIndex((val: StudentShift): boolean => val.id === studentId)
+    if (studentIndex >= 0) {
+      const lessonTotal: number = this.students[studentIndex].lessonTotal - 1
+      this.students.splice(studentIndex, 1, { ...this.students[studentIndex], lessonTotal })
+    }
+    const lessonIndex: number = this.lessons.findIndex((val: Lesson): boolean => val.id === lessonId)
+    if (lessonIndex >= 0) {
+      this.lessons.splice(lessonIndex, 1)
+    }
+  }
+
+  @Mutation
+  private setTeacherSubmission(submission: TeacherSubmissionDetail): void {
+    const teacher: TeacherShift | undefined = this.teachers.find(
+      (val: TeacherShift): boolean => val.id === submission.id
+    )
+    if (!teacher) {
+      return
+    }
+    submission.name = teacher.name
+    submission.nameKana = teacher.nameKana
+    this.teacherSubmission = submission
+  }
+
+  @Mutation
+  private setTeacherLessons({
+    current,
+    lessons,
+    total,
+  }: {
+    current: string
+    lessons: ShiftLesson[]
+    total: number
+  }): void {
+    const teachers: { [key: string]: TeacherShift } = {}
+    const students: { [key: string]: StudentShift } = {}
+    lessons.forEach((lesson: ShiftLesson): void => {
+      const teacher: TeacherShift | undefined = this.teachers.find((val: TeacherShift) => val.id === lesson.teacherId)
+      const student: StudentShift | undefined = this.students.find((val: StudentShift) => val.id === lesson.studentId)
+      if (teacher) {
+        teachers[teacher.id] = teacher
+      }
+      if (student) {
+        students[student.id] = student
+      }
+    })
+    this.teacherLessons = { current, lessons, teachers, students, total }
+  }
+
+  @Mutation
+  private setStudentSubmission(submission: StudentSubmissionDetail): void {
+    const student: StudentShift | undefined = this.students.find(
+      (val: StudentShift): boolean => val.id === submission.id
+    )
+    if (!student) {
+      return
+    }
+    submission.name = student.name
+    submission.nameKana = student.nameKana
+    this.studentSubmission = submission
+  }
+
+  @Mutation
+  private setStudentLessons({
+    current,
+    lessons,
+    total,
+  }: {
+    current: string
+    lessons: ShiftLesson[]
+    total: number
+  }): void {
+    const teachers: { [key: string]: TeacherShift } = {}
+    const students: { [key: string]: StudentShift } = {}
+    lessons.forEach((lesson: ShiftLesson): void => {
+      const teacher: TeacherShift | undefined = this.teachers.find((val: TeacherShift) => val.id === lesson.teacherId)
+      const student: StudentShift | undefined = this.students.find((val: StudentShift) => val.id === lesson.studentId)
+      if (teacher) {
+        teachers[teacher.id] = teacher
+      }
+      if (student) {
+        students[student.id] = student
+      }
+    })
+    this.studentLessons = { current, lessons, teachers, students, total }
+  }
+
+  @Mutation
+  private setLessonDetail(lessonDetail: ShiftLessonDetail): void {
+    let date: string = ''
+    for (const detail of this.details) {
+      for (const lesson of detail.lessons) {
+        if (lesson.id === lessonDetail.shiftId) {
+          date = detail.date
+          break
+        }
+      }
+      if (date !== '') break
+    }
+    lessonDetail.date = date
+    lessonDetail.teachers = lessonDetail.teachers.map((teacher: Teacher): Teacher => {
+      const name = getName(teacher.lastName, teacher.firstName)
+      const nameKana = getName(teacher.lastNameKana, teacher.firstNameKana)
+      return { ...teacher, name, nameKana }
+    })
+    lessonDetail.students = lessonDetail.students.map((student: Student): Student => {
+      const name = getName(student.lastName, student.firstName)
+      const nameKana = getName(student.lastNameKana, student.firstNameKana)
+      return { ...student, name, nameKana }
+    })
+    this.lessonDetail = lessonDetail
   }
 
   @Action({})
@@ -164,6 +439,11 @@ export default class ShiftModule extends VuexModule {
       rooms: initialState.rooms,
       lessons: initialState.lessons,
     })
+    this.setTeacherSubmission(initialState.teacherSubmission)
+    this.setTeacherLessons(initialState.teacherLessons)
+    this.setStudentSubmission(initialState.studentSubmission)
+    this.setStudentLessons(initialState.studentLessons)
+    this.setLessonDetail(initialState.lessonDetail)
   }
 
   @Action({ rawError: true })
@@ -184,7 +464,7 @@ export default class ShiftModule extends VuexModule {
     await $axios
       .$get('/v1/shifts' + query)
       .then((res: ShiftSummariesResponse) => {
-        const summaries: ShiftSummary[] = res.summaries.map((data: ShiftSummaryResponse): ShiftSummary => {
+        const summaries: ShiftSummary[] = res.summaries.map((data: V1ShiftSummary): ShiftSummary => {
           return { ...data }
         })
         this.setSummaries({ summaries })
@@ -219,6 +499,29 @@ export default class ShiftModule extends VuexModule {
   }
 
   @Action({ rawError: true })
+  public async updateShiftSummaryDecided({
+    summaryId,
+    decided,
+  }: {
+    summaryId: number
+    decided: boolean
+  }): Promise<void> {
+    const req: UpdateShiftSummaryDecidedRequest = {
+      decided,
+    }
+
+    await $axios
+      .$patch(`/v1/shifts/${summaryId}/decided`, req)
+      .then(() => {
+        this.updateSummaryDecided(decided)
+      })
+      .catch((err: AxiosError) => {
+        const res: ErrorResponse = { ...err.response?.data }
+        throw new ApiError(res.status, res.message, res)
+      })
+  }
+
+  @Action({ rawError: true })
   public async createShifts({ form }: { form: ShiftsNewForm }): Promise<void> {
     const closedDates = form.params.closedDates.map((closedDate: string): string => {
       return replaceDate(closedDate, '-', '')
@@ -236,8 +539,8 @@ export default class ShiftModule extends VuexModule {
       .then((res: ShiftDetailsResponse) => {
         const summary: ShiftSummary = { ...res.summary }
 
-        const details: ShiftDetail[] = res.shifts.map((shift: ShiftDetailResponse): ShiftDetail => {
-          const lessons: ShiftDetailLesson[] = shift.lessons.map((lesson: LessonResponse): ShiftDetailLesson => {
+        const details: ShiftDetail[] = res.shifts.map((shift: V1ShiftDetail): ShiftDetail => {
+          const lessons: ShiftDetailLesson[] = shift.lessons.map((lesson: V1ShiftDetailLesson): ShiftDetailLesson => {
             return { ...lesson }
           })
           return { ...shift, lessons }
@@ -280,26 +583,32 @@ export default class ShiftModule extends VuexModule {
         const summary: ShiftSummary = { ...res.summary }
         const rooms: number = res.rooms
 
-        const details: ShiftDetail[] = res.shifts.map((shift: ShiftDetailResponse): ShiftDetail => {
-          const lessons: ShiftDetailLesson[] = shift.lessons.map((lesson: LessonResponse): ShiftDetailLesson => {
+        const details: ShiftDetail[] = res.shifts.map((shift: V1ShiftDetail): ShiftDetail => {
+          const lessons: ShiftDetailLesson[] = shift.lessons.map((lesson: V1ShiftDetailLesson): ShiftDetailLesson => {
             return { ...lesson }
           })
           return { ...shift, lessons }
         })
-        const teachers: TeacherShift[] = res.teachers.map((val: v1Teacher): TeacherShift => {
+        const teachers: TeacherShift[] = res.teachers.map((val: v1TeacherShift): TeacherShift => {
           const name: string = getName(val.teacher.lastName, val.teacher.firstName)
           const nameKana: string = getName(val.teacher.lastNameKana, val.teacher.firstNameKana)
           return { id: val.teacher.id, name, nameKana, lessonTotal: val.lessonTotal }
         })
-        const students: StudentShift[] = res.students.map((val: v1Student): StudentShift => {
+        const students: StudentShift[] = res.students.map((val: v1StudentShift): StudentShift => {
           const name: string = getName(val.student.lastName, val.student.firstName)
           const nameKana: string = getName(val.student.lastNameKana, val.student.firstNameKana)
+          const suggestedLessons: SuggestedLesson[] = val.suggestedLessons.map(
+            (lesson: v1SuggestedLesson): SuggestedLesson => {
+              return { ...lesson }
+            }
+          )
           return {
             id: val.student.id,
             name,
             nameKana,
+            suggestedLessons,
+            suggestedLessonsTotal: val.suggestedLessonsTotal,
             lessonTotal: val.lessonTotal,
-            suggestedClassesTotal: val.suggestedClassesTotal,
           }
         })
         const lessons: Lesson[] = res.lessons.map((val: v1Lesson): Lesson => {
@@ -307,6 +616,244 @@ export default class ShiftModule extends VuexModule {
         })
 
         this.setDetails({ summary, details, teachers, students, rooms, lessons })
+      })
+      .catch((err: AxiosError) => {
+        const res: ErrorResponse = { ...err.response?.data }
+        throw new ApiError(res.status, res.message, res)
+      })
+  }
+
+  @Action({ rawError: true })
+  public async showTeacherSubmissions({
+    summaryId,
+    teacherId,
+  }: {
+    summaryId: number
+    teacherId: string
+  }): Promise<void> {
+    await $axios
+      .$get(`/v1/shifts/${summaryId}/teachers/${teacherId}`)
+      .then((res: TeacherShiftsResponse) => {
+        let submissionTotal: number = 0
+        const summary: TeacherShiftSummary = { ...res.summary }
+        const shifts: ShiftDetail[] = res.shifts.map((shift: V1ShiftDetail): ShiftDetail => {
+          const lessons: ShiftDetailLesson[] = shift.lessons.map((lesson: V1ShiftDetailLesson): ShiftDetailLesson => {
+            return { ...lesson }
+          })
+          submissionTotal += lessons.length
+          return { ...shift, lessons }
+        })
+
+        this.setTeacherSubmission({ id: teacherId, name: '', nameKana: '', summary, shifts, submissionTotal })
+      })
+      .catch((err: AxiosError) => {
+        const res: ErrorResponse = { ...err.response?.data }
+        throw new ApiError(res.status, res.message, res)
+      })
+  }
+
+  @Action({ rawError: true })
+  public async showStudentSubmissions({
+    summaryId,
+    studentId,
+  }: {
+    summaryId: number
+    studentId: string
+  }): Promise<void> {
+    await $axios
+      .$get(`/v1/shifts/${summaryId}/students/${studentId}`)
+      .then((res: StudentShiftsResponse) => {
+        let submissionTotal: number = 0
+        const summary: StudentShiftSummary = { ...res.summary }
+        const shifts: ShiftDetail[] = res.shifts.map((shift: V1ShiftDetail): ShiftDetail => {
+          const lessons: ShiftDetailLesson[] = shift.lessons.map((lesson: V1ShiftDetailLesson): ShiftDetailLesson => {
+            return { ...lesson }
+          })
+          submissionTotal += lessons.length
+          return { ...shift, lessons }
+        })
+        const suggestedLessons: SuggestedLesson[] = res.suggestedLessons.map(
+          (lesson: v1SuggestedLesson): SuggestedLesson => {
+            return { ...lesson }
+          }
+        )
+
+        this.setStudentSubmission({
+          id: studentId,
+          name: '',
+          nameKana: '',
+          summary,
+          shifts,
+          suggestedLessons,
+          submissionTotal,
+        })
+      })
+      .catch((err: AxiosError) => {
+        const res: ErrorResponse = { ...err.response?.data }
+        throw new ApiError(res.status, res.message, res)
+      })
+  }
+
+  @Action({ rawError: true })
+  public async listShiftLessons({
+    summaryId,
+    shiftId,
+    lessonId,
+    room,
+  }: {
+    summaryId: number
+    shiftId: number
+    lessonId: number
+    room: number
+  }): Promise<void> {
+    await $axios
+      .$get(`/v1/shifts/${summaryId}/submissions/${shiftId}`)
+      .then((res: ShiftSubmissionsResponse) => {
+        let current: ShiftLesson | undefined
+        const lessons: ShiftLesson[] = res.lessons.map((lesson: v1ShiftLesson): ShiftLesson => {
+          if (lesson.room === room) {
+            current = lesson
+          }
+          return { ...lesson }
+        })
+        const teachers: Teacher[] = res.teachers.map((teacher: v1Teacher): Teacher => {
+          const subjects = teacher.subjects
+            ? {
+                小学校: teacher.subjects[1].map((i) => subjectResponse2Subject(i)),
+                中学校: teacher.subjects[2].map((i) => subjectResponse2Subject(i)),
+                高校: teacher.subjects[3].map((i) => subjectResponse2Subject(i)),
+                その他: [],
+              }
+            : initializeSubjects()
+
+          return { ...teacher, subjects }
+        })
+        const students: Student[] = res.students.map((student: v1Student): Student => {
+          const type: SchoolType = schoolTypeNum2schoolTypeString(student.schoolType)
+          const subjects: Subject[] = student.subjects.map((subject): Subject => {
+            const schoolType: SchoolType = schoolTypeNum2schoolTypeString(subject.schoolType)
+            return { ...subject, schoolType }
+          })
+          return { ...student, type, subjects }
+        })
+
+        this.setLessonDetail({
+          lessonId,
+          summaryId,
+          shiftId,
+          room,
+          date: '',
+          current,
+          teachers,
+          students,
+          lessons,
+        })
+      })
+      .catch((err: AxiosError) => {
+        const res: ErrorResponse = { ...err.response?.data }
+        throw new ApiError(res.status, res.message, res)
+      })
+  }
+
+  @Action({ rawError: true })
+  public async listTeacherLessons({ summaryId, teacherId }: { summaryId: number; teacherId: string }): Promise<void> {
+    if (teacherId === '') {
+      return
+    }
+    await $axios
+      .$get(`/v1/shifts/${summaryId}/lessons?teacherId=${teacherId}`)
+      .then((res: ShiftLessonsResponse) => {
+        const total: number = res.total
+        const lessons: ShiftLesson[] = res.lessons.map((lesson: v1Lesson): ShiftLesson => {
+          return { ...lesson }
+        })
+
+        this.setTeacherLessons({ current: teacherId, lessons, total })
+      })
+      .catch((err: AxiosError) => {
+        const res: ErrorResponse = { ...err.response?.data }
+        throw new ApiError(res.status, res.message, res)
+      })
+  }
+
+  @Action({ rawError: true })
+  public async listStudentLessons({ summaryId, studentId }: { summaryId: number; studentId: string }): Promise<void> {
+    if (studentId === '') {
+      return
+    }
+    await $axios
+      .$get(`/v1/shifts/${summaryId}/lessons?studentId=${studentId}`)
+      .then((res: ShiftLessonsResponse) => {
+        const total: number = res.total
+        const lessons: ShiftLesson[] = res.lessons.map((lesson: v1Lesson): ShiftLesson => {
+          return { ...lesson }
+        })
+
+        this.setStudentLessons({ current: studentId, lessons, total })
+      })
+      .catch((err: AxiosError) => {
+        const res: ErrorResponse = { ...err.response?.data }
+        throw new ApiError(res.status, res.message, res)
+      })
+  }
+
+  @Action({ rawError: true })
+  private async createLesson({ summaryId, form }: { summaryId: number; form: ShiftLessonForm }): Promise<void> {
+    const req: CreateShiftLessonRequest = {
+      shiftId: form.params.shiftId,
+      room: form.params.room,
+      subjectId: form.params.subjectId,
+      teacherId: form.params.teacherId,
+      studentId: form.params.studentId,
+    }
+
+    await $axios
+      .$post(`/v1/shifts/${summaryId}/lessons`, req)
+      .then((res: ShiftLessonResponse) => {
+        this.addLesson({ ...res })
+      })
+      .catch((err: AxiosError) => {
+        const res: ErrorResponse = { ...err.response?.data }
+        throw new ApiError(res.status, res.message, res)
+      })
+  }
+
+  @Action({ rawError: true })
+  private async updateLesson({ summaryId, form }: { summaryId: number; form: ShiftLessonForm }): Promise<void> {
+    const req: UpdateShiftLessonRequest = {
+      shiftId: form.params.shiftId,
+      room: form.params.room,
+      subjectId: form.params.subjectId,
+      teacherId: form.params.teacherId,
+      studentId: form.params.studentId,
+    }
+
+    await $axios
+      .$patch(`/v1/shifts/${summaryId}/lessons/${form.params.lessonId}`, req)
+      .then((res: ShiftLessonResponse) => {
+        this.replaceLesson({ ...res })
+      })
+      .catch((err: AxiosError) => {
+        const res: ErrorResponse = { ...err.response?.data }
+        throw new ApiError(res.status, res.message, res)
+      })
+  }
+
+  @Action({ rawError: true })
+  public async upsertLesson({ summaryId, form }: { summaryId: number; form: ShiftLessonForm }): Promise<void> {
+    if (form.params.lessonId === 0) {
+      await this.createLesson({ summaryId, form })
+    } else {
+      await this.updateLesson({ summaryId, form })
+    }
+  }
+
+  @Action({ rawError: true })
+  public async deleteLesson({ summaryId, form }: { summaryId: number; form: ShiftLessonForm }): Promise<void> {
+    await $axios
+      .$delete(`/v1/shifts/${summaryId}/lessons/${form.params.lessonId}`)
+      .then(() => {
+        this.removeLesson({ ...form.params })
       })
       .catch((err: AxiosError) => {
         const res: ErrorResponse = { ...err.response?.data }
@@ -321,4 +868,13 @@ function getName(lastName: string, firstName: string): string {
 
 function replaceDate(date: string, oldVal: string, newVal: string): string {
   return date.replaceAll(oldVal, newVal)
+}
+
+function initializeSubjects(): SubjectsMap {
+  return {
+    小学校: [],
+    中学校: [],
+    高校: [],
+    その他: [],
+  }
 }

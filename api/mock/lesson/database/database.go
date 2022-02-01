@@ -37,6 +37,21 @@ func (m *MockLesson) EXPECT() *MockLessonMockRecorder {
 	return m.recorder
 }
 
+// Count mocks base method.
+func (m *MockLesson) Count(ctx context.Context, p *database.ListLessonsParams) (int64, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Count", ctx, p)
+	ret0, _ := ret[0].(int64)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Count indicates an expected call of Count.
+func (mr *MockLessonMockRecorder) Count(ctx, p interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Count", reflect.TypeOf((*MockLesson)(nil).Count), ctx, p)
+}
+
 // Create mocks base method.
 func (m *MockLesson) Create(ctx context.Context, lesson *entity.Lesson) error {
 	m.ctrl.T.Helper()
@@ -191,6 +206,40 @@ func (mr *MockShiftSummaryMockRecorder) List(ctx, p interface{}, fields ...inter
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "List", reflect.TypeOf((*MockShiftSummary)(nil).List), varargs...)
 }
 
+// MultiGet mocks base method.
+func (m *MockShiftSummary) MultiGet(ctx context.Context, ids []int64, fields ...string) (entity.ShiftSummaries, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, ids}
+	for _, a := range fields {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "MultiGet", varargs...)
+	ret0, _ := ret[0].(entity.ShiftSummaries)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// MultiGet indicates an expected call of MultiGet.
+func (mr *MockShiftSummaryMockRecorder) MultiGet(ctx, ids interface{}, fields ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, ids}, fields...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MultiGet", reflect.TypeOf((*MockShiftSummary)(nil).MultiGet), varargs...)
+}
+
+// UpdateDecided mocks base method.
+func (m *MockShiftSummary) UpdateDecided(ctx context.Context, id int64, decided bool) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateDecided", ctx, id, decided)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateDecided indicates an expected call of UpdateDecided.
+func (mr *MockShiftSummaryMockRecorder) UpdateDecided(ctx, id, decided interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateDecided", reflect.TypeOf((*MockShiftSummary)(nil).UpdateDecided), ctx, id, decided)
+}
+
 // UpdateSchedule mocks base method.
 func (m *MockShiftSummary) UpdateSchedule(ctx context.Context, id int64, openAt, endAt time.Time) error {
 	m.ctrl.T.Helper()
@@ -266,6 +315,26 @@ func (mr *MockShiftMockRecorder) List(ctx, p interface{}, fields ...interface{})
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{ctx, p}, fields...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "List", reflect.TypeOf((*MockShift)(nil).List), varargs...)
+}
+
+// ListByDuration mocks base method.
+func (m *MockShift) ListByDuration(ctx context.Context, since, until time.Time, fields ...string) (entity.Shifts, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, since, until}
+	for _, a := range fields {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "ListByDuration", varargs...)
+	ret0, _ := ret[0].(entity.Shifts)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListByDuration indicates an expected call of ListByDuration.
+func (mr *MockShiftMockRecorder) ListByDuration(ctx, since, until interface{}, fields ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, since, until}, fields...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListByDuration", reflect.TypeOf((*MockShift)(nil).ListByDuration), varargs...)
 }
 
 // MultiGet mocks base method.
