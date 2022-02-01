@@ -77,7 +77,6 @@ export default defineComponent({
       getTime,
       getSubjectName,
       getSubjectColor,
-      getUserName,
       getTeacherName,
       getStudentName,
       onClickNew,
