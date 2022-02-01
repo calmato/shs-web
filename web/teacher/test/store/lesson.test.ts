@@ -1,8 +1,8 @@
-import { setup, refresh, setSafetyMode } from '~~/test/helpers/store-helper'
+import { setup, refresh, setSafetyMode, setIsAxiosMockValue } from '~~/test/helpers/store-helper'
 import { LessonStore } from '~/store'
 import { ErrorResponse } from '~/types/api/exception'
 import { ApiError } from '~/types/exception'
-import { SubjectNewForm } from '~/types/form'
+import { SubjectEditForm, SubjectNewForm } from '~/types/form'
 
 describe('store/lesson', () => {
   beforeEach(() => {
@@ -81,6 +81,7 @@ describe('store/lesson', () => {
       describe('failure', () => {
         beforeEach(() => {
           setSafetyMode(false)
+          setIsAxiosMockValue(true)
         })
 
         it('return reject', async () => {
@@ -91,6 +92,13 @@ describe('store/lesson', () => {
           } as ErrorResponse)
           await expect(LessonStore.getAllSubjects()).rejects.toThrow(err)
         })
+
+        it('throw internal server error', async () => {
+          setIsAxiosMockValue(false)
+
+          const err = new Error('internal server error')
+          await expect(LessonStore.getAllSubjects()).rejects.toThrow(err)
+        })
       })
     })
 
@@ -98,6 +106,10 @@ describe('store/lesson', () => {
       describe('success', () => {
         beforeEach(() => {
           setSafetyMode(true)
+        })
+
+        afterEach(() => {
+          jest.clearAllMocks()
         })
 
         it('return resolve', async () => {
@@ -126,6 +138,7 @@ describe('store/lesson', () => {
       describe('failure', () => {
         beforeEach(() => {
           setSafetyMode(false)
+          setIsAxiosMockValue(true)
         })
 
         it('return reject', async () => {
@@ -143,6 +156,228 @@ describe('store/lesson', () => {
 
           try {
             await LessonStore.createSubject(invalidPayload)
+          } catch (e) {
+            expect(e).toEqual(err)
+          }
+        })
+
+        it('not called getAllSubject', async () => {
+          const mockGetAllSubjects = jest.spyOn(LessonStore, 'getAllSubjects')
+
+          const invalidPayload: SubjectNewForm = {
+            name: '',
+            color: '',
+            schoolType: '小学校',
+          }
+
+          const err = new ApiError(400, 'api error', {
+            status: 400,
+            message: 'api error',
+            details: 'some error',
+          } as ErrorResponse)
+
+          try {
+            await LessonStore.createSubject(invalidPayload)
+          } catch (e) {
+            expect(e).toEqual(err)
+            expect(mockGetAllSubjects).toBeCalledTimes(0)
+          }
+        })
+
+        it('throw internal server error', async () => {
+          setIsAxiosMockValue(false)
+
+          const invalidPayload: SubjectNewForm = {
+            name: '',
+            color: '',
+            schoolType: '小学校',
+          }
+
+          const err = new Error('internal server error')
+
+          try {
+            await LessonStore.createSubject(invalidPayload)
+          } catch (e) {
+            expect(e).toEqual(err)
+          }
+        })
+      })
+    })
+
+    describe('editSubject', () => {
+      describe('success', () => {
+        beforeEach(() => {
+          setSafetyMode(true)
+        })
+
+        afterEach(() => {
+          jest.clearAllMocks()
+        })
+
+        it('return resolve', async () => {
+          const payload: SubjectEditForm = {
+            subjectId: 1,
+            name: '算数',
+            color: '#DBD0E6',
+            schoolType: '小学校',
+          }
+
+          await expect(LessonStore.editSubject(payload)).resolves.toBeUndefined()
+        })
+
+        it('called getAllSubject', async () => {
+          const mockGetAllSubjects = jest.spyOn(LessonStore, 'getAllSubjects')
+
+          const payload: SubjectEditForm = {
+            subjectId: 1,
+            name: '算数',
+            color: '#DBD0E6',
+            schoolType: '小学校',
+          }
+
+          await expect(LessonStore.editSubject(payload)).resolves.toBeUndefined()
+
+          expect(mockGetAllSubjects).toBeCalled()
+          expect(mockGetAllSubjects).toBeCalledTimes(1)
+        })
+      })
+
+      describe('failure', () => {
+        beforeEach(() => {
+          setSafetyMode(false)
+          setIsAxiosMockValue(true)
+        })
+
+        it('return reject', async () => {
+          const invalidPayload: SubjectEditForm = {
+            subjectId: 1,
+            name: '算数',
+            color: '#DBD0E6',
+            schoolType: '小学校',
+          }
+
+          const err = new ApiError(400, 'api error', {
+            status: 400,
+            message: 'api error',
+            details: 'some error',
+          } as ErrorResponse)
+
+          try {
+            await LessonStore.editSubject(invalidPayload)
+          } catch (e) {
+            expect(e).toEqual(err)
+          }
+        })
+
+        it('notcalled getAllSubject', async () => {
+          const invalidPayload: SubjectEditForm = {
+            subjectId: 1,
+            name: '算数',
+            color: '#DBD0E6',
+            schoolType: '小学校',
+          }
+
+          const err = new ApiError(400, 'api error', {
+            status: 400,
+            message: 'api error',
+            details: 'some error',
+          } as ErrorResponse)
+
+          try {
+            await LessonStore.editSubject(invalidPayload)
+          } catch (e) {
+            expect(e).toEqual(err)
+          }
+        })
+
+        it('throw internal server error', async () => {
+          setIsAxiosMockValue(false)
+
+          const invalidPayload: SubjectEditForm = {
+            subjectId: 1,
+            name: '算数',
+            color: '#DBD0E6',
+            schoolType: '小学校',
+          }
+
+          const err = new Error('internal server error')
+
+          try {
+            await LessonStore.editSubject(invalidPayload)
+          } catch (e) {
+            expect(e).toEqual(err)
+          }
+        })
+      })
+    })
+
+    describe('deleteSubject', () => {
+      describe('success', () => {
+        beforeEach(() => {
+          setSafetyMode(true)
+        })
+
+        afterEach(() => {
+          jest.clearAllMocks()
+        })
+
+        it('return resolve', async () => {
+          await expect(LessonStore.deleteSubject(1)).resolves.toBeUndefined()
+        })
+
+        it('called getAllSubject', async () => {
+          const mockGetAllSubjects = jest.spyOn(LessonStore, 'getAllSubjects')
+
+          await expect(LessonStore.deleteSubject(1)).resolves.toBeUndefined()
+          expect(mockGetAllSubjects).toBeCalled()
+          expect(mockGetAllSubjects).toBeCalledTimes(1)
+        })
+      })
+
+      describe('failure', () => {
+        beforeEach(() => {
+          setSafetyMode(false)
+          setIsAxiosMockValue(true)
+        })
+
+        it('return reject', async () => {
+          const err = new ApiError(400, 'api error', {
+            status: 400,
+            message: 'api error',
+            details: 'some error',
+          } as ErrorResponse)
+
+          try {
+            await LessonStore.deleteSubject(-1)
+          } catch (e) {
+            expect(e).toEqual(err)
+          }
+        })
+
+        it('not called getAllSubject', async () => {
+          const mockGetAllSubjects = jest.spyOn(LessonStore, 'getAllSubjects')
+
+          const err = new ApiError(400, 'api error', {
+            status: 400,
+            message: 'api error',
+            details: 'some error',
+          } as ErrorResponse)
+
+          try {
+            await LessonStore.deleteSubject(-1)
+          } catch (e) {
+            expect(e).toEqual(err)
+            expect(mockGetAllSubjects).toBeCalledTimes(0)
+          }
+        })
+
+        it('throw internal server error', async () => {
+          setIsAxiosMockValue(false)
+
+          const err = new Error('internal server error')
+
+          try {
+            await LessonStore.deleteSubject(-1)
           } catch (e) {
             expect(e).toEqual(err)
           }

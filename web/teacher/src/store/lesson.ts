@@ -12,7 +12,7 @@ import {
   Student as v1Student,
 } from '~/types/api/v1'
 import { ApiError } from '~/types/exception'
-import { SubjectNewForm } from '~/types/form'
+import { SubjectEditForm, SubjectNewForm } from '~/types/form'
 import {
   Lesson,
   LessonState,
@@ -181,6 +181,35 @@ export default class LessonModule extends VuexModule {
     try {
       const request = { ...payload, schoolType: schoolTypeString2schoolTypeNum(payload.schoolType) }
       await $axios.$post('/v1/subjects', request)
+      await this.getAllSubjects()
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        const res: ErrorResponse = { ...err.response?.data }
+        throw new ApiError(res.status, res.message, res)
+      }
+      throw new Error('internal server error')
+    }
+  }
+
+  @Action({ rawError: true })
+  public async editSubject(payload: SubjectEditForm): Promise<void> {
+    try {
+      const request = { ...payload, schoolType: schoolTypeString2schoolTypeNum(payload.schoolType) }
+      await $axios.$patch(`/v1/subjects/${payload.subjectId}`, request)
+      await this.getAllSubjects()
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        const res: ErrorResponse = { ...err.response?.data }
+        throw new ApiError(res.status, res.message, res)
+      }
+      throw new Error('internal server error')
+    }
+  }
+
+  @Action({ rawError: true })
+  public async deleteSubject(subjectId: number): Promise<void> {
+    try {
+      await $axios.$delete(`/v1/subjects/${subjectId}`)
       await this.getAllSubjects()
     } catch (err) {
       if (axios.isAxiosError(err)) {

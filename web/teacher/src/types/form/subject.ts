@@ -5,3 +5,7 @@ export interface SubjectNewForm {
   color: string
   schoolType: SchoolType
 }
+
+export interface SubjectEditForm extends SubjectNewForm {
+  subjectId: number
+}
