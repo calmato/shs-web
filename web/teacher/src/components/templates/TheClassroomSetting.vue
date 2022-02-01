@@ -1,9 +1,5 @@
 <template>
   <v-container>
-    <v-btn text class="px-0 mb-4" @click="handleBackButton">
-      <v-icon>mdi-chevron-left</v-icon>
-      戻る
-    </v-btn>
     <the-booth-setting-form :value.sync="boothFormData" />
     <the-regular-holiday-setting-form :value.sync="regularHolidayFormData" />
     <the-hour-setting-form

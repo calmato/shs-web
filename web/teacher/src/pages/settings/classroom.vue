@@ -1,5 +1,6 @@
 <template>
   <the-classroom-setting
+    class="mt-4"
     :regular-holiday-value.sync="selectedRegularHoliday"
     :booth-value.sync="boothRef"
     :weekday-hour-form="weekdayHourForm"

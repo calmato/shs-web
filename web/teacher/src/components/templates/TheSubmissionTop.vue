@@ -1,19 +1,20 @@
 <template>
   <v-container>
-    <v-row v-if="summaries.length > 0" class="py-4" justify="center">
+    <v-row v-if="summaries.length > 0" class="py-4">
       <v-col v-for="summary in summaries" :key="summary.id" cols="12" sm="6" md="4">
-        <v-card outlined elevation="4">
-          <v-card-title class="justify-center">{{ getTitle(summary.year, summary.month) }}</v-card-title>
-          <v-card-text class="text-center">
-            提出期限:
-            <span class="text-decoration-underline red--text text--lighten-1">{{ getDate(summary.endAt) }}</span>
-          </v-card-text>
-          <v-card-actions class="mx-8">
-            <v-chip dark :color="getSubmissionStatusColor(summary.submissionStatus)">
+        <v-card outlined elevation="1">
+          <v-card-title>
+            <v-chip class="mr-4" dark :color="getSubmissionStatusColor(summary.submissionStatus)">
               {{ getSubmissionStatus(summary.submissionStatus) }}
             </v-chip>
-            <v-spacer />
-            <v-btn :color="getDetailButtonColor(summary.submissionStatus)" @click="onClickShow(summary)">
+            {{ getTitle(summary.year, summary.month) }}</v-card-title
+          >
+          <v-card-text>
+            ・提出期限:
+            <span class="text-decoration-underline red--text text--lighten-1">{{ getDate(summary.endAt) }}</span>
+          </v-card-text>
+          <v-card-actions class="pa-4">
+            <v-btn :color="getDetailButtonColor(summary.submissionStatus)" block outlined @click="onClickShow(summary)">
               {{ getDetailButtonMessage(summary.submissionStatus) }}
             </v-btn>
           </v-card-actions>
@@ -73,7 +74,7 @@ export default defineComponent({
         case SubmissionStatus.WAITING:
           return 'red'
         case SubmissionStatus.SUBMITTED:
-          return 'light-green'
+          return 'primary'
         default:
           return ''
       }
@@ -82,9 +83,9 @@ export default defineComponent({
     const getDetailButtonMessage = (status: SubmissionStatus): string => {
       switch (status) {
         case SubmissionStatus.WAITING:
-          return '入力する'
+          return '入力'
         case SubmissionStatus.SUBMITTED:
-          return '修正する'
+          return '修正'
         default:
           return ''
       }

@@ -1,6 +1,6 @@
 <template>
   <v-card>
-    <v-toolbar color="primary" dark>
+    <v-toolbar color="primary" dark elevation="0">
       <span>授業登録</span>
       <v-spacer />
       <v-icon v-if="lessonId !== 0" dark @click="onDelete">mdi-delete</v-icon>
@@ -75,10 +75,10 @@
     </v-card-text>
     <v-card-actions>
       <v-spacer />
+      <v-btn color="primary" outlined @click="onClose">閉じる</v-btn>
       <v-btn :loading="loading" :disabled="loading || selectedTeacher === ''" color="primary" @click="onSubmit">
-        登録する
+        登録
       </v-btn>
-      <v-btn color="secondary" @click="onClose">閉じる</v-btn>
     </v-card-actions>
   </v-card>
 </template>

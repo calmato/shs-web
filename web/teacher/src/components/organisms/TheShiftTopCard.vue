@@ -1,5 +1,5 @@
 <template>
-  <v-card>
+  <v-card outlined elevation="1">
     <v-card-title class="d-flex align-center">
       <span>{{ getTitle() }}</span>
       <v-icon class="ml-auto" @click="onClickEdit">mdi-pencil</v-icon>
@@ -12,9 +12,9 @@
       </div>
       <div>・シフト募集期間: {{ getDate(summary.openAt) }} ~ {{ getDate(summary.endAt) }}</div>
     </v-card-text>
-    <v-card-actions>
+    <v-card-actions class="pa-4">
       <v-spacer />
-      <v-btn v-show="isEnabledCreateLesson()" color="primary" @click="onClickNew">授業登録画面へ</v-btn>
+      <v-btn v-show="isEnabledCreateLesson()" color="primary" block outlined @click="onClickNew">授業登録画面へ</v-btn>
     </v-card-actions>
   </v-card>
 </template>

@@ -24,14 +24,14 @@
         />
       </v-dialog>
       <v-col cols="12" align="center">
-        <v-btn color="info" @click="onClickNewShift">
+        <v-btn color="primary" outlined block @click="onClickNewShift">
           <v-icon>mdi-plus</v-icon>
           <span>シフトを募集する</span>
         </v-btn>
       </v-col>
       <v-col cols="12">
         <h3>募集中のシフト</h3>
-        <v-row align="center" class="pa-4">
+        <v-row align="center" class="py-4">
           <v-col v-for="summary in acceptingSummaries" :key="summary.id" cols="4">
             <the-shift-top-card :summary="summary" @click:new="onClickNewLesson" @click:edit="onClickEditShift" />
           </v-col>
@@ -39,7 +39,7 @@
       </v-col>
       <v-col cols="12">
         <h3>募集終了後のシフト</h3>
-        <v-row align="center" class="pa-4">
+        <v-row align="center" class="py-4">
           <v-col v-for="summary in finishedSummaries" :key="summary.id" cols="4">
             <the-shift-top-card :summary="summary" @click:new="onClickNewLesson" @click:edit="onClickEditShift" />
           </v-col>
@@ -47,7 +47,7 @@
       </v-col>
       <v-col cols="12">
         <h3>募集開始前のシフト</h3>
-        <v-row align="center" class="pa-4">
+        <v-row align="center" class="py-4">
           <v-col v-for="summary in waitingSummaries" :key="summary.id" cols="4">
             <the-shift-top-card :summary="summary" @click:new="onClickNewLesson" @click:edit="onClickEditShift" />
           </v-col>

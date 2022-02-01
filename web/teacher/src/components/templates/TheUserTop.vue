@@ -30,8 +30,11 @@
               @submit:role="onSubmitTeacherRole"
             />
           </v-dialog>
-          <v-col class="d-flex flex-column align-end px-8">
-            <v-btn v-show="isAdmin" color="primary" @click="onClickNew('teachers')">新規登録</v-btn>
+          <v-col class="my-4 mx-3">
+            <v-btn v-show="isAdmin" color="primary" block outlined @click="onClickNew('teachers')">
+              <v-icon>mdi-plus</v-icon>
+              新規登録</v-btn
+            >
           </v-col>
           <v-col cols="12">
             <the-teacher-list

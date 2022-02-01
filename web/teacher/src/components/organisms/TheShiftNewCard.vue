@@ -1,6 +1,6 @@
 <template>
   <v-card>
-    <v-toolbar color="primary" dark>新規シフト募集の作成</v-toolbar>
+    <v-toolbar color="primary" dark elevation="0">新規シフト募集の作成</v-toolbar>
 
     <v-card-text>
       <the-form-group>
@@ -16,7 +16,7 @@
           </v-col>
           <v-col cols="12">
             <h4>シフト提出可能期間</h4>
-            <div class="d-flex align-center">
+            <div class="d-flex align-center h-stack">
               <the-date-picker
                 :label="form.options.openDate.label"
                 :rules="form.options.openDate.rules"
@@ -33,7 +33,7 @@
           <v-col cols="12">
             <h4>
               <span class="pr-4">休日の設定</span>
-              <v-btn color="primary" fab x-small @click="addClosedDate"><v-icon>mdi-plus</v-icon></v-btn>
+              <v-btn color="primary" fab x-small elevation="1" @click="addClosedDate"><v-icon>mdi-plus</v-icon></v-btn>
             </h4>
             <the-date-picker
               v-for="(_, index) in form.params.closedDates"
@@ -43,7 +43,9 @@
               :value.sync="form.params.closedDates[index]"
               class="d-flex flex-column"
             >
-              <v-btn color="error" fab x-small @click="removeClosedDate(index)"><v-icon>mdi-minus</v-icon></v-btn>
+              <v-btn color="error" fab x-small elevation="1" @click="removeClosedDate(index)"
+                ><v-icon>mdi-minus</v-icon></v-btn
+              >
             </the-date-picker>
           </v-col>
         </v-row>
@@ -52,8 +54,8 @@
 
     <v-card-actions>
       <v-spacer />
+      <v-btn color="primary" outlined @click="onClose">閉じる</v-btn>
       <v-btn color="primary" :loading="loading" :disabled="loading" @click="onSubmit">作成する</v-btn>
-      <v-btn color="secondary" @click="onClose">閉じる</v-btn>
     </v-card-actions>
   </v-card>
 </template>
@@ -110,3 +112,9 @@ export default defineComponent({
   },
 })
 </script>
+
+<style lang="scss" scoped>
+.h-stack {
+  gap: 1rem;
+}
+</style>

@@ -75,7 +75,7 @@ describe('components/templates/TheSubmissionTop', () => {
         })
 
         it('status is submitted', () => {
-          expect(wrapper.vm.getSubmissionStatusColor(SubmissionStatus.SUBMITTED)).toBe('light-green')
+          expect(wrapper.vm.getSubmissionStatusColor(SubmissionStatus.SUBMITTED)).toBe('primary')
         })
 
         it('invalid status', () => {
@@ -85,11 +85,11 @@ describe('components/templates/TheSubmissionTop', () => {
 
       describe('getDetailButtonMessage', () => {
         it('status is waiting', () => {
-          expect(wrapper.vm.getDetailButtonMessage(SubmissionStatus.WAITING)).toBe('入力する')
+          expect(wrapper.vm.getDetailButtonMessage(SubmissionStatus.WAITING)).toBe('入力')
         })
 
         it('status is submitted', () => {
-          expect(wrapper.vm.getDetailButtonMessage(SubmissionStatus.SUBMITTED)).toBe('修正する')
+          expect(wrapper.vm.getDetailButtonMessage(SubmissionStatus.SUBMITTED)).toBe('修正')
         })
 
         it('invalid status', () => {

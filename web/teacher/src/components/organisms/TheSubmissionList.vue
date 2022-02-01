@@ -22,7 +22,7 @@
     </v-container>
     <v-container>
       <v-row class="justify-end">
-        <v-btn color="primary" class="right mt-4" large :disabled="loading" @click="onClick">提出する</v-btn>
+        <v-btn color="primary" class="right mt-4" large :disabled="loading" @click="onClick">提出</v-btn>
       </v-row>
     </v-container>
   </div>
