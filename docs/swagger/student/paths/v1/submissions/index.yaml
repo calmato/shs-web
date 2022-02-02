@@ -1,0 +1,34 @@
+get:
+  summary: 授業希望提出状況一覧取得
+  tags:
+  - Submission
+  security:
+  - BearerAuth: []
+  parameters:
+  - in: query
+    name: limit
+    schema:
+      type: integer
+      format: int64
+    description: 取得上限 (デフォルト:30)
+    example: 30
+  - in: query
+    name: offset
+    schema:
+      type: integer
+      format: int64
+    description: 取得開始位置 (デフォルト:0)
+    example: 0
+  responses:
+    200:
+      description: A successful response.
+      content:
+        application/json:
+          schema:
+            $ref: './../../../openapi.yaml#/components/schemas/v1SubmissionsResponse'
+    default:
+      description: An unexpected error response.
+      content:
+        application/json:
+          schema:
+            $ref: './../../../openapi.yaml#/components/schemas/errorResponse'

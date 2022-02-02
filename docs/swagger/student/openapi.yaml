@@ -9,6 +9,8 @@ servers:
 tags:
 - name: Auth
   description: 認証関連
+- name: Submission
+  description: 授業希望関連
 paths:
   # Auth
   /v1/me:
@@ -17,7 +19,11 @@ paths:
     $ref: './paths/v1/me/mail.yaml'
   /v1/me/password:
     $ref: './paths/v1/me/password.yaml'
-  # Students
+  # Submission
+  /v1/submissions:
+    $ref: './paths/v1/submissions/index.yaml'
+  /v1/submissions/{summaryId}:
+    $ref: './paths/v1/submissions/_summaryId.yaml'
 components:
   securitySchemes:
     BearerAuth:
@@ -32,6 +38,12 @@ components:
       $ref: './components/schemas/v1/auth.request.yaml#/updateMyMailRequest'
     v1UpdateMyPasswordRequest:
       $ref: './components/schemas/v1/auth.request.yaml#/updateMyPasswordRequest'
+    v1UpsertSubmissionRequest:
+      $ref: './components/schemas/v1/submissions.request.yaml#/upsertSubmissionRequest'
     # Response
     v1AuthResponse:
       $ref: './components/schemas/v1/auth.response.yaml#/authResponse'
+    v1SubmissionResponse:
+      $ref: './components/schemas/v1/submissions.response.yaml#/submissionResponse'
+    v1SubmissionsResponse:
+      $ref: './components/schemas/v1/submissions.response.yaml#/submissionsResponse'
