@@ -9,6 +9,8 @@ servers:
 tags:
 - name: Auth
   description: 認証関連
+- name: Subject
+  description: 授業科目関連
 - name: Submission
   description: 授業希望関連
 paths:
@@ -19,6 +21,9 @@ paths:
     $ref: './paths/v1/me/mail.yaml'
   /v1/me/password:
     $ref: './paths/v1/me/password.yaml'
+  # Subject
+  /v1/subjects:
+    $ref: './paths/v1/subjects/index.yaml'
   # Submission
   /v1/submissions:
     $ref: './paths/v1/submissions/index.yaml'
@@ -43,6 +48,8 @@ components:
     # Response
     v1AuthResponse:
       $ref: './components/schemas/v1/auth.response.yaml#/authResponse'
+    v1SubjectsResponse:
+      $ref: './components/schemas/v1/subjects.response.yaml#/subjectsResponse'
     v1SubmissionResponse:
       $ref: './components/schemas/v1/submissions.response.yaml#/submissionResponse'
     v1SubmissionsResponse:
