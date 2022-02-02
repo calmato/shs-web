@@ -1,7 +1,18 @@
 package request
 
-import "github.com/calmato/shs-web/api/internal/gateway/teacher/v1/entity"
+import "time"
+
+type ScheduleLesson struct {
+	StartTime string `json:"startTime,omitempty"` // 授業開始時間
+	EndTime   string `json:"endTime,omitempty"`   // 授業終了時間
+}
+
+type ScheduleToUpdate struct {
+	Weekday  time.Weekday      `json:"weekday,omitempty"`  // 曜日
+	IsClosed bool              `json:"isClosed,omitempty"` // 休校フラグ
+	Lessons  []*ScheduleLesson `json:"lessons,omitempty"`
+}
 
 type UpdateSchedulesRequest struct {
-	Schedules []*entity.ScheduleToUpdate `json:"schedules,omitempty"` // 授業スケジュール一覧
+	Schedules []*ScheduleToUpdate `json:"schedules,omitempty"` // 授業スケジュール一覧
 }
