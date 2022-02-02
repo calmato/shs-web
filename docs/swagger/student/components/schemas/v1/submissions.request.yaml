@@ -1,0 +1,32 @@
+upsertSubmissionRequest:
+  type: object
+  properties:
+    suggestedLessons:
+      type: array
+      description: 希望授業一覧
+      items:
+        type: object
+        properties:
+          subjectId:
+            type: integer
+            format: int64
+            description: 授業科目ID
+          total:
+            type: integer
+            format: int64
+            description: 希望授業回数
+    shiftIds:
+      type: array
+      description: 授業希望シフトID一覧
+      items:
+        type: integer
+        format: int64
+  example:
+    suggestedLessons:
+    - subjectId: 1
+      total: 4
+    - subjectId: 2
+      total: 4
+    shiftIds:
+    - 1
+    - 2
