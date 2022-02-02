@@ -104,7 +104,6 @@ func TestListLessons(t *testing.T) {
 							FirstName:     "広大",
 							LastNameKana:  "なかむら",
 							FirstNameKana: "こうだい",
-							Mail:          "teacher-test001@calmato.jp",
 						},
 					},
 				},

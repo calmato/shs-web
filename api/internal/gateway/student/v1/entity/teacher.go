@@ -1,12 +1,6 @@
 package entity
 
-import (
-	"errors"
-
-	"github.com/calmato/shs-web/api/internal/gateway/entity"
-)
-
-var errInvalidRole = errors.New("entity: invalid role")
+import "github.com/calmato/shs-web/api/internal/gateway/entity"
 
 type Teacher struct {
 	ID            string `json:"id"`            // 講師ID
@@ -14,7 +8,6 @@ type Teacher struct {
 	FirstName     string `json:"firstName"`     // 名
 	LastNameKana  string `json:"lastNameKana"`  // 姓(かな)
 	FirstNameKana string `json:"firstNameKana"` // 名(かな)
-	Mail          string `json:"mail"`          // メールアドレス
 }
 
 type Teachers []*Teacher
@@ -26,7 +19,6 @@ func NewTeacher(teacher *entity.Teacher) *Teacher {
 		FirstName:     teacher.FirstName,
 		LastNameKana:  teacher.LastNameKana,
 		FirstNameKana: teacher.FirstNameKana,
-		Mail:          teacher.Mail,
 	}
 }
 
