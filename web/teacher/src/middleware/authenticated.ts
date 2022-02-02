@@ -9,9 +9,8 @@ export default async ({ route, store, redirect }: Context) => {
 
   await store
     .dispatch('auth/authentication')
-    .then(async () => {
-      await store.dispatch('auth/showAuth')
-      await store.dispatch('lesson/getAllSubjects')
+    .then(() => {
+      Promise.all([store.dispatch('auth/showAuth'), store.dispatch('lesson/getAllSubjects')])
     })
     .catch(() => {
       redirect('/signin')
