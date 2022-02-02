@@ -39,7 +39,7 @@ func (h *apiV1Handler) UpdateSchedules(ctx *gin.Context) {
 	}
 
 	in := &classroom.UpdateSchedulesRequest{
-		Schedules: entity.NewSchedulesToUpdate(req.Schedules),
+		Schedules: h.newSchedulesToUpdate(req.Schedules),
 	}
 	_, err := h.classroom.UpdateSchedules(c, in)
 	if err != nil {
@@ -48,4 +48,32 @@ func (h *apiV1Handler) UpdateSchedules(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusNoContent, gin.H{})
+}
+
+func (h *apiV1Handler) newScheduleLessonsToUpdate(
+	lessons []*request.ScheduleLesson, isClosed bool,
+) []*classroom.ScheduleToUpdate_Lesson {
+	if isClosed {
+		return nil
+	}
+	res := make([]*classroom.ScheduleToUpdate_Lesson, len(lessons))
+	for i := range lessons {
+		res[i] = &classroom.ScheduleToUpdate_Lesson{
+			StartTime: lessons[i].StartTime,
+			EndTime:   lessons[i].EndTime,
+		}
+	}
+	return res
+}
+
+func (h *apiV1Handler) newSchedulesToUpdate(schedules []*request.ScheduleToUpdate) []*classroom.ScheduleToUpdate {
+	res := make([]*classroom.ScheduleToUpdate, len(schedules))
+	for i := range schedules {
+		res[i] = &classroom.ScheduleToUpdate{
+			Weekday:  int32(schedules[i].Weekday),
+			IsClosed: schedules[i].IsClosed,
+			Lessons:  h.newScheduleLessonsToUpdate(schedules[i].Lessons, schedules[i].IsClosed),
+		}
+	}
+	return res
 }

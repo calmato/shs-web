@@ -128,11 +128,11 @@ func TestUpdateSchedules(t *testing.T) {
 				mocks.classroom.EXPECT().UpdateSchedules(gomock.Any(), in).Return(out, nil)
 			},
 			req: &request.UpdateSchedulesRequest{
-				Schedules: []*entity.ScheduleToUpdate{
+				Schedules: []*request.ScheduleToUpdate{
 					{
 						Weekday:  time.Sunday,
 						IsClosed: false,
-						Lessons: entity.ScheduleLessons{
+						Lessons: []*request.ScheduleLesson{
 							{StartTime: "1530", EndTime: "1700"},
 							{StartTime: "1700", EndTime: "1830"},
 							{StartTime: "1830", EndTime: "2000"},
@@ -146,7 +146,7 @@ func TestUpdateSchedules(t *testing.T) {
 					{
 						Weekday:  time.Tuesday,
 						IsClosed: false,
-						Lessons: entity.ScheduleLessons{
+						Lessons: []*request.ScheduleLesson{
 							{StartTime: "1700", EndTime: "1830"},
 							{StartTime: "1830", EndTime: "2000"},
 							{StartTime: "2000", EndTime: "2130"},
@@ -165,11 +165,11 @@ func TestUpdateSchedules(t *testing.T) {
 				mocks.classroom.EXPECT().UpdateSchedules(gomock.Any(), in).Return(nil, errmock)
 			},
 			req: &request.UpdateSchedulesRequest{
-				Schedules: []*entity.ScheduleToUpdate{
+				Schedules: []*request.ScheduleToUpdate{
 					{
 						Weekday:  time.Sunday,
 						IsClosed: false,
-						Lessons: entity.ScheduleLessons{
+						Lessons: []*request.ScheduleLesson{
 							{StartTime: "1530", EndTime: "1700"},
 							{StartTime: "1700", EndTime: "1830"},
 							{StartTime: "1830", EndTime: "2000"},
@@ -183,7 +183,7 @@ func TestUpdateSchedules(t *testing.T) {
 					{
 						Weekday:  time.Tuesday,
 						IsClosed: false,
-						Lessons: entity.ScheduleLessons{
+						Lessons: []*request.ScheduleLesson{
 							{StartTime: "1700", EndTime: "1830"},
 							{StartTime: "1830", EndTime: "2000"},
 							{StartTime: "2000", EndTime: "2130"},

@@ -1,7 +1,7 @@
 get:
   summary: 授業スケジュール一覧取得
   tags:
-  - Schedule
+  - Other
   security:
   - BearerAuth: []
   responses:
@@ -20,7 +20,7 @@ get:
 patch:
   summary: 授業スケジュール更新
   tags:
-  - Schedule
+  - Other
   security:
   - BearerAuth: []
   requestBody:
