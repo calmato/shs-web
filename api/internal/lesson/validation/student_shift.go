@@ -50,3 +50,21 @@ func (v *requestValidation) UpsertStudentShifts(req *lesson.UpsertStudentShiftsR
 
 	return nil
 }
+
+func (v *requestValidation) GetStudentShiftTemplate(req *lesson.GetStudentShiftTemplateRequest) error {
+	if err := req.Validate(); err != nil {
+		validate := err.(lesson.GetStudentShiftTemplateRequestValidationError)
+		return validationError(validate.Error())
+	}
+
+	return nil
+}
+
+func (v *requestValidation) UpsertStudentShiftTemplate(req *lesson.UpsertStudentShiftTemplateRequest) error {
+	if err := req.Validate(); err != nil {
+		validate := err.(lesson.UpsertStudentShiftTemplateRequestValidationError)
+		return validationError(validate.Error())
+	}
+
+	return nil
+}

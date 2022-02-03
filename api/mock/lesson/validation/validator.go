@@ -104,6 +104,20 @@ func (mr *MockRequestValidationMockRecorder) GetShiftSummary(req interface{}) *g
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetShiftSummary", reflect.TypeOf((*MockRequestValidation)(nil).GetShiftSummary), req)
 }
 
+// GetStudentShiftTemplate mocks base method.
+func (m *MockRequestValidation) GetStudentShiftTemplate(req *lesson.GetStudentShiftTemplateRequest) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetStudentShiftTemplate", req)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// GetStudentShiftTemplate indicates an expected call of GetStudentShiftTemplate.
+func (mr *MockRequestValidationMockRecorder) GetStudentShiftTemplate(req interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetStudentShiftTemplate", reflect.TypeOf((*MockRequestValidation)(nil).GetStudentShiftTemplate), req)
+}
+
 // GetStudentShifts mocks base method.
 func (m *MockRequestValidation) GetStudentShifts(req *lesson.GetStudentShiftsRequest) error {
 	m.ctrl.T.Helper()
@@ -312,6 +326,20 @@ func (m *MockRequestValidation) UpdateShiftSummarySchedule(req *lesson.UpdateShi
 func (mr *MockRequestValidationMockRecorder) UpdateShiftSummarySchedule(req interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateShiftSummarySchedule", reflect.TypeOf((*MockRequestValidation)(nil).UpdateShiftSummarySchedule), req)
+}
+
+// UpsertStudentShiftTemplate mocks base method.
+func (m *MockRequestValidation) UpsertStudentShiftTemplate(req *lesson.UpsertStudentShiftTemplateRequest) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpsertStudentShiftTemplate", req)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpsertStudentShiftTemplate indicates an expected call of UpsertStudentShiftTemplate.
+func (mr *MockRequestValidationMockRecorder) UpsertStudentShiftTemplate(req interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpsertStudentShiftTemplate", reflect.TypeOf((*MockRequestValidation)(nil).UpsertStudentShiftTemplate), req)
 }
 
 // UpsertStudentShifts mocks base method.

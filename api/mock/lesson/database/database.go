@@ -670,3 +670,55 @@ func (mr *MockStudentShiftMockRecorder) Replace(ctx, submission, shifts interfac
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Replace", reflect.TypeOf((*MockStudentShift)(nil).Replace), ctx, submission, shifts)
 }
+
+// MockStudentShiftTemplate is a mock of StudentShiftTemplate interface.
+type MockStudentShiftTemplate struct {
+	ctrl     *gomock.Controller
+	recorder *MockStudentShiftTemplateMockRecorder
+}
+
+// MockStudentShiftTemplateMockRecorder is the mock recorder for MockStudentShiftTemplate.
+type MockStudentShiftTemplateMockRecorder struct {
+	mock *MockStudentShiftTemplate
+}
+
+// NewMockStudentShiftTemplate creates a new mock instance.
+func NewMockStudentShiftTemplate(ctrl *gomock.Controller) *MockStudentShiftTemplate {
+	mock := &MockStudentShiftTemplate{ctrl: ctrl}
+	mock.recorder = &MockStudentShiftTemplateMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockStudentShiftTemplate) EXPECT() *MockStudentShiftTemplateMockRecorder {
+	return m.recorder
+}
+
+// Get mocks base method.
+func (m *MockStudentShiftTemplate) Get(ctx context.Context, studentID string) (*entity.StudentShiftTemplate, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Get", ctx, studentID)
+	ret0, _ := ret[0].(*entity.StudentShiftTemplate)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Get indicates an expected call of Get.
+func (mr *MockStudentShiftTemplateMockRecorder) Get(ctx, studentID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockStudentShiftTemplate)(nil).Get), ctx, studentID)
+}
+
+// Upsert mocks base method.
+func (m *MockStudentShiftTemplate) Upsert(ctx context.Context, studentID string, template *entity.StudentShiftTemplate) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Upsert", ctx, studentID, template)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Upsert indicates an expected call of Upsert.
+func (mr *MockStudentShiftTemplateMockRecorder) Upsert(ctx, studentID, template interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Upsert", reflect.TypeOf((*MockStudentShiftTemplate)(nil).Upsert), ctx, studentID, template)
+}
