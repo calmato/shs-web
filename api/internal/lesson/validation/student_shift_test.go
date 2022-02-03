@@ -2,6 +2,7 @@ package validation
 
 import (
 	"testing"
+	"time"
 
 	"github.com/calmato/shs-web/api/proto/lesson"
 	"github.com/stretchr/testify/assert"
@@ -227,6 +228,7 @@ func TestUpsertStudentShifts(t *testing.T) {
 				ShiftSummaryId: 1,
 				ShiftIds:       []int64{1, 2},
 				Decided:        true,
+				Lessons:        []*lesson.StudentSuggestedLesson{{SubjectId: 1, Total: 4}},
 			},
 			isErr: false,
 		},
@@ -237,6 +239,7 @@ func TestUpsertStudentShifts(t *testing.T) {
 				ShiftSummaryId: 1,
 				ShiftIds:       []int64{1, 2},
 				Decided:        true,
+				Lessons:        []*lesson.StudentSuggestedLesson{{SubjectId: 1, Total: 4}},
 			},
 			isErr: true,
 		},
@@ -247,6 +250,7 @@ func TestUpsertStudentShifts(t *testing.T) {
 				ShiftSummaryId: 0,
 				ShiftIds:       []int64{1, 2},
 				Decided:        true,
+				Lessons:        []*lesson.StudentSuggestedLesson{{SubjectId: 1, Total: 4}},
 			},
 			isErr: true,
 		},
@@ -257,6 +261,7 @@ func TestUpsertStudentShifts(t *testing.T) {
 				ShiftSummaryId: 1,
 				ShiftIds:       []int64{1, 1},
 				Decided:        true,
+				Lessons:        []*lesson.StudentSuggestedLesson{{SubjectId: 1, Total: 4}},
 			},
 			isErr: true,
 		},
@@ -267,6 +272,29 @@ func TestUpsertStudentShifts(t *testing.T) {
 				ShiftSummaryId: 1,
 				ShiftIds:       []int64{0},
 				Decided:        true,
+				Lessons:        []*lesson.StudentSuggestedLesson{{SubjectId: 1, Total: 4}},
+			},
+			isErr: true,
+		},
+		{
+			name: "Lessons.SubjectId is gt",
+			req: &lesson.UpsertStudentShiftsRequest{
+				StudentId:      "studentid",
+				ShiftSummaryId: 1,
+				ShiftIds:       []int64{0},
+				Decided:        true,
+				Lessons:        []*lesson.StudentSuggestedLesson{{SubjectId: 0, Total: 4}},
+			},
+			isErr: true,
+		},
+		{
+			name: "Lessons.Total is gte",
+			req: &lesson.UpsertStudentShiftsRequest{
+				StudentId:      "studentid",
+				ShiftSummaryId: 1,
+				ShiftIds:       []int64{0},
+				Decided:        true,
+				Lessons:        []*lesson.StudentSuggestedLesson{{SubjectId: 1, Total: -1}},
 			},
 			isErr: true,
 		},
@@ -277,6 +305,266 @@ func TestUpsertStudentShifts(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 			err := validator.UpsertStudentShifts(tt.req)
+			assert.Equal(t, tt.isErr, err != nil, err)
+		})
+	}
+}
+
+func TestGetStudentShiftTemplate(t *testing.T) {
+	t.Parallel()
+	validator := NewRequestValidation()
+
+	tests := []struct {
+		name  string
+		req   *lesson.GetStudentShiftTemplateRequest
+		isErr bool
+	}{
+		{
+			name: "success",
+			req: &lesson.GetStudentShiftTemplateRequest{
+				StudentId: "studentid",
+			},
+			isErr: false,
+		},
+		{
+			name: "StudentId is min_len",
+			req: &lesson.GetStudentShiftTemplateRequest{
+				StudentId: "",
+			},
+			isErr: true,
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			err := validator.GetStudentShiftTemplate(tt.req)
+			assert.Equal(t, tt.isErr, err != nil, err)
+		})
+	}
+}
+
+func TestUpsertStudentShiftTemplate(t *testing.T) {
+	t.Parallel()
+	validator := NewRequestValidation()
+
+	tests := []struct {
+		name  string
+		req   *lesson.UpsertStudentShiftTemplateRequest
+		isErr bool
+	}{
+		{
+			name: "success",
+			req: &lesson.UpsertStudentShiftTemplateRequest{
+				StudentId: "studentid",
+				Template: &lesson.StudentShiftTemplateToUpsert{
+					Schedules: []*lesson.StudentShiftTemplateToUpsert_Schedule{
+						{
+							Weekday: int32(time.Sunday),
+							Lessons: []*lesson.StudentShiftTemplateToUpsert_Lesson{{StartTime: "1700", EndTime: "1830"}},
+						},
+					},
+					SuggestedLessons: []*lesson.StudentSuggestedLesson{
+						{SubjectId: 1, Total: 4},
+					},
+				},
+			},
+			isErr: false,
+		},
+		{
+			name: "StudentId is min_len",
+			req: &lesson.UpsertStudentShiftTemplateRequest{
+				StudentId: "",
+				Template: &lesson.StudentShiftTemplateToUpsert{
+					Schedules: []*lesson.StudentShiftTemplateToUpsert_Schedule{
+						{
+							Weekday: int32(time.Sunday),
+							Lessons: []*lesson.StudentShiftTemplateToUpsert_Lesson{{StartTime: "1700", EndTime: "1830"}},
+						},
+					},
+					SuggestedLessons: []*lesson.StudentSuggestedLesson{
+						{SubjectId: 1, Total: 4},
+					},
+				},
+			},
+			isErr: true,
+		},
+		{
+			name: "Template is required",
+			req: &lesson.UpsertStudentShiftTemplateRequest{
+				StudentId: "studentid",
+				Template:  nil,
+			},
+			isErr: true,
+		},
+		{
+			name: "Template.Schedules is max_items",
+			req: &lesson.UpsertStudentShiftTemplateRequest{
+				StudentId: "studentid",
+				Template: &lesson.StudentShiftTemplateToUpsert{
+					Schedules: []*lesson.StudentShiftTemplateToUpsert_Schedule{
+						{Weekday: int32(time.Sunday), Lessons: []*lesson.StudentShiftTemplateToUpsert_Lesson{}},
+						{Weekday: int32(time.Monday), Lessons: []*lesson.StudentShiftTemplateToUpsert_Lesson{}},
+						{Weekday: int32(time.Tuesday), Lessons: []*lesson.StudentShiftTemplateToUpsert_Lesson{}},
+						{Weekday: int32(time.Wednesday), Lessons: []*lesson.StudentShiftTemplateToUpsert_Lesson{}},
+						{Weekday: int32(time.Thursday), Lessons: []*lesson.StudentShiftTemplateToUpsert_Lesson{}},
+						{Weekday: int32(time.Friday), Lessons: []*lesson.StudentShiftTemplateToUpsert_Lesson{}},
+						{Weekday: int32(time.Saturday), Lessons: []*lesson.StudentShiftTemplateToUpsert_Lesson{}},
+						{Weekday: int32(time.Sunday), Lessons: []*lesson.StudentShiftTemplateToUpsert_Lesson{}},
+					},
+					SuggestedLessons: []*lesson.StudentSuggestedLesson{
+						{SubjectId: 1, Total: 4},
+					},
+				},
+			},
+			isErr: true,
+		},
+		{
+			name: "Template.Schedules.Weekday is gte",
+			req: &lesson.UpsertStudentShiftTemplateRequest{
+				StudentId: "studentid",
+				Template: &lesson.StudentShiftTemplateToUpsert{
+					Schedules: []*lesson.StudentShiftTemplateToUpsert_Schedule{
+						{Weekday: -1, Lessons: []*lesson.StudentShiftTemplateToUpsert_Lesson{}},
+					},
+					SuggestedLessons: []*lesson.StudentSuggestedLesson{
+						{SubjectId: 1, Total: 4},
+					},
+				},
+			},
+			isErr: true,
+		},
+		{
+			name: "Template.Schedules.Weekday is lte",
+			req: &lesson.UpsertStudentShiftTemplateRequest{
+				StudentId: "studentid",
+				Template: &lesson.StudentShiftTemplateToUpsert{
+					Schedules: []*lesson.StudentShiftTemplateToUpsert_Schedule{
+						{Weekday: 7, Lessons: []*lesson.StudentShiftTemplateToUpsert_Lesson{}},
+					},
+					SuggestedLessons: []*lesson.StudentSuggestedLesson{
+						{SubjectId: 1, Total: 4},
+					},
+				},
+			},
+			isErr: true,
+		},
+		{
+			name: "Template.Schedules.Lessons.StartTime is len",
+			req: &lesson.UpsertStudentShiftTemplateRequest{
+				StudentId: "studentid",
+				Template: &lesson.StudentShiftTemplateToUpsert{
+					Schedules: []*lesson.StudentShiftTemplateToUpsert_Schedule{
+						{
+							Weekday: int32(time.Sunday),
+							Lessons: []*lesson.StudentShiftTemplateToUpsert_Lesson{{StartTime: "", EndTime: "1830"}},
+						},
+					},
+					SuggestedLessons: []*lesson.StudentSuggestedLesson{
+						{SubjectId: 1, Total: 4},
+					},
+				},
+			},
+			isErr: true,
+		},
+		{
+			name: "Template.Schedules.Lessons.StartTime is pattern",
+			req: &lesson.UpsertStudentShiftTemplateRequest{
+				StudentId: "studentid",
+				Template: &lesson.StudentShiftTemplateToUpsert{
+					Schedules: []*lesson.StudentShiftTemplateToUpsert_Schedule{
+						{
+							Weekday: int32(time.Sunday),
+							Lessons: []*lesson.StudentShiftTemplateToUpsert_Lesson{{StartTime: "aaaa", EndTime: "1830"}},
+						},
+					},
+					SuggestedLessons: []*lesson.StudentSuggestedLesson{
+						{SubjectId: 1, Total: 4},
+					},
+				},
+			},
+			isErr: true,
+		},
+		{
+			name: "Template.Schedules.Lessons.EndTime is len",
+			req: &lesson.UpsertStudentShiftTemplateRequest{
+				StudentId: "studentid",
+				Template: &lesson.StudentShiftTemplateToUpsert{
+					Schedules: []*lesson.StudentShiftTemplateToUpsert_Schedule{
+						{
+							Weekday: int32(time.Sunday),
+							Lessons: []*lesson.StudentShiftTemplateToUpsert_Lesson{{StartTime: "1700", EndTime: ""}},
+						},
+					},
+					SuggestedLessons: []*lesson.StudentSuggestedLesson{
+						{SubjectId: 1, Total: 4},
+					},
+				},
+			},
+			isErr: true,
+		},
+		{
+			name: "Template.Schedules.Lessons.StartTime is pattern",
+			req: &lesson.UpsertStudentShiftTemplateRequest{
+				StudentId: "studentid",
+				Template: &lesson.StudentShiftTemplateToUpsert{
+					Schedules: []*lesson.StudentShiftTemplateToUpsert_Schedule{
+						{
+							Weekday: int32(time.Sunday),
+							Lessons: []*lesson.StudentShiftTemplateToUpsert_Lesson{{StartTime: "1700", EndTime: "aaaa"}},
+						},
+					},
+					SuggestedLessons: []*lesson.StudentSuggestedLesson{
+						{SubjectId: 1, Total: 4},
+					},
+				},
+			},
+			isErr: true,
+		},
+		{
+			name: "Template.SuggestedLessons.SubjectId is gt",
+			req: &lesson.UpsertStudentShiftTemplateRequest{
+				StudentId: "studentid",
+				Template: &lesson.StudentShiftTemplateToUpsert{
+					Schedules: []*lesson.StudentShiftTemplateToUpsert_Schedule{
+						{
+							Weekday: int32(time.Sunday),
+							Lessons: []*lesson.StudentShiftTemplateToUpsert_Lesson{{StartTime: "1700", EndTime: "1830"}},
+						},
+					},
+					SuggestedLessons: []*lesson.StudentSuggestedLesson{
+						{SubjectId: 0, Total: 4},
+					},
+				},
+			},
+			isErr: true,
+		},
+		{
+			name: "Template.SuggestedLessons.Total is gte",
+			req: &lesson.UpsertStudentShiftTemplateRequest{
+				StudentId: "studentid",
+				Template: &lesson.StudentShiftTemplateToUpsert{
+					Schedules: []*lesson.StudentShiftTemplateToUpsert_Schedule{
+						{
+							Weekday: int32(time.Sunday),
+							Lessons: []*lesson.StudentShiftTemplateToUpsert_Lesson{{StartTime: "1700", EndTime: "1830"}},
+						},
+					},
+					SuggestedLessons: []*lesson.StudentSuggestedLesson{
+						{SubjectId: 1, Total: -1},
+					},
+				},
+			},
+			isErr: true,
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			err := validator.UpsertStudentShiftTemplate(tt.req)
 			assert.Equal(t, tt.isErr, err != nil, err)
 		})
 	}

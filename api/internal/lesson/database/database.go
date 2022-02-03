@@ -28,24 +28,26 @@ type Params struct {
 }
 
 type Database struct {
-	Lesson            Lesson
-	ShiftSummary      ShiftSummary
-	Shift             Shift
-	TeacherSubmission TeacherSubmission
-	TeacherShift      TeacherShift
-	StudentSubmission StudentSubmission
-	StudentShift      StudentShift
+	Lesson               Lesson
+	ShiftSummary         ShiftSummary
+	Shift                Shift
+	TeacherSubmission    TeacherSubmission
+	TeacherShift         TeacherShift
+	StudentSubmission    StudentSubmission
+	StudentShift         StudentShift
+	StudentShiftTemplate StudentShiftTemplate
 }
 
 func NewDatabase(params *Params) *Database {
 	return &Database{
-		Lesson:            NewLesson(params.Database),
-		ShiftSummary:      NewShiftSummary(params.Database),
-		Shift:             NewShift(params.Database),
-		TeacherSubmission: NewTeacherSubmission(params.Database),
-		TeacherShift:      NewTeacherShift(params.Database),
-		StudentSubmission: NewStudentSubmission(params.Database),
-		StudentShift:      NewStudentShift(params.Database),
+		Lesson:               NewLesson(params.Database),
+		ShiftSummary:         NewShiftSummary(params.Database),
+		Shift:                NewShift(params.Database),
+		TeacherSubmission:    NewTeacherSubmission(params.Database),
+		TeacherShift:         NewTeacherShift(params.Database),
+		StudentSubmission:    NewStudentSubmission(params.Database),
+		StudentShift:         NewStudentShift(params.Database),
+		StudentShiftTemplate: NewStudentShiftTemplate(params.Database),
 	}
 }
 
@@ -109,6 +111,11 @@ type StudentShift interface {
 	) (entity.StudentShifts, error)
 	ListByShiftID(ctx context.Context, shiftID int64, fields ...string) (entity.StudentShifts, error)
 	Replace(ctx context.Context, submission *entity.StudentSubmission, shifts entity.StudentShifts) error
+}
+
+type StudentShiftTemplate interface {
+	Get(ctx context.Context, studentID string) (*entity.StudentShiftTemplate, error)
+	Upsert(ctx context.Context, studentID string, template *entity.StudentShiftTemplate) error
 }
 
 /**

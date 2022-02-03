@@ -11,7 +11,7 @@ message StudentSubmission {
   // int64                    suggested_classes = 4;
   int64                    created_at        = 5;
   int64                    updated_at        = 6;
-  repeated SuggestedLesson suggestedLessons  = 7;
+  repeated SuggestedLesson suggested_lessons = 7;
   reserved 4;
 }
 

@@ -4,10 +4,30 @@ package lesson;
 
 option go_package = "github.com/calmato/shs-web/api/proto/lesson";
 
+import "lesson/student_submission.proto";
+
 message StudentShift {
   string student_id       = 1;
   int64  shift_id         = 2;
   int64  shift_summary_id = 3;
   int64  created_at       = 4;
   int64  updated_at       = 5;
+}
+
+message StudentShiftTemplate {
+  string                   student_id       = 1; // 生徒ID
+  repeated ShiftSchedule   schedules        = 2; // 希望授業時間一覧
+  repeated SuggestedLesson suggeste_lessons = 3; // 希望授業科目一覧
+  int64                    created_at       = 4; // 登録日時
+  int64                    updated_at       = 5; // 講師日時
+}
+
+message ShiftSchedule {
+  int32                   weekday = 1; // 曜日
+  repeated LessonSchedule lessons = 2; // 希望授業時間一覧
+}
+
+message LessonSchedule {
+  string start_time = 1; // 授業開始時間
+  string end_time   = 2; // 授業終了時間
 }
