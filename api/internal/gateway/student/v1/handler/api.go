@@ -74,6 +74,7 @@ func (h *apiV1Handler) AuthRoutes(rg *gin.RouterGroup) {
 	rg.GET("/v1/submissions", h.ListSubmissions)
 	rg.GET("/v1/submissions/:summaryId", h.GetSubmission)
 	rg.POST("/v1/submissions/:summaryId", h.UpsertSubmission)
+	rg.GET("/v1/lessons", h.ListLessons)
 }
 
 func (h *apiV1Handler) NoAuthRoutes(rg *gin.RouterGroup) {}

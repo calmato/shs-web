@@ -13,6 +13,8 @@ tags:
   description: 授業科目関連
 - name: Submission
   description: 授業希望関連
+- name: Lesson
+  description: 授業関連
 paths:
   # Auth
   /v1/me:
@@ -29,6 +31,9 @@ paths:
     $ref: './paths/v1/submissions/index.yaml'
   /v1/submissions/{summaryId}:
     $ref: './paths/v1/submissions/_summaryId.yaml'
+  # Lessons
+  /v1/lessons:
+    $ref: './paths/v1/lessons/index.yaml'
 components:
   securitySchemes:
     BearerAuth:
@@ -54,3 +59,5 @@ components:
       $ref: './components/schemas/v1/submissions.response.yaml#/submissionResponse'
     v1SubmissionsResponse:
       $ref: './components/schemas/v1/submissions.response.yaml#/submissionsResponse'
+    v1LessonsResponse:
+      $ref: './components/schemas/v1/lessons.response.yaml#/lessonsResponse'
