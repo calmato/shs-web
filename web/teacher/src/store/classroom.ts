@@ -5,10 +5,21 @@ import { Schedule, ScheduleResponse, TotalRoomsResponse } from '~/types/api/v1'
 import { ClassroomState } from '~/types/store'
 import { ErrorResponse } from '~/types/api/exception'
 import { ApiError } from '~/types/exception'
+import { HourForm } from '~/types/form'
+import dayjs from '~/plugins/dayjs'
 
 const initialState: ClassroomState = {
   totalRooms: 0,
   schedules: [],
+}
+
+function extractHourFormBySchedule(schedule: Schedule): HourForm[] {
+  return schedule.lessons.map((item) => {
+    return {
+      startAt: dayjs(item.startTime, 'HHmm').format('HH:mm'),
+      endAt: dayjs(item.endTime, 'HHmm').format('HH:mm'),
+    }
+  })
 }
 
 @Module({
@@ -26,6 +37,20 @@ export default class ClassroomModule extends VuexModule {
 
   public get getSchedules(): Schedule[] {
     return this.schedules
+  }
+
+  public get weekdayHourFormValue(): HourForm[] {
+    const target = this.getSchedules.find((item) => item.weekday === 1)
+    return target ? extractHourFormBySchedule(target) : []
+  }
+
+  public get holidayHourFormValue(): HourForm[] {
+    const target = this.getSchedules.find((item) => item.weekday === 6)
+    return target ? extractHourFormBySchedule(target) : []
+  }
+
+  public get regularHoliday(): number[] {
+    return this.getSchedules.filter((item) => item.isClosed).map((item) => item.weekday)
   }
 
   @Mutation
