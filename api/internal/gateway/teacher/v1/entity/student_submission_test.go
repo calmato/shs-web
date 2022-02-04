@@ -34,13 +34,11 @@ func TestStudentSubmission(t *testing.T) {
 				},
 			},
 			submission: &entity.StudentSubmission{
-				StudentSubmission: &lesson.StudentSubmission{
-					StudentId:      "studentid",
-					ShiftSummaryId: 1,
-					Decided:        true,
-					CreatedAt:      now.Unix(),
-					UpdatedAt:      now.Unix(),
-				},
+				StudentID:      "studentid",
+				ShiftSummaryID: 1,
+				Decided:        true,
+				CreatedAt:      now,
+				UpdatedAt:      now,
 			},
 			expect: &StudentSubmission{
 				ShiftSummaryID:   1,
@@ -102,13 +100,11 @@ func TestStudentSubmissions(t *testing.T) {
 			},
 			submissions: map[int64]*entity.StudentSubmission{
 				1: {
-					StudentSubmission: &lesson.StudentSubmission{
-						StudentId:      "studentid",
-						ShiftSummaryId: 1,
-						Decided:        true,
-						CreatedAt:      now.Unix(),
-						UpdatedAt:      now.Unix(),
-					},
+					StudentID:      "studentid",
+					ShiftSummaryID: 1,
+					Decided:        true,
+					CreatedAt:      now,
+					UpdatedAt:      now,
 				},
 			},
 			expect: StudentSubmissions{
@@ -151,14 +147,16 @@ func TestStudentSuggestedLesson(t *testing.T) {
 	t.Parallel()
 	tests := []struct {
 		name   string
-		lesson *lesson.SuggestedLesson
+		lesson *entity.StudentSuggestedLesson
 		expect *StudentSuggestedLesson
 	}{
 		{
 			name: "success",
-			lesson: &lesson.SuggestedLesson{
-				SubjectId: 1,
-				Total:     4,
+			lesson: &entity.StudentSuggestedLesson{
+				SuggestedLesson: &lesson.SuggestedLesson{
+					SubjectId: 1,
+					Total:     4,
+				},
 			},
 			expect: &StudentSuggestedLesson{
 				SubjectID: 1,
@@ -178,26 +176,16 @@ func TestStudentSuggestedLesson(t *testing.T) {
 
 func TestStudentSuggestedLessons(t *testing.T) {
 	t.Parallel()
-	now := jst.Date(2021, 8, 2, 18, 30, 0, 0)
 	tests := []struct {
-		name       string
-		submission *entity.StudentSubmission
-		expect     StudentSuggestedLessons
+		name    string
+		lessons entity.StudentSuggestedLessons
+		expect  StudentSuggestedLessons
 	}{
 		{
 			name: "success",
-			submission: &entity.StudentSubmission{
-				StudentSubmission: &lesson.StudentSubmission{
-					StudentId:      "kSByoE6FetnPs5Byk3a9Zx",
-					ShiftSummaryId: 1,
-					Decided:        true,
-					SuggestedLessons: []*lesson.SuggestedLesson{
-						{SubjectId: 1, Total: 4},
-						{SubjectId: 2, Total: 4},
-					},
-					CreatedAt: now.Unix(),
-					UpdatedAt: now.Unix(),
-				},
+			lessons: entity.StudentSuggestedLessons{
+				{SuggestedLesson: &lesson.SuggestedLesson{SubjectId: 1, Total: 4}},
+				{SuggestedLesson: &lesson.SuggestedLesson{SubjectId: 2, Total: 4}},
 			},
 			expect: StudentSuggestedLessons{
 				{SubjectID: 1, Total: 4},
@@ -210,7 +198,7 @@ func TestStudentSuggestedLessons(t *testing.T) {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			assert.Equal(t, tt.expect, NewStudentSuggestedLessons(tt.submission))
+			assert.Equal(t, tt.expect, NewStudentSuggestedLessons(tt.lessons))
 		})
 	}
 }
@@ -255,17 +243,15 @@ func TestStudentSubmissionDetail(t *testing.T) {
 				},
 			},
 			submission: &entity.StudentSubmission{
-				StudentSubmission: &lesson.StudentSubmission{
-					StudentId:      "kSByoE6FetnPs5Byk3a9Zx",
-					ShiftSummaryId: 1,
-					Decided:        true,
-					SuggestedLessons: []*lesson.SuggestedLesson{
-						{SubjectId: 1, Total: 4},
-						{SubjectId: 2, Total: 4},
-					},
-					CreatedAt: now.Unix(),
-					UpdatedAt: now.Unix(),
+				StudentID:      "kSByoE6FetnPs5Byk3a9Zx",
+				ShiftSummaryID: 1,
+				Decided:        true,
+				SuggestedLessons: entity.StudentSuggestedLessons{
+					{SuggestedLesson: &lesson.SuggestedLesson{SubjectId: 1, Total: 4}},
+					{SuggestedLesson: &lesson.SuggestedLesson{SubjectId: 2, Total: 4}},
 				},
+				CreatedAt: now,
+				UpdatedAt: now,
 			},
 			lessons: entity.Lessons{
 				{
@@ -384,17 +370,15 @@ func TestStudentSubmissionDetails(t *testing.T) {
 			},
 			submissions: map[string]*entity.StudentSubmission{
 				"kSByoE6FetnPs5Byk3a9Zx": {
-					StudentSubmission: &lesson.StudentSubmission{
-						StudentId:      "kSByoE6FetnPs5Byk3a9Zx",
-						ShiftSummaryId: 1,
-						Decided:        true,
-						SuggestedLessons: []*lesson.SuggestedLesson{
-							{SubjectId: 1, Total: 4},
-							{SubjectId: 2, Total: 4},
-						},
-						CreatedAt: now.Unix(),
-						UpdatedAt: now.Unix(),
+					StudentID:      "kSByoE6FetnPs5Byk3a9Zx",
+					ShiftSummaryID: 1,
+					Decided:        true,
+					SuggestedLessons: entity.StudentSuggestedLessons{
+						{SuggestedLesson: &lesson.SuggestedLesson{SubjectId: 1, Total: 4}},
+						{SuggestedLesson: &lesson.SuggestedLesson{SubjectId: 2, Total: 4}},
 					},
+					CreatedAt: now,
+					UpdatedAt: now,
 				},
 			},
 			lessons: map[string]entity.Lessons{
@@ -494,7 +478,7 @@ func TestStudentSubmissionStatus(t *testing.T) {
 		{
 			name:       "student submission status submitted",
 			summary:    &entity.ShiftSummary{},
-			submission: &entity.StudentSubmission{StudentSubmission: &lesson.StudentSubmission{Decided: true}},
+			submission: &entity.StudentSubmission{Decided: true},
 			expect:     StudentSubmissionStatusSubmitted,
 		},
 		{

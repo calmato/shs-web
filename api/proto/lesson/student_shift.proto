@@ -17,7 +17,7 @@ message StudentShift {
 message StudentShiftTemplate {
   string                   student_id       = 1; // 生徒ID
   repeated ShiftSchedule   schedules        = 2; // 希望授業時間一覧
-  repeated SuggestedLesson suggeste_lessons = 3; // 希望授業科目一覧
+  repeated SuggestedLesson suggested_lessons = 3; // 希望授業科目一覧
   int64                    created_at       = 4; // 登録日時
   int64                    updated_at       = 5; // 講師日時
 }

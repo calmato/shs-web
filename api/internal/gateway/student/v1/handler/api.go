@@ -70,6 +70,8 @@ func (h *apiV1Handler) AuthRoutes(rg *gin.RouterGroup) {
 	rg.GET("/v1/me", h.GetAuth)
 	rg.PATCH("/v1/me/mail", h.UpdateMyMail)
 	rg.PATCH("/v1/me/password", h.UpdateMyPassword)
+	rg.GET("/v1/me/submission", h.GetSubmissionTemplate)
+	rg.POST("/v1/me/submission", h.UpsertSubmissionTemplate)
 	rg.GET("/v1/subjects", h.ListSubjects)
 	rg.GET("/v1/submissions", h.ListSubmissions)
 	rg.GET("/v1/submissions/:summaryId", h.GetSubmission)

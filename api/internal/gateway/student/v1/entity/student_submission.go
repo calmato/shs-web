@@ -5,7 +5,6 @@ import (
 
 	"github.com/calmato/shs-web/api/internal/gateway/entity"
 	"github.com/calmato/shs-web/api/pkg/jst"
-	"github.com/calmato/shs-web/api/proto/lesson"
 )
 
 type StudentSubmission struct {
@@ -21,13 +20,6 @@ type StudentSubmission struct {
 }
 
 type StudentSubmissions []*StudentSubmission
-
-type StudentSuggestedLesson struct {
-	SubjectID int64 `json:"subjectId"` // 授業ID
-	Total     int64 `json:"total"`     // 希望授業数
-}
-
-type StudentSuggestedLessons []*StudentSuggestedLesson
 
 type StudentSubmissionDetail struct {
 	Student               *Student                `json:"student"`               // 生徒情報
@@ -67,60 +59,6 @@ func NewStudentSubmissions(
 	for i, s := range summaries {
 		submission := submissions[s.Id] // null: 出勤不可
 		ss[i] = NewStudentSubmission(s, submission)
-	}
-	return ss
-}
-
-func NewStudentSuggestedLesson(suggestedLesson *lesson.SuggestedLesson) *StudentSuggestedLesson {
-	return &StudentSuggestedLesson{
-		SubjectID: suggestedLesson.SubjectId,
-		Total:     suggestedLesson.Total,
-	}
-}
-
-func NewStudentSuggestedLessons(submission *entity.StudentSubmission) StudentSuggestedLessons {
-	if submission == nil {
-		return StudentSuggestedLessons{}
-	}
-	ls := make(StudentSuggestedLessons, len(submission.SuggestedLessons))
-	for i := range submission.SuggestedLessons {
-		ls[i] = NewStudentSuggestedLesson(submission.SuggestedLessons[i])
-	}
-	return ls
-}
-
-func NewStudentSubmissionDetail(
-	student *entity.Student,
-	subjects entity.Subjects,
-	submission *entity.StudentSubmission,
-	lessons entity.Lessons,
-) *StudentSubmissionDetail {
-	var suggestedLessonsTotal int64
-	if submission != nil {
-		for _, l := range submission.SuggestedLessons {
-			suggestedLessonsTotal += l.Total
-		}
-	}
-	return &StudentSubmissionDetail{
-		Student:               NewStudent(student, subjects),
-		SuggestedLessons:      NewStudentSuggestedLessons(submission),
-		SuggestedLessonsTotal: suggestedLessonsTotal,
-		LessonTotal:           int64(len(lessons)),
-	}
-}
-
-func NewStudentSubmissionDetails(
-	students entity.Students,
-	subjectsMap map[string]entity.Subjects,
-	submissionMap map[string]*entity.StudentSubmission,
-	lessonsMap map[string]entity.Lessons,
-) StudentSubmissionDetails {
-	ss := make(StudentSubmissionDetails, len(students))
-	for i, student := range students {
-		subjects := subjectsMap[student.Id]
-		submission := submissionMap[student.Id]
-		lessons := lessonsMap[student.Id]
-		ss[i] = NewStudentSubmissionDetail(student, subjects, submission, lessons)
 	}
 	return ss
 }
