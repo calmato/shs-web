@@ -85,24 +85,6 @@ func TestStudentShifts(t *testing.T) {
 				},
 			},
 		},
-		{
-			name: "success to only enabled",
-			shifts: entity.Shifts{
-				{
-					Shift: &lesson.Shift{
-						Id:             1,
-						ShiftSummaryId: 1,
-						Date:           "20211226",
-						StartTime:      "1700",
-						EndTime:        "1830",
-						CreatedAt:      now.Unix(),
-						UpdatedAt:      now.Unix(),
-					},
-				},
-			},
-			studentShifts: map[int64]*entity.StudentShift{},
-			expect:        StudentShifts{},
-		},
 	}
 
 	for _, tt := range tests {
