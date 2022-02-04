@@ -137,7 +137,7 @@ func TestStudentSubmissions_MapByShiftSummaryID(t *testing.T) {
 			expect: map[int64]*StudentSubmission{
 				1: {
 					StudentID:      "studentid",
-					ShiftSummaryID: 2,
+					ShiftSummaryID: 1,
 					Decided:        true,
 					SuggestedLessons: StudentSuggestedLessons{
 						{SuggestedLesson: &lesson.SuggestedLesson{SubjectId: 1, Total: 4}},
