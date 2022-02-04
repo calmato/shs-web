@@ -128,11 +128,11 @@ func (t *StudentShiftTemplate) fillSuggestedLessonsJSON() error {
 
 func (t *StudentShiftTemplate) Proto() *lesson.StudentShiftTemplate {
 	return &lesson.StudentShiftTemplate{
-		StudentId:       t.StudentID,
-		Schedules:       t.Schedules.Proto(),
-		SuggesteLessons: t.SuggestedLessons.Proto(),
-		CreatedAt:       t.CreatedAt.Unix(),
-		UpdatedAt:       t.UpdatedAt.Unix(),
+		StudentId:        t.StudentID,
+		Schedules:        t.Schedules.Proto(),
+		SuggestedLessons: t.SuggestedLessons.Proto(),
+		CreatedAt:        t.CreatedAt.Unix(),
+		UpdatedAt:        t.UpdatedAt.Unix(),
 	}
 }
 

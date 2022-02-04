@@ -5,7 +5,6 @@ import (
 
 	"github.com/calmato/shs-web/api/internal/gateway/entity"
 	"github.com/calmato/shs-web/api/pkg/jst"
-	"github.com/calmato/shs-web/api/proto/lesson"
 )
 
 type StudentSubmission struct {
@@ -71,20 +70,17 @@ func NewStudentSubmissions(
 	return ss
 }
 
-func NewStudentSuggestedLesson(suggestedLesson *lesson.SuggestedLesson) *StudentSuggestedLesson {
+func NewStudentSuggestedLesson(suggestedLesson *entity.StudentSuggestedLesson) *StudentSuggestedLesson {
 	return &StudentSuggestedLesson{
 		SubjectID: suggestedLesson.SubjectId,
 		Total:     suggestedLesson.Total,
 	}
 }
 
-func NewStudentSuggestedLessons(submission *entity.StudentSubmission) StudentSuggestedLessons {
-	if submission == nil {
-		return StudentSuggestedLessons{}
-	}
-	ls := make(StudentSuggestedLessons, len(submission.SuggestedLessons))
-	for i := range submission.SuggestedLessons {
-		ls[i] = NewStudentSuggestedLesson(submission.SuggestedLessons[i])
+func NewStudentSuggestedLessons(lessons entity.StudentSuggestedLessons) StudentSuggestedLessons {
+	ls := make(StudentSuggestedLessons, len(lessons))
+	for i := range lessons {
+		ls[i] = NewStudentSuggestedLesson(lessons[i])
 	}
 	return ls
 }
@@ -96,14 +92,16 @@ func NewStudentSubmissionDetail(
 	lessons entity.Lessons,
 ) *StudentSubmissionDetail {
 	var suggestedLessonsTotal int64
+	suggestedLessons := StudentSuggestedLessons{}
 	if submission != nil {
 		for _, l := range submission.SuggestedLessons {
 			suggestedLessonsTotal += l.Total
 		}
+		suggestedLessons = NewStudentSuggestedLessons(submission.SuggestedLessons)
 	}
 	return &StudentSubmissionDetail{
 		Student:               NewStudent(student, subjects),
-		SuggestedLessons:      NewStudentSuggestedLessons(submission),
+		SuggestedLessons:      suggestedLessons,
 		SuggestedLessonsTotal: suggestedLessonsTotal,
 		LessonTotal:           int64(len(lessons)),
 	}

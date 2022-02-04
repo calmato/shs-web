@@ -11,3 +11,8 @@ type SubmissionResponse struct {
 type SubmissionsResponse struct {
 	Summaries entity.StudentSubmissions `json:"summaries"` // 授業希望募集概要一覧
 }
+
+type SubmissionTemplateResponse struct {
+	Schedules        entity.StudentSchedules        `json:"schedules"`        // 授業希望(曜日毎)一覧
+	SuggestedLessons entity.StudentSuggestedLessons `json:"suggestedlessons"` // 授業希望(科目毎)一覧
+}

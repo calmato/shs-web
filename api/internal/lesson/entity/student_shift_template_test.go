@@ -206,7 +206,7 @@ func TestStudentShiftTemplate_Proto(t *testing.T) {
 						},
 					},
 				},
-				SuggesteLessons: []*lesson.SuggestedLesson{
+				SuggestedLessons: []*lesson.SuggestedLesson{
 					{SubjectId: 1, Total: 4},
 				},
 				CreatedAt: now.Unix(),
