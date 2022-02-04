@@ -55,7 +55,9 @@ func NewStudentScheduleLesson(lesson *classroom.Schedule_Lesson, enabled bool) *
 	}
 }
 
-func NewStudentScheduleLessons(weekday time.Weekday, lessons []*classroom.Schedule_Lesson, keys *set.Set) StudentScheduleLessons {
+func NewStudentScheduleLessons(
+	weekday time.Weekday, lessons []*classroom.Schedule_Lesson, keys *set.Set,
+) StudentScheduleLessons {
 	res := make(StudentScheduleLessons, len(lessons))
 	for i := range lessons {
 		key := entity.LessonKey(weekday, lessons[i].StartTime, lessons[i].EndTime)

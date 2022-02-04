@@ -73,7 +73,7 @@ func NewStudentSuggestedLessons(sls []*lesson.SuggestedLesson) StudentSuggestedL
 
 func (ss StudentShiftSchedules) LessonKeys() *set.Set {
 	const maxLesson = 70 // 想定最大授業数: 10/day -> 10 * 7day = 70
-	set := set.New(70)
+	set := set.New(maxLesson)
 	for i := range ss {
 		for _, schedule := range ss[i].Lessons {
 			key := LessonKey(time.Weekday(ss[i].Weekday), schedule.StartTime, schedule.EndTime)

@@ -290,7 +290,9 @@ func (h *apiV1Handler) UpsertSubmissionTemplate(ctx *gin.Context) {
 	ctx.JSON(http.StatusNoContent, gin.H{})
 }
 
-func (h *apiV1Handler) newStudentShiftSchedulesToUpsert(schedules entity.StudentSchedules) []*lesson.StudentShiftTemplateToUpsert_Schedule {
+func (h *apiV1Handler) newStudentShiftSchedulesToUpsert(
+	schedules entity.StudentSchedules,
+) []*lesson.StudentShiftTemplateToUpsert_Schedule {
 	req := make([]*lesson.StudentShiftTemplateToUpsert_Schedule, len(schedules))
 	for i := range schedules {
 		lessons := make([]*lesson.StudentShiftTemplateToUpsert_Lesson, 0, len(schedules[i].Lessons))
@@ -312,7 +314,9 @@ func (h *apiV1Handler) newStudentShiftSchedulesToUpsert(schedules entity.Student
 	return req
 }
 
-func (h *apiV1Handler) newSuggestedLessonsToUpsert(lessons entity.StudentSuggestedLessons) []*lesson.StudentSuggestedLesson {
+func (h *apiV1Handler) newSuggestedLessonsToUpsert(
+	lessons entity.StudentSuggestedLessons,
+) []*lesson.StudentSuggestedLesson {
 	res := make([]*lesson.StudentSuggestedLesson, len(lessons))
 	for i := range lessons {
 		res[i] = &lesson.StudentSuggestedLesson{
