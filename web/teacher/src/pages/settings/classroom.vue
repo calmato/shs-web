@@ -19,7 +19,7 @@ import customParseFormat from 'dayjs/plugin/customParseFormat'
 import dayjs from '~/plugins/dayjs'
 import TheClassroomSetting from '~/components/templates/TheClassroomSetting.vue'
 import { HourForm } from '~/types/form'
-import { CommonStore } from '~/store'
+import { ClassroomStore, CommonStore } from '~/store'
 
 dayjs.extend(customParseFormat)
 
@@ -37,10 +37,10 @@ export default defineComponent({
   setup() {
     const router = useRouter()
 
-    const selectedRegularHoliday = reactive<string[]>([])
-    const boothRef: Ref<number> = ref<number>(1)
-    const weekdayHourForm = reactive<HourForm[]>([{ startAt: '17:00', endAt: '18:30' }])
-    const holidayHourForm = reactive<HourForm[]>([{ startAt: '15:30', endAt: '17:00' }])
+    const selectedRegularHoliday = reactive<number[]>(ClassroomStore.regularHoliday)
+    const boothRef: Ref<number> = ref<number>(ClassroomStore.getTotalRooms)
+    const weekdayHourForm = reactive<HourForm[]>(ClassroomStore.weekdayHourFormValue)
+    const holidayHourForm = reactive<HourForm[]>(ClassroomStore.holidayHourFormValue)
 
     const handleWeekdayHourFormAddButton = () => {
       // 一つ前のコマを基準に開始時刻と終了時刻を設定しておく
