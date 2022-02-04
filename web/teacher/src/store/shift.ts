@@ -10,12 +10,13 @@ import {
   StudentShiftsResponse,
   TeacherShiftsResponse,
   Lesson as v1Lesson,
-  ShiftSummary as V1ShiftSummary,
-  ShiftDetail as V1ShiftDetail,
-  ShiftDetailLesson as V1ShiftDetailLesson,
+  ShiftSummary as v1ShiftSummary,
+  ShiftDetail as v1ShiftDetail,
+  ShiftDetailLesson as v1ShiftDetailLesson,
   ShiftLesson as v1ShiftLesson,
   Student as v1Student,
   StudentShift as v1StudentShift,
+  Subject as v1Subject,
   SuggestedLesson as v1SuggestedLesson,
   Teacher as v1Teacher,
   TeacherShift as v1TeacherShift,
@@ -53,7 +54,7 @@ import {
 import { ErrorResponse } from '~/types/api/exception'
 import { ApiError } from '~/types/exception'
 import { ShiftLessonForm, ShiftsNewForm, ShiftSummaryEditScheduleForm } from '~/types/form'
-import { schoolTypeNum2schoolTypeString, subjectResponse2Subject } from '~/lib'
+import { schoolTypeNum2schoolTypeString, subjectResponses2Subjects } from '~/lib'
 
 const initialState: ShiftState = {
   summary: {
@@ -205,17 +206,22 @@ export default class ShiftModule extends VuexModule {
   }
 
   @Mutation
+  private setSummary(summary: ShiftSummary): void {
+    this.summary = summary
+  }
+
+  @Mutation
   private updateSummaryDecided(decided: boolean): void {
     this.summary.decided = decided
   }
 
   @Mutation
-  private setSummaries({ summaries }: { summaries: ShiftSummary[] }): void {
+  private setSummaries(summaries: ShiftSummary[]): void {
     this.summaries = summaries
   }
 
   @Mutation
-  private addSummaries({ summary }: { summary: ShiftSummary }): void {
+  private addSummaries(summary: ShiftSummary): void {
     this.summaries.unshift(summary)
   }
 
@@ -248,26 +254,27 @@ export default class ShiftModule extends VuexModule {
   }
 
   @Mutation
-  private setDetails({
-    summary,
-    details,
-    teachers,
-    students,
-    rooms,
-    lessons,
-  }: {
-    summary: ShiftSummary
-    details: ShiftDetail[]
-    teachers: TeacherShift[]
-    students: StudentShift[]
-    rooms: number
-    lessons: Lesson[]
-  }): void {
-    this.summary = summary
+  private setDetails(details: ShiftDetail[]): void {
     this.details = details
+  }
+
+  @Mutation
+  private setTeachers(teachers: TeacherShift[]): void {
     this.teachers = teachers
+  }
+
+  @Mutation
+  private setStudents(students: StudentShift[]): void {
     this.students = students
+  }
+
+  @Mutation
+  private setRooms(rooms: number): void {
     this.rooms = rooms
+  }
+
+  @Mutation
+  private setLessons(lessons: Lesson[]): void {
     this.lessons = lessons
   }
 
@@ -430,15 +437,13 @@ export default class ShiftModule extends VuexModule {
 
   @Action({})
   public factory(): void {
-    this.setSummaries({ summaries: initialState.summaries })
-    this.setDetails({
-      summary: initialState.summary,
-      details: initialState.details,
-      teachers: initialState.teachers,
-      students: initialState.students,
-      rooms: initialState.rooms,
-      lessons: initialState.lessons,
-    })
+    this.setSummary(initialState.summary)
+    this.setSummaries(initialState.summaries)
+    this.setDetails(initialState.details)
+    this.setRooms(initialState.rooms)
+    this.setTeachers(initialState.teachers)
+    this.setStudents(initialState.students)
+    this.setLessons(initialState.lessons)
     this.setTeacherSubmission(initialState.teacherSubmission)
     this.setTeacherLessons(initialState.teacherLessons)
     this.setStudentSubmission(initialState.studentSubmission)
@@ -464,10 +469,8 @@ export default class ShiftModule extends VuexModule {
     await $axios
       .$get('/v1/shifts' + query)
       .then((res: ShiftSummariesResponse) => {
-        const summaries: ShiftSummary[] = res.summaries.map((data: V1ShiftSummary): ShiftSummary => {
-          return { ...data }
-        })
-        this.setSummaries({ summaries })
+        const summaries: ShiftSummary[] = res.summaries.map((val: v1ShiftSummary): ShiftSummary => ({ ...val }))
+        this.setSummaries(summaries)
       })
       .catch((err: AxiosError) => {
         const res: ErrorResponse = { ...err.response?.data }
@@ -537,24 +540,11 @@ export default class ShiftModule extends VuexModule {
     await $axios
       .$post('/v1/shifts', req)
       .then((res: ShiftDetailsResponse) => {
-        const summary: ShiftSummary = { ...res.summary }
+        const { details } = convertShiftDetails(res.shifts)
 
-        const details: ShiftDetail[] = res.shifts.map((shift: V1ShiftDetail): ShiftDetail => {
-          const lessons: ShiftDetailLesson[] = shift.lessons.map((lesson: V1ShiftDetailLesson): ShiftDetailLesson => {
-            return { ...lesson }
-          })
-          return { ...shift, lessons }
-        })
-
-        this.addSummaries({ summary })
-        this.setDetails({
-          summary,
-          details,
-          teachers: initialState.teachers,
-          students: initialState.students,
-          rooms: initialState.rooms,
-          lessons: initialState.lessons,
-        })
+        this.addSummaries({ ...res.summary })
+        this.setSummary({ ...res.summary })
+        this.setDetails(details)
       })
       .catch((err: AxiosError) => {
         const res: ErrorResponse = { ...err.response?.data }
@@ -580,42 +570,14 @@ export default class ShiftModule extends VuexModule {
     await $axios
       .$get(`/v1/shifts/${summaryId}`)
       .then((res: ShiftDetailsResponse) => {
-        const summary: ShiftSummary = { ...res.summary }
-        const rooms: number = res.rooms
+        const { details } = convertShiftDetails(res.shifts)
 
-        const details: ShiftDetail[] = res.shifts.map((shift: V1ShiftDetail): ShiftDetail => {
-          const lessons: ShiftDetailLesson[] = shift.lessons.map((lesson: V1ShiftDetailLesson): ShiftDetailLesson => {
-            return { ...lesson }
-          })
-          return { ...shift, lessons }
-        })
-        const teachers: TeacherShift[] = res.teachers.map((val: v1TeacherShift): TeacherShift => {
-          const name: string = getName(val.teacher.lastName, val.teacher.firstName)
-          const nameKana: string = getName(val.teacher.lastNameKana, val.teacher.firstNameKana)
-          return { id: val.teacher.id, name, nameKana, lessonTotal: val.lessonTotal }
-        })
-        const students: StudentShift[] = res.students.map((val: v1StudentShift): StudentShift => {
-          const name: string = getName(val.student.lastName, val.student.firstName)
-          const nameKana: string = getName(val.student.lastNameKana, val.student.firstNameKana)
-          const suggestedLessons: SuggestedLesson[] = val.suggestedLessons.map(
-            (lesson: v1SuggestedLesson): SuggestedLesson => {
-              return { ...lesson }
-            }
-          )
-          return {
-            id: val.student.id,
-            name,
-            nameKana,
-            suggestedLessons,
-            suggestedLessonsTotal: val.suggestedLessonsTotal,
-            lessonTotal: val.lessonTotal,
-          }
-        })
-        const lessons: Lesson[] = res.lessons.map((val: v1Lesson): Lesson => {
-          return { ...val }
-        })
-
-        this.setDetails({ summary, details, teachers, students, rooms, lessons })
+        this.setSummary({ ...res.summary })
+        this.setDetails(details)
+        this.setRooms(res.rooms)
+        this.setTeachers(convertTeacherShifts(res.teachers))
+        this.setStudents(convertStudentShifts(res.students))
+        this.setLessons(res.lessons.map((val: v1Lesson): Lesson => ({ ...val })))
       })
       .catch((err: AxiosError) => {
         const res: ErrorResponse = { ...err.response?.data }
@@ -634,17 +596,17 @@ export default class ShiftModule extends VuexModule {
     await $axios
       .$get(`/v1/shifts/${summaryId}/teachers/${teacherId}`)
       .then((res: TeacherShiftsResponse) => {
-        let submissionTotal: number = 0
         const summary: TeacherShiftSummary = { ...res.summary }
-        const shifts: ShiftDetail[] = res.shifts.map((shift: V1ShiftDetail): ShiftDetail => {
-          const lessons: ShiftDetailLesson[] = shift.lessons.map((lesson: V1ShiftDetailLesson): ShiftDetailLesson => {
-            return { ...lesson }
-          })
-          submissionTotal += lessons.length
-          return { ...shift, lessons }
-        })
+        const { details, total } = convertShiftDetails(res.shifts)
 
-        this.setTeacherSubmission({ id: teacherId, name: '', nameKana: '', summary, shifts, submissionTotal })
+        this.setTeacherSubmission({
+          id: teacherId,
+          name: '',
+          nameKana: '',
+          summary,
+          shifts: details,
+          submissionTotal: total,
+        })
       })
       .catch((err: AxiosError) => {
         const res: ErrorResponse = { ...err.response?.data }
@@ -663,29 +625,17 @@ export default class ShiftModule extends VuexModule {
     await $axios
       .$get(`/v1/shifts/${summaryId}/students/${studentId}`)
       .then((res: StudentShiftsResponse) => {
-        let submissionTotal: number = 0
         const summary: StudentShiftSummary = { ...res.summary }
-        const shifts: ShiftDetail[] = res.shifts.map((shift: V1ShiftDetail): ShiftDetail => {
-          const lessons: ShiftDetailLesson[] = shift.lessons.map((lesson: V1ShiftDetailLesson): ShiftDetailLesson => {
-            return { ...lesson }
-          })
-          submissionTotal += lessons.length
-          return { ...shift, lessons }
-        })
-        const suggestedLessons: SuggestedLesson[] = res.suggestedLessons.map(
-          (lesson: v1SuggestedLesson): SuggestedLesson => {
-            return { ...lesson }
-          }
-        )
+        const { details, total } = convertShiftDetails(res.shifts)
 
         this.setStudentSubmission({
           id: studentId,
           name: '',
           nameKana: '',
           summary,
-          shifts,
-          suggestedLessons,
-          submissionTotal,
+          shifts: details,
+          suggestedLessons: convertSuggestedLessons(res.suggestedLessons),
+          submissionTotal: total,
         })
       })
       .catch((err: AxiosError) => {
@@ -717,23 +667,12 @@ export default class ShiftModule extends VuexModule {
           return { ...lesson }
         })
         const teachers: Teacher[] = res.teachers.map((teacher: v1Teacher): Teacher => {
-          const subjects = teacher.subjects
-            ? {
-                小学校: teacher.subjects[1].map((i) => subjectResponse2Subject(i)),
-                中学校: teacher.subjects[2].map((i) => subjectResponse2Subject(i)),
-                高校: teacher.subjects[3].map((i) => subjectResponse2Subject(i)),
-                その他: [],
-              }
-            : initializeSubjects()
-
+          const subjects = convertSubjectsMap(teacher.subjects)
           return { ...teacher, subjects }
         })
         const students: Student[] = res.students.map((student: v1Student): Student => {
           const type: SchoolType = schoolTypeNum2schoolTypeString(student.schoolType)
-          const subjects: Subject[] = student.subjects.map((subject): Subject => {
-            const schoolType: SchoolType = schoolTypeNum2schoolTypeString(subject.schoolType)
-            return { ...subject, schoolType }
-          })
+          const subjects: Subject[] = subjectResponses2Subjects(student.subjects)
           return { ...student, type, subjects }
         })
 
@@ -764,9 +703,7 @@ export default class ShiftModule extends VuexModule {
       .$get(`/v1/shifts/${summaryId}/lessons?teacherId=${teacherId}`)
       .then((res: ShiftLessonsResponse) => {
         const total: number = res.total
-        const lessons: ShiftLesson[] = res.lessons.map((lesson: v1Lesson): ShiftLesson => {
-          return { ...lesson }
-        })
+        const lessons: ShiftLesson[] = res.lessons.map((lesson: v1Lesson): ShiftLesson => ({ ...lesson }))
 
         this.setTeacherLessons({ current: teacherId, lessons, total })
       })
@@ -785,9 +722,7 @@ export default class ShiftModule extends VuexModule {
       .$get(`/v1/shifts/${summaryId}/lessons?studentId=${studentId}`)
       .then((res: ShiftLessonsResponse) => {
         const total: number = res.total
-        const lessons: ShiftLesson[] = res.lessons.map((lesson: v1Lesson): ShiftLesson => {
-          return { ...lesson }
-        })
+        const lessons: ShiftLesson[] = res.lessons.map((lesson: v1Lesson): ShiftLesson => ({ ...lesson }))
 
         this.setStudentLessons({ current: studentId, lessons, total })
       })
@@ -870,11 +805,58 @@ function replaceDate(date: string, oldVal: string, newVal: string): string {
   return date.replaceAll(oldVal, newVal)
 }
 
-function initializeSubjects(): SubjectsMap {
-  return {
-    小学校: [],
-    中学校: [],
-    高校: [],
-    その他: [],
-  }
+function convertSubjectsMap(subjects: { [key: number]: v1Subject[] }): SubjectsMap {
+  return subjects
+    ? {
+        小学校: subjectResponses2Subjects(subjects[1]),
+        中学校: subjectResponses2Subjects(subjects[2]),
+        高校: subjectResponses2Subjects(subjects[3]),
+        その他: [],
+      }
+    : {
+        小学校: [],
+        中学校: [],
+        高校: [],
+        その他: [],
+      }
+}
+
+function convertTeacherShifts(teachers: v1TeacherShift[]): TeacherShift[] {
+  return teachers.map(
+    (val: v1TeacherShift): TeacherShift => ({
+      id: val.teacher.id,
+      name: getName(val.teacher.lastName, val.teacher.firstName),
+      nameKana: getName(val.teacher.lastNameKana, val.teacher.firstNameKana),
+      lessonTotal: val.lessonTotal,
+    })
+  )
+}
+
+function convertStudentShifts(students: v1StudentShift[]): StudentShift[] {
+  return students.map(
+    (val: v1StudentShift): StudentShift => ({
+      id: val.student.id,
+      name: getName(val.student.lastName, val.student.firstName),
+      nameKana: getName(val.student.lastNameKana, val.student.firstNameKana),
+      suggestedLessons: convertSuggestedLessons(val.suggestedLessons),
+      suggestedLessonsTotal: val.suggestedLessonsTotal,
+      lessonTotal: val.lessonTotal,
+    })
+  )
+}
+
+function convertSuggestedLessons(lessons: v1SuggestedLesson[]): SuggestedLesson[] {
+  return lessons.map((lesson: v1SuggestedLesson): SuggestedLesson => ({ ...lesson }))
+}
+
+function convertShiftDetails(details: v1ShiftDetail[]): { details: ShiftDetail[]; total: number } {
+  let submissionTotal = 0
+  const res: ShiftDetail[] = details.map((detail: v1ShiftDetail): ShiftDetail => {
+    const lessons: ShiftDetailLesson[] = detail.lessons.map(
+      (lesson: v1ShiftDetailLesson): ShiftDetailLesson => ({ ...lesson })
+    )
+    submissionTotal += lessons.length
+    return { ...detail, lessons }
+  })
+  return { details: res, total: submissionTotal }
 }
