@@ -42,9 +42,7 @@ describe('store/classroom', () => {
         })
 
         it('return resolve', async () => {
-          await expect(
-            ClassroomStore.getTotalRoomsByApi()
-          ).resolves.toBeUndefined()
+          await expect(ClassroomStore.getTotalRoomsByApi()).resolves.toBeUndefined()
         })
 
         it('change state', async () => {
@@ -79,9 +77,7 @@ describe('store/classroom', () => {
         })
 
         it('return resolve', async () => {
-          await expect(
-            ClassroomStore.getSchedulesByApi()
-          ).resolves.toBeUndefined()
+          await expect(ClassroomStore.getSchedulesByApi()).resolves.toBeUndefined()
         })
 
         it('change state', async () => {
