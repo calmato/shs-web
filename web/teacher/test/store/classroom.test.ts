@@ -2,6 +2,7 @@ import { refresh, setSafetyMode, setup } from "~~/test//helpers/store-helper";
 import { ClassroomStore } from "~/store";
 import { ErrorResponse } from "~/types/api/exception";
 import { ApiError } from "~/types/exception";
+import { Schedule } from "~/types/api/v1";
 
 describe("store/classroom", () => {
   beforeEach(() => {
@@ -67,6 +68,93 @@ describe("store/classroom", () => {
           } catch (e) {
             expect(e).toEqual(err);
           }
+        });
+      });
+    });
+
+    describe("getSchedulesByApi", () => {
+      describe("success", () => {
+        beforeEach(() => {
+          setSafetyMode(true);
+        });
+
+        it("return resolve", async () => {
+          await expect(
+            ClassroomStore.getSchedulesByApi()
+          ).resolves.toBeUndefined();
+        });
+
+        it("change state", async () => {
+          const expectedSchedules: Schedule[] = [
+            {
+              weekday: 0,
+              isClosed: false,
+              lessons: [
+                { startTime: "1530", endTime: "1700" },
+                { startTime: "1700", endTime: "1830" },
+                { startTime: "1830", endTime: "2000" },
+                { startTime: "2000", endTime: "2130" },
+              ],
+            },
+            {
+              weekday: 1,
+              isClosed: false,
+              lessons: [
+                { startTime: "1700", endTime: "1830" },
+                { startTime: "1830", endTime: "2000" },
+                { startTime: "2000", endTime: "2130" },
+              ],
+            },
+            {
+              weekday: 2,
+              isClosed: false,
+              lessons: [
+                { startTime: "1700", endTime: "1830" },
+                { startTime: "1830", endTime: "2000" },
+                { startTime: "2000", endTime: "2130" },
+              ],
+            },
+            {
+              weekday: 3,
+              isClosed: false,
+              lessons: [
+                { startTime: "1700", endTime: "1830" },
+                { startTime: "1830", endTime: "2000" },
+                { startTime: "2000", endTime: "2130" },
+              ],
+            },
+            {
+              weekday: 4,
+              isClosed: false,
+              lessons: [
+                { startTime: "1700", endTime: "1830" },
+                { startTime: "1830", endTime: "2000" },
+                { startTime: "2000", endTime: "2130" },
+              ],
+            },
+            {
+              weekday: 5,
+              isClosed: false,
+              lessons: [
+                { startTime: "1700", endTime: "1830" },
+                { startTime: "1830", endTime: "2000" },
+                { startTime: "2000", endTime: "2130" },
+              ],
+            },
+            {
+              weekday: 6,
+              isClosed: false,
+              lessons: [
+                { startTime: "1530", endTime: "1700" },
+                { startTime: "1700", endTime: "1830" },
+                { startTime: "1830", endTime: "2000" },
+                { startTime: "2000", endTime: "2130" },
+              ],
+            },
+          ];
+
+          await ClassroomStore.getSchedulesByApi();
+          expect(ClassroomStore.getSchedules).toEqual(expectedSchedules);
         });
       });
     });
