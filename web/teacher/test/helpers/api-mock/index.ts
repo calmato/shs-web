@@ -3,6 +3,7 @@ import * as LessonStore from './lesson'
 import * as ShiftStore from './shift'
 import * as SubmissionStore from './submission'
 import * as UserStore from './user'
+import * as ClassroomStore from './classroom'
 import { ErrorResponse } from '~/types/api/exception'
 
 const err: { response: { data: ErrorResponse } } = {
@@ -25,6 +26,8 @@ export default {
     ...SubmissionStore.listTeacherShifts,
     ...UserStore.listTeachers,
     ...UserStore.showTeacher,
+    ...ClassroomStore.getTotalRoomsByApi,
+    ...ClassroomStore.getSchedulesByApi,
   },
   post: {
     ...ShiftStore.createShifts,

@@ -63,6 +63,12 @@ export default class ClassroomModule extends VuexModule {
     this.schedules = schedules
   }
 
+  @Action({})
+  public factory(): void {
+    this.setTotalRooms(initialState.totalRooms)
+    this.setSchedules(initialState.schedules)
+  }
+
   @Action({ rawError: true })
   public async getTotalRoomsByApi(): Promise<void> {
     try {
