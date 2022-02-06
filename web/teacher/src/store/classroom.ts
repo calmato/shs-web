@@ -96,4 +96,18 @@ export default class ClassroomModule extends VuexModule {
       throw new Error('internal server error')
     }
   }
+
+  @Action({ rawError: true })
+  public async updateTotalRooms(payload: { total: number }): Promise<void> {
+    try {
+      await $axios.$patch('/v1/rooms', payload)
+      await this.getTotalRoomsByApi()
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        const res: ErrorResponse = { ...err.response?.data }
+        throw new ApiError(res.status, res.message, res)
+      }
+      throw new Error('internal server error')
+    }
+  }
 }

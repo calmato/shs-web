@@ -10,6 +10,10 @@
       @click:addHolidayHourForm="handleHolidayHourFormAddButton"
       @click:removeHolidayHourForm="handleHolidayHourFormRemoveButton"
     />
+    <div class="d-flex">
+      <v-spacer />
+      <v-btn color="primary" @click="handleSubmitButton">保存</v-btn>
+    </div>
   </v-container>
 </template>
 
@@ -75,6 +79,10 @@ export default defineComponent({
       emit('click:removeHolidayHourForm', id)
     }
 
+    const handleSubmitButton = () => {
+      emit('click:submit')
+    }
+
     return {
       regularHolidayFormData,
       boothFormData,
@@ -83,6 +91,7 @@ export default defineComponent({
       handleWeekdayHourFormRemoveButton,
       handleHolidayHourFormAddButton,
       handleHolidayHourFormRemoveButton,
+      handleSubmitButton,
     }
   },
 })
