@@ -4,6 +4,7 @@ import { $axios } from '~/plugins/axios'
 import {
   TeachersResponse,
   Teacher as V1Teacher,
+  Student as V1Student,
   CreateTeacherRequest,
   TeacherResponse,
   UpdateTeacherSubjectsRequest,
@@ -25,7 +26,12 @@ import {
   TeacherUpdateMailForm,
   TeacherUpdatePasswordForm,
 } from '~/types/form'
-import { schoolTypeString2schoolTypeNum, subjectResponse2Subject } from '~/lib'
+import {
+  schoolTypeNum2schoolTypeString,
+  schoolTypeString2schoolTypeNum,
+  subjectResponse2Subject,
+  subjectResponses2Subjects,
+} from '~/lib'
 
 const initialState: UserState = {
   students: [
@@ -59,6 +65,7 @@ const initialState: UserState = {
   },
   teachers: [],
   teachersTotal: 0,
+  studentsTotal: 0,
 }
 
 @Module({
@@ -71,6 +78,7 @@ export default class UserModule extends VuexModule {
   private teacher: UserState['teacher'] = initialState.teacher
   private teachers: UserState['teachers'] = initialState.teachers
   private teachersTotal: UserState['teachersTotal'] = initialState.teachersTotal
+  private studentsTotal: UserState['studentsTotal'] = initialState.studentsTotal
 
   public get getStudents(): Student[] {
     return this.students
@@ -105,12 +113,13 @@ export default class UserModule extends VuexModule {
   }
 
   @Mutation
-  private setStudents(students: Student[]): void {
+  private setStudents({ students, total }: { students: Student[]; total: number }): void {
     this.students = students.map((student: Student): Student => {
       const name = getName(student.lastName, student.firstName)
       const nameKana = getName(student.lastNameKana, student.firstNameKana)
       return { ...student, name, nameKana }
     })
+    this.studentsTotal = total
   }
 
   @Mutation
@@ -152,7 +161,7 @@ export default class UserModule extends VuexModule {
 
   @Action({})
   public factory(): void {
-    this.setStudents(initialState.students)
+    this.setStudents({ students: initialState.students, total: initialState.studentsTotal })
     this.setTeachers({ teachers: initialState.teachers, total: initialState.teachersTotal })
   }
 
@@ -204,10 +213,20 @@ export default class UserModule extends VuexModule {
       query = `?limit=${limit}&offset=${offset}`
     }
 
-    await $axios.$get('/v1/students' + query).catch((err: AxiosError) => {
-      const res: ErrorResponse = { ...err.response?.data }
-      throw new ApiError(res.status, res.message, res)
-    })
+    await $axios
+      .$get('/v1/students' + query)
+      .then((res: StudentsResponse) => {
+        const students: Student[] = res.students.map((student) => {
+          const subjects = subjectResponses2Subjects(student.subjects)
+          const schoolType = schoolTypeNum2schoolTypeString(student.schoolType)
+          return { ...student, subjects, schoolType }
+        })
+        this.setStudents({ students, total: res.total })
+      })
+      .catch((err: AxiosError) => {
+        const res: ErrorResponse = { ...err.response?.data }
+        throw new ApiError(res.status, res.message, res)
+      })
   }
 
   @Action({ rawError: true })

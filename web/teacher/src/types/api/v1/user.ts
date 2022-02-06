@@ -1,3 +1,5 @@
+import { SchoolType } from '~/types/store'
+
 /**
  * ---------------------------
  * Request
@@ -65,7 +67,7 @@ export interface Student {
   lastNameKana: string
   firstNameKana: string
   mail: string
-  schoolType: 1 | 2 | 3
+  schoolType: number
   grade: number
   subjects: Subject[]
   createdAt: string
@@ -118,6 +120,6 @@ export interface TeachersResponse {
 }
 
 export interface StudentsResponse {
-  teachers: Student[]
+  students: Student[]
   total: number
 }

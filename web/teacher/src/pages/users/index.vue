@@ -55,6 +55,9 @@ export default defineComponent({
     const teachersPage = ref<number>(1)
     const teachersItemsPerPage = ref<number>(10)
 
+    const studentsPage = ref<number>(1)
+    const studentsItemsPerPage = ref<number>(10)
+
     const editTeacherElementarySchoolForm = reactive<TeacherEditSubjectForm>({
       params: TeacherEditSubjectForElementarySchoolParams,
       options: TeacherEditSubjectForElementarySchoolOptions,
@@ -91,8 +94,20 @@ export default defineComponent({
       await listTeachers()
     })
 
+    watch(studentsPage, async () => {
+      await listStudents()
+    })
+
+    watch(studentsItemsPerPage, async () => {
+      await listStudents()
+    })
+
     useAsync(async () => {
       await listTeachers()
+    })
+
+    useAsync(async () => {
+      await listStudents()
     })
 
     async function listTeachers(): Promise<void> {
@@ -102,6 +117,21 @@ export default defineComponent({
       const offset: number = (teachersPage.value - 1) * limit
 
       await UserStore.listTeachers({ limit, offset })
+        .catch((err: Error) => {
+          console.log('feiled to list teachers', err)
+        })
+        .finally(() => {
+          CommonStore.endConnection()
+        })
+    }
+
+    async function listStudents(): Promise<void> {
+      CommonStore.startConnection()
+
+      const limit: number = studentsItemsPerPage.value
+      const offset: number = (studentsPage.value - 1) * limit
+
+      await UserStore.listStudents({ limit, offset })
         .catch((err: Error) => {
           console.log('feiled to list teachers', err)
         })
