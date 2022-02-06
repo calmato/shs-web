@@ -50,16 +50,6 @@ func NewSubjects(subjects entity.Subjects) Subjects {
 	return ss
 }
 
-func (ss Subjects) FiterBySchoolType(schoolType SchoolType) Subjects {
-	res := make(Subjects, 0, len(ss))
-	for i := range ss {
-		if schoolType == ss[i].SchoolType {
-			res = append(res, ss[i])
-		}
-	}
-	return res
-}
-
 func NewSchoolTypeFromClassroom(schoolType classroom.SchoolType) SchoolType {
 	switch schoolType {
 	case classroom.SchoolType_SCHOOL_TYPE_ELEMENTARY_SCHOOL:

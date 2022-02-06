@@ -36,10 +36,9 @@ func (h *apiV1Handler) GetAuth(ctx *gin.Context) {
 		return
 	}
 
-	schoolType := entity.NewSchoolTypeFromUser(student.SchoolType)
 	res := &response.AuthResponse{
 		Auth:     entity.NewAuth(student),
-		Subjects: entity.NewSubjects(subjects).FiterBySchoolType(schoolType),
+		Subjects: entity.NewSubjects(subjects),
 	}
 	ctx.JSON(http.StatusOK, res)
 }
