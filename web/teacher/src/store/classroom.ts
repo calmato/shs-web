@@ -1,8 +1,15 @@
 import { Action, Module, Mutation, VuexModule } from 'vuex-module-decorators'
 import axios from 'axios'
 import { $axios } from '~/plugins/axios'
-import { Schedule, ScheduleResponse, TotalRoomsResponse } from '~/types/api/v1'
-import { ClassroomState } from '~/types/store'
+import {
+  LessonTime,
+  Schedule,
+  ScheduleRequest,
+  ScheduleResponse,
+  TotalRoomsRequest,
+  TotalRoomsResponse,
+} from '~/types/api/v1'
+import { ClassroomState, UpdateSchedulesPayload } from '~/types/store'
 import { ErrorResponse } from '~/types/api/exception'
 import { ApiError } from '~/types/exception'
 import { HourForm } from '~/types/form'
@@ -20,6 +27,13 @@ function extractHourFormBySchedule(schedule: Schedule): HourForm[] {
       endAt: dayjs(item.endTime, 'HHmm').format('HH:mm'),
     }
   })
+}
+
+function hourForm2LessonTime(hourForm: HourForm): LessonTime {
+  return {
+    startTime: dayjs(hourForm.startAt, 'HH:mm').format('HHmm'),
+    endTime: dayjs(hourForm.endAt, 'HH:mm').format('HHmm'),
+  }
 }
 
 @Module({
@@ -98,10 +112,39 @@ export default class ClassroomModule extends VuexModule {
   }
 
   @Action({ rawError: true })
-  public async updateTotalRooms(payload: { total: number }): Promise<void> {
+  public async updateTotalRooms(payload: TotalRoomsRequest): Promise<void> {
     try {
       await $axios.$patch('/v1/rooms', payload)
       await this.getTotalRoomsByApi()
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        const res: ErrorResponse = { ...err.response?.data }
+        throw new ApiError(res.status, res.message, res)
+      }
+      throw new Error('internal server error')
+    }
+  }
+
+  @Action({ rawError: true })
+  public async updateSchedules(payload: UpdateSchedulesPayload): Promise<void> {
+    try {
+      const HOLIDAY: number[] = [0, 6]
+      const { regularHoliday, weekdayHourForm, holidayHourForm } = payload
+
+      const updateSchedules: ScheduleRequest = {
+        schedules: this.schedules.map((item) => {
+          return {
+            weekday: item.weekday,
+            isClosed: regularHoliday.includes(item.weekday),
+            lessons: HOLIDAY.includes(item.weekday)
+              ? holidayHourForm.map((i) => hourForm2LessonTime(i))
+              : weekdayHourForm.map((i) => hourForm2LessonTime(i)),
+          }
+        }),
+      }
+
+      await $axios.$patch('/v1/schedules', updateSchedules)
+      await this.getSchedulesByApi()
     } catch (err) {
       if (axios.isAxiosError(err)) {
         const res: ErrorResponse = { ...err.response?.data }
