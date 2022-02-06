@@ -32,7 +32,7 @@
       </v-chip>
     </div>
 
-    <v-dialog v-model="isOpen" @click:outside="handleDialoOutsideClick">
+    <v-dialog v-model="isOpen" @click:outside="handleDialogOutsideClick">
       <v-card>
         <v-card-title class="primary white--text">
           {{ `開講科目${dialogType === '新規作成' ? '追加' : '編集'}（${formData.schoolType}）` }}
