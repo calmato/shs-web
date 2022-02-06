@@ -1,5 +1,3 @@
-import { SchoolType } from '~/types/store'
-
 /**
  * ---------------------------
  * Request

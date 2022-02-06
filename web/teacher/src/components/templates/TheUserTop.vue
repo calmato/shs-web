@@ -60,7 +60,15 @@
             </v-btn>
           </v-col>
           <v-col cols="12">
-            <the-student-list :items="students" :loading="loading" />
+            <the-student-list
+              :items="students"
+              :total="studentsTotal"
+              :page="studentsPage"
+              :items-per-page="studentsItemsPerPage"
+              :loading="loading"
+              @update:page="$emit('update:students-page', $event)"
+              @update:items-per-page="$emit('update:students-items-per-page', $event)"
+            />
           </v-col>
         </v-row>
       </v-tab-item>
@@ -116,6 +124,18 @@ export default defineComponent({
     students: {
       type: Array as PropType<Student[]>,
       default: () => [],
+    },
+    studentsTotal: {
+      type: Number,
+      default: 0,
+    },
+    studentsPage: {
+      type: Number,
+      default: 1,
+    },
+    studentsItemsPerPage: {
+      type: Number,
+      default: 10,
     },
     teacher: {
       type: Object as PropType<Teacher>,

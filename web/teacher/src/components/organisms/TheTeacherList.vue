@@ -13,7 +13,7 @@
     @click:row="onClick"
   >
     <template #[`item.role`]="{ item }">
-      <v-chip :color="getRoleColor(item.role)" dark>
+      <v-chip :color="getRoleColor(item.role)" dark small>
         {{ getRole(item.role) }}
       </v-chip>
     </template>

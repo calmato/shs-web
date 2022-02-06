@@ -4,7 +4,6 @@ import { $axios } from '~/plugins/axios'
 import {
   TeachersResponse,
   Teacher as V1Teacher,
-  Student as V1Student,
   CreateTeacherRequest,
   TeacherResponse,
   UpdateTeacherSubjectsRequest,
@@ -44,7 +43,7 @@ const initialState: UserState = {
       lastNameKana: 'はまだ',
       firstNameKana: 'じろう',
       mail: 'student-001@calmato.jp',
-      type: '小学校',
+      schoolType: '小学校',
       grade: 2,
       subjects: [],
       createdAt: '',
@@ -112,6 +111,10 @@ export default class UserModule extends VuexModule {
     return this.teachersTotal
   }
 
+  public get getStudentsTotal(): number {
+    return this.studentsTotal
+  }
+
   @Mutation
   private setStudents({ students, total }: { students: Student[]; total: number }): void {
     this.students = students.map((student: Student): Student => {
@@ -145,6 +148,14 @@ export default class UserModule extends VuexModule {
     const nameKana = getName(teacher.lastNameKana, teacher.firstNameKana)
     this.teachers.push({ ...teacher, name, nameKana })
     this.teachersTotal += 1
+  }
+
+  @Mutation
+  private addStudent(student: Student): void {
+    const name = getName(student.lastName, student.firstName)
+    const nameKana = getName(student.lastNameKana, student.firstNameKana)
+    this.students.push({ ...student, name, nameKana })
+    this.studentsTotal += 1
   }
 
   @Mutation
@@ -263,7 +274,12 @@ export default class UserModule extends VuexModule {
     await $axios
       .$post('/v1/students', req)
       .then((res: StudentResponse) => {
-        console.log(res)
+        const student: Student = {
+          ...res,
+          schoolType: schoolTypeNum2schoolTypeString(res.schoolType),
+          subjects: subjectResponses2Subjects(res.subjects),
+        }
+        this.addStudent(student)
       })
       .catch((err: AxiosError) => {
         const res: ErrorResponse = { ...err.response?.data }
