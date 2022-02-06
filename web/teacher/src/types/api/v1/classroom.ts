@@ -16,3 +16,11 @@ export interface ScheduleResponse {
 export interface TotalRoomsResponse {
   total: number
 }
+
+export interface ScheduleRequest {
+  schedules: Schedule[]
+}
+
+export interface TotalRoomsRequest {
+  total: number
+}

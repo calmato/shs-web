@@ -9,12 +9,13 @@
     @click:removeWeekdayHourForm="handleWeekdayHourFormRemoveButton"
     @click:addHolidayHourForm="handleHolidayHourFormAddButton"
     @click:removeHolidayHourForm="handleHolidayHourFormRemoveButton"
+    @click:submit="handleSubmitButton"
     @onClickBackButton="handleBackButton"
   />
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, ref, Ref, useRouter } from '@nuxtjs/composition-api'
+import { computed, ComputedRef, defineComponent, reactive, ref, Ref, useRouter } from '@nuxtjs/composition-api'
 import customParseFormat from 'dayjs/plugin/customParseFormat'
 import dayjs from '~/plugins/dayjs'
 import TheClassroomSetting from '~/components/templates/TheClassroomSetting.vue'
@@ -34,6 +35,15 @@ export default defineComponent({
     TheClassroomSetting,
   },
 
+  beforeRouteLeave(_to, _from, next) {
+    if (!this.$data.isChanged) {
+      next()
+      return
+    }
+    const answer = window.confirm('保存されていない変更がありますが、よろしいですか？')
+    answer ? next() : next(false)
+  },
+
   setup() {
     const router = useRouter()
 
@@ -41,6 +51,10 @@ export default defineComponent({
     const boothRef: Ref<number> = ref<number>(ClassroomStore.getTotalRooms)
     const weekdayHourForm = reactive<HourForm[]>(ClassroomStore.weekdayHourFormValue)
     const holidayHourForm = reactive<HourForm[]>(ClassroomStore.holidayHourFormValue)
+
+    const isChanged: ComputedRef<boolean> = computed(() => {
+      return boothRef.value !== ClassroomStore.getTotalRooms
+    })
 
     const handleWeekdayHourFormAddButton = () => {
       // 一つ前のコマを基準に開始時刻と終了時刻を設定しておく
@@ -94,16 +108,32 @@ export default defineComponent({
       }
     }
 
+    const handleSubmitButton = async () => {
+      try {
+        await ClassroomStore.updateTotalRooms({ total: boothRef.value })
+        await ClassroomStore.updateSchedules({
+          regularHoliday: selectedRegularHoliday,
+          weekdayHourForm,
+          holidayHourForm,
+        })
+        CommonStore.showSuccessInSnackbar('更新しました。')
+      } catch (err) {
+        CommonStore.showErrorInSnackbar(err)
+      }
+    }
+
     return {
       selectedRegularHoliday,
       boothRef,
       weekdayHourForm,
       holidayHourForm,
+      isChanged,
       handleBackButton,
       handleWeekdayHourFormAddButton,
       handleWeekdayHourFormRemoveButton,
       handleHolidayHourFormAddButton,
       handleHolidayHourFormRemoveButton,
+      handleSubmitButton,
     }
   },
 })

@@ -2,8 +2,9 @@ import { refresh, setIsAxiosMockValue, setSafetyMode, setup } from '~~/test//hel
 import { ClassroomStore } from '~/store'
 import { ErrorResponse } from '~/types/api/exception'
 import { ApiError } from '~/types/exception'
-import { Schedule } from '~/types/api/v1'
+import { Schedule, TotalRoomsRequest } from '~/types/api/v1'
 import { HourForm } from '~/types/form'
+import { UpdateSchedulesPayload } from '~/types/store'
 
 describe('store/classroom', () => {
   beforeEach(() => {
@@ -213,6 +214,182 @@ describe('store/classroom', () => {
 
           try {
             await ClassroomStore.getSchedulesByApi()
+          } catch (e) {
+            expect(e).toEqual(err)
+          }
+        })
+      })
+    })
+
+    describe('updateTotalRooms', () => {
+      describe('success', () => {
+        beforeEach(() => {
+          setSafetyMode(true)
+        })
+
+        afterEach(() => {
+          jest.clearAllMocks()
+        })
+
+        it('return resolve', async () => {
+          const payload: TotalRoomsRequest = { total: 7 }
+          await expect(ClassroomStore.updateTotalRooms(payload)).resolves.toBeUndefined()
+        })
+
+        it('called getTotalRoomsByApi', async () => {
+          const mockGetTotalRoomsByApi = jest.spyOn(ClassroomStore, 'getTotalRoomsByApi')
+
+          const payload: TotalRoomsRequest = { total: 7 }
+          await expect(ClassroomStore.updateTotalRooms(payload)).resolves.toBeUndefined()
+          expect(mockGetTotalRoomsByApi).toBeCalled()
+          expect(mockGetTotalRoomsByApi).toBeCalledTimes(1)
+        })
+      })
+
+      describe('failure', () => {
+        beforeEach(() => {
+          setSafetyMode(false)
+          setIsAxiosMockValue(true)
+        })
+
+        it('return reject', async () => {
+          const invalidPayload: TotalRoomsRequest = { total: -1 }
+
+          const err = new ApiError(400, 'api error', {
+            status: 400,
+            message: 'api error',
+            details: 'some error',
+          } as ErrorResponse)
+
+          try {
+            await ClassroomStore.updateTotalRooms(invalidPayload)
+          } catch (e) {
+            expect(e).toEqual(err)
+          }
+        })
+
+        it('throw internal server error', async () => {
+          setIsAxiosMockValue(false)
+
+          const payload: TotalRoomsRequest = { total: 7 }
+          const err = new Error('internal server error')
+          try {
+            await ClassroomStore.updateTotalRooms(payload)
+          } catch (e) {
+            expect(e).toEqual(err)
+          }
+        })
+      })
+    })
+
+    describe('updateSchedules', () => {
+      describe('success', () => {
+        beforeEach(() => {
+          setSafetyMode(true)
+        })
+
+        afterEach(() => {
+          jest.clearAllMocks()
+        })
+
+        it('return resolve', async () => {
+          const payload: UpdateSchedulesPayload = {
+            regularHoliday: [1],
+            holidayHourForm: [
+              { startAt: '15:30', endAt: '17:00' },
+              { startAt: '17:00', endAt: '18:30' },
+              { startAt: '18:30', endAt: '20:00' },
+              { startAt: '20:00', endAt: '21:30' },
+            ],
+            weekdayHourForm: [
+              { startAt: '17:00', endAt: '18:30' },
+              { startAt: '18:30', endAt: '20:00' },
+              { startAt: '20:00', endAt: '21:30' },
+            ],
+          }
+          await expect(ClassroomStore.updateSchedules(payload)).resolves.toBeUndefined()
+        })
+
+        it('called getTotalRoomsByApi', async () => {
+          const mockGetSchedulesByApi = jest.spyOn(ClassroomStore, 'getSchedulesByApi')
+
+          const payload: UpdateSchedulesPayload = {
+            regularHoliday: [1],
+            holidayHourForm: [
+              { startAt: '15:30', endAt: '17:00' },
+              { startAt: '17:00', endAt: '18:30' },
+              { startAt: '18:30', endAt: '20:00' },
+              { startAt: '20:00', endAt: '21:30' },
+            ],
+            weekdayHourForm: [
+              { startAt: '17:00', endAt: '18:30' },
+              { startAt: '18:30', endAt: '20:00' },
+              { startAt: '20:00', endAt: '21:30' },
+            ],
+          }
+
+          await expect(ClassroomStore.updateSchedules(payload)).resolves.toBeUndefined()
+          expect(mockGetSchedulesByApi).toBeCalled()
+          expect(mockGetSchedulesByApi).toBeCalledTimes(1)
+        })
+      })
+
+      describe('failure', () => {
+        beforeEach(() => {
+          setSafetyMode(false)
+          setIsAxiosMockValue(true)
+        })
+
+        it('return reject', async () => {
+          const invalidPayload: UpdateSchedulesPayload = {
+            regularHoliday: [-1, 7, 8],
+            holidayHourForm: [
+              { startAt: '15:30', endAt: '17:00' },
+              { startAt: '17:00', endAt: '18:30' },
+              { startAt: '18:30', endAt: '20:00' },
+              { startAt: '20:00', endAt: '21:30' },
+            ],
+            weekdayHourForm: [
+              { startAt: '17:00', endAt: '18:30' },
+              { startAt: '18:30', endAt: '20:00' },
+              { startAt: '20:00', endAt: '21:30' },
+            ],
+          }
+
+          const err = new ApiError(400, 'api error', {
+            status: 400,
+            message: 'api error',
+            details: 'some error',
+          } as ErrorResponse)
+
+          try {
+            await ClassroomStore.updateSchedules(invalidPayload)
+          } catch (e) {
+            expect(e).toEqual(err)
+          }
+        })
+
+        it('throw internal server error', async () => {
+          setIsAxiosMockValue(false)
+
+          const payload: UpdateSchedulesPayload = {
+            regularHoliday: [1],
+            holidayHourForm: [
+              { startAt: '15:30', endAt: '17:00' },
+              { startAt: '17:00', endAt: '18:30' },
+              { startAt: '18:30', endAt: '20:00' },
+              { startAt: '20:00', endAt: '21:30' },
+            ],
+            weekdayHourForm: [
+              { startAt: '17:00', endAt: '18:30' },
+              { startAt: '18:30', endAt: '20:00' },
+              { startAt: '20:00', endAt: '21:30' },
+            ],
+          }
+
+          const err = new Error('internal server error')
+          try {
+            await ClassroomStore.updateSchedules(payload)
           } catch (e) {
             expect(e).toEqual(err)
           }
