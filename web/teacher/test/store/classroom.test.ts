@@ -1,4 +1,4 @@
-import { refresh, setSafetyMode, setup } from '~~/test//helpers/store-helper'
+import { refresh, setIsAxiosMockValue, setSafetyMode, setup } from '~~/test//helpers/store-helper'
 import { ClassroomStore } from '~/store'
 import { ErrorResponse } from '~/types/api/exception'
 import { ApiError } from '~/types/exception'
@@ -55,7 +55,9 @@ describe('store/classroom', () => {
       describe('failure', () => {
         beforeEach(() => {
           setSafetyMode(false)
+          setIsAxiosMockValue(true)
         })
+
         it('return reject', async () => {
           const err = new ApiError(503, 'api error', {
             status: 503,
@@ -63,7 +65,19 @@ describe('store/classroom', () => {
             details: 'some error',
           } as ErrorResponse)
           try {
-            await ClassroomStore.getSchedulesByApi()
+            await ClassroomStore.getTotalRoomsByApi()
+          } catch (e) {
+            expect(e).toEqual(err)
+          }
+        })
+
+        it('throw internal server error', async () => {
+          setIsAxiosMockValue(false)
+
+          const err = new Error('internal server error')
+
+          try {
+            await ClassroomStore.getTotalRoomsByApi()
           } catch (e) {
             expect(e).toEqual(err)
           }
@@ -170,6 +184,38 @@ describe('store/classroom', () => {
           expect(ClassroomStore.weekdayHourFormValue.length).toBe(expectedWeekdayHourFormValue.length)
           expect(ClassroomStore.holidayHourFormValue.length).toEqual(expectedHolidayHourFormValue.length)
           expect(ClassroomStore.regularHoliday).toEqual(expectedRegularHoliday)
+        })
+      })
+
+      describe('failure', () => {
+        beforeEach(() => {
+          setSafetyMode(false)
+          setIsAxiosMockValue(true)
+        })
+
+        it('return reject', async () => {
+          const err = new ApiError(503, 'api error', {
+            status: 503,
+            message: 'api error',
+            details: 'some error',
+          } as ErrorResponse)
+          try {
+            await ClassroomStore.getSchedulesByApi()
+          } catch (e) {
+            expect(e).toEqual(err)
+          }
+        })
+
+        it('throw internal server error', async () => {
+          setIsAxiosMockValue(false)
+
+          const err = new Error('internal server error')
+
+          try {
+            await ClassroomStore.getSchedulesByApi()
+          } catch (e) {
+            expect(e).toEqual(err)
+          }
         })
       })
     })
