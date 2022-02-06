@@ -109,11 +109,13 @@ export default defineComponent({
     }
 
     const handleSubmitButton = async () => {
-      if (!isChanged.value) {
-        return
-      }
       try {
         await ClassroomStore.updateTotalRooms({ total: boothRef.value })
+        await ClassroomStore.updateSchedules({
+          regularHoliday: selectedRegularHoliday,
+          weekdayHourForm,
+          holidayHourForm,
+        })
         CommonStore.showSuccessInSnackbar('更新しました。')
       } catch (err) {
         CommonStore.showErrorInSnackbar(err)
