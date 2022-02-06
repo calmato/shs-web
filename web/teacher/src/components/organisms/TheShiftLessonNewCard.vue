@@ -217,7 +217,7 @@ export default defineComponent({
           (val: ShiftLesson): boolean => val.studentId === student.id && val.subjectId === lesson.subjectId
         )
         const enabled: boolean = lesson.total - lessons.length > 0
-        addSubject(subjects, { id: subject.id, name: subject.name, enabled })
+        addSubject(subjects, { id: subject.id, name: subject.fullname, enabled })
       })
       return subjects
     }

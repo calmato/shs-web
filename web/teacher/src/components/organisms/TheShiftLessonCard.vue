@@ -50,7 +50,7 @@ export default defineComponent({
     }
 
     const getSubjectName = (detail: LessonDetail | undefined): string => {
-      return detail?.subject?.name || ''
+      return detail?.subject?.fullname || ''
     }
 
     const getSubjectColor = (detail: LessonDetail | undefined): string => {

@@ -25,18 +25,25 @@ export function authResponse2Auth(authResponse: AuthResponse): Auth {
  * @returns
  */
 export function subjectResponse2Subject(subjectResponse: SubjectResponse): Subject {
+  const schoolType: SchoolType = schoolTypeNum2schoolTypeString(subjectResponse.schoolType)
   const subject: Subject = {
     ...subjectResponse,
-    schoolType: schoolTypeNum2schoolTypeString(subjectResponse.schoolType),
+    fullname: `${schoolType}${subjectResponse.name}`,
+    schoolType,
   }
   return subject
 }
 
 export function subjectResponses2Subjects(responses: SubjectResponse[]): Subject[] {
-  const subjects: Subject[] | undefined = responses?.map((response: SubjectResponse) => ({
-    ...response,
-    schoolType: schoolTypeNum2schoolTypeString(response.schoolType),
-  }))
+  const subjects: Subject[] | undefined = responses?.map((response: SubjectResponse) => {
+    const schoolType: SchoolType = schoolTypeNum2schoolTypeString(response.schoolType)
+    const subject: Subject = {
+      ...response,
+      fullname: `${schoolType}${response.name}`,
+      schoolType,
+    }
+    return subject
+  })
   return subjects || []
 }
 
@@ -63,7 +70,7 @@ export function schoolTypeNum2schoolTypeString(schoolType: number): SchoolType {
  * @param schoolType
  * @returns
  */
-export function schoolTypeString2schoolTypeNum(schoolType: SchoolType) {
+export function schoolTypeString2schoolTypeNum(schoolType: SchoolType): number {
   switch (schoolType) {
     case '小学校':
       return 1

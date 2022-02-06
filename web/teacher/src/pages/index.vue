@@ -65,7 +65,7 @@ export default defineComponent({
 
         return {
           lessonId: lesson.id,
-          name: `[${subject.name}] ${student.name}`,
+          name: `[${subject.fullname}] ${student.name}`,
           start: lesson.startAt,
           end: lesson.endAt,
           color: subject.color,
@@ -88,7 +88,7 @@ export default defineComponent({
 
       const target: EventDetail = {
         lessonId: lesson.id,
-        subject: subject?.name || '',
+        subject: subject?.fullname || '',
         student: `${student.name} (${student.nameKana})`,
         teacher: `${teacher.name} (${teacher.nameKana})`,
         start: lesson.startAt,
