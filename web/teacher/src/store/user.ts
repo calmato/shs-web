@@ -10,18 +10,22 @@ import {
   UpdateTeacherRoleRequest,
   UpdateTeacherMailRequest,
   UpdateTeacherPasswordRequest,
+  CreateStudentRequest,
+  StudentResponse,
+  StudentsResponse,
 } from '~/types/api/v1'
 import { Role, Student, StudentMap, SubjectsMap, Teacher, TeacherMap, UserState } from '~/types/store'
 import { ErrorResponse } from '~/types/api/exception'
 import { ApiError } from '~/types/exception'
 import {
+  StudentNewForm,
   TeacherEditRoleForm,
   TeacherEditSubjectForm,
   TeacherNewForm,
   TeacherUpdateMailForm,
   TeacherUpdatePasswordForm,
 } from '~/types/form'
-import { subjectResponse2Subject } from '~/lib'
+import { schoolTypeString2schoolTypeNum, subjectResponse2Subject } from '~/lib'
 
 const initialState: UserState = {
   students: [
@@ -194,6 +198,19 @@ export default class UserModule extends VuexModule {
   }
 
   @Action({ rawError: true })
+  public async listStudents({ limit, offset }: { limit: number; offset: number }): Promise<void> {
+    let query: string = ''
+    if (limit !== 0 || offset !== 0) {
+      query = `?limit=${limit}&offset=${offset}`
+    }
+
+    await $axios.$get('/v1/students' + query).catch((err: AxiosError) => {
+      const res: ErrorResponse = { ...err.response?.data }
+      throw new ApiError(res.status, res.message, res)
+    })
+  }
+
+  @Action({ rawError: true })
   public async createTeacher({ form }: { form: TeacherNewForm }): Promise<void> {
     const req: CreateTeacherRequest = { ...form.params }
 
@@ -209,6 +226,25 @@ export default class UserModule extends VuexModule {
             }
           : initializeSubjects()
         this.addTeacher({ ...res, subjects })
+      })
+      .catch((err: AxiosError) => {
+        const res: ErrorResponse = { ...err.response?.data }
+        throw new ApiError(res.status, res.message, res)
+      })
+  }
+
+  @Action({ rawError: true })
+  public async createStudent({ form }: { form: StudentNewForm }): Promise<void> {
+    const req: CreateStudentRequest = {
+      ...form.params,
+      schoolType: schoolTypeString2schoolTypeNum(form.params.schoolType),
+      grade: Number(form.params.grade),
+    }
+
+    await $axios
+      .$post('/v1/students', req)
+      .then((res: StudentResponse) => {
+        console.log(res)
       })
       .catch((err: AxiosError) => {
         const res: ErrorResponse = { ...err.response?.data }

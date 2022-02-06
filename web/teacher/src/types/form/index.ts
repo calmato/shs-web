@@ -1,6 +1,7 @@
 export * from './auth'
 export * from './shift'
 export * from './teacher'
+export * from './student'
 export * from './lesson'
 export * from './setting'
 export * from './subject'

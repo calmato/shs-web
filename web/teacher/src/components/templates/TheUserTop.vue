@@ -33,8 +33,8 @@
           <v-col class="my-4 mx-3">
             <v-btn v-show="isAdmin" color="primary" block outlined @click="onClickNew('teachers')">
               <v-icon>mdi-plus</v-icon>
-              新規登録</v-btn
-            >
+              新規登録
+            </v-btn>
           </v-col>
           <v-col cols="12">
             <the-teacher-list
@@ -51,7 +51,18 @@
         </v-row>
       </v-tab-item>
       <v-tab-item value="tab-students">
-        <the-student-list :items="students" :loading="loading" />
+        <v-row>
+          <v-dialog> </v-dialog>
+          <v-col class="my-4 mx-3">
+            <v-btn v-show="isAdmin" color="primary" block outlined @click="onClickNew('students')">
+              <v-icon>mdi-plus</v-icon>
+              新規登録
+            </v-btn>
+          </v-col>
+          <v-col cols="12">
+            <the-student-list :items="students" :loading="loading" />
+          </v-col>
+        </v-row>
       </v-tab-item>
     </v-tabs-items>
   </v-container>
