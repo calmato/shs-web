@@ -3,6 +3,7 @@ import { ClassroomStore } from '~/store'
 import { ErrorResponse } from '~/types/api/exception'
 import { ApiError } from '~/types/exception'
 import { Schedule } from '~/types/api/v1'
+import { HourForm } from '~/types/form'
 
 describe('store/classroom', () => {
   beforeEach(() => {
@@ -149,8 +150,26 @@ describe('store/classroom', () => {
             },
           ]
 
+          const expectedWeekdayHourFormValue: HourForm[] = [
+            { startAt: '17:00', endAt: '18:30' },
+            { startAt: '18:30', endAt: '20:00' },
+            { startAt: '20:00', endAt: '21:30' },
+          ]
+
+          const expectedHolidayHourFormValue: HourForm[] = [
+            { startAt: '15:30', endAt: '17:00' },
+            { startAt: '17:00', endAt: '18:30' },
+            { startAt: '18:30', endAt: '20:00' },
+            { startAt: '20:00', endAt: '21:30' },
+          ]
+
+          const expectedRegularHoliday: number[] = []
+
           await ClassroomStore.getSchedulesByApi()
           expect(ClassroomStore.getSchedules).toEqual(expectedSchedules)
+          expect(ClassroomStore.weekdayHourFormValue.length).toBe(expectedWeekdayHourFormValue.length)
+          expect(ClassroomStore.holidayHourFormValue.length).toEqual(expectedHolidayHourFormValue.length)
+          expect(ClassroomStore.regularHoliday).toEqual(expectedRegularHoliday)
         })
       })
     })
