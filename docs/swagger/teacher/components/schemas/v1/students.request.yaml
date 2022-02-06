@@ -63,6 +63,10 @@ updateStudentPasswordRequest:
 updateStudentSubjectsRequest:
   type: object
   properties:
+    schoolType:
+      type: integer
+      format: int32
+      description: 校種 (1:小学校, 2:中学校, 3:高等学校)
     subjectIds:
       type: array
       description: 受講科目一覧
@@ -71,6 +75,7 @@ updateStudentSubjectsRequest:
         format: int64
         description: 授業科目ID
   example:
+    schoolType: 1
     subjectIds:
     - 1
     - 2

@@ -24,5 +24,6 @@ type UpdateStudentPasswordRequest struct {
 }
 
 type UpdateStudentSubjectRequest struct {
-	SubjectIDs []int64 `json:"subjectIds,omitempty"` // 受講教科ID一覧
+	SchoolType entity.SchoolType `json:"schoolType,omitempty"` // 校種
+	SubjectIDs []int64           `json:"subjectIds,omitempty"` // 受講教科ID一覧
 }
