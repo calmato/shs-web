@@ -97,7 +97,9 @@ func (s *schedule) MultipleUpdate(ctx context.Context, schedules entity.Schedule
 		schedule.CreatedAt = current.CreatedAt
 		schedule.UpdatedAt = now
 
-		err = tx.Table(scheduleTable).Save(&schedule).Error
+		err = tx.Table(scheduleTable).
+			Where("weekday = ?", schedule.Weekday).
+			Save(&schedule).Error
 		if err != nil {
 			tx.Rollback()
 			return dbError(err)
