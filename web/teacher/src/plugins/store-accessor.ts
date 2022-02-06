@@ -2,6 +2,7 @@
 import { Store } from 'vuex'
 import { getModule } from 'vuex-module-decorators'
 import AuthModule from '~/store/auth'
+import ClassroomModule from '~/store/classroom'
 import CommonModule from '~/store/common'
 import LessonModule from '~/store/lesson'
 import ShiftModule from '~/store/shift'
@@ -14,6 +15,7 @@ let LessonStore: LessonModule
 let ShiftStore: ShiftModule
 let SubmissionStore: SubmissionModule
 let UserStore: UserModule
+let ClassroomStore: ClassroomModule
 
 function initialiseStores(store: Store<any>): void {
   AuthStore = getModule(AuthModule, store)
@@ -22,6 +24,7 @@ function initialiseStores(store: Store<any>): void {
   ShiftStore = getModule(ShiftModule, store)
   SubmissionStore = getModule(SubmissionModule, store)
   UserStore = getModule(UserModule, store)
+  ClassroomStore = getModule(ClassroomModule, store)
 }
 
-export { initialiseStores, AuthStore, CommonStore, LessonStore, ShiftStore, SubmissionStore, UserStore }
+export { initialiseStores, AuthStore, CommonStore, LessonStore, ShiftStore, SubmissionStore, UserStore, ClassroomStore }

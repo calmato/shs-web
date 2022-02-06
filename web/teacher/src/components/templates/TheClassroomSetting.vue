@@ -25,7 +25,7 @@ export default defineComponent({
 
   props: {
     regularHolidayValue: {
-      type: Array as PropType<string[]>,
+      type: Array as PropType<number[]>,
       default: () => [],
     },
     boothValue: {
@@ -45,7 +45,7 @@ export default defineComponent({
   setup(props, { emit }: SetupContext) {
     const regularHolidayFormData = computed({
       get: () => props.regularHolidayValue,
-      set: (val: string[]) => emit('update:regularHolidayValue', val),
+      set: (val: number[]) => emit('update:regularHolidayValue', val),
     })
 
     const boothFormData = computed({
