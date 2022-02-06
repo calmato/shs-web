@@ -32,6 +32,14 @@ export function subjectResponse2Subject(subjectResponse: SubjectResponse): Subje
   return subject
 }
 
+export function subjectResponses2Subjects(responses: SubjectResponse[]): Subject[] {
+  const subjects: Subject[] | undefined = responses?.map((response: SubjectResponse) => ({
+    ...response,
+    schoolType: schoolTypeNum2schoolTypeString(response.schoolType),
+  }))
+  return subjects || []
+}
+
 /**
  * 数値をSchoolTypeに変換する関数
  * @param schoolType

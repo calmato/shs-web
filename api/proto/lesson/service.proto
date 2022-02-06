@@ -38,6 +38,8 @@ service LessonService {
   rpc ListStudentShifts(ListStudentShiftsRequest) returns (ListStudentShiftsResponse);
   rpc GetStudentShifts(GetStudentShiftsRequest) returns (GetStudentShiftsResponse);
   rpc UpsertStudentShifts(UpsertStudentShiftsRequest) returns (UpsertStudentShiftsResponse);
+  rpc GetStudentShiftTemplate(GetStudentShiftTemplateRequest) returns (GetStudentShiftTemplateResponse);
+  rpc UpsertStudentShiftTemplate(UpsertStudentShiftTemplateRequest) returns (UpsertStudentShiftTemplateResponse);
 }
 
 message ListLessonsRequest {
@@ -253,22 +255,50 @@ message GetStudentShiftsResponse {
   repeated StudentShift shifts     = 2;
 }
 
+message StudentSuggestedLesson {
+  int64 subject_id = 1 [(validate.rules).int64 = { gt: 0 }];
+  int64 total      = 2 [(validate.rules).int64 = { gte: 0 }];
+}
+
 message UpsertStudentShiftsRequest {
   string                          student_id        = 1 [(validate.rules).string = { min_len: 1 }];
   int64                           shift_summary_id  = 2 [(validate.rules).int64 = { gt: 0 }];
   repeated int64                  shift_ids         = 3 [(validate.rules).repeated = { unique: true, items: { int64: { gt: 0 }}}];
   bool                            decided           = 4;
   // int64                           suggested_classes = 5 [(validate.rules).int64 = { gte: 0 }];
-  repeated StudentSuggestedLesson lessons = 6 [(validate.rules).repeated = { items: { message: { required: true }}}];
+  repeated StudentSuggestedLesson lessons           = 6;
   reserved 5;
-}
-
-message StudentSuggestedLesson {
-  int64 subject_id = 1 [(validate.rules).int64 = { gt: 0 }];
-  int64 total      = 2 [(validate.rules).int64 = { gte: 0 }];
 }
 
 message UpsertStudentShiftsResponse {
   StudentSubmission     submission = 1;
   repeated StudentShift shifts     = 2;
 }
+
+message GetStudentShiftTemplateRequest {
+  string student_id = 1 [(validate.rules).string = { min_len: 1 }];
+}
+
+message GetStudentShiftTemplateResponse {
+  StudentShiftTemplate template = 1;
+}
+
+message StudentShiftTemplateToUpsert {
+  message Lesson {
+    string start_time = 1 [(validate.rules).string = { len: 4, pattern: "^[0-9]*$" }];
+    string end_time   = 2 [(validate.rules).string = { len: 4, pattern: "^[0-9]*$" }];
+  }
+  message Schedule {
+    int32           weekday = 1 [(validate.rules).int32 = { gte: 0, lte: 6 }];
+    repeated Lesson lessons = 2;
+  }
+  repeated Schedule               schedules         = 1 [(validate.rules).repeated = { max_items: 7 }];
+  repeated StudentSuggestedLesson suggested_lessons = 2;
+}
+
+message UpsertStudentShiftTemplateRequest {
+  string                       student_id = 1 [(validate.rules).string = { min_len: 1 }];
+  StudentShiftTemplateToUpsert template   = 2 [(validate.rules).message = { required: true }];
+}
+
+message UpsertStudentShiftTemplateResponse {}

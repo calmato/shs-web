@@ -1,16 +1,31 @@
 package entity
 
-import "github.com/calmato/shs-web/api/proto/lesson"
+import (
+	"time"
+
+	"github.com/calmato/shs-web/api/pkg/jst"
+	"github.com/calmato/shs-web/api/proto/lesson"
+)
 
 type StudentSubmission struct {
-	*lesson.StudentSubmission
+	StudentID        string
+	ShiftSummaryID   int64
+	Decided          bool
+	SuggestedLessons StudentSuggestedLessons
+	CreatedAt        time.Time
+	UpdatedAt        time.Time
 }
 
 type StudentSubmissions []*StudentSubmission
 
 func NewStudentSubmission(submission *lesson.StudentSubmission) *StudentSubmission {
 	return &StudentSubmission{
-		StudentSubmission: submission,
+		StudentID:        submission.StudentId,
+		ShiftSummaryID:   submission.ShiftSummaryId,
+		Decided:          submission.Decided,
+		SuggestedLessons: NewStudentSuggestedLessons(submission.SuggestedLessons),
+		CreatedAt:        jst.ParseFromUnix(submission.CreatedAt),
+		UpdatedAt:        jst.ParseFromUnix(submission.UpdatedAt),
 	}
 }
 
@@ -25,7 +40,7 @@ func NewStudentSubmissions(submissions []*lesson.StudentSubmission) StudentSubmi
 func (ss StudentSubmissions) MapByShiftSummaryID() map[int64]*StudentSubmission {
 	res := make(map[int64]*StudentSubmission, len(ss))
 	for _, s := range ss {
-		res[s.ShiftSummaryId] = s
+		res[s.ShiftSummaryID] = s
 	}
 	return res
 }
@@ -33,7 +48,7 @@ func (ss StudentSubmissions) MapByShiftSummaryID() map[int64]*StudentSubmission 
 func (ss StudentSubmissions) MapByStudentID() map[string]*StudentSubmission {
 	res := make(map[string]*StudentSubmission, len(ss))
 	for _, s := range ss {
-		res[s.StudentId] = s
+		res[s.StudentID] = s
 	}
 	return res
 }

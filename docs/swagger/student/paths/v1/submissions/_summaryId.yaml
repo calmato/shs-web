@@ -1,0 +1,63 @@
+get:
+  summary: 授業希望提出状況取得
+  tags:
+  - Submission
+  security:
+  - BearerAuth: []
+  parameters:
+  - in: path
+    name: summaryId
+    required: true
+    schema:
+      type: integer
+      format: int64
+    description: 授業希望募集ID
+    example: 1
+  responses:
+    200:
+      description: A successful response.
+      content:
+        application/json:
+          schema:
+            $ref: './../../../openapi.yaml#/components/schemas/v1SubmissionResponse'
+    default:
+      description: An unexpected error response.
+      content:
+        application/json:
+          schema:
+            $ref: './../../../openapi.yaml#/components/schemas/errorResponse'
+post:
+  summary: 授業希望提出
+  tags:
+  - Submission
+  security:
+  - BearerAuth: []
+  parameters:
+  - in: path
+    name: summaryId
+    required: true
+    schema:
+      type: integer
+      format: int64
+    description: 授業希望募集ID
+    example: 1
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: './../../../openapi.yaml#/components/schemas/v1UpsertSubmissionRequest'
+  responses:
+    200:
+      description: A successful response.
+      content:
+        application/json:
+          schema:
+            $ref: './../../../openapi.yaml#/components/schemas/v1SubmissionResponse'
+    default:
+      description: An unexpected error response.
+      content:
+        application/json:
+          schema:
+            $ref: './../../../openapi.yaml#/components/schemas/errorResponse'
+

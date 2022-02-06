@@ -10,7 +10,7 @@ import (
 
 func TestStudentSubmission(t *testing.T) {
 	t.Parallel()
-	now := jst.Now()
+	now := jst.Date(2022, 2, 1, 18, 30, 0, 0)
 	tests := []struct {
 		name       string
 		submission *lesson.StudentSubmission
@@ -30,17 +30,15 @@ func TestStudentSubmission(t *testing.T) {
 				UpdatedAt: now.Unix(),
 			},
 			expect: &StudentSubmission{
-				StudentSubmission: &lesson.StudentSubmission{
-					StudentId:      "studentid",
-					ShiftSummaryId: 1,
-					Decided:        true,
-					SuggestedLessons: []*lesson.SuggestedLesson{
-						{SubjectId: 1, Total: 4},
-						{SubjectId: 2, Total: 4},
-					},
-					CreatedAt: now.Unix(),
-					UpdatedAt: now.Unix(),
+				StudentID:      "studentid",
+				ShiftSummaryID: 1,
+				Decided:        true,
+				SuggestedLessons: StudentSuggestedLessons{
+					{SuggestedLesson: &lesson.SuggestedLesson{SubjectId: 1, Total: 4}},
+					{SuggestedLesson: &lesson.SuggestedLesson{SubjectId: 2, Total: 4}},
 				},
+				CreatedAt: now,
+				UpdatedAt: now,
 			},
 		},
 	}
@@ -56,7 +54,7 @@ func TestStudentSubmission(t *testing.T) {
 
 func TestStudentSubmissions(t *testing.T) {
 	t.Parallel()
-	now := jst.Now()
+	now := jst.Date(2022, 1, 2, 18, 30, 0, 0)
 	tests := []struct {
 		name        string
 		submissions []*lesson.StudentSubmission
@@ -79,17 +77,15 @@ func TestStudentSubmissions(t *testing.T) {
 			},
 			expect: StudentSubmissions{
 				{
-					StudentSubmission: &lesson.StudentSubmission{
-						StudentId:      "studentid",
-						ShiftSummaryId: 1,
-						Decided:        true,
-						SuggestedLessons: []*lesson.SuggestedLesson{
-							{SubjectId: 1, Total: 4},
-							{SubjectId: 2, Total: 4},
-						},
-						CreatedAt: now.Unix(),
-						UpdatedAt: now.Unix(),
+					StudentID:      "studentid",
+					ShiftSummaryID: 1,
+					Decided:        true,
+					SuggestedLessons: StudentSuggestedLessons{
+						{SuggestedLesson: &lesson.SuggestedLesson{SubjectId: 1, Total: 4}},
+						{SuggestedLesson: &lesson.SuggestedLesson{SubjectId: 2, Total: 4}},
 					},
+					CreatedAt: now,
+					UpdatedAt: now,
 				},
 			},
 		},
@@ -106,7 +102,7 @@ func TestStudentSubmissions(t *testing.T) {
 
 func TestStudentSubmissions_MapByShiftSummaryID(t *testing.T) {
 	t.Parallel()
-	now := jst.Now()
+	now := jst.Date(2022, 1, 2, 18, 30, 0, 0)
 	tests := []struct {
 		name        string
 		submissions StudentSubmissions
@@ -116,58 +112,50 @@ func TestStudentSubmissions_MapByShiftSummaryID(t *testing.T) {
 			name: "success",
 			submissions: StudentSubmissions{
 				{
-					StudentSubmission: &lesson.StudentSubmission{
-						StudentId:      "studentid",
-						ShiftSummaryId: 1,
-						Decided:        true,
-						SuggestedLessons: []*lesson.SuggestedLesson{
-							{SubjectId: 1, Total: 4},
-							{SubjectId: 2, Total: 4},
-						},
-						CreatedAt: now.Unix(),
-						UpdatedAt: now.Unix(),
+					StudentID:      "studentid",
+					ShiftSummaryID: 1,
+					Decided:        true,
+					SuggestedLessons: StudentSuggestedLessons{
+						{SuggestedLesson: &lesson.SuggestedLesson{SubjectId: 1, Total: 4}},
+						{SuggestedLesson: &lesson.SuggestedLesson{SubjectId: 2, Total: 4}},
 					},
+					CreatedAt: now,
+					UpdatedAt: now,
 				},
 				{
-					StudentSubmission: &lesson.StudentSubmission{
-						StudentId:      "studentid",
-						ShiftSummaryId: 2,
-						Decided:        false,
-						SuggestedLessons: []*lesson.SuggestedLesson{
-							{SubjectId: 1, Total: 4},
-							{SubjectId: 2, Total: 4},
-						},
-						CreatedAt: now.Unix(),
-						UpdatedAt: now.Unix(),
+					StudentID:      "studentid",
+					ShiftSummaryID: 2,
+					Decided:        true,
+					SuggestedLessons: StudentSuggestedLessons{
+						{SuggestedLesson: &lesson.SuggestedLesson{SubjectId: 1, Total: 4}},
+						{SuggestedLesson: &lesson.SuggestedLesson{SubjectId: 2, Total: 4}},
 					},
+					CreatedAt: now,
+					UpdatedAt: now,
 				},
 			},
 			expect: map[int64]*StudentSubmission{
 				1: {
-					StudentSubmission: &lesson.StudentSubmission{
-						StudentId:      "studentid",
-						ShiftSummaryId: 1,
-						Decided:        true,
-						SuggestedLessons: []*lesson.SuggestedLesson{
-							{SubjectId: 1, Total: 4},
-							{SubjectId: 2, Total: 4},
-						},
-						CreatedAt: now.Unix(),
-						UpdatedAt: now.Unix(),
+					StudentID:      "studentid",
+					ShiftSummaryID: 1,
+					Decided:        true,
+					SuggestedLessons: StudentSuggestedLessons{
+						{SuggestedLesson: &lesson.SuggestedLesson{SubjectId: 1, Total: 4}},
+						{SuggestedLesson: &lesson.SuggestedLesson{SubjectId: 2, Total: 4}},
 					},
+					CreatedAt: now,
+					UpdatedAt: now,
 				},
 				2: {
-					StudentSubmission: &lesson.StudentSubmission{
-						StudentId:      "studentid",
-						ShiftSummaryId: 2,
-						Decided:        false,
-						SuggestedLessons: []*lesson.SuggestedLesson{
-							{SubjectId: 1, Total: 4},
-							{SubjectId: 2, Total: 4},
-						},
-						CreatedAt: now.Unix(),
-						UpdatedAt: now.Unix(),
+					StudentID:      "studentid",
+					ShiftSummaryID: 2,
+					Decided:        true,
+					SuggestedLessons: StudentSuggestedLessons{
+						{SuggestedLesson: &lesson.SuggestedLesson{SubjectId: 1, Total: 4}},
+						{SuggestedLesson: &lesson.SuggestedLesson{SubjectId: 2, Total: 4}},
 					},
+					CreatedAt: now,
+					UpdatedAt: now,
 				},
 			},
 		},
@@ -194,57 +182,50 @@ func TestStudentSubmissions_MapByStudentID(t *testing.T) {
 			name: "success",
 			submissions: StudentSubmissions{
 				{
-					StudentSubmission: &lesson.StudentSubmission{
-						StudentId:      "studentid1",
-						ShiftSummaryId: 1,
-						Decided:        true,
-						SuggestedLessons: []*lesson.SuggestedLesson{
-							{SubjectId: 1, Total: 4},
-							{SubjectId: 2, Total: 4},
-						},
-						CreatedAt: now.Unix(),
-						UpdatedAt: now.Unix(),
+					StudentID:      "studentid1",
+					ShiftSummaryID: 1,
+					Decided:        true,
+					SuggestedLessons: StudentSuggestedLessons{
+						{SuggestedLesson: &lesson.SuggestedLesson{SubjectId: 1, Total: 4}},
+						{SuggestedLesson: &lesson.SuggestedLesson{SubjectId: 2, Total: 4}},
 					},
+					CreatedAt: now,
+					UpdatedAt: now,
 				},
 				{
-					StudentSubmission: &lesson.StudentSubmission{
-						StudentId:      "studentid2",
-						ShiftSummaryId: 1,
-						SuggestedLessons: []*lesson.SuggestedLesson{
-							{SubjectId: 1, Total: 4},
-							{SubjectId: 2, Total: 4},
-						},
-						CreatedAt: now.Unix(),
-						UpdatedAt: now.Unix(),
+					StudentID:      "studentid2",
+					ShiftSummaryID: 1,
+					Decided:        true,
+					SuggestedLessons: StudentSuggestedLessons{
+						{SuggestedLesson: &lesson.SuggestedLesson{SubjectId: 1, Total: 4}},
+						{SuggestedLesson: &lesson.SuggestedLesson{SubjectId: 2, Total: 4}},
 					},
+					CreatedAt: now,
+					UpdatedAt: now,
 				},
 			},
 			expect: map[string]*StudentSubmission{
 				"studentid1": {
-					StudentSubmission: &lesson.StudentSubmission{
-						StudentId:      "studentid1",
-						ShiftSummaryId: 1,
-						Decided:        true,
-						SuggestedLessons: []*lesson.SuggestedLesson{
-							{SubjectId: 1, Total: 4},
-							{SubjectId: 2, Total: 4},
-						},
-						CreatedAt: now.Unix(),
-						UpdatedAt: now.Unix(),
+					StudentID:      "studentid1",
+					ShiftSummaryID: 1,
+					Decided:        true,
+					SuggestedLessons: StudentSuggestedLessons{
+						{SuggestedLesson: &lesson.SuggestedLesson{SubjectId: 1, Total: 4}},
+						{SuggestedLesson: &lesson.SuggestedLesson{SubjectId: 2, Total: 4}},
 					},
+					CreatedAt: now,
+					UpdatedAt: now,
 				},
 				"studentid2": {
-					StudentSubmission: &lesson.StudentSubmission{
-						StudentId:      "studentid2",
-						ShiftSummaryId: 1,
-						Decided:        false,
-						SuggestedLessons: []*lesson.SuggestedLesson{
-							{SubjectId: 1, Total: 4},
-							{SubjectId: 2, Total: 4},
-						},
-						CreatedAt: now.Unix(),
-						UpdatedAt: now.Unix(),
+					StudentID:      "studentid2",
+					ShiftSummaryID: 1,
+					Decided:        true,
+					SuggestedLessons: StudentSuggestedLessons{
+						{SuggestedLesson: &lesson.SuggestedLesson{SubjectId: 1, Total: 4}},
+						{SuggestedLesson: &lesson.SuggestedLesson{SubjectId: 2, Total: 4}},
 					},
+					CreatedAt: now,
+					UpdatedAt: now,
 				},
 			},
 		},

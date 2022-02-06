@@ -9,11 +9,33 @@ servers:
 tags:
 - name: Auth
   description: 認証関連
+- name: Subject
+  description: 授業科目関連
+- name: Submission
+  description: 授業希望関連
+- name: Lesson
+  description: 授業関連
 paths:
   # Auth
   /v1/me:
     $ref: './paths/v1/me/index.yaml'
-  # Students
+  /v1/me/mail:
+    $ref: './paths/v1/me/mail.yaml'
+  /v1/me/password:
+    $ref: './paths/v1/me/password.yaml'
+  /v1/me/submission:
+    $ref: './paths/v1/me/submission.yaml'
+  # Subject
+  /v1/subjects:
+    $ref: './paths/v1/subjects/index.yaml'
+  # Submission
+  /v1/submissions:
+    $ref: './paths/v1/submissions/index.yaml'
+  /v1/submissions/{summaryId}:
+    $ref: './paths/v1/submissions/_summaryId.yaml'
+  # Lessons
+  /v1/lessons:
+    $ref: './paths/v1/lessons/index.yaml'
 components:
   securitySchemes:
     BearerAuth:
@@ -24,6 +46,24 @@ components:
     errorResponse:
       $ref: './components/schemas/common.yaml#/errorResponse'
     # Request
+    v1UpdateMyMailRequest:
+      $ref: './components/schemas/v1/auth.request.yaml#/updateMyMailRequest'
+    v1UpdateMyPasswordRequest:
+      $ref: './components/schemas/v1/auth.request.yaml#/updateMyPasswordRequest'
+    v1UpsertSubmissionRequest:
+      $ref: './components/schemas/v1/submissions.request.yaml#/upsertSubmissionRequest'
+    v1UpsertSubmissionTemplateRequest:
+      $ref: './components/schemas/v1/submissions.request.yaml#/upsertSubmissionTemplateRequest'
     # Response
     v1AuthResponse:
       $ref: './components/schemas/v1/auth.response.yaml#/authResponse'
+    v1SubjectsResponse:
+      $ref: './components/schemas/v1/subjects.response.yaml#/subjectsResponse'
+    v1SubmissionResponse:
+      $ref: './components/schemas/v1/submissions.response.yaml#/submissionResponse'
+    v1SubmissionsResponse:
+      $ref: './components/schemas/v1/submissions.response.yaml#/submissionsResponse'
+    v1SubmissionTemplateResponse:
+      $ref: './components/schemas/v1/submissions.response.yaml#/submissionTemplateResponse'
+    v1LessonsResponse:
+      $ref: './components/schemas/v1/lessons.response.yaml#/lessonsResponse'

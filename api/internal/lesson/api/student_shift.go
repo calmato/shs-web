@@ -173,6 +173,44 @@ func (s *lessonService) UpsertStudentShifts(
 	return res, nil
 }
 
+func (s *lessonService) GetStudentShiftTemplate(
+	ctx context.Context, req *lesson.GetStudentShiftTemplateRequest,
+) (*lesson.GetStudentShiftTemplateResponse, error) {
+	if err := s.validator.GetStudentShiftTemplate(req); err != nil {
+		return nil, gRPCError(err)
+	}
+
+	template, err := s.db.StudentShiftTemplate.Get(ctx, req.StudentId)
+	if err != nil {
+		return nil, gRPCError(err)
+	}
+
+	res := &lesson.GetStudentShiftTemplateResponse{
+		Template: template.Proto(),
+	}
+	return res, nil
+}
+
+func (s *lessonService) UpsertStudentShiftTemplate(
+	ctx context.Context, req *lesson.UpsertStudentShiftTemplateRequest,
+) (*lesson.UpsertStudentShiftTemplateResponse, error) {
+	if err := s.validator.UpsertStudentShiftTemplate(req); err != nil {
+		return nil, gRPCError(err)
+	}
+
+	in := &user.GetStudentRequest{Id: req.StudentId}
+	if _, err := s.user.GetStudent(ctx, in); err != nil {
+		return nil, gRPCError(err)
+	}
+
+	template := entity.NewStudentShiftTemplate(req.StudentId, req.Template)
+	if err := s.db.StudentShiftTemplate.Upsert(ctx, req.StudentId, template); err != nil {
+		return nil, gRPCError(err)
+	}
+
+	return &lesson.UpsertStudentShiftTemplateResponse{}, nil
+}
+
 func (s *lessonService) isContainsStudentSubjects(
 	subject *classroom.StudentSubject, lessons entity.SuggestedLessons,
 ) bool {

@@ -1,0 +1,94 @@
+upsertSubmissionRequest:
+  type: object
+  properties:
+    suggestedLessons:
+      type: array
+      description: 希望授業一覧
+      items:
+        type: object
+        properties:
+          subjectId:
+            type: integer
+            format: int64
+            description: 授業科目ID
+          total:
+            type: integer
+            format: int64
+            description: 希望授業回数
+    shiftIds:
+      type: array
+      description: 授業希望シフトID一覧
+      items:
+        type: integer
+        format: int64
+  example:
+    suggestedLessons:
+    - subjectId: 1
+      total: 4
+    - subjectId: 2
+      total: 4
+    shiftIds:
+    - 1
+    - 2
+upsertSubmissionTemplateRequest:
+  type: object
+  properties:
+    schedules:
+      type: array
+      description: 授業希望(曜日毎)一覧
+      items:
+        type: object
+        properties:
+          weekday:
+            type: integer
+            format: int32
+            description: 曜日 (0:日曜日, 1:月曜日, ..., 6:土曜日)
+          lessons:
+            type: array
+            description: 授業コマ一覧
+            items:
+              type: object
+              properties:
+                enabled:
+                  type: boolean
+                  description: 授業希望フラグ
+                startTime:
+                  type: string
+                  format: 'HHMM'
+                  description: 授業開始時間
+                endTime:
+                  type: string
+                  format: 'HHMM'
+                  description: 授業終了時間
+    suggestedLessons:
+      type: array
+      description: 授業希望(科目毎)一覧
+      items:
+        type: object
+        properties:
+          subjectId:
+            type: integer
+            format: int64
+            description: 授業科目ID
+          total:
+            type: integer
+            format: int64
+            description: 授業希望回数
+  example:
+    schedules:
+    - weekday: 0
+      lessons: []
+    - weekday: 1
+      lessons:
+      - enabled: true
+        startTime: '1700'
+        endTime: '1830'
+      - enabled: false
+        startTime: '1830'
+        endTime: '2000'
+    suggestedLessons:
+    - subjectId: 1
+      total: 4
+    - subjectId: 2
+      total: 4
+

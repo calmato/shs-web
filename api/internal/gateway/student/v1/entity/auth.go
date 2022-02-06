@@ -16,15 +16,6 @@ type Auth struct {
 	Grade         int64      `json:"grade"`         // 学年
 }
 
-type SchoolType int32
-
-const (
-	SchoolTypeUnknown          SchoolType = 0
-	SchoolTypeElementarySchool SchoolType = 1
-	SchoolTypeJuniorHighSchool SchoolType = 2
-	SchoolTypeHighSchool       SchoolType = 3
-)
-
 func NewAuth(student *entity.Student) *Auth {
 	return &Auth{
 		ID:            student.Id,
@@ -33,12 +24,12 @@ func NewAuth(student *entity.Student) *Auth {
 		LastNameKana:  student.LastNameKana,
 		FirstNameKana: student.FirstNameKana,
 		Mail:          student.Mail,
-		SchoolType:    NewUserSchoolType(student.SchoolType),
+		SchoolType:    NewSchoolTypeFromUser(student.SchoolType),
 		Grade:         student.Grade,
 	}
 }
 
-func NewUserSchoolType(schoolType user.SchoolType) SchoolType {
+func NewSchoolTypeFromUser(schoolType user.SchoolType) SchoolType {
 	switch schoolType {
 	case user.SchoolType_SCHOOL_TYPE_ELEMENTARY_SCHOOL:
 		return SchoolTypeElementarySchool

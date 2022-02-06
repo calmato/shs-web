@@ -34,6 +34,8 @@ type RequestValidation interface {
 	ListStudentShifts(req *lesson.ListStudentShiftsRequest) error
 	GetStudentShifts(req *lesson.GetStudentShiftsRequest) error
 	UpsertStudentShifts(req *lesson.UpsertStudentShiftsRequest) error
+	GetStudentShiftTemplate(req *lesson.GetStudentShiftTemplateRequest) error
+	UpsertStudentShiftTemplate(req *lesson.UpsertStudentShiftTemplateRequest) error
 }
 
 type requestValidation struct{}

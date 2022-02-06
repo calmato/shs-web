@@ -15,6 +15,7 @@ import (
 	"github.com/golang/mock/gomock"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/protobuf/proto"
+	"gorm.io/datatypes"
 )
 
 func TestListStudentSubmissionsByShiftSummaryID(t *testing.T) {
@@ -733,6 +734,202 @@ func TestUpsertStudentShifts(t *testing.T) {
 		tt := tt
 		t.Run(tt.name, testGRPC(tt.setup, tt.expect, func(ctx context.Context, service *lessonService) (proto.Message, error) {
 			return service.UpsertStudentShifts(ctx, tt.req)
+		}))
+	}
+}
+
+func TestGetStudentShiftTempalte(t *testing.T) {
+	t.Parallel()
+	now := jst.Now()
+	req := &lesson.GetStudentShiftTemplateRequest{
+		StudentId: "studentid",
+	}
+	template := &entity.StudentShiftTemplate{
+		StudentID: "studentid",
+		Schedules: entity.ShiftSchedules{
+			{
+				Weekday: time.Sunday,
+				Lessons: entity.LessonSchedules{
+					{StartTime: "1700", EndTime: "1830"},
+					{StartTime: "1830", EndTime: "2000"},
+				},
+			},
+		},
+		SchedulesJSON: datatypes.JSON([]byte(`[{"weekday":0,"lessons":[{"startTime":"1700","endTime":"1830"},{"startTime":"1830","endTime":"2000"}]}]`)),
+		SuggestedLessons: entity.SuggestedLessons{
+			{SubjectID: 1, Total: 4},
+		},
+		SuggestedLessonsJSON: datatypes.JSON([]byte(`[{"subjectId":1,"total":4}]`)),
+		CreatedAt:            now,
+		UpdatedAt:            now,
+	}
+	tests := []struct {
+		name   string
+		setup  func(ctx context.Context, t *testing.T, mocks *mocks)
+		req    *lesson.GetStudentShiftTemplateRequest
+		expect *testResponse
+	}{
+		{
+			name: "success",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				mocks.validator.EXPECT().GetStudentShiftTemplate(req).Return(nil)
+				mocks.db.StudentShiftTemplate.EXPECT().Get(ctx, "studentid").Return(template, nil)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.OK,
+				body: &lesson.GetStudentShiftTemplateResponse{
+					Template: &lesson.StudentShiftTemplate{
+						StudentId: "studentid",
+						Schedules: []*lesson.ShiftSchedule{
+							{
+								Weekday: int32(time.Sunday),
+								Lessons: []*lesson.LessonSchedule{
+									{StartTime: "1700", EndTime: "1830"},
+									{StartTime: "1830", EndTime: "2000"},
+								},
+							},
+						},
+						SuggestedLessons: []*lesson.SuggestedLesson{
+							{SubjectId: 1, Total: 4},
+						},
+						CreatedAt: now.Unix(),
+						UpdatedAt: now.Unix(),
+					},
+				},
+			},
+		},
+		{
+			name: "failed to invalid argument",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				req := &lesson.GetStudentShiftTemplateRequest{}
+				mocks.validator.EXPECT().GetStudentShiftTemplate(req).Return(validation.ErrRequestValidation)
+			},
+			req: &lesson.GetStudentShiftTemplateRequest{},
+			expect: &testResponse{
+				code: codes.InvalidArgument,
+			},
+		},
+		{
+			name: "failed to get student shift template",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				mocks.validator.EXPECT().GetStudentShiftTemplate(req).Return(nil)
+				mocks.db.StudentShiftTemplate.EXPECT().Get(ctx, "studentid").Return(nil, errmock)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.Internal,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, testGRPC(tt.setup, tt.expect, func(ctx context.Context, service *lessonService) (proto.Message, error) {
+			return service.GetStudentShiftTemplate(ctx, tt.req)
+		}))
+	}
+}
+
+func TestUpsertStudentShiftTempalte(t *testing.T) {
+	t.Parallel()
+	req := &lesson.UpsertStudentShiftTemplateRequest{
+		StudentId: "studentid",
+		Template: &lesson.StudentShiftTemplateToUpsert{
+			Schedules: []*lesson.StudentShiftTemplateToUpsert_Schedule{
+				{
+					Weekday: int32(time.Sunday),
+					Lessons: []*lesson.StudentShiftTemplateToUpsert_Lesson{
+						{StartTime: "1700", EndTime: "1830"},
+						{StartTime: "1830", EndTime: "2000"},
+					},
+				},
+			},
+			SuggestedLessons: []*lesson.StudentSuggestedLesson{
+				{SubjectId: 1, Total: 4},
+			},
+		},
+	}
+	student := &user.Student{Id: "studentid"}
+	template := &entity.StudentShiftTemplate{
+		StudentID: "studentid",
+		Schedules: entity.ShiftSchedules{
+			{
+				Weekday: time.Sunday,
+				Lessons: entity.LessonSchedules{
+					{StartTime: "1700", EndTime: "1830"},
+					{StartTime: "1830", EndTime: "2000"},
+				},
+			},
+		},
+		SuggestedLessons: entity.SuggestedLessons{
+			{SubjectID: 1, Total: 4},
+		},
+	}
+	tests := []struct {
+		name   string
+		setup  func(ctx context.Context, t *testing.T, mocks *mocks)
+		req    *lesson.UpsertStudentShiftTemplateRequest
+		expect *testResponse
+	}{
+		{
+			name: "success",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				in := &user.GetStudentRequest{Id: "studentid"}
+				out := &user.GetStudentResponse{Student: student}
+				mocks.validator.EXPECT().UpsertStudentShiftTemplate(req).Return(nil)
+				mocks.user.EXPECT().GetStudent(ctx, in).Return(out, nil)
+				mocks.db.StudentShiftTemplate.EXPECT().Upsert(ctx, "studentid", template).Return(nil)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.OK,
+				body: &lesson.UpsertStudentShiftTemplateResponse{},
+			},
+		},
+		{
+			name: "failed to invalid argument",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				req := &lesson.UpsertStudentShiftTemplateRequest{}
+				mocks.validator.EXPECT().UpsertStudentShiftTemplate(req).Return(validation.ErrRequestValidation)
+			},
+			req: &lesson.UpsertStudentShiftTemplateRequest{},
+			expect: &testResponse{
+				code: codes.InvalidArgument,
+			},
+		},
+		{
+			name: "failed to get student",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				in := &user.GetStudentRequest{Id: "studentid"}
+				mocks.validator.EXPECT().UpsertStudentShiftTemplate(req).Return(nil)
+				mocks.user.EXPECT().GetStudent(ctx, in).Return(nil, errmock)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.Internal,
+			},
+		},
+		{
+			name: "failed to get student shift template",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				in := &user.GetStudentRequest{Id: "studentid"}
+				out := &user.GetStudentResponse{Student: student}
+				mocks.validator.EXPECT().UpsertStudentShiftTemplate(req).Return(nil)
+				mocks.user.EXPECT().GetStudent(ctx, in).Return(out, nil)
+				mocks.db.StudentShiftTemplate.EXPECT().Upsert(ctx, "studentid", template).Return(errmock)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.Internal,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, testGRPC(tt.setup, tt.expect, func(ctx context.Context, service *lessonService) (proto.Message, error) {
+			return service.UpsertStudentShiftTemplate(ctx, tt.req)
 		}))
 	}
 }

@@ -1,4 +1,4 @@
-openapi: "3.0.3"
+openapi: 3.0.3
 info:
   title: SHS Web
   description: 管理者・講師用API
@@ -15,8 +15,6 @@ tags:
   description: 生徒・保護者関連
 - name: Subject
   description: 授業科目関連
-- name: Schedule
-  description: 授業コマ関連
 - name: Shift
   description: シフト作成関連
 - name: Submission
@@ -64,9 +62,6 @@ paths:
     $ref: './paths/v1/subjects/index.yaml'
   /v1/subjects/{subjectId}:
     $ref: './paths/v1/subjects/_subjectId.yaml'
-  # Schedules
-  /v1/schedules:
-    $ref: './paths/v1/schedules/index.yaml'
   # Shifts
   /v1/shifts:
     $ref: './paths/v1/shifts/index.yaml'
@@ -95,6 +90,8 @@ paths:
   /v1/lessons:
     $ref: './paths/v1/lessons/index.yaml'
   # Other
+  /v1/schedules:
+    $ref: './paths/v1/schedules/index.yaml'
   /v1/rooms:
     $ref: './paths/v1/rooms/index.yaml'
 components:

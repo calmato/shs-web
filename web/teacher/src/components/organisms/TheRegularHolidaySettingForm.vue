@@ -7,8 +7,8 @@
       :key="i"
       v-model="selectedValues"
       class="ma-0 pt-0"
-      :label="dateString"
-      :value="dateString"
+      :label="dateString.label"
+      :value="dateString.value"
     />
   </div>
 </template>
@@ -19,17 +19,25 @@ import { defineComponent, PropType, SetupContext, computed } from '@nuxtjs/compo
 export default defineComponent({
   props: {
     value: {
-      type: Array as PropType<string[]>,
+      type: Array as PropType<number[]>,
       default: () => [],
     },
   },
 
   setup(props, { emit }: SetupContext) {
-    const dateList: string[] = ['月曜日', '火曜日', '水曜日', '木曜日', '金曜日', '土曜日', '日曜日']
+    const dateList: { label: string; value: number }[] = [
+      { label: '月曜日', value: 1 },
+      { label: '火曜日', value: 2 },
+      { label: '水曜日', value: 3 },
+      { label: '木曜日', value: 4 },
+      { label: '金曜日', value: 5 },
+      { label: '土曜日', value: 6 },
+      { label: '日曜日', value: 7 },
+    ]
 
     const selectedValues = computed({
       get: () => props.value,
-      set: (val: string[]) => emit('update:value', val),
+      set: (val: number[]) => emit('update:value', val),
     })
 
     return {

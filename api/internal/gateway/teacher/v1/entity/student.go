@@ -35,7 +35,7 @@ func NewStudent(student *entity.Student, subjects entity.Subjects) *Student {
 		Mail:          student.Mail,
 		SchoolType:    schoolType,
 		Grade:         student.Grade,
-		Subjects:      NewSubjects(subjects).FiterBySchoolType(schoolType),
+		Subjects:      NewSubjects(subjects),
 		CreatedAt:     jst.ParseFromUnix(student.CreatedAt),
 		UpdatedAt:     jst.ParseFromUnix(student.UpdatedAt),
 	}

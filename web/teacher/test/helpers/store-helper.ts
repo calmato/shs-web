@@ -1,14 +1,24 @@
 import Vue from 'vue'
 import Vuex, { Store } from 'vuex'
 import { createLocalVue } from '@vue/test-utils'
-import { CommonStore, UserStore, initialiseStores, LessonStore, AuthStore, ShiftStore, SubmissionStore } from '~/store'
+import {
+  CommonStore,
+  UserStore,
+  initialiseStores,
+  LessonStore,
+  AuthStore,
+  ShiftStore,
+  SubmissionStore,
+  ClassroomStore,
+} from '~/store'
 import AuthModule from '~/store/auth'
 import CommonModule from '~/store/common'
 import LessonModule from '~/store/lesson'
 import ShiftModule from '~/store/shift'
 import UserModule from '~/store/user'
-import response from '~~/test/helpers/api-mock'
 import SubmissionModule from '~/store/submission'
+import ClassroomModule from '~/store/classroom'
+import response from '~~/test/helpers/api-mock'
 
 const localVue: Vue.VueConstructor<Vue> = createLocalVue()
 localVue.use(Vuex)
@@ -21,6 +31,7 @@ const store = new Store({
     shift: ShiftModule,
     submission: SubmissionModule,
     user: UserModule,
+    classroom: ClassroomModule,
   },
 })
 
@@ -35,6 +46,7 @@ function refresh(): void {
   ShiftStore.factory()
   SubmissionStore.factory()
   UserStore.factory()
+  ClassroomStore.factory()
 }
 
 // Error を返したいときだけ false にする

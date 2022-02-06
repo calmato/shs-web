@@ -60,10 +60,14 @@ func (h *apiV1Handler) ListEnabledStudentShifts(ctx *gin.Context) {
 		return
 	}
 
+	var suggestesLessons entity.StudentSuggestedLessons
+	if gsubmission != nil {
+		suggestesLessons = entity.NewStudentSuggestedLessons(gsubmission.SuggestedLessons)
+	}
 	res := &response.StudentShiftsResponse{
 		Summary:          entity.NewStudentSubmission(gsummary, gsubmission),
 		Shifts:           entity.NewEnabledStudentShiftDetails(summary, shifts, gstudentShifts.MapByShiftID()),
-		SuggestedLessons: entity.NewStudentSuggestedLessons(gsubmission),
+		SuggestedLessons: suggestesLessons,
 	}
 	ctx.JSON(http.StatusOK, res)
 }
