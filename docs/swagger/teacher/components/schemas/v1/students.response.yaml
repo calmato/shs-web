@@ -35,6 +35,33 @@ studentResponse:
       type: integer
       format: int64
       description: 学年
+    subjects:
+      type: array
+      description: 受講科目一覧
+      items:
+        type: object
+        properties:
+          id:
+            type: integer
+            format: int64
+            description: 授業科目ID
+          name:
+            type: string
+            description: 授業科目名
+          color:
+            type: string
+            description: 表示色
+            format: '#rrggbb'
+          schoolType:
+            type: integer
+            format: int32
+            description: 校種
+          createdAt:
+            type: string
+            description: 登録日時
+          updatedAt:
+            type: string
+            description: 更新日時
   example:
     id: 'kSByoE6FetnPs5Byk3a9Zx'
     lastName: '中村'
