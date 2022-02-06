@@ -144,10 +144,6 @@ func forbidden(ctx *gin.Context, err error) {
 	httpError(ctx, status.Error(codes.PermissionDenied, err.Error()))
 }
 
-func preconditionFailed(ctx *gin.Context, err error) {
-	httpError(ctx, status.Error(codes.FailedPrecondition, err.Error()))
-}
-
 /**
  * ###############################################
  * other
