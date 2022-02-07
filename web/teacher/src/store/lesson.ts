@@ -147,7 +147,7 @@ export default class LessonModule extends VuexModule {
         const students: Student[] = res.students.map((student: v1Student): Student => {
           const schoolType = schoolTypeNum2schoolTypeString(student.schoolType)
           const subjects: Subject[] = []
-          return { ...student, type: schoolType, subjects }
+          return { ...student, schoolType, subjects }
         })
         this.setLessons(lessons)
         this.setUsers({ teachers, students })

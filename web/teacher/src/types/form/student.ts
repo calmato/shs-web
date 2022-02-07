@@ -58,7 +58,7 @@ export const StudentNewParams: IStudentNewParams = {
   mail: '',
   password: '',
   passwordConfirmation: '',
-  schoolType: '',
+  schoolType: 'その他',
   grade: '',
 }
 

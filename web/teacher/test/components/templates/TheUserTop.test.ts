@@ -143,7 +143,7 @@ describe('components/templates/TheUserTop', () => {
               lastNameKana: 'はまだ',
               firstNameKana: 'じろう',
               mail: 'student-001@calmato.jp',
-              type: '小学校',
+              schoolType: '小学校',
               grade: 2,
               subjects: [],
               createdAt: '',
