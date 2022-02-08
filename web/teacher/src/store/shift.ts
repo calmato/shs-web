@@ -671,9 +671,9 @@ export default class ShiftModule extends VuexModule {
           return { ...teacher, subjects }
         })
         const students: Student[] = res.students.map((student: v1Student): Student => {
-          const type: SchoolType = schoolTypeNum2schoolTypeString(student.schoolType)
+          const schoolType: SchoolType = schoolTypeNum2schoolTypeString(student.schoolType)
           const subjects: Subject[] = subjectResponses2Subjects(student.subjects)
-          return { ...student, type, subjects }
+          return { ...student, schoolType, subjects }
         })
 
         this.setLessonDetail({

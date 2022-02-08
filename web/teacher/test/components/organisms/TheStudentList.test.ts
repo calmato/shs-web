@@ -29,7 +29,7 @@ describe('components/organisms/TheStudentList', () => {
               lastNameKana: 'はまだ',
               firstNameKana: 'じろう',
               mail: 'student-001@calmato.jp',
-              type: '小学校',
+              schoolType: '小学校',
               grade: 2,
               subjects: [],
               createdAt: '',
@@ -63,47 +63,27 @@ describe('components/organisms/TheStudentList', () => {
       })
     })
 
-    describe('methods', () => {
-      describe('getSchoolType', () => {
-        it('type is elementary school', () => {
-          expect(wrapper.vm.getSchoolType(1)).toBe('小学校')
-        })
-
-        it('type is junior high school', () => {
-          expect(wrapper.vm.getSchoolType(2)).toBe('中学校')
-        })
-
-        it('type is high school', () => {
-          expect(wrapper.vm.getSchoolType(3)).toBe('高校')
-        })
-
-        it('invalid type', () => {
-          expect(wrapper.vm.getSchoolType(0)).toBe('その他')
-        })
+    describe('getSchoolTypeColor', () => {
+      it('type is elementary school', () => {
+        expect(wrapper.vm.getSchoolTypeColor('小学校')).toBe('primary')
       })
 
-      describe('getSchoolTypeColor', () => {
-        it('type is elementary school', () => {
-          expect(wrapper.vm.getSchoolTypeColor(1)).toBe('primary')
-        })
-
-        it('type is junior high school', () => {
-          expect(wrapper.vm.getSchoolTypeColor(2)).toBe('secondary')
-        })
-
-        it('type is high school', () => {
-          expect(wrapper.vm.getSchoolTypeColor(3)).toBe('info')
-        })
-
-        it('invalid type', () => {
-          expect(wrapper.vm.getSchoolTypeColor(0)).toBe('')
-        })
+      it('type is junior high school', () => {
+        expect(wrapper.vm.getSchoolTypeColor('中学校')).toBe('secondary')
       })
 
-      describe('getSchoolYear', () => {
-        it('return', () => {
-          expect(wrapper.vm.getSchoolYear(3)).toBe('3年')
-        })
+      it('type is high school', () => {
+        expect(wrapper.vm.getSchoolTypeColor('高校')).toBe('info')
+      })
+
+      it('invalid type', () => {
+        expect(wrapper.vm.getSchoolTypeColor('その他')).toBe('')
+      })
+    })
+
+    describe('getSchoolYear', () => {
+      it('return', () => {
+        expect(wrapper.vm.getSchoolYear(3)).toBe('3年')
       })
     })
   })

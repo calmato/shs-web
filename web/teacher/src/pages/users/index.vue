@@ -4,6 +4,9 @@
     :is-admin="isAdmin"
     :subjects="subjects"
     :students="students"
+    :students-total="studentsTotal"
+    :students-page.sync="studentsPage"
+    :students-items-per-page.sync="studentsItemsPerPage"
     :teacher="teacher"
     :teacher-edit-dialog="teacherDialog"
     :teachers="teachers"
@@ -55,6 +58,9 @@ export default defineComponent({
     const teachersPage = ref<number>(1)
     const teachersItemsPerPage = ref<number>(10)
 
+    const studentsPage = ref<number>(1)
+    const studentsItemsPerPage = ref<number>(10)
+
     const editTeacherElementarySchoolForm = reactive<TeacherEditSubjectForm>({
       params: TeacherEditSubjectForElementarySchoolParams,
       options: TeacherEditSubjectForElementarySchoolOptions,
@@ -79,6 +85,7 @@ export default defineComponent({
     const isAdmin = computed<boolean>(() => store.getters['auth/getRole'] === Role.ADMINISTRATOR)
     const subjects = computed<SubjectsMap>(() => store.getters['lesson/getSubjectsMap'])
     const students = computed<Student[]>(() => store.getters['user/getStudents'])
+    const studentsTotal = computed<number>(() => store.getters['user/getStudentsTotal'])
     const teacher = computed<Teacher>(() => store.getters['user/getTeacher'])
     const teachers = computed<Teacher[]>(() => store.getters['user/getTeachers'])
     const teachersTotal = computed<number>(() => store.getters['user/getTeachersTotal'])
@@ -91,8 +98,20 @@ export default defineComponent({
       await listTeachers()
     })
 
+    watch(studentsPage, async () => {
+      await listStudents()
+    })
+
+    watch(studentsItemsPerPage, async () => {
+      await listStudents()
+    })
+
     useAsync(async () => {
       await listTeachers()
+    })
+
+    useAsync(async () => {
+      await listStudents()
     })
 
     async function listTeachers(): Promise<void> {
@@ -104,6 +123,21 @@ export default defineComponent({
       await UserStore.listTeachers({ limit, offset })
         .catch((err: Error) => {
           console.log('feiled to list teachers', err)
+        })
+        .finally(() => {
+          CommonStore.endConnection()
+        })
+    }
+
+    async function listStudents(): Promise<void> {
+      CommonStore.startConnection()
+
+      const limit: number = studentsItemsPerPage.value
+      const offset: number = (studentsPage.value - 1) * limit
+
+      await UserStore.listStudents({ limit, offset })
+        .catch((err: Error) => {
+          console.log('feiled to list students', err)
         })
         .finally(() => {
           CommonStore.endConnection()
@@ -226,6 +260,9 @@ export default defineComponent({
       isAdmin,
       subjects,
       students,
+      studentsTotal,
+      studentsPage,
+      studentsItemsPerPage,
       teacher,
       teacherDialog,
       teachers,

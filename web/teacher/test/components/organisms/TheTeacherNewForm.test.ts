@@ -45,7 +45,6 @@ describe('components/organisms/TheTeacherNewForm', () => {
     describe('data', () => {
       it('roleItems', () => {
         expect(wrapper.vm.roleItems).toEqual([
-          { text: '--- 役職を選択してください -------', value: Role.UNKNOWN },
           { text: '講師', value: Role.TEACHER },
           { text: '管理者', value: Role.ADMINISTRATOR },
         ])

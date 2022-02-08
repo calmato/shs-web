@@ -54,12 +54,20 @@
           type="password"
         />
       </v-col>
-      <v-col cols="12">
+      <v-col cols="12" sm="6">
         <the-select
-          :label="form.options.role.label"
-          :rules="form.options.role.rules"
-          :value.sync="form.params.role"
-          :items="roleItems"
+          :label="form.options.schoolType.label"
+          :rules="form.options.schoolType.rules"
+          :value.sync="form.params.schoolType"
+          :items="schoolTypeItem"
+        />
+      </v-col>
+      <v-col cols="12" sm="6">
+        <the-select
+          :label="form.options.grade.label"
+          :rules="form.options.grade.rules"
+          :value.sync="form.params.grade"
+          :items="getGrade(form.params.schoolType)"
         />
       </v-col>
     </v-row>
@@ -71,9 +79,8 @@ import { defineComponent, PropType } from '@nuxtjs/composition-api'
 import TheFormGroup from '~/components/atoms/TheFormGroup.vue'
 import TheSelect from '~/components/atoms/TheSelect.vue'
 import TheTextField from '~/components/atoms/TheTextField.vue'
-import { TeacherNewForm, TeacherNewOptions, TeacherNewParams } from '~/types/form'
-import { RoleItem } from '~/types/props/teacher'
-import { Role } from '~/types/store'
+import { StudentNewForm, StudentNewOptions, StudentNewParams } from '~/types/form'
+import { gradeItem, SchoolTypeItem } from '~/types/props/student'
 
 export default defineComponent({
   components: {
@@ -84,22 +91,52 @@ export default defineComponent({
 
   props: {
     form: {
-      type: Object as PropType<TeacherNewForm>,
+      type: Object as PropType<StudentNewForm>,
       default: () => ({
-        params: TeacherNewParams,
-        options: TeacherNewOptions,
+        params: StudentNewParams,
+        options: StudentNewOptions,
       }),
     },
   },
 
   setup() {
-    const roleItems: RoleItem[] = [
-      { text: '講師', value: Role.TEACHER },
-      { text: '管理者', value: Role.ADMINISTRATOR },
+    const schoolTypeItem: SchoolTypeItem[] = [
+      { text: '小学校', value: '小学校' },
+      { text: '中学校', value: '中学校' },
+      { text: '高校', value: '高校' },
     ]
 
+    const getGrade = (schoolType: string): gradeItem[] => {
+      switch (schoolType) {
+        case '小学校':
+          return [
+            { text: '1', value: '1' },
+            { text: '2', value: '2' },
+            { text: '3', value: '3' },
+            { text: '4', value: '4' },
+            { text: '5', value: '5' },
+            { text: '6', value: '6' },
+          ]
+        case '中学校':
+          return [
+            { text: '1', value: '1' },
+            { text: '2', value: '2' },
+            { text: '3', value: '3' },
+          ]
+        case '高校':
+          return [
+            { text: '1', value: '1' },
+            { text: '2', value: '2' },
+            { text: '3', value: '3' },
+          ]
+        default:
+          return [{ text: '校種を選択してください', value: '' }]
+      }
+    }
+
     return {
-      roleItems,
+      schoolTypeItem,
+      getGrade,
     }
   },
 })

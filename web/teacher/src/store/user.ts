@@ -10,18 +10,27 @@ import {
   UpdateTeacherRoleRequest,
   UpdateTeacherMailRequest,
   UpdateTeacherPasswordRequest,
+  CreateStudentRequest,
+  StudentResponse,
+  StudentsResponse,
 } from '~/types/api/v1'
 import { Role, Student, StudentMap, SubjectsMap, Teacher, TeacherMap, UserState } from '~/types/store'
 import { ErrorResponse } from '~/types/api/exception'
 import { ApiError } from '~/types/exception'
 import {
+  StudentNewForm,
   TeacherEditRoleForm,
   TeacherEditSubjectForm,
   TeacherNewForm,
   TeacherUpdateMailForm,
   TeacherUpdatePasswordForm,
 } from '~/types/form'
-import { subjectResponse2Subject } from '~/lib'
+import {
+  schoolTypeNum2schoolTypeString,
+  schoolTypeString2schoolTypeNum,
+  subjectResponse2Subject,
+  subjectResponses2Subjects,
+} from '~/lib'
 
 const initialState: UserState = {
   students: [
@@ -34,7 +43,7 @@ const initialState: UserState = {
       lastNameKana: 'はまだ',
       firstNameKana: 'じろう',
       mail: 'student-001@calmato.jp',
-      type: '小学校',
+      schoolType: '小学校',
       grade: 2,
       subjects: [],
       createdAt: '',
@@ -55,6 +64,7 @@ const initialState: UserState = {
   },
   teachers: [],
   teachersTotal: 0,
+  studentsTotal: 0,
 }
 
 @Module({
@@ -67,6 +77,7 @@ export default class UserModule extends VuexModule {
   private teacher: UserState['teacher'] = initialState.teacher
   private teachers: UserState['teachers'] = initialState.teachers
   private teachersTotal: UserState['teachersTotal'] = initialState.teachersTotal
+  private studentsTotal: UserState['studentsTotal'] = initialState.studentsTotal
 
   public get getStudents(): Student[] {
     return this.students
@@ -100,13 +111,18 @@ export default class UserModule extends VuexModule {
     return this.teachersTotal
   }
 
+  public get getStudentsTotal(): number {
+    return this.studentsTotal
+  }
+
   @Mutation
-  private setStudents(students: Student[]): void {
+  private setStudents({ students, total }: { students: Student[]; total: number }): void {
     this.students = students.map((student: Student): Student => {
       const name = getName(student.lastName, student.firstName)
       const nameKana = getName(student.lastNameKana, student.firstNameKana)
       return { ...student, name, nameKana }
     })
+    this.studentsTotal = total
   }
 
   @Mutation
@@ -135,6 +151,14 @@ export default class UserModule extends VuexModule {
   }
 
   @Mutation
+  private addStudent(student: Student): void {
+    const name = getName(student.lastName, student.firstName)
+    const nameKana = getName(student.lastNameKana, student.firstNameKana)
+    this.students.push({ ...student, name, nameKana })
+    this.studentsTotal += 1
+  }
+
+  @Mutation
   private removeTeacher({ teacherId }: { teacherId: string }): void {
     const index: number = this.teachers.findIndex((val: Teacher) => {
       return val.id === teacherId
@@ -148,7 +172,7 @@ export default class UserModule extends VuexModule {
 
   @Action({})
   public factory(): void {
-    this.setStudents(initialState.students)
+    this.setStudents({ students: initialState.students, total: initialState.studentsTotal })
     this.setTeachers({ teachers: initialState.teachers, total: initialState.teachersTotal })
   }
 
@@ -194,6 +218,29 @@ export default class UserModule extends VuexModule {
   }
 
   @Action({ rawError: true })
+  public async listStudents({ limit, offset }: { limit: number; offset: number }): Promise<void> {
+    let query: string = ''
+    if (limit !== 0 || offset !== 0) {
+      query = `?limit=${limit}&offset=${offset}`
+    }
+
+    await $axios
+      .$get('/v1/students' + query)
+      .then((res: StudentsResponse) => {
+        const students: Student[] = res.students.map((student) => {
+          const subjects = subjectResponses2Subjects(student.subjects)
+          const schoolType = schoolTypeNum2schoolTypeString(student.schoolType)
+          return { ...student, subjects, schoolType }
+        })
+        this.setStudents({ students, total: res.total })
+      })
+      .catch((err: AxiosError) => {
+        const res: ErrorResponse = { ...err.response?.data }
+        throw new ApiError(res.status, res.message, res)
+      })
+  }
+
+  @Action({ rawError: true })
   public async createTeacher({ form }: { form: TeacherNewForm }): Promise<void> {
     const req: CreateTeacherRequest = { ...form.params }
 
@@ -209,6 +256,30 @@ export default class UserModule extends VuexModule {
             }
           : initializeSubjects()
         this.addTeacher({ ...res, subjects })
+      })
+      .catch((err: AxiosError) => {
+        const res: ErrorResponse = { ...err.response?.data }
+        throw new ApiError(res.status, res.message, res)
+      })
+  }
+
+  @Action({ rawError: true })
+  public async createStudent({ form }: { form: StudentNewForm }): Promise<void> {
+    const req: CreateStudentRequest = {
+      ...form.params,
+      schoolType: schoolTypeString2schoolTypeNum(form.params.schoolType),
+      grade: Number(form.params.grade),
+    }
+
+    await $axios
+      .$post('/v1/students', req)
+      .then((res: StudentResponse) => {
+        const student: Student = {
+          ...res,
+          schoolType: schoolTypeNum2schoolTypeString(res.schoolType),
+          subjects: subjectResponses2Subjects(res.subjects),
+        }
+        this.addStudent(student)
       })
       .catch((err: AxiosError) => {
         const res: ErrorResponse = { ...err.response?.data }
