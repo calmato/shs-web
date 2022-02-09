@@ -3,6 +3,7 @@ package notifier
 import (
 	"context"
 	"errors"
+	"net/url"
 	"os"
 	"testing"
 	"time"
@@ -51,11 +52,20 @@ func newNotifier(mocks *mocks, opts ...testOption) *Notifier {
 	for i := range opts {
 		opts[i](dopts)
 	}
+	webURL, _ := url.Parse("http://example.com")
 	return &Notifier{
 		logger: zap.NewNop(),
 		mailer: mocks.mailer,
 		puller: mocks.puller,
 		user:   mocks.user,
+		teacherWebURL: func() *url.URL {
+			url := *webURL
+			return &url
+		},
+		studentWebURL: func() *url.URL {
+			url := *webURL
+			return &url
+		},
 	}
 }
 
