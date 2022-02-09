@@ -52,7 +52,25 @@
       </v-tab-item>
       <v-tab-item value="tab-students">
         <v-row>
-          <v-dialog> </v-dialog>
+          <v-dialog :value.sync="studentEditDialog" width="600px" scrollable @click:outside="onCloseStudentDialog">
+            <the-student-edit-card
+              :is-admin="isAdmin"
+              :subjects="subjects"
+              :student="student"
+              :loading="loading"
+              :delete-dialog="studentDeleteDialog"
+              :edit-student-elementary-school-form="editStudentElementarySchoolForm"
+              :edit-student-junior-high-school-form="editStudentJuniorHighSchoolForm"
+              :edit-student-high-school-form="editStudentHighSchoolForm"
+              @click:close="onCloseStudentDialog"
+              @click:delete="onClickDeleteStudent"
+              @click:delete-accept="onClickDeleteStudentAccept"
+              @click:delete-cancel="onClickDeleteStudentCancel"
+              @submit:elementary-school="onSubmitStudentElementarySchool"
+              @submit:junior-high-school="onSubmitStudentJuniorHighSchool"
+              @submit:high-school="onSubmitStudentHighSchool"
+            />
+          </v-dialog>
           <v-col class="my-4 mx-3">
             <v-btn v-show="isAdmin" color="primary" block outlined @click="onClickNew('students')">
               <v-icon>mdi-plus</v-icon>
@@ -68,6 +86,7 @@
               :loading="loading"
               @update:page="$emit('update:students-page', $event)"
               @update:items-per-page="$emit('update:students-items-per-page', $event)"
+              @click="onClickShowStudent"
             />
           </v-col>
         </v-row>
@@ -79,9 +98,17 @@
 <script lang="ts">
 import { defineComponent, PropType, ref, SetupContext } from '@nuxtjs/composition-api'
 import TheStudentList from '~/components/organisms/TheStudentList.vue'
+import TheStudentEditCard from '~/components/organisms/TheStudentEditCard.vue'
 import TheTeacherList from '~/components/organisms/TheTeacherList.vue'
 import TheTeacherEditCard from '~/components/organisms/TheTeacherEditCard.vue'
 import {
+  StudentEditSubjectForm,
+  StudentEditSubjectForElementarySchoolParams,
+  StudentEditSubjectForHighSchoolParams,
+  StudentEditSubjectForJuniorHighSchoolParams,
+  StudentEditSubjectForElementarySchoolOptions,
+  StudentEditSubjectForJuniorHighSchoolOptions,
+  StudentEditSubjectForHighSchoolOptions,
   TeacherEditSubjectForm,
   TeacherEditSubjectForElementarySchoolParams,
   TeacherEditSubjectForHighSchoolParams,
@@ -99,6 +126,7 @@ import { Role, Student, SubjectsMap, Teacher } from '~/types/store'
 export default defineComponent({
   components: {
     TheStudentList,
+    TheStudentEditCard,
     TheTeacherList,
     TheTeacherEditCard,
   },
@@ -121,9 +149,32 @@ export default defineComponent({
         その他: [],
       }),
     },
+    /**
+     * 生徒関連
+     */
+    student: {
+      type: Object as PropType<Student>,
+      default: () => ({
+        id: '',
+        lastName: '',
+        firstName: '',
+        lastNameKana: '',
+        firstNameKana: '',
+        mail: '',
+        schoolType: 'その他',
+        grade: 1,
+        subjects: [],
+        createdAt: '',
+        updatedAt: '',
+      }),
+    },
     students: {
       type: Array as PropType<Student[]>,
       default: () => [],
+    },
+    studentEditDialog: {
+      type: Boolean,
+      default: false,
     },
     studentsTotal: {
       type: Number,
@@ -137,6 +188,30 @@ export default defineComponent({
       type: Number,
       default: 10,
     },
+    editStudentElementarySchoolForm: {
+      type: Object as PropType<StudentEditSubjectForm>,
+      default: () => ({
+        params: StudentEditSubjectForElementarySchoolParams,
+        options: StudentEditSubjectForElementarySchoolOptions,
+      }),
+    },
+    editStudentJuniorHighSchoolForm: {
+      type: Object as PropType<StudentEditSubjectForm>,
+      default: () => ({
+        params: StudentEditSubjectForJuniorHighSchoolParams,
+        options: StudentEditSubjectForJuniorHighSchoolOptions,
+      }),
+    },
+    editStudentHighSchoolForm: {
+      type: Object as PropType<StudentEditSubjectForm>,
+      default: () => ({
+        params: StudentEditSubjectForHighSchoolParams,
+        options: StudentEditSubjectForHighSchoolOptions,
+      }),
+    },
+    /**
+     * 講師関連
+     */
     teacher: {
       type: Object as PropType<Teacher>,
       default: () => ({
@@ -152,13 +227,13 @@ export default defineComponent({
         updatedAt: '',
       }),
     },
-    teacherEditDialog: {
-      type: Boolean,
-      default: false,
-    },
     teachers: {
       type: Array as PropType<Teacher[]>,
       default: () => [],
+    },
+    teacherEditDialog: {
+      type: Boolean,
+      default: false,
     },
     teachersTotal: {
       type: Number,
@@ -209,12 +284,53 @@ export default defineComponent({
     ]
 
     const selector = ref<string>('teachers')
+    const studentDeleteDialog = ref<boolean>(false)
     const teacherDeleteDialog = ref<boolean>(false)
 
     const onClickNew = (actor: string): void => {
       emit('click:new', actor)
     }
 
+    /**
+     * 生徒関連
+     */
+    const onClickShowStudent = (student: Student): void => {
+      emit('click:show-student', student)
+    }
+
+    const onClickDeleteStudent = (): void => {
+      studentDeleteDialog.value = true
+    }
+
+    const onClickDeleteStudentAccept = (): void => {
+      emit('submit:student-delete')
+      studentDeleteDialog.value = false
+    }
+
+    const onClickDeleteStudentCancel = (): void => {
+      studentDeleteDialog.value = false
+    }
+
+    const onCloseStudentDialog = (): void => {
+      emit('click:close-student')
+      studentDeleteDialog.value = false
+    }
+
+    const onSubmitStudentElementarySchool = (): void => {
+      emit('submit:student-elementary-school')
+    }
+
+    const onSubmitStudentJuniorHighSchool = (): void => {
+      emit('submit:student-junior-high-school')
+    }
+
+    const onSubmitStudentHighSchool = (): void => {
+      emit('submit:student-high-school')
+    }
+
+    /**
+     * 講師関連
+     */
     const onClickShowTeacher = (teacher: Teacher): void => {
       emit('click:show-teacher', teacher)
     }
@@ -256,13 +372,22 @@ export default defineComponent({
     return {
       actors,
       selector,
+      studentDeleteDialog,
       teacherDeleteDialog,
       onClickNew,
+      onClickShowStudent,
       onClickShowTeacher,
+      onCloseStudentDialog,
       onCloseTeacherDialog,
+      onClickDeleteStudent,
+      onClickDeleteStudentAccept,
+      onClickDeleteStudentCancel,
       onClickDeleteTeacher,
       onClickDeleteTeacherAccept,
       onClickDeleteTeacherCancel,
+      onSubmitStudentElementarySchool,
+      onSubmitStudentJuniorHighSchool,
+      onSubmitStudentHighSchool,
       onSubmitTeacherElementarySchool,
       onSubmitTeacherJuniorHighSchool,
       onSubmitTeacherHighSchool,

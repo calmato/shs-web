@@ -1,5 +1,5 @@
 import { SchoolType } from '../store'
-import { ISelect, ITextField } from './util'
+import { IHidden, ISelect, ITextField } from './util'
 
 /**
  * ---------------------------
@@ -16,6 +16,11 @@ export interface IStudentNewParams {
   passwordConfirmation: string
   schoolType: SchoolType
   grade: string
+}
+
+export interface IStudentEditSubjectParams {
+  schoolType: 1 | 2 | 3
+  subjectIds: number[]
 }
 
 /**
@@ -35,6 +40,11 @@ export interface IStudentNewOptions {
   grade: ISelect
 }
 
+export interface IStudentEditSubjectOptions {
+  schoolType: IHidden
+  subjectIds: ISelect
+}
+
 /**
  * ---------------------------
  * interface - form
@@ -43,6 +53,11 @@ export interface IStudentNewOptions {
 export interface StudentNewForm {
   params: IStudentNewParams
   options: IStudentNewOptions
+}
+
+export interface StudentEditSubjectForm {
+  params: IStudentEditSubjectParams
+  options: IStudentEditSubjectOptions
 }
 
 /**
@@ -60,6 +75,21 @@ export const StudentNewParams: IStudentNewParams = {
   passwordConfirmation: '',
   schoolType: 'その他',
   grade: '',
+}
+
+export const StudentEditSubjectForElementarySchoolParams: IStudentEditSubjectParams = {
+  schoolType: 1,
+  subjectIds: [],
+}
+
+export const StudentEditSubjectForJuniorHighSchoolParams: IStudentEditSubjectParams = {
+  schoolType: 2,
+  subjectIds: [],
+}
+
+export const StudentEditSubjectForHighSchoolParams: IStudentEditSubjectParams = {
+  schoolType: 3,
+  subjectIds: [],
 }
 
 /**
@@ -132,5 +162,26 @@ export const StudentNewOptions: IStudentNewOptions = {
     rules: {
       required: true,
     },
+  } as ISelect,
+}
+
+export const StudentEditSubjectForElementarySchoolOptions: IStudentEditSubjectOptions = {
+  schoolType: {} as IHidden,
+  subjectIds: {
+    label: '受講科目 (小学校)',
+  } as ISelect,
+}
+
+export const StudentEditSubjectForJuniorHighSchoolOptions: IStudentEditSubjectOptions = {
+  schoolType: {} as IHidden,
+  subjectIds: {
+    label: '受講科目 (中学校)',
+  } as ISelect,
+}
+
+export const StudentEditSubjectForHighSchoolOptions: IStudentEditSubjectOptions = {
+  schoolType: {} as IHidden,
+  subjectIds: {
+    label: '受講科目 (高等学校)',
   } as ISelect,
 }

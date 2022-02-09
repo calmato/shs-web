@@ -10,6 +10,7 @@
     :server-items-length="total"
     @update:page="$emit('update:page', $event)"
     @update:items-per-page="$emit('update:items-per-page', $event)"
+    @click:row="onClick"
   >
     <template #[`item.type`]="{ item }">
       <v-chip :color="getSchoolTypeColor(item.schoolType)" dark small>
@@ -21,7 +22,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from '@nuxtjs/composition-api'
+import { defineComponent, PropType, SetupContext } from '@nuxtjs/composition-api'
 import { TableFooter, TableHeader } from '~/types/props/user'
 import { Student } from '~/types/store'
 
@@ -49,7 +50,7 @@ export default defineComponent({
     },
   },
 
-  setup() {
+  setup(_, { emit }: SetupContext) {
     const headers: TableHeader[] = [
       { text: '生徒名', value: 'name', sortable: false },
       { text: '校種', value: 'type', sortable: false },
@@ -78,11 +79,16 @@ export default defineComponent({
       return `${grade}年`
     }
 
+    const onClick = (student: Student): void => {
+      emit('click', student)
+    }
+
     return {
       headers,
       footer,
       getSchoolTypeColor,
       getSchoolYear,
+      onClick,
     }
   },
 })
