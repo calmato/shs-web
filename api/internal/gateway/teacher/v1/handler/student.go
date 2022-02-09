@@ -2,7 +2,6 @@ package handler
 
 import (
 	"context"
-	"errors"
 	"net/http"
 	"strconv"
 
@@ -182,23 +181,16 @@ func (h *apiV1Handler) UpdateStudentSubject(ctx *gin.Context) {
 		badRequest(ctx, err)
 		return
 	}
-
-	student, err := h.getStudent(c, studentID)
+	schoolType, err := req.SchoolType.ClassroomSchoolType()
 	if err != nil {
-		httpError(ctx, err)
+		badRequest(ctx, err)
 		return
 	}
-	schoolType := entity.NewSchoolTypeFromUser(student.SchoolType)
-	if schoolType == entity.SchoolTypeUnknown {
-		preconditionFailed(ctx, errors.New("api: school type is invalid"))
-		return
-	}
-	cschoolType, _ := schoolType.ClassroomSchoolType()
 
 	in := &classroom.UpsertStudentSubjectRequest{
-		StudentId:  student.Id,
+		StudentId:  studentID,
 		SubjectIds: req.SubjectIDs,
-		SchoolType: cschoolType,
+		SchoolType: schoolType,
 	}
 	_, err = h.classroom.UpsertStudentSubject(c, in)
 	if err != nil {
