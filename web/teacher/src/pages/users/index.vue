@@ -3,7 +3,9 @@
     :loading="loading"
     :is-admin="isAdmin"
     :subjects="subjects"
+    :student="student"
     :students="students"
+    :student-edit-dialog="studentDialog"
     :students-total="studentsTotal"
     :students-page.sync="studentsPage"
     :students-items-per-page.sync="studentsItemsPerPage"
@@ -13,12 +15,21 @@
     :teachers-total="teachersTotal"
     :teachers-page.sync="teachersPage"
     :teachers-items-per-page.sync="teachersItemsPerPage"
+    :edit-student-elementary-school-form="editStudentElementarySchoolForm"
+    :edit-student-junior-high-school-form="editStudentJuniorHighSchoolForm"
+    :edit-student-high-school-form="editStudentHighSchoolForm"
     :edit-teacher-elementary-school-form="editTeacherElementarySchoolForm"
     :edit-teacher-junior-high-school-form="editTeacherJuniorHighSchoolForm"
     :edit-teacher-high-school-form="editTeacherHighSchoolForm"
     @click:new="handleClickNew"
+    @click:show-student="handleClickShowStudent"
     @click:show-teacher="handleClickShowTeacher"
+    @click:close-student="handleCloseStudentDialog"
     @click:close-teacher="handleCloseTeacherDialog"
+    @submit:student-elementary-school="handleSubmitStudentElementarySchool"
+    @submit:student-junior-high-school="handleSubmitStudentJuniorHighSchool"
+    @submit:student-high-school="handleSubmitStudentHighSchool"
+    @submit:student-delete="handleSubmitDeleteStudent"
     @submit:teacher-elementary-school="handleSubmitTeacherElementarySchool"
     @submit:teacher-junior-high-school="handleSubmitTeacherJuniorHighSchool"
     @submit:teacher-high-school="handleSubmitTeacherHighSchool"
@@ -28,20 +39,27 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, reactive, ref, SetupContext, useAsync, watch } from '@nuxtjs/composition-api'
+import { computed, defineComponent, reactive, ref, useAsync, watch, useRouter, useStore } from '@nuxtjs/composition-api'
 import TheUserTop from '~/components/templates/TheUserTop.vue'
 import { CommonStore, UserStore } from '~/store'
 import {
+  StudentEditSubjectForm,
+  StudentEditSubjectForElementarySchoolOptions,
+  StudentEditSubjectForElementarySchoolParams,
+  StudentEditSubjectForJuniorHighSchoolOptions,
+  StudentEditSubjectForJuniorHighSchoolParams,
+  StudentEditSubjectForHighSchoolOptions,
+  StudentEditSubjectForHighSchoolParams,
   TeacherEditSubjectForm,
-  TeacherEditSubjectForElementarySchoolParams,
-  TeacherEditSubjectForHighSchoolParams,
-  TeacherEditSubjectForJuniorHighSchoolParams,
-  TeacherEditRoleForm,
-  TeacherEditRoleParams,
-  TeacherEditRoleOptions,
-  TeacherEditSubjectForHighSchoolOptions,
-  TeacherEditSubjectForJuniorHighSchoolOptions,
   TeacherEditSubjectForElementarySchoolOptions,
+  TeacherEditSubjectForElementarySchoolParams,
+  TeacherEditSubjectForJuniorHighSchoolOptions,
+  TeacherEditSubjectForJuniorHighSchoolParams,
+  TeacherEditSubjectForHighSchoolOptions,
+  TeacherEditSubjectForHighSchoolParams,
+  TeacherEditRoleForm,
+  TeacherEditRoleOptions,
+  TeacherEditRoleParams,
 } from '~/types/form'
 import { PromiseState, Role, Student, Subject, SubjectsMap, Teacher } from '~/types/store'
 
@@ -50,16 +68,31 @@ export default defineComponent({
     TheUserTop,
   },
 
-  setup(_, { root }: SetupContext) {
-    const router = root.$router
-    const store = root.$store
+  setup() {
+    const router = useRouter()
+    const store = useStore()
 
+    const studentDialog = ref<boolean>(false)
+    const studentsPage = ref<number>(1)
+    const studentsItemsPerPage = ref<number>(10)
     const teacherDialog = ref<boolean>(false)
     const teachersPage = ref<number>(1)
     const teachersItemsPerPage = ref<number>(10)
 
-    const studentsPage = ref<number>(1)
-    const studentsItemsPerPage = ref<number>(10)
+    const editStudentElementarySchoolForm = reactive<StudentEditSubjectForm>({
+      params: StudentEditSubjectForElementarySchoolParams,
+      options: StudentEditSubjectForElementarySchoolOptions,
+    })
+
+    const editStudentJuniorHighSchoolForm = reactive<StudentEditSubjectForm>({
+      params: StudentEditSubjectForJuniorHighSchoolParams,
+      options: StudentEditSubjectForJuniorHighSchoolOptions,
+    })
+
+    const editStudentHighSchoolForm = reactive<StudentEditSubjectForm>({
+      params: StudentEditSubjectForHighSchoolParams,
+      options: StudentEditSubjectForHighSchoolOptions,
+    })
 
     const editTeacherElementarySchoolForm = reactive<TeacherEditSubjectForm>({
       params: TeacherEditSubjectForElementarySchoolParams,
@@ -84,19 +117,12 @@ export default defineComponent({
     const loading = computed<boolean>(() => store.getters['common/getPromiseState'] === PromiseState.LOADING)
     const isAdmin = computed<boolean>(() => store.getters['auth/getRole'] === Role.ADMINISTRATOR)
     const subjects = computed<SubjectsMap>(() => store.getters['lesson/getSubjectsMap'])
+    const student = computed<Student>(() => store.getters['user/getStudent'])
     const students = computed<Student[]>(() => store.getters['user/getStudents'])
     const studentsTotal = computed<number>(() => store.getters['user/getStudentsTotal'])
     const teacher = computed<Teacher>(() => store.getters['user/getTeacher'])
     const teachers = computed<Teacher[]>(() => store.getters['user/getTeachers'])
     const teachersTotal = computed<number>(() => store.getters['user/getTeachersTotal'])
-
-    watch(teachersPage, async () => {
-      await listTeachers()
-    })
-
-    watch(teachersItemsPerPage, async () => {
-      await listTeachers()
-    })
 
     watch(studentsPage, async () => {
       await listStudents()
@@ -106,7 +132,11 @@ export default defineComponent({
       await listStudents()
     })
 
-    useAsync(async () => {
+    watch(teachersPage, async () => {
+      await listTeachers()
+    })
+
+    watch(teachersItemsPerPage, async () => {
       await listTeachers()
     })
 
@@ -114,20 +144,9 @@ export default defineComponent({
       await listStudents()
     })
 
-    async function listTeachers(): Promise<void> {
-      CommonStore.startConnection()
-
-      const limit: number = teachersItemsPerPage.value
-      const offset: number = (teachersPage.value - 1) * limit
-
-      await UserStore.listTeachers({ limit, offset })
-        .catch((err: Error) => {
-          console.log('feiled to list teachers', err)
-        })
-        .finally(() => {
-          CommonStore.endConnection()
-        })
-    }
+    useAsync(async () => {
+      await listTeachers()
+    })
 
     async function listStudents(): Promise<void> {
       CommonStore.startConnection()
@@ -138,6 +157,21 @@ export default defineComponent({
       await UserStore.listStudents({ limit, offset })
         .catch((err: Error) => {
           console.log('feiled to list students', err)
+        })
+        .finally(() => {
+          CommonStore.endConnection()
+        })
+    }
+
+    async function listTeachers(): Promise<void> {
+      CommonStore.startConnection()
+
+      const limit: number = teachersItemsPerPage.value
+      const offset: number = (teachersPage.value - 1) * limit
+
+      await UserStore.listTeachers({ limit, offset })
+        .catch((err: Error) => {
+          console.log('feiled to list teachers', err)
         })
         .finally(() => {
           CommonStore.endConnection()
@@ -155,6 +189,105 @@ export default defineComponent({
       router.push(`/users/${actor}/new`)
     }
 
+    /**
+     * 生徒関連
+     */
+    const handleClickShowStudent = async (student: Student): Promise<void> => {
+      CommonStore.startConnection()
+
+      const studentId: string = student.id
+
+      await UserStore.showStudent({ studentId })
+        .then(() => {
+          const student: Student = store.getters['user/getStudent']
+          const subjects: SubjectsMap = {
+            小学校: [],
+            中学校: [],
+            高校: [],
+            その他: [],
+          }
+          student.subjects.forEach((subject: Subject): void => {
+            subjects[subject.schoolType].push(subject)
+          })
+          editStudentElementarySchoolForm.params.subjectIds = getSubjectIds(subjects['小学校'])
+          editStudentJuniorHighSchoolForm.params.subjectIds = getSubjectIds(subjects['中学校'])
+          editStudentHighSchoolForm.params.subjectIds = getSubjectIds(subjects['高校'])
+          studentDialog.value = true
+        })
+        .catch((err: Error) => {
+          console.log('feiled to show student', err)
+        })
+        .finally(() => {
+          CommonStore.endConnection()
+        })
+    }
+
+    const handleSubmitStudentElementarySchool = async (): Promise<void> => {
+      CommonStore.startConnection()
+
+      const studentId: string = student.value.id
+
+      await UserStore.updateStudentSubjects({ studentId, form: editStudentElementarySchoolForm })
+        .catch((err: Error) => {
+          console.log('feiled to update student subjects', err)
+        })
+        .finally(() => {
+          CommonStore.endConnection()
+        })
+    }
+
+    const handleSubmitStudentJuniorHighSchool = async (): Promise<void> => {
+      CommonStore.startConnection()
+
+      const studentId: string = student.value.id
+
+      await UserStore.updateStudentSubjects({ studentId, form: editStudentJuniorHighSchoolForm })
+        .catch((err: Error) => {
+          console.log('feiled to update student subjects', err)
+        })
+        .finally(() => {
+          CommonStore.endConnection()
+        })
+    }
+
+    const handleSubmitStudentHighSchool = async (): Promise<void> => {
+      CommonStore.startConnection()
+
+      const studentId: string = student.value.id
+
+      await UserStore.updateStudentSubjects({ studentId, form: editStudentHighSchoolForm })
+        .catch((err: Error) => {
+          console.log('feiled to update student subjects', err)
+        })
+        .finally(() => {
+          CommonStore.endConnection()
+        })
+    }
+
+    const handleSubmitDeleteStudent = async (): Promise<void> => {
+      CommonStore.startConnection()
+
+      const studentId: string = student.value.id
+
+      await UserStore.deleteStudent({ studentId })
+        .then(() => {
+          studentDialog.value = false
+        })
+        .catch((err: Error) => {
+          console.log('feiled to delete student', err)
+        })
+        .finally(() => {
+          CommonStore.endConnection()
+        })
+    }
+
+    const handleCloseStudentDialog = (): void => {
+      studentDialog.value = false
+    }
+
+    /**
+     * 生徒関連
+     */
     const handleClickShowTeacher = async (teacher: Teacher): Promise<void> => {
       CommonStore.startConnection()
 
@@ -259,7 +392,9 @@ export default defineComponent({
       loading,
       isAdmin,
       subjects,
+      student,
       students,
+      studentDialog,
       studentsTotal,
       studentsPage,
       studentsItemsPerPage,
@@ -269,17 +404,26 @@ export default defineComponent({
       teachersTotal,
       teachersPage,
       teachersItemsPerPage,
+      editStudentElementarySchoolForm,
+      editStudentJuniorHighSchoolForm,
+      editStudentHighSchoolForm,
       editTeacherElementarySchoolForm,
       editTeacherJuniorHighSchoolForm,
       editTeacherHighSchoolForm,
       editTeacherRoleForm,
       handleClickNew,
+      handleClickShowStudent,
       handleClickShowTeacher,
+      handleSubmitStudentElementarySchool,
+      handleSubmitStudentJuniorHighSchool,
+      handleSubmitStudentHighSchool,
       handleSubmitTeacherElementarySchool,
       handleSubmitTeacherJuniorHighSchool,
       handleSubmitTeacherHighSchool,
       handleSubmitTeacherRole,
+      handleSubmitDeleteStudent,
       handleSubmitDeleteTeacher,
+      handleCloseStudentDialog,
       handleCloseTeacherDialog,
     }
   },

@@ -3,17 +3,6 @@
  * Request
  * ---------------------------
  */
-export interface CreateTeacherRequest {
-  lastName: string
-  firstName: string
-  lastNameKana: string
-  firstNameKana: string
-  mail: string
-  password: string
-  passwordConfirmation: string
-  role: number
-}
-
 export interface CreateStudentRequest {
   lastName: string
   firstName: string
@@ -24,6 +13,22 @@ export interface CreateStudentRequest {
   passwordConfirmation: string
   schoolType: number
   grade: number
+}
+
+export interface UpdateStudentSubjectsRequest {
+  schoolType: number
+  subjectIds: number[]
+}
+
+export interface CreateTeacherRequest {
+  lastName: string
+  firstName: string
+  lastNameKana: string
+  firstNameKana: string
+  mail: string
+  password: string
+  passwordConfirmation: string
+  role: number
 }
 
 export interface UpdateTeacherSubjectsRequest {

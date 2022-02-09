@@ -33,6 +33,7 @@ export interface Teacher {
 }
 
 export interface UserState {
+  student: Student
   students: Student[]
   teacher: Teacher
   teachers: Teacher[]

@@ -23,43 +23,11 @@ describe('store/user', () => {
 
   describe('getters', () => {
     it('getStudents', () => {
-      expect(UserStore.getStudents).toEqual([
-        {
-          id: '123456789012345678901',
-          name: '浜田 二郎',
-          nameKana: 'はまだ じろう',
-          lastName: '浜田',
-          firstName: '二郎',
-          lastNameKana: 'はまだ',
-          firstNameKana: 'じろう',
-          mail: 'student-001@calmato.jp',
-          schoolType: '小学校',
-          grade: 2,
-          subjects: [],
-          createdAt: '',
-          updatedAt: '',
-        },
-      ])
+      expect(UserStore.getStudents).toEqual([])
     })
 
     it('getStudentMap', () => {
-      expect(UserStore.getStudentMap).toEqual({
-        '123456789012345678901': {
-          id: '123456789012345678901',
-          name: '浜田 二郎',
-          nameKana: 'はまだ じろう',
-          lastName: '浜田',
-          firstName: '二郎',
-          lastNameKana: 'はまだ',
-          firstNameKana: 'じろう',
-          mail: 'student-001@calmato.jp',
-          schoolType: '小学校',
-          grade: 2,
-          subjects: [],
-          createdAt: '',
-          updatedAt: '',
-        },
-      })
+      expect(UserStore.getStudentMap).toEqual({})
     })
 
     it('getTeacher', () => {
