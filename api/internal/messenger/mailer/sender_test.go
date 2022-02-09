@@ -116,7 +116,7 @@ func TestMessage(t *testing.T) {
 				}},
 				Attachments: []*mail.Attachment{},
 				Categories:  []string{"template-id"},
-				TemplateID:  "template-id",
+				TemplateID:  "d-templateid",
 				SendAt:      int(now.Unix()),
 			},
 		},
@@ -126,7 +126,10 @@ func TestMessage(t *testing.T) {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			client := &client{now: func() time.Time { return now }}
+			client := &client{
+				now:         func() time.Time { return now },
+				templateMap: map[string]string{"template-id": "d-templateid"},
+			}
 			assert.Equal(t, tt.expect, client.newMessage(
 				tt.args.templateID,
 				tt.args.fromName,
