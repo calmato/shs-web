@@ -52,7 +52,6 @@ func NewNotifier(params *Params) *Notifier {
 }
 
 func (n *Notifier) Run(ctx context.Context, concurrency int, mailboxCapacity int) error {
-	const msgCap = 1
 	msgCh := make(chan *pubsub.Message, mailboxCapacity)
 	eg, ectx := errgroup.WithContext(ctx)
 	eg.Go(func() error {
@@ -105,7 +104,7 @@ func (n *Notifier) dispatch(ctx context.Context, req *messenger.NotifierRequest)
 	// メール送信
 	go func() {
 		defer wg.Done()
-		emailRetryable, err = n.sendEmail(ctx, req.Key, req.TeacherIds, req.StudentIds, req.Email)
+		emailRetryable, err = n.sendEmail(ctx, req.TeacherIds, req.StudentIds, req.Email)
 		if err == nil {
 			return
 		}
@@ -121,7 +120,7 @@ func (n *Notifier) dispatch(ctx context.Context, req *messenger.NotifierRequest)
 }
 
 func (n *Notifier) sendEmail(
-	ctx context.Context, key string, teacherIDs []string, studentIDs []string, msg *messenger.EmailConfig,
+	ctx context.Context, teacherIDs []string, studentIDs []string, msg *messenger.EmailConfig,
 ) (bool, error) {
 	if msg == nil {
 		return false, nil

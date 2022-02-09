@@ -18,13 +18,10 @@ type puller struct {
  * options
  */
 type PullerOptions struct {
-	timeout                time.Duration
-	maxRetries             int64
-	maxOutstandingMessages int64
-	maxOutstandingBytes    int64
-	concurrency            int
-	sync                   bool
-	logger                 *zap.Logger
+	timeout     time.Duration
+	maxRetries  int64
+	concurrency int
+	logger      *zap.Logger
 }
 
 type PullerOption func(*PullerOptions)
