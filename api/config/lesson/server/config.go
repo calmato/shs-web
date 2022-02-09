@@ -21,6 +21,7 @@ type Config struct {
 	GRPCInsecure        bool   `envconfig:"GRPC_INSECURE" default:"true"`
 	ClassroomServiceURL string `envconfig:"CLASSROOM_SERVICE_URL" default:""`
 	UserServiceURL      string `envconfig:"USER_SERVICE_URL" default:""`
+	MessengerServiceURL string `envconfig:"MESSENGER_SERVICE_URL" default:""`
 }
 
 func NewConfig() (*Config, error) {

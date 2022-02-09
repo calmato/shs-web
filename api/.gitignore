@@ -11,6 +11,9 @@ coverage.txt
 # build file
 app
 
+# secret file
+config/**/*.yaml
+
 # external library
 third_party
 

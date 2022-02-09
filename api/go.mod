@@ -4,6 +4,7 @@ go 1.17
 
 require (
 	cloud.google.com/go/firestore v1.5.0
+	cloud.google.com/go/pubsub v1.3.1
 	cloud.google.com/go/storage v1.10.0
 	firebase.google.com/go/v4 v4.6.1
 	github.com/envoyproxy/protoc-gen-validate v0.1.0
@@ -19,6 +20,7 @@ require (
 	github.com/prometheus/client_golang v1.11.0
 	github.com/rs/cors v1.8.0
 	github.com/satori/go.uuid v1.2.0
+	github.com/sendgrid/sendgrid-go v3.10.5+incompatible
 	github.com/stretchr/testify v1.7.0
 	go.uber.org/zap v1.19.1
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c
@@ -26,6 +28,7 @@ require (
 	google.golang.org/genproto v0.0.0-20210222152913-aa3ee6e6a81c
 	google.golang.org/grpc v1.35.0
 	google.golang.org/protobuf v1.26.0-rc.1
+	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
 	gorm.io/datatypes v1.0.4
 	gorm.io/driver/mysql v1.2.1
 	gorm.io/gorm v1.22.4
@@ -57,6 +60,7 @@ require (
 	github.com/prometheus/client_model v0.2.0 // indirect
 	github.com/prometheus/common v0.26.0 // indirect
 	github.com/prometheus/procfs v0.6.0 // indirect
+	github.com/sendgrid/rest v2.6.7+incompatible // indirect
 	github.com/ugorji/go/codec v1.1.7 // indirect
 	go.opencensus.io v0.22.5 // indirect
 	go.uber.org/atomic v1.7.0 // indirect
@@ -72,5 +76,4 @@ require (
 	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	gopkg.in/yaml.v2 v2.3.0 // indirect
-	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
 )

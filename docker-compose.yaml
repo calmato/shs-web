@@ -157,10 +157,72 @@ services:
       - DB_PASSWORD=${MYSQL_ROOT_PASSWORD}
       - CLASSROOM_SERVICE_URL=classroom_api:8080
       - USER_SERVICE_URL=user_api:8080
+      - MESSENGER_SERVICE_URL=messenger_api:8080
     ports:
       - 19020:8080
       - 19021:9090
     command: make dev SERVICE=lesson/server
+
+  messenger_api:
+    container_name: messenger_api
+    build:
+      context: .
+      dockerfile: ./infra/docker/api/messenger/server/Dockerfile.development
+    working_dir: /go/src/github.com/calmato/shs-web/api
+    volumes:
+      - ./api:/go/src/github.com/calmato/shs-web/api:cached
+      - ./tmp/data/go/pkg/mod:/go/pkg/mod:delegated
+      - ./tmp/logs/api/messenger:/var/log/api:delegated
+    environment:
+      - PORT=8080
+      - METRICS_PORT=9090
+      - SHUTDOWN_DELAY_SEC=0
+      - LOG_PATH=/var/log/api
+      - GCP_PROJECT_ID=project-dev
+      - PUBSUB_EMULATOR_HOST=pubsub:8085
+      - PUBSUB_TOPIC_ID=pubsub-messenger
+      - USER_SERVICE_URL=user_api:8080
+      - LESSON_SERVICE_URL=lesson_api:8080
+    ports:
+      - 19030:8080
+      - 19031:9090
+    command: make dev SERVICE=messenger/server
+
+  messenger_notifier:
+    container_name: messenger_notifier
+    build:
+      context: .
+      dockerfile: ./infra/docker/api/messenger/notifier/Dockerfile.development
+    working_dir: /go/src/github.com/calmato/shs-web/api
+    volumes:
+      - ./api:/go/src/github.com/calmato/shs-web/api:cached
+      - ./tmp/data/go/pkg/mod:/go/pkg/mod:delegated
+      - ./tmp/logs/api/lesson:/var/log/api:delegated
+    environment:
+      - METRICS_PORT=9090
+      - LOG_PATH=/var/log/api
+      - GCP_PROJECT_ID=project-dev
+      - PUBSUB_EMULATOR_HOST=pubsub:8085
+      - PUBSUB_SUBSCRIPTION_ID=pubsub-messenger
+      - SENDGRID_API_KEY=${SENDGRID_API_KEY}
+      - SENDGRID_TEMPLATE_PATH=./config/messenger/notifier/dev.yaml
+      - MAIL_FROM_NAME=${MAIL_FROM_NAME}
+      - MAIL_FROM_ADDRESS=${MAIL_FROM_ADDRESS}
+      - TEACHER_WEB_URL=http://127.0.0.1:3000
+      - STUDENT_WEB_URL=http://127.0.0.1:3010
+      - USER_SERVICE_URL=user_api:8080
+    command: make dev SERVICE=messenger/notifier
+    depends_on:
+    - pubsub
+
+  pubsub:
+    container_name: pubsub
+    platform: linux/x86_64
+    build:
+      context: ./infra/docker/infra/pubsub
+      dockerfile: Dockerfile
+    ports:
+      - 8090:8085
 
   mysql:
     container_name: mysql
@@ -206,6 +268,7 @@ services:
     ports:
       - 4000:4000
       - 8080:8080
+      - 8085:8085
       - 9099:9099
 
   executor:

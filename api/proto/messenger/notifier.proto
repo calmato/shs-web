@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package messenger;
+
+option go_package = "github.com/calmato/shs-web/api/proto/messenger";
+
+import "github.com/envoyproxy/protoc-gen-validate/validate/validate.proto";
+
+message NotifierRequest {
+  string          key         = 1;                                                // キー (重複実行抑止用)
+  repeated string teacher_ids = 2 [(validate.rules).repeated = { unique: true }]; // 送信先講師ID一覧
+  repeated string student_ids = 3 [(validate.rules).repeated = { unique: true }]; // 送信先生徒ID一覧
+  EmailConfig     email       = 4;                                                // メール送信設定
+}
+
+// メース送信設定値
+message EmailConfig {
+  string              email_id      = 1 [(validate.rules).string = { min_len: 1 }]; // メールテンプレートID
+  map<string, string> substitutions = 2;                                            // メール動的内容
+}

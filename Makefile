@@ -40,16 +40,18 @@ ps:
 .PHONY: start-api start-swagger start-test
 
 start-web:
-	docker-compose up teacher_web student_web
+	docker-compose up -d teacher_web student_web
 
 start-api: proto
-	docker-compose up teacher_gateway student_gateway user_api classroom_api lesson_api mysql
+	docker-compose up -d teacher_gateway student_gateway user_api classroom_api lesson_api messenger_api messenger_notifier mysql pubsub
+	until curl 127.0.0.1:8090 2> /dev/null; do echo 'waiting for pubsub emulator started..'; sleep 3; done; echo 'pubsub emulator is ready!'
+	docker-compose run --rm executor sh -c "cd ./hack/pubsub-create; go run ./main.go -topic-id=pubsub-messenger -emulator-path=pubsub:8085"
 
 start-swagger:
-	docker-compose up swagger_generator swagger_teacher swagger_student
+	docker-compose up -d swagger_generator swagger_teacher swagger_student
 
 start-test:
-	docker-compose up mysql_test firebase_test
+	docker-compose up -d mysql_test firebase_test
 
 ##################################################
 # Container Commands - Single

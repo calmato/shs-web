@@ -28,6 +28,7 @@ WORKDIR /var/firebase
 
 EXPOSE 4000
 EXPOSE 8080
+EXPOSE 8085
 EXPOSE 9099
 
 CMD ["firebase", "emulators:start"]
