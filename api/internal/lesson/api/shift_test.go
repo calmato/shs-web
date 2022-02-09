@@ -11,6 +11,7 @@ import (
 	"github.com/calmato/shs-web/api/pkg/jst"
 	"github.com/calmato/shs-web/api/proto/classroom"
 	"github.com/calmato/shs-web/api/proto/lesson"
+	"github.com/calmato/shs-web/api/proto/messenger"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc/codes"
@@ -306,8 +307,25 @@ func TestUpdateShiftSummaryDecided(t *testing.T) {
 		{
 			name: "success",
 			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				in := &messenger.NotifyLessonDecidedRequest{ShiftSummaryId: 1}
+				out := &messenger.NotifyLessonDecidedResponse{}
 				mocks.validator.EXPECT().UpdateShiftSummaryDecided(req).Return(nil)
 				mocks.db.ShiftSummary.EXPECT().UpdateDecided(ctx, int64(1), true).Return(nil)
+				mocks.messenger.EXPECT().NotifyLessonDecided(gomock.Any(), in).Return(out, nil)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.OK,
+				body: &lesson.UpdateShiftSummaryDecidedResponse{},
+			},
+		},
+		{
+			name: "success without notify lesson decided",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				in := &messenger.NotifyLessonDecidedRequest{ShiftSummaryId: 1}
+				mocks.validator.EXPECT().UpdateShiftSummaryDecided(req).Return(nil)
+				mocks.db.ShiftSummary.EXPECT().UpdateDecided(ctx, int64(1), true).Return(nil)
+				mocks.messenger.EXPECT().NotifyLessonDecided(gomock.Any(), in).Return(nil, errmock)
 			},
 			req: req,
 			expect: &testResponse{

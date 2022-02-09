@@ -9,6 +9,8 @@ import (
 	"github.com/calmato/shs-web/api/pkg/jst"
 	"github.com/calmato/shs-web/api/proto/classroom"
 	"github.com/calmato/shs-web/api/proto/lesson"
+	"github.com/calmato/shs-web/api/proto/messenger"
+	"go.uber.org/zap"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -124,6 +126,16 @@ func (s *lessonService) UpdateShiftSummaryDecided(
 	if err != nil {
 		return nil, gRPCError(err)
 	}
+
+	s.waitGroup.Add(1)
+	go func() {
+		defer s.waitGroup.Done()
+		bgctx := context.Background()
+		in := &messenger.NotifyLessonDecidedRequest{ShiftSummaryId: req.Id}
+		if _, err := s.messenger.NotifyLessonDecided(bgctx, in); err != nil {
+			s.logger.Error("Failed to notify lesson decided", zap.Int64("shiftSummaryId", req.Id))
+		}
+	}()
 	return &lesson.UpdateShiftSummaryDecidedResponse{}, nil
 }
 

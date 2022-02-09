@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package messenger;
+
+option go_package = "github.com/calmato/shs-web/api/proto/messenger";
+
+import "github.com/envoyproxy/protoc-gen-validate/validate/validate.proto";
+
+service MessengerService {
+  rpc NotifyLessonDecided(NotifyLessonDecidedRequest) returns (NotifyLessonDecidedResponse);
+}
+
+message NotifyLessonDecidedRequest {
+  int64 shift_summary_id = 1 [(validate.rules).int64 = { gt: 0 }];
+}
+
+message NotifyLessonDecidedResponse {}

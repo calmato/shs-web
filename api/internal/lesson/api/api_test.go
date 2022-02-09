@@ -13,6 +13,7 @@ import (
 	mock_database "github.com/calmato/shs-web/api/mock/lesson/database"
 	mock_validation "github.com/calmato/shs-web/api/mock/lesson/validation"
 	mock_classroom "github.com/calmato/shs-web/api/mock/proto/classroom"
+	mock_messenger "github.com/calmato/shs-web/api/mock/proto/messenger"
 	mock_user "github.com/calmato/shs-web/api/mock/proto/user"
 	"github.com/calmato/shs-web/api/pkg/jst"
 	"github.com/golang/mock/gomock"
@@ -32,6 +33,7 @@ type mocks struct {
 	validator *mock_validation.MockRequestValidation
 	classroom *mock_classroom.MockClassroomServiceClient
 	user      *mock_user.MockUserServiceClient
+	messenger *mock_messenger.MockMessengerServiceClient
 }
 
 type dbMocks struct {
@@ -63,6 +65,7 @@ func newMocks(ctrl *gomock.Controller) *mocks {
 		validator: mock_validation.NewMockRequestValidation(ctrl),
 		classroom: mock_classroom.NewMockClassroomServiceClient(ctrl),
 		user:      mock_user.NewMockUserServiceClient(ctrl),
+		messenger: mock_messenger.NewMockMessengerServiceClient(ctrl),
 	}
 }
 
@@ -98,6 +101,7 @@ func newLessonService(mocks *mocks, opts *testOptions) *lessonService {
 		validator: mocks.validator,
 		classroom: mocks.classroom,
 		user:      mocks.user,
+		messenger: mocks.messenger,
 	}
 }
 
