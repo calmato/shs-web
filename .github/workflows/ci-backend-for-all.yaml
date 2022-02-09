@@ -160,6 +160,12 @@ jobs:
     - name: Build lesson server
       run: make build SERVICE=lesson/server
 
+    - name: Build messenger server
+      run: make build SERVICE=messenger/server
+
+    - name: Build messenger notifier
+      run: make build SERVICE=messenger/notifier
+
     ############################################
     # Notifications, etc.
     ############################################

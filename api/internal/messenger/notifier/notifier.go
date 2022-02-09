@@ -85,7 +85,7 @@ func (n *Notifier) run(ctx context.Context, msgCh <-chan *pubsub.Message) error 
 			}
 			retryable, err := n.dispatch(ctx, &req)
 			if err != nil {
-				n.logger.Error("Failed to dispatch error", zap.Error(err), zap.Any("request", req))
+				n.logger.Error("Failed to dispatch error", zap.Error(err), zap.String("request.key", req.Key))
 			}
 			if retryable {
 				msg.Nack()
