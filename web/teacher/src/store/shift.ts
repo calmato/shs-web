@@ -359,15 +359,15 @@ export default class ShiftModule extends VuexModule {
     const teachers: { [key: string]: TeacherShift } = {}
     const students: { [key: string]: StudentShift } = {}
     lessons.forEach((lesson: ShiftLesson): void => {
-      const teacher: TeacherShift | undefined = this.teachers.find((val: TeacherShift) => val.id === lesson.teacherId)
       const student: StudentShift | undefined = this.students.find((val: StudentShift) => val.id === lesson.studentId)
-      if (teacher) {
-        teachers[teacher.id] = teacher
-      }
       if (student) {
         students[student.id] = student
       }
     })
+    const teacher: TeacherShift | undefined = this.teachers.find((val: TeacherShift): boolean => val.id === current)
+    if (teacher) {
+      teachers[current] = teacher
+    }
     this.teacherLessons = { current, lessons, teachers, students, total }
   }
 
@@ -398,14 +398,14 @@ export default class ShiftModule extends VuexModule {
     const students: { [key: string]: StudentShift } = {}
     lessons.forEach((lesson: ShiftLesson): void => {
       const teacher: TeacherShift | undefined = this.teachers.find((val: TeacherShift) => val.id === lesson.teacherId)
-      const student: StudentShift | undefined = this.students.find((val: StudentShift) => val.id === lesson.studentId)
       if (teacher) {
         teachers[teacher.id] = teacher
       }
-      if (student) {
-        students[student.id] = student
-      }
     })
+    const student: StudentShift | undefined = this.students.find((val: StudentShift): boolean => val.id === current)
+    if (student) {
+      students[current] = student
+    }
     this.studentLessons = { current, lessons, teachers, students, total }
   }
 
