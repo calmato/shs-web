@@ -3,6 +3,7 @@ import { SchoolType } from './common'
 import { Student, Teacher } from '.'
 
 export interface Subject extends BaseSubject {
+  fullname: string
   schoolType: SchoolType
 }
 

@@ -95,7 +95,7 @@ export default defineComponent({
 
     const getSubjectName = (subjectId: number): string => {
       const subject: Subject | undefined = props.subjects.find((subject: Subject) => subject.id === subjectId)
-      return subject?.name || ''
+      return subject?.fullname || ''
     }
 
     const getSubjectColor = (subjectId: number): string => {

@@ -11,6 +11,7 @@ const subjects = {
     {
       id: 1,
       name: '国語',
+      fullname: '高校国語',
       color: '#F8BBD0',
       schoolType: '高校',
       createdAt: '2021-12-02T18:30:00+09:00',

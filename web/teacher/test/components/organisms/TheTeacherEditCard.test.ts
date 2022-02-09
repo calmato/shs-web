@@ -248,6 +248,7 @@ describe('components/organisms/TheTeacherEditCard', () => {
               {
                 id: 1,
                 name: '国語',
+                fullname: '小学校国語',
                 color: '#F8BBD0',
                 schoolType: '小学校',
                 createdAt: '',
@@ -258,6 +259,7 @@ describe('components/organisms/TheTeacherEditCard', () => {
               {
                 id: 2,
                 name: '数学',
+                fullname: '中学校数学',
                 color: '#BBDEFB',
                 schoolType: '中学校',
                 createdAt: '',
@@ -268,6 +270,7 @@ describe('components/organisms/TheTeacherEditCard', () => {
               {
                 id: 3,
                 name: '英語',
+                fullname: '高校英語',
                 color: '#FEE6C9',
                 schoolType: '高校',
                 createdAt: '',
@@ -281,6 +284,7 @@ describe('components/organisms/TheTeacherEditCard', () => {
             {
               id: 1,
               name: '国語',
+              fullname: '小学校国語',
               color: '#F8BBD0',
               schoolType: '小学校',
               createdAt: '',
@@ -297,6 +301,7 @@ describe('components/organisms/TheTeacherEditCard', () => {
               {
                 id: 1,
                 name: '国語',
+                fullname: '小学校国語',
                 color: '#F8BBD0',
                 schoolType: '小学校',
                 createdAt: '',
@@ -307,6 +312,7 @@ describe('components/organisms/TheTeacherEditCard', () => {
               {
                 id: 2,
                 name: '数学',
+                fullname: '中学校数学',
                 color: '#BBDEFB',
                 schoolType: '中学校',
                 createdAt: '',
@@ -317,6 +323,7 @@ describe('components/organisms/TheTeacherEditCard', () => {
               {
                 id: 3,
                 name: '英語',
+                fullname: '高校英語',
                 color: '#FEE6C9',
                 schoolType: '高校',
                 createdAt: '',
@@ -330,6 +337,7 @@ describe('components/organisms/TheTeacherEditCard', () => {
             {
               id: 2,
               name: '数学',
+              fullname: '中学校数学',
               color: '#BBDEFB',
               schoolType: '中学校',
               createdAt: '',
@@ -346,6 +354,7 @@ describe('components/organisms/TheTeacherEditCard', () => {
               {
                 id: 1,
                 name: '国語',
+                fullname: '小学校国語',
                 color: '#F8BBD0',
                 schoolType: '小学校',
                 createdAt: '',
@@ -356,6 +365,7 @@ describe('components/organisms/TheTeacherEditCard', () => {
               {
                 id: 2,
                 name: '数学',
+                fullname: '中学校数学',
                 color: '#BBDEFB',
                 schoolType: '中学校',
                 createdAt: '',
@@ -366,6 +376,7 @@ describe('components/organisms/TheTeacherEditCard', () => {
               {
                 id: 3,
                 name: '英語',
+                fullname: '高校英語',
                 color: '#FEE6C9',
                 schoolType: '高校',
                 createdAt: '',
@@ -379,6 +390,7 @@ describe('components/organisms/TheTeacherEditCard', () => {
             {
               id: 3,
               name: '英語',
+              fullname: '高校英語',
               color: '#FEE6C9',
               schoolType: '高校',
               createdAt: '',

@@ -4,6 +4,7 @@
     v-model="calendarFocus"
     :events="getParseEvents()"
     :event-color="getEventColor"
+    event-text-color="black"
     :type="calendarType"
     :now="currentTime"
     :weekdays="weekdays"
