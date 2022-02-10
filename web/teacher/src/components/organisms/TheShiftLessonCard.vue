@@ -1,11 +1,11 @@
 <template>
   <v-card-text class="d-flex flex-column align-stretch">
-    <h2>
-      <v-chip v-if="detail" :color="getSubjectColor(detail)">
+    <h4 class="d-flex align-center justify-center">
+      <v-chip v-if="detail" :color="getSubjectColor(detail)" small class="mr-4">
         {{ getSubjectName(detail) }}
       </v-chip>
       <span>{{ getTime(summary.startTime) }} ~ {{ getTime(summary.endTime) }}</span>
-    </h2>
+    </h4>
     <div class="d-flex align-center justify-center mt-2">
       <a v-if="detail" class="d-block" @click="onClickEdit">
         <div class="black--text text-decoration-underline">生徒: {{ getStudentName(detail) }}</div>
