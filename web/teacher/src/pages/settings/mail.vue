@@ -22,7 +22,7 @@ import { useRouter } from '@nuxtjs/composition-api'
 import { defineComponent, reactive } from '@vue/composition-api'
 import TheFormGroup from '~/components/atoms/TheFormGroup.vue'
 import TheTextField from '~/components/atoms/TheTextField.vue'
-import { CommonStore, UserStore } from '~/store'
+import { AuthStore, CommonStore } from '~/store'
 import { TeacherUpdateMailOptions, TeacherUpdateMailParams } from '~/types/form'
 
 export default defineComponent({
@@ -41,8 +41,9 @@ export default defineComponent({
     const handleSubmit = async (): Promise<void> => {
       CommonStore.startConnection()
 
-      await UserStore.updateMail({ form: updateMailForm })
+      await AuthStore.updateMail({ form: updateMailForm })
         .then(() => {
+          AuthStore.signOut()
           router.push('/signin')
           CommonStore.showSnackbar({ color: 'success', message: 'メールアドレスを更新しました。' })
         })

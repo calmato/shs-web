@@ -4,9 +4,9 @@ import { AxiosError } from 'axios'
 import { $axios } from '~/plugins/axios'
 import { app } from '~/plugins/firebase'
 import { ErrorResponse } from '~/types/api/exception'
-import { AuthResponse } from '~/types/api/v1'
+import { AuthResponse, UpdateMyMailRequest, UpdateMyPasswordRequest } from '~/types/api/v1'
 import { ApiError } from '~/types/exception'
-import { SignInForm, SubjectUpdateForm } from '~/types/form'
+import { SignInForm, SubjectUpdateForm, TeacherUpdateMailForm, TeacherUpdatePasswordForm } from '~/types/form'
 import { Auth, AuthState, Role } from '~/types/store'
 import { authResponse2Auth } from '~/lib'
 
@@ -132,6 +132,31 @@ export default class AuthModule extends VuexModule {
         const res: ErrorResponse = { ...err.response?.data }
         throw new ApiError(res.status, res.message, res)
       })
+  }
+
+  @Action({ rawError: true })
+  public async updateMail({ form }: { form: TeacherUpdateMailForm }): Promise<void> {
+    const req: UpdateMyMailRequest = {
+      mail: form.params.mail,
+    }
+
+    await $axios.$patch(`/v1/me/mail`, req).catch((err: AxiosError) => {
+      const res: ErrorResponse = { ...err.response?.data }
+      throw new ApiError(res.status, res.message, res)
+    })
+  }
+
+  @Action({ rawError: true })
+  public async updatePassword({ form }: { form: TeacherUpdatePasswordForm }): Promise<void> {
+    const req: UpdateMyPasswordRequest = {
+      password: form.params.password,
+      passwordConfirmation: form.params.passwordConfirmaion,
+    }
+
+    await $axios.$patch(`/v1/me/password`, req).catch((err: AxiosError) => {
+      const res: ErrorResponse = { ...err.response?.data }
+      throw new ApiError(res.status, res.message, res)
+    })
   }
 
   @Action({ rawError: true })
