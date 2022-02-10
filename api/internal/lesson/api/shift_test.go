@@ -305,7 +305,7 @@ func TestUpdateShiftSummaryDecided(t *testing.T) {
 		expect *testResponse
 	}{
 		{
-			name: "success",
+			name: "success when lesson decided",
 			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
 				in := &messenger.NotifyLessonDecidedRequest{ShiftSummaryId: 1}
 				out := &messenger.NotifyLessonDecidedResponse{}
@@ -314,6 +314,22 @@ func TestUpdateShiftSummaryDecided(t *testing.T) {
 				mocks.messenger.EXPECT().NotifyLessonDecided(gomock.Any(), in).Return(out, nil)
 			},
 			req: req,
+			expect: &testResponse{
+				code: codes.OK,
+				body: &lesson.UpdateShiftSummaryDecidedResponse{},
+			},
+		},
+		{
+			name: "success when lesson undecided",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				req := &lesson.UpdateShiftSummaryDecidedRequest{Id: 1, Decided: false}
+				mocks.validator.EXPECT().UpdateShiftSummaryDecided(req).Return(nil)
+				mocks.db.ShiftSummary.EXPECT().UpdateDecided(ctx, int64(1), false).Return(nil)
+			},
+			req: &lesson.UpdateShiftSummaryDecidedRequest{
+				Id:      1,
+				Decided: false,
+			},
 			expect: &testResponse{
 				code: codes.OK,
 				body: &lesson.UpdateShiftSummaryDecidedResponse{},
