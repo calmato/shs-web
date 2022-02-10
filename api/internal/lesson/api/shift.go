@@ -130,6 +130,9 @@ func (s *lessonService) UpdateShiftSummaryDecided(
 	s.waitGroup.Add(1)
 	go func() {
 		defer s.waitGroup.Done()
+		if !req.Decided {
+			return
+		}
 		bgctx := context.Background()
 		in := &messenger.NotifyLessonDecidedRequest{ShiftSummaryId: req.Id}
 		if _, err := s.messenger.NotifyLessonDecided(bgctx, in); err != nil {
