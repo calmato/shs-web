@@ -6,7 +6,7 @@
         <span class="text-subtitle-1">授業一覧</span>
         <span class="ml-auto text-subtitle-1 info--text">合計: {{ lesson.total }}</span>
       </div>
-      <v-data-table :headers="headers" :items="getItems()" :items-per-page="-1" hide-default-footer>
+      <v-data-table :loading="loading" :headers="headers" :items="getItems()" :items-per-page="-1" hide-default-footer>
         <template #[`item.subjectId`]="{ item }">
           <v-chip :color="getSubjectColor(item.subjectId)">{{ getSubjectName(item.subjectId) }}</v-chip>
         </template>
@@ -30,6 +30,10 @@ import { ShiftLesson, ShiftUserLesson, Subject } from '~/types/store'
 
 export default defineComponent({
   props: {
+    loading: {
+      type: Boolean,
+      default: false,
+    },
     lesson: {
       type: Object as PropType<ShiftUserLesson>,
       default: () => {},

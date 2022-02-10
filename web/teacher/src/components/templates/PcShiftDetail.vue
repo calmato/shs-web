@@ -4,12 +4,14 @@
       <!-- 講師 提出シフト一覧ダイアログ -->
       <the-shift-teacher-submission-card
         v-if="dialogKey == '講師シフト'"
+        :loading="loading"
         :submission="teacherSubmission"
         @click:close="onCloseDialog"
       />
       <!-- 講師 授業一覧ダイアログ -->
       <the-shift-teacher-lesson-card
         v-if="dialogKey == '講師授業'"
+        :loading="loading"
         :lesson="teacherLessons"
         :subjects="subjects"
         @click:close="onCloseDialog"
@@ -17,6 +19,7 @@
       <!-- 生徒 授業希望一覧ダイアログ -->
       <the-shift-student-submission-card
         v-if="dialogKey == '生徒授業希望'"
+        :loading="loading"
         :submission="studentSubmission"
         :subjects="subjects"
         @click:close="onCloseDialog"
@@ -24,6 +27,7 @@
       <!-- 生徒 授業一覧ダイアログ -->
       <the-shift-student-lesson-card
         v-if="dialogKey == '生徒授業'"
+        :loading="loading"
         :lesson="studentLessons"
         :subjects="subjects"
         @click:close="onCloseDialog"
