@@ -130,6 +130,7 @@ export default defineComponent({
       room: number
     }): Promise<void> {
       CommonStore.startConnection()
+      openDialog('授業登録')
 
       await ShiftStore.listShiftLessons({ summaryId, lessonId, shiftId, room })
         .then(() => {
@@ -195,11 +196,9 @@ export default defineComponent({
 
     const handleClickShowTeacherSubmissions = async (teacherId: string): Promise<void> => {
       CommonStore.startConnection()
+      openDialog('講師シフト')
 
       await ShiftStore.showTeacherSubmissions({ summaryId, teacherId })
-        .then(() => {
-          openDialog('講師シフト')
-        })
         .catch((err: Error) => {
           CommonStore.showErrorInSnackbar(err)
         })
@@ -210,11 +209,9 @@ export default defineComponent({
 
     const handleClickShowTeacherLessons = async (teacherId: string): Promise<void> => {
       CommonStore.startConnection()
+      openDialog('講師授業')
 
       await ShiftStore.listTeacherLessons({ summaryId, teacherId })
-        .then(() => {
-          openDialog('講師授業')
-        })
         .catch((err: Error) => {
           CommonStore.showErrorInSnackbar(err)
         })
@@ -225,11 +222,9 @@ export default defineComponent({
 
     const handleClickShowStudentSubmissions = async (studentId: string): Promise<void> => {
       CommonStore.startConnection()
+      openDialog('生徒授業希望')
 
       await ShiftStore.showStudentSubmissions({ summaryId, studentId })
-        .then(() => {
-          openDialog('生徒授業希望')
-        })
         .catch((err: Error) => {
           CommonStore.showErrorInSnackbar(err)
         })
@@ -240,11 +235,9 @@ export default defineComponent({
 
     const handleClickShowStudentLessons = async (studentId: string): Promise<void> => {
       CommonStore.startConnection()
+      openDialog('生徒授業')
 
       await ShiftStore.listStudentLessons({ summaryId, studentId })
-        .then(() => {
-          openDialog('生徒授業')
-        })
         .catch((err: Error) => {
           CommonStore.showErrorInSnackbar(err)
         })
@@ -273,9 +266,7 @@ export default defineComponent({
     }
 
     const handleClickNewLesson = async ({ shiftId, room }: { shiftId: number; room: number }): Promise<void> => {
-      await listShiftLessons({ shiftId, room, lessonId: 0 }).then(() => {
-        openDialog('授業登録')
-      })
+      await listShiftLessons({ shiftId, room, lessonId: 0 })
     }
 
     const handleClickEditLesson = async ({
@@ -287,9 +278,7 @@ export default defineComponent({
       lessonId: number
       room: number
     }): Promise<void> => {
-      await listShiftLessons({ shiftId, room, lessonId }).then(() => {
-        openDialog('授業登録')
-      })
+      await listShiftLessons({ shiftId, room, lessonId })
     }
 
     const handleClickSubmitLesson = async (): Promise<void> => {

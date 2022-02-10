@@ -6,7 +6,7 @@
         <span class="text-subtitle-1">提出シフト一覧</span>
         <span class="ml-auto text-subtitle-1 info--text">合計: {{ submission.submissionTotal }}件</span>
       </div>
-      <v-data-table :headers="headers" :items="getItems()" :items-per-page="-1" hide-default-footer>
+      <v-data-table :loading="loading" :headers="headers" :items="getItems()" :items-per-page="-1" hide-default-footer>
         <template #[`item.lessons`]="{ item }">
           <v-chip v-for="lesson in item.lessons" :key="lesson.id">
             {{ getDuration(lesson.startTime, lesson.endTime) }}
@@ -29,6 +29,10 @@ import { ShiftDetail, ShiftStatus, SubmissionStatus, TeacherSubmissionDetail } f
 
 export default defineComponent({
   props: {
+    loading: {
+      type: Boolean,
+      default: false,
+    },
     submission: {
       type: Object as PropType<TeacherSubmissionDetail>,
       default: () => ({

@@ -4,6 +4,7 @@
     <v-card-text class="py-4">
       <div class="text-subtitle-1">授業希望概要</div>
       <v-data-table
+        :loading="loading"
         :headers="suggestedLessonHeaders"
         :items="submission.suggestedLessons"
         :items-per-page="-1"
@@ -19,7 +20,13 @@
         <span class="text-subtitle-1">授業希望一覧</span>
         <span class="ml-auto text-subtitle-1 info--text">合計: {{ submission.submissionTotal }}件</span>
       </div>
-      <v-data-table :headers="submissionHeaders" :items="getSubmissionItems()" :items-per-page="-1" hide-default-footer>
+      <v-data-table
+        :loading="loading"
+        :headers="submissionHeaders"
+        :items="getSubmissionItems()"
+        :items-per-page="-1"
+        hide-default-footer
+      >
         <template #[`item.lessons`]="{ item }">
           <v-chip v-for="lesson in item.lessons" :key="lesson.id">
             {{ getDuration(lesson.startTime, lesson.endTime) }}
@@ -42,6 +49,10 @@ import { ShiftDetail, ShiftStatus, StudentSubmissionDetail, Subject, SubmissionS
 
 export default defineComponent({
   props: {
+    loading: {
+      type: Boolean,
+      default: false,
+    },
     submission: {
       type: Object as PropType<StudentSubmissionDetail>,
       default: () => ({
