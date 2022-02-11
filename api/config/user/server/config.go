@@ -18,6 +18,7 @@ type Config struct {
 	DBUsername           string `envconfig:"DB_USERNAME" default:"root"`
 	DBPassword           string `envconfig:"DB_PASSWORD" default:""`
 	DBDatabase           string `envconfig:"DB_DATABASE" default:"users"`
+	DBTimeZone           string `envconfig:"DB_TIMEZONE" default:""`
 	GRPCInsecure         bool   `envconfig:"GRPC_INSECURE" default:"true"`
 	GCPServiceKeyJSON    string `envconfig:"GCP_SERVICE_KEY_JSON" required:"true"`
 	GCPStorageBucketName string `envconfig:"GCP_STORAGE_BUCKET_NAME" default:""`

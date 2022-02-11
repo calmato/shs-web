@@ -63,6 +63,7 @@ func Exec() error {
 		Database: conf.DBDatabase,
 		Username: conf.DBUsername,
 		Password: conf.DBPassword,
+		TimeZone: conf.DBTimeZone,
 	}
 	db, err := database.NewClient(dbParams)
 	if err != nil {
