@@ -25,7 +25,7 @@
     <v-row v-else>
       <v-col class="d-flex flex-column text-center px-8">
         <v-img src="/submission.png" contain max-height="400" />
-        <h2 class="my-4">現在募集中のシフトは<br />ありません</h2>
+        <h2 class="my-4">現在募集中の授業は<br />ありません</h2>
         <v-btn @click="onClickTop">トップへ戻る</v-btn>
       </v-col>
     </v-row>
@@ -47,7 +47,7 @@ export default defineComponent({
 
   setup(_, { emit }: SetupContext) {
     const getTitle = (year: number, month: number): string => {
-      return `${year}年${month}月 シフト希望`
+      return `${year}年${month}月 授業希望`
     }
 
     const getDate = (date: string): string => {
