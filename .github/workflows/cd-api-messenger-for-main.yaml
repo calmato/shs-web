@@ -20,8 +20,8 @@ env:
   GCR_LOCATION: ${{ secrets.GCR_LOCATION }}
   GCR_PROJECT_ID: ${{ secrets.GCR_PROJECT_ID }}
   GCR_REPOSITORY: ${{ secrets.GCR_REPOSITORY }}
-  GCR_IMAGE_SERVER_NAME: messenger-api
-  GCR_IMAGE_WORKER_NAME: messenger-notifier
+  GCR_IMAGE_NAME_SERVER: messenger-api
+  GCR_IMAGE_NAME_WORKER: messenger-notifier
   GCR_IMAGE_TAG: ${{ github.sha }}
   ### For Cloud Run and GKE
   GCP_PROJECT_ID: ${{ secrets.DEV_GCP_PROJECT_ID }}
@@ -99,8 +99,8 @@ jobs:
 
     - name: Set GCR_IMAGE_PATH
       run: |
-        echo "GCR_IMAGE_SERVER_PATH=${GCR_REGISTRY}/${GCR_PROJECT_ID}/${GCR_REPOSITORY}/${GCR_IMAGE_SERVER_NAME}" >> $GITHUB_ENV
-        echo "GCR_IMAGE_WORKER_PATH=${GCR_REGISTRY}/${GCR_PROJECT_ID}/${GCR_REPOSITORY}/${GCR_IMAGE_WORKER_NAME}" >> $GITHUB_ENV
+        echo "GCR_IMAGE_SERVER_PATH=${GCR_REGISTRY}/${GCR_PROJECT_ID}/${GCR_REPOSITORY}/${GCR_IMAGE_NAME_SERVER}" >> $GITHUB_ENV
+        echo "GCR_IMAGE_WORKER_PATH=${GCR_REGISTRY}/${GCR_PROJECT_ID}/${GCR_REPOSITORY}/${GCR_IMAGE_NAME_WORKER}" >> $GITHUB_ENV
 
     - name: Configure gcloud
       run: |

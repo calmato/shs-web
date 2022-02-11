@@ -4,13 +4,13 @@ on:
     branches:
     - 'main'
     paths:
-    - '.github/workflows/cd-gateway-teacher-for-main.yaml'
-    - 'api/cmd/gateway/teacher/**'
-    - 'api/config/gateway/teacher/**'
+    - '.github/workflows/cd-api-gateway-for-main.yaml'
+    - 'api/cmd/gateway/**'
+    - 'api/config/gateway/**'
     - 'api/internal/gateway/**'
     - 'api/pkg/**'
     - 'api/proto/**'
-    - 'infra/docker/api/gateway/teacher/**'
+    - 'infra/docker/api/gateway/**'
     - 'infra/kubernetes/**'
 
 env:
@@ -20,8 +20,9 @@ env:
   GCR_LOCATION: ${{ secrets.GCR_LOCATION }}
   GCR_PROJECT_ID: ${{ secrets.GCR_PROJECT_ID }}
   GCR_REPOSITORY: ${{ secrets.GCR_REPOSITORY }}
-  GCR_IMAGE_NAME: teacher-gateway
   GCR_IMAGE_TAG: ${{ github.sha }}
+  GCR_IMAGE_NAME_TEACHER: teacher-gateway
+  GCR_IMAGE_NAME_STUDENT: student-gateway
   ### For Cloud Run and GKE
   GCP_PROJECT_ID: ${{ secrets.DEV_GCP_PROJECT_ID }}
   GCP_REGION: ${{ secrets.DEV_GCP_REGION }}
@@ -98,7 +99,8 @@ jobs:
 
     - name: Set GCR_IMAGE_PATH
       run: |
-        echo "GCR_IMAGE_PATH=${GCR_REGISTRY}/${GCR_PROJECT_ID}/${GCR_REPOSITORY}/${GCR_IMAGE_NAME}" >> $GITHUB_ENV
+        echo "GCR_IMAGE_TEACHER_PATH=${GCR_REGISTRY}/${GCR_PROJECT_ID}/${GCR_REPOSITORY}/${GCR_IMAGE_NAME_TEACHER}" >> $GITHUB_ENV
+        echo "GCR_IMAGE_STUDENT_PATH=${GCR_REGISTRY}/${GCR_PROJECT_ID}/${GCR_REPOSITORY}/${GCR_IMAGE_NAME_STUDENT}" >> $GITHUB_ENV
 
     - name: Configure gcloud
       run: |
@@ -110,13 +112,17 @@ jobs:
     # https://cloud.google.com/artifact-registry/docs/docker/pushing-and-pulling?hl=ja#tag
     - name: Docker Build
       run: |
-        docker build -f ./infra/docker/api/gateway/teacher/Dockerfile -t ${GCR_IMAGE_PATH} .
+        docker build -f ./infra/docker/api/gateway/teacher/Dockerfile -t ${GCR_IMAGE_TEACHER_PATH} .
+        docker build -f ./infra/docker/api/gateway/student/Dockerfile -t ${GCR_IMAGE_STUDENT_PATH} .
 
     - name: Attached Tag
       run: |
-        docker tag ${GCR_IMAGE_PATH} ${GCR_IMAGE_PATH}:latest
-        docker tag ${GCR_IMAGE_PATH} ${GCR_IMAGE_PATH}:${GCR_IMAGE_TAG}
+        docker tag ${GCR_IMAGE_TEACHER_PATH} ${GCR_IMAGE_TEACHER_PATH}:latest
+        docker tag ${GCR_IMAGE_TEACHER_PATH} ${GCR_IMAGE_TEACHER_PATH}:${GCR_IMAGE_TAG}
+        docker tag ${GCR_IMAGE_STUDENT_PATH} ${GCR_IMAGE_STUDENT_PATH}:latest
+        docker tag ${GCR_IMAGE_STUDENT_PATH} ${GCR_IMAGE_STUDENT_PATH}:${GCR_IMAGE_TAG}
 
     - name: Push Artifact Registry in Google Cloud Platform
       run: |
-        docker push ${GCR_IMAGE_PATH}
+        docker push ${GCR_IMAGE_TEACHER_PATH}
+        docker push ${GCR_IMAGE_STUDENT_PATH}

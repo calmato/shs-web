@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: messenger-api
+  labels:
+    app: messenger-api
+spec:
+  replicas: 1
+  revisionHistoryLimit: 5
+  selector:
+    matchLabels:
+      app: messenger-api
+  template:
+    metadata:
+      labels:
+        app: messenger-api
+    spec:
+      containers:
+      # User Service
+      - name: messenger-api
+        image: asia-northeast1-docker.pkg.dev/<PROJECT-ID>/<REPOSITORY-NAME>/messenger-api:latest
+        imagePullPolicy: Always
+        resources:
+          limits:
+            cpu: 100m
+            memory: 128Mi
+        ports:
+        - name: default
+          containerPort: 8080
+        livenessProbe:
+          tcpSocket:
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          failureThreshold: 3
+        env:
+        - name: PORT
+          value: '8080'
+        - name: METRICS_PORT
+          value: '9090'
+        - name: LOG_LEVEL
+          value: 'info'
+        - name: USER_SERVICE_URL
+          value: 'user-api.default.svc.cluster.local:8080'
+        - name: LESSON_SERVICE_URL
+          value: 'lesson-api.default.svc.cluster.local:8080'
+        - name: GCP_PROJECT_ID
+          valueFrom:
+            secretKeyRef:
+              name: messenger-api-secret
+              key: GCP_PROJECT_ID
+        - name: PUBSUB_TOPIC_ID
+          valueFrom:
+            secretKeyRef:
+              name: messenger-api-secret
+              key: PUBSUB_TOPIC_ID
+        - name: GCP_SERVICE_KEY_JSON
+          valueFrom:
+            secretKeyRef:
+              name: common-secret
+              key: gcp-service-key.json
+      volumes:
+      - name: gcp-secret-volume
+        secret:
+          secretName: common-secret
+          items:
+          - key: gcp-service-key.json
+            path: gcp-service-key.json

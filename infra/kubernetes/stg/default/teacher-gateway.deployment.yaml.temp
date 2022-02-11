@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: teacher-gateway
+  labels:
+    app: teacher-gateway
+spec:
+  replicas: 1
+  revisionHistoryLimit: 5
+  selector:
+    matchLabels:
+      app: teacher-gateway
+  template:
+    metadata:
+      labels:
+        app: teacher-gateway
+    spec:
+      containers:
+      - name: teacher-gateway
+        image: asia-northeast1-docker.pkg.dev/<PROJECT-ID>/<REPOSITORY-NAME>/teacher-gateway:latest
+        imagePullPolicy: Always
+        resources:
+          limits:
+            cpu: 100m
+            memory: 128Mi
+        ports:
+        - name: default
+          containerPort: 8080
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          failureThreshold: 3
+        env:
+        - name: PORT
+          value: '8080'
+        - name: METRICS_PORT
+          value: '9090'
+        - name: LOG_LEVEL
+          value: 'info'
+        - name: USER_SERVICE_URL
+          value: 'user-api.default.svc.cluster.local:8080'
+        - name: LESSON_SERVICE_URL
+          value: 'lesson-api.default.svc.cluster.local:8080'
+        - name: CLASSROOM_SERVICE_URL
+          value: 'classroom-api.default.svc.cluster.local:8080'
+        - name: GCP_SERVICE_KEY_JSON
+          valueFrom:
+            secretKeyRef:
+              name: common-secret
+              key: gcp-service-key.json
+      volumes:
+      - name: gcp-secret-volume
+        secret:
+          secretName: common-secret
+          items:
+          - key: gcp-service-key.json
+            path: gcp-service-key.json
