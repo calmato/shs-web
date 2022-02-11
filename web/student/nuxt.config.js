@@ -10,8 +10,8 @@ export default {
 
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
-    titleTemplate: '%s - shs-web',
-    title: 'shs-web',
+    titleTemplate: 'SHS WEB',
+    title: 'SHS WEB',
     htmlAttrs: {
       lang: 'ja',
     },
