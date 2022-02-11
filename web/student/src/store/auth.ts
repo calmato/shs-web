@@ -4,9 +4,9 @@ import { AxiosError } from 'axios'
 import { $axios } from '~/plugins/axios'
 import { app } from '~/plugins/firebase'
 import { ErrorResponse } from '~/types/api/exception'
-import { AuthResponse } from '~/types/api/v1'
+import { AuthResponse, UpdateMyPasswordRequest } from '~/types/api/v1'
 import { ApiError } from '~/types/exception'
-import { SignInForm } from '~/types/form'
+import { SignInForm, StudentUpdatePasswordForm } from '~/types/form'
 import { Auth, AuthState, SchoolType } from '~/types/store'
 
 const initialState: AuthState = {
@@ -122,6 +122,19 @@ export default class AuthModule extends VuexModule {
         const res: ErrorResponse = { ...err.response?.data }
         throw new ApiError(res.status, res.message, res)
       })
+  }
+
+  @Action({ rawError: true })
+  public async updatePassword({ form }: { form: StudentUpdatePasswordForm }): Promise<void> {
+    const req: UpdateMyPasswordRequest = {
+      password: form.params.password,
+      passwordConfirmation: form.params.passwordConfirmaion,
+    }
+
+    await $axios.$patch(`/v1/me/password`, req).catch((err: AxiosError) => {
+      const res: ErrorResponse = { ...err.response?.data }
+      throw new ApiError(res.status, res.message, res)
+    })
   }
 
   @Action({ rawError: true })
