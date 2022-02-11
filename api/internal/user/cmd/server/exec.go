@@ -11,7 +11,6 @@ import (
 	"github.com/calmato/shs-web/api/pkg/database"
 	"github.com/calmato/shs-web/api/pkg/firebase"
 	"github.com/calmato/shs-web/api/pkg/firebase/authentication"
-	"github.com/calmato/shs-web/api/pkg/firebase/storage"
 	"github.com/calmato/shs-web/api/pkg/grpc"
 	"github.com/calmato/shs-web/api/pkg/http"
 	"github.com/calmato/shs-web/api/pkg/log"
@@ -70,18 +69,11 @@ func Exec() error {
 		return err
 	}
 
-	// Cloud Storageの設定
-	gcs, err := storage.NewClient(ctx, fb.App, conf.GCPStorageBucketName)
-	if err != nil {
-		return err
-	}
-
 	// 依存関係の解決
 	regParams := &params{
-		logger:  logger,
-		auth:    fa,
-		db:      db,
-		storage: gcs,
+		logger: logger,
+		auth:   fa,
+		db:     db,
 	}
 	reg := newRegistry(regParams)
 

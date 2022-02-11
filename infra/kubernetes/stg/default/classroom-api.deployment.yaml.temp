@@ -46,6 +46,8 @@ spec:
           value: '127.0.0.1'
         - name: DB_PORT
           value: '3306'
+        - name: DB_TIMEZONE
+          value: 'UTC'
         - name: DB_USERNAME
           valueFrom:
             secretKeyRef:
