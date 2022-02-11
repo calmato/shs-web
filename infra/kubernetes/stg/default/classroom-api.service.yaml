@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: classroom-api
+  labels:
+    app: classroom-api
+spec:
+  selector:
+    app: classroom-api
+  # type: ClusterIP
+  clusterIP: None
+  ports:
+  - name: grpc
+    protocol: TCP
+    port: 8080
+    targetPort: 8080

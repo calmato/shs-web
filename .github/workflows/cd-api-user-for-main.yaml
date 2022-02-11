@@ -20,8 +20,8 @@ env:
   GCR_LOCATION: ${{ secrets.GCR_LOCATION }}
   GCR_PROJECT_ID: ${{ secrets.GCR_PROJECT_ID }}
   GCR_REPOSITORY: ${{ secrets.GCR_REPOSITORY }}
-  GCR_IMAGE_NAME: user-api
   GCR_IMAGE_TAG: ${{ github.sha }}
+  GCR_IMAGE_NAME: user-api
   ### For Cloud Run and GKE
   GCP_PROJECT_ID: ${{ secrets.DEV_GCP_PROJECT_ID }}
   GCP_REGION: ${{ secrets.DEV_GCP_REGION }}
