@@ -8,6 +8,10 @@ export interface UpdateMyPasswordRequest {
   passwordConfirmation: string
 }
 
+export interface UpdateMyMailRequest {
+  mail: string
+}
+
 /**
  * ---------------------------
  * Response

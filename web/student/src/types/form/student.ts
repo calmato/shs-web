@@ -10,6 +10,10 @@ export interface IStudentUpdatePasswordParams {
   passwordConfirmaion: string
 }
 
+export interface IStudentUpdateMailParams {
+  mail: string
+}
+
 /**
  * ---------------------------
  * interface - options
@@ -18,6 +22,10 @@ export interface IStudentUpdatePasswordParams {
 export interface IStudentUpdatePasswordOptions {
   password: ITextField
   passwordConfirmation: ITextField
+}
+
+export interface IStudentUpdateMailOptions {
+  mail: ITextField
 }
 
 /**
@@ -30,6 +38,11 @@ export interface StudentUpdatePasswordForm {
   options: IStudentUpdatePasswordOptions
 }
 
+export interface StudentUpdateMailForm {
+  params: IStudentUpdateMailParams
+  options: IStudentUpdateMailOptions
+}
+
 /**
  * ---------------------------
  * const - params
@@ -38,6 +51,10 @@ export interface StudentUpdatePasswordForm {
 export const StudentUpdatePasswordParams: IStudentUpdatePasswordParams = {
   password: '',
   passwordConfirmaion: '',
+}
+
+export const StudentUpdateMailParams: IStudentUpdateMailParams = {
+  mail: '',
 }
 
 /**
@@ -60,6 +77,16 @@ export const StudentUpdatePasswordOptions: IStudentUpdatePasswordOptions = {
     rules: {
       required: true,
       confirmed: '変更後パスワード',
+    },
+  } as ITextField,
+}
+
+export const StudentUpdateMailOptions: IStudentUpdateMailOptions = {
+  mail: {
+    label: 'メールアドレス',
+    rules: {
+      required: true,
+      email: true,
     },
   } as ITextField,
 }

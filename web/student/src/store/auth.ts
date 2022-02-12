@@ -4,9 +4,9 @@ import { AxiosError } from 'axios'
 import { $axios } from '~/plugins/axios'
 import { app } from '~/plugins/firebase'
 import { ErrorResponse } from '~/types/api/exception'
-import { AuthResponse, UpdateMyPasswordRequest } from '~/types/api/v1'
+import { AuthResponse, UpdateMyMailRequest, UpdateMyPasswordRequest } from '~/types/api/v1'
 import { ApiError } from '~/types/exception'
-import { SignInForm, StudentUpdatePasswordForm } from '~/types/form'
+import { SignInForm, StudentUpdateMailForm, StudentUpdatePasswordForm } from '~/types/form'
 import { Auth, AuthState, SchoolType } from '~/types/store'
 
 const initialState: AuthState = {
@@ -132,6 +132,18 @@ export default class AuthModule extends VuexModule {
     }
 
     await $axios.$patch(`/v1/me/password`, req).catch((err: AxiosError) => {
+      const res: ErrorResponse = { ...err.response?.data }
+      throw new ApiError(res.status, res.message, res)
+    })
+  }
+
+  @Action({ rawError: true })
+  public async updateMail({ form }: { form: StudentUpdateMailForm }): Promise<void> {
+    const req: UpdateMyMailRequest = {
+      mail: form.params.mail,
+    }
+
+    await $axios.$patch(`/v1/me/mail`, req).catch((err: AxiosError) => {
       const res: ErrorResponse = { ...err.response?.data }
       throw new ApiError(res.status, res.message, res)
     })
