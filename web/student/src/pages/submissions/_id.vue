@@ -3,6 +3,7 @@
     :loading="loading"
     :summary="summary"
     :shifts="shifts"
+    :lessons="lessons"
     :enabled-lesson-ids="enabledLessonIds"
     @click:change-items="handleClickChangeEnabled"
     @click:submit="handleClickSubmit"
