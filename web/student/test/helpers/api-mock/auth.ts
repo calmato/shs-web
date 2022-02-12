@@ -10,5 +10,6 @@ export const showAuth: { [key: string]: AuthResponse } = {
     mail: 'teacher-test001@calmato.jp',
     schoolType: 3,
     grade: 2,
+    subjects: [],
   },
 }

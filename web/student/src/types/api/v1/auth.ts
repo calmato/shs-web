@@ -1,3 +1,5 @@
+import { Subject } from './lesson'
+
 /**
  * ---------------------------
  * Request
@@ -26,4 +28,5 @@ export interface AuthResponse {
   mail: string
   schoolType: number
   grade: number
+  subjects: Subject[]
 }
