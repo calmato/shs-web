@@ -2,6 +2,7 @@ package entity
 
 import (
 	"fmt"
+	"sort"
 	"time"
 
 	"github.com/calmato/shs-web/api/internal/gateway/entity"
@@ -62,5 +63,12 @@ func NewLessons(lessons entity.Lessons, shifts map[int64]*entity.Shift) (Lessons
 		}
 		ls[i] = l
 	}
+	ls.SortByStartAt()
 	return ls, nil
+}
+
+func (ls Lessons) SortByStartAt() {
+	sort.SliceStable(ls, func(i, j int) bool {
+		return ls[i].StartAt.Before(ls[j].StartAt)
+	})
 }
