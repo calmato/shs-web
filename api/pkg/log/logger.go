@@ -16,7 +16,19 @@ type Params struct {
 // NewLogger - ログ出力用クライアントの生成
 func NewLogger(params *Params) (*zap.Logger, error) {
 	level := getLogLevel(params.Level)
-	encoderConfig := zapcore.EncoderConfig{}
+	encoderConfig := zapcore.EncoderConfig{
+		MessageKey:     "msg",
+		LevelKey:       "level",
+		TimeKey:        "time",
+		NameKey:        "name",
+		CallerKey:      "caller",
+		FunctionKey:    "func",
+		StacktraceKey:  "stacktrace",
+		EncodeLevel:    zapcore.LowercaseLevelEncoder,
+		EncodeTime:     zapcore.ISO8601TimeEncoder,
+		EncodeDuration: zapcore.StringDurationEncoder,
+		EncodeCaller:   zapcore.ShortCallerEncoder,
+	}
 
 	// 標準出力設定
 	consoleCore := zapcore.NewCore(
