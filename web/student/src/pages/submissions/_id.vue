@@ -13,7 +13,13 @@
 import { computed, defineComponent, ref, useAsync, useRoute, useRouter, useStore } from '@nuxtjs/composition-api'
 import TheSubmissionDetail from '~/components/templates/TheSubmissionDetail.vue'
 import { CommonStore, SubmissionStore } from '~/store'
-import { PromiseState, SubmissionDetail, SubmissionDetailLesson, SubmissionSummary } from '~/types/store'
+import {
+  PromiseState,
+  SubmissionDetail,
+  SubmissionDetailLesson,
+  SubmissionLesson,
+  SubmissionSummary,
+} from '~/types/store'
 
 export default defineComponent({
   components: {
@@ -27,9 +33,9 @@ export default defineComponent({
 
     const enabledLessonIds = ref<number[]>([])
 
-    const teacherId = computed<string>(() => store.getters['auth/getUid'])
     const summary = computed<SubmissionSummary>(() => store.getters['submission/getSummary'])
     const shifts = computed<SubmissionDetail[]>(() => store.getters['submission/getShifts'])
+    const lessons = computed<SubmissionLesson[]>(() => store.getters['submission/getLessons'])
     const loading = computed<boolean>(() => {
       return store.getters['common/getPromiseState'] === PromiseState.LOADING
     })
@@ -75,9 +81,9 @@ export default defineComponent({
 
       const shiftId = Number(route.value.params.id)
 
-      await SubmissionStore.submitTeacherShifts({
-        teacherId: teacherId.value,
+      await SubmissionStore.submitStudentShifts({
         shiftId,
+        lessons: lessons.value,
         lessonIds: enabledLessonIds.value,
       })
         .then(() => {
@@ -97,6 +103,7 @@ export default defineComponent({
       enabledLessonIds,
       summary,
       shifts,
+      lessons,
       handleClickChangeEnabled,
       handleClickSubmit,
     }
