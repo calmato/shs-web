@@ -1,6 +1,6 @@
 <template>
   <div class="shift-lessons">
-    <v-container v-for="shift in shifts" :key="shift.date" tag="v-row" class="pa-0 ma-0">
+    <v-container v-for="shift in shifts" :key="shift.date" tag="v-row" class="row pa-0 ma-0">
       <v-col cols="1" align="center" class="shift-lessons-date pt-4">{{ getDay(shift.date) }}</v-col>
       <v-col cols="11" class="d-flex flex-column" align="center">
         <!-- 休講日 -->
