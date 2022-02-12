@@ -7,6 +7,8 @@ import (
 	"cloud.google.com/go/pubsub"
 	"github.com/calmato/shs-web/api/pkg/backoff"
 	"go.uber.org/zap"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type puller struct {
@@ -94,15 +96,16 @@ func (p *puller) Pull(ctx context.Context, msgCh chan<- *Message) error {
 		if err == nil {
 			return nil
 		}
-		if p.opts.logger != nil {
+		switch {
+		case status.Code(err) == codes.Canceled:
+		default:
 			p.opts.logger.Error("Failed to receive", zap.Error(err))
 		}
-		if !isRetryable(err) {
-			return err
-		}
-		if p.opts.logger != nil {
+		if isRetryable(err) {
 			p.opts.logger.Info("Retry to receive from subscription")
+			continue
 		}
+		return err
 	}
 	return err
 }
