@@ -2,7 +2,6 @@ import { setup, setSafetyMode, refresh } from '~~/test/helpers/store-helper'
 import { AuthStore } from '~/store'
 import { ApiError } from '~/types/exception'
 import { ErrorResponse } from '~/types/api/exception'
-import { SchoolType } from '~/types/store'
 
 describe('store/auth', () => {
   beforeEach(() => {
