@@ -29,7 +29,7 @@
       />
     </div>
     <div class="d-flex align-center my-2">
-      <p class="text-subtitle-1 mr-4 mb-0">休日</p>
+      <p class="text-subtitle-1 mr-4 mb-0">土日</p>
       <v-tooltip right>
         <template #activator="{ on, attrs }">
           <v-btn
