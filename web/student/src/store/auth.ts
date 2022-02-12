@@ -7,7 +7,8 @@ import { ErrorResponse } from '~/types/api/exception'
 import { AuthResponse, UpdateMyMailRequest, UpdateMyPasswordRequest } from '~/types/api/v1'
 import { ApiError } from '~/types/exception'
 import { SignInForm, StudentUpdateMailForm, StudentUpdatePasswordForm } from '~/types/form'
-import { Auth, AuthState, SchoolType } from '~/types/store'
+import { Auth, AuthState } from '~/types/store'
+import { authResponse2Auth } from '~/lib'
 
 const initialState: AuthState = {
   uid: '',
@@ -15,13 +16,21 @@ const initialState: AuthState = {
   emailVerified: false,
   auth: {
     id: '',
+    name: '',
+    nameKana: '',
     lastName: '',
     firstName: '',
     lastNameKana: '',
     firstNameKana: '',
     mail: '',
-    schoolType: SchoolType.UNKNOWN,
+    schoolType: 'その他',
     grade: 0,
+    subjects: {
+      小学校: [],
+      中学校: [],
+      高校: [],
+      その他: [],
+    },
   },
 }
 
@@ -116,7 +125,8 @@ export default class AuthModule extends VuexModule {
     await $axios
       .$get('/v1/me')
       .then((res: AuthResponse) => {
-        this.setApiAuth({ ...res })
+        const auth = authResponse2Auth(res)
+        this.setApiAuth(auth)
       })
       .catch((err: AxiosError) => {
         const res: ErrorResponse = { ...err.response?.data }

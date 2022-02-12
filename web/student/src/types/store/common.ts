@@ -1,15 +1,11 @@
+// SchoolType 校種
+export const SchoolTypeArray = ['小学校', '中学校', '高校', 'その他'] as const
+export type SchoolType = typeof SchoolTypeArray[number]
+
 // PromiseState 通信状態
 export enum PromiseState {
   NONE = 0, // 未接続
   LOADING = 1, // 通信中
-}
-
-// SchoolType 校種
-export enum SchoolType {
-  UNKNOWN = 0, // 不明
-  ELEMENTARY_SCHOOL = 1, // 小学校
-  JUNIOR_HIGH_SCHOOL = 2, // 中学校
-  HIGH_SCHOOL = 3, // 高等学校
 }
 
 // ShiftStatus シフト募集状況
