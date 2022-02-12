@@ -24,6 +24,7 @@ func NewLogger(params *Params) (*zap.Logger, error) {
 		CallerKey:      "caller",
 		FunctionKey:    "func",
 		StacktraceKey:  "stacktrace",
+		LineEnding:     "line",
 		EncodeLevel:    zapcore.LowercaseLevelEncoder,
 		EncodeTime:     zapcore.ISO8601TimeEncoder,
 		EncodeDuration: zapcore.StringDurationEncoder,
