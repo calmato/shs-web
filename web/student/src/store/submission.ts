@@ -1,12 +1,11 @@
 import { Action, Module, Mutation, VuexModule } from 'vuex-module-decorators'
 import { AxiosError } from 'axios'
 import {
-  SubmissionRequest,
   SubmissionResponse,
-  SubmissionsResponse,
   SubmissionDetail as v1SubmissionDetail,
   SubmissionDetailLesson as v1SubmissionDetailLesson,
   SubmissionSummary as v1SubmissionSummary,
+  SubmissionsResponse,
 } from '~/types/api/v1'
 import {
   ShiftStatus,
@@ -15,6 +14,7 @@ import {
   SubmissionDetail,
   SubmissionDetailLesson,
   SubmissionSummary,
+  SubmissionLesson,
 } from '~/types/store'
 import { $axios } from '~/plugins/axios'
 import { ErrorResponse } from '~/types/api/exception'
@@ -34,6 +34,7 @@ const initialState: SubmissionState = {
   },
   summaries: [],
   shifts: [],
+  suggestedLessons: [],
 }
 
 @Module({
@@ -45,6 +46,7 @@ export default class SubmissionModule extends VuexModule {
   private summary: SubmissionState['summary'] = initialState.summary
   private summaries: SubmissionState['summaries'] = initialState.summaries
   private shifts: SubmissionState['shifts'] = initialState.shifts
+  private lessons: SubmissionState['suggestedLessons'] = initialState.suggestedLessons
 
   public get getSummary(): SubmissionSummary {
     return this.summary
@@ -58,6 +60,10 @@ export default class SubmissionModule extends VuexModule {
     return this.shifts
   }
 
+  public get getLessons(): SubmissionLesson[] {
+    return this.lessons
+  }
+
   @Mutation
   private setSummaries({ summaries }: { summaries: SubmissionSummary[] }): void {
     this.summaries = summaries
@@ -67,6 +73,11 @@ export default class SubmissionModule extends VuexModule {
   private setShifts({ summary, shifts }: { summary: SubmissionSummary; shifts: SubmissionDetail[] }): void {
     this.summary = summary
     this.shifts = shifts
+  }
+
+  @Mutation
+  private setLessons({ lessons }: { lessons: SubmissionLesson[] }): void {
+    this.lessons = lessons
   }
 
   @Action({})
@@ -92,9 +103,9 @@ export default class SubmissionModule extends VuexModule {
   }
 
   @Action({ rawError: true })
-  public async listStudentShifts({ studentId, shiftId }: { studentId: string; shiftId: number }): Promise<void> {
+  public async listStudentLessons({ lessonId }: { lessonId: number }): Promise<void> {
     await $axios
-      .$get(`/v1/students/${studentId}/submissions/${shiftId}`)
+      .$get(`/v1/submissions/${lessonId}`)
       .then((res: SubmissionResponse) => {
         const summary: SubmissionSummary = { ...res.summary }
         const shifts: SubmissionDetail[] = res.shifts.map((shift: v1SubmissionDetail): SubmissionDetail => {
@@ -105,31 +116,13 @@ export default class SubmissionModule extends VuexModule {
           )
           return { ...shift, lessons }
         })
+        const lessons: SubmissionLesson[] = { ...res.suggestedLessons }
         this.setShifts({ summary, shifts })
+        this.setLessons({ lessons })
       })
       .catch((err: AxiosError) => {
         const res: ErrorResponse = { ...err.response?.data }
         throw new ApiError(res.status, res.message, res)
       })
-  }
-
-  @Action({ rawError: true })
-  public async submitStudentShifts({
-    studentId,
-    shiftId,
-    lessonIds,
-  }: {
-    studentId: string
-    shiftId: number
-    lessonIds: number[]
-  }): Promise<void> {
-    const req: SubmissionRequest = {
-      shiftIds: lessonIds,
-    }
-
-    await $axios.$post(`/v1/students/${studentId}/submissions/${shiftId}`, req).catch((err: AxiosError) => {
-      const res: ErrorResponse = { ...err.response?.data }
-      throw new ApiError(res.status, res.message, res)
-    })
   }
 }

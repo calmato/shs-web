@@ -37,9 +37,15 @@ export interface SubmissionDetail {
   lessons: SubmissionDetailLesson[]
 }
 
+export interface SubmissionLesson {
+  subjectId: number
+  total: number
+}
+
 export interface SubmissionResponse {
   summary: SubmissionSummary
   shifts: SubmissionDetail[]
+  suggestedLessons: SubmissionLesson[]
 }
 
 export interface SubmissionsResponse {
