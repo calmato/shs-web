@@ -2,6 +2,7 @@ package entity
 
 import (
 	"errors"
+	"sort"
 	"time"
 
 	"github.com/calmato/shs-web/api/internal/gateway/entity"
@@ -47,6 +48,7 @@ func NewSubjects(subjects entity.Subjects) Subjects {
 	for i := range subjects {
 		ss[i] = NewSubject(subjects[i])
 	}
+	ss.SortByColor()
 	return ss
 }
 
@@ -61,6 +63,12 @@ func NewSchoolTypeFromClassroom(schoolType classroom.SchoolType) SchoolType {
 	default:
 		return SchoolTypeUnknown
 	}
+}
+
+func (ss Subjects) SortByColor() {
+	sort.SliceStable(ss, func(i, j int) bool {
+		return ss[i].Color < ss[j].Color
+	})
 }
 
 func (ss Subjects) GroupBySchoolType() map[SchoolType]Subjects {
