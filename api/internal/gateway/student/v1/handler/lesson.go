@@ -23,7 +23,7 @@ func (h *apiV1Handler) ListLessons(ctx *gin.Context) {
 	)
 
 	in := &lesson.ListLessonsByDurationRequest{
-		TeacherId: getStudentID(ctx),
+		StudentId: getStudentID(ctx),
 		Since:     ctx.DefaultQuery("since", defaultSince),
 		Until:     ctx.DefaultQuery("until", defaultUntil),
 	}

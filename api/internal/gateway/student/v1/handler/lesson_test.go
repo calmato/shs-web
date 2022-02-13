@@ -65,7 +65,7 @@ func TestListLessons(t *testing.T) {
 			name: "success",
 			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
 				lessonsIn := &lesson.ListLessonsByDurationRequest{
-					TeacherId: idmock,
+					StudentId: idmock,
 					Since:     "20220101",
 					Until:     "20220131",
 				}
@@ -113,7 +113,7 @@ func TestListLessons(t *testing.T) {
 			name: "failed to list lessons",
 			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
 				lessonsIn := &lesson.ListLessonsByDurationRequest{
-					TeacherId: idmock,
+					StudentId: idmock,
 					Since:     "20220101",
 					Until:     "20220107",
 				}
@@ -128,7 +128,7 @@ func TestListLessons(t *testing.T) {
 			name: "failed to multi get teachers",
 			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
 				lessonsIn := &lesson.ListLessonsByDurationRequest{
-					TeacherId: idmock,
+					StudentId: idmock,
 					Since:     "20220101",
 					Until:     "20220131",
 				}
@@ -149,7 +149,7 @@ func TestListLessons(t *testing.T) {
 			name: "failed to new lessons",
 			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
 				lessonsIn := &lesson.ListLessonsByDurationRequest{
-					TeacherId: idmock,
+					StudentId: idmock,
 					Since:     "20220101",
 					Until:     "20220131",
 				}
