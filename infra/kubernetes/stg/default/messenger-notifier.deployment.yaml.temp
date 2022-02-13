@@ -27,15 +27,7 @@ spec:
         ports:
         - name: default
           containerPort: 8080
-        livenessProbe:
-          tcpSocket:
-            port: 8080
-          initialDelaySeconds: 10
-          periodSeconds: 5
-          failureThreshold: 3
         env:
-        - name: PORT
-          value: '8080'
         - name: METRICS_PORT
           value: '9090'
         - name: LOG_LEVEL

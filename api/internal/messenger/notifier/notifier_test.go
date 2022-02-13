@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"net/url"
-	"os"
 	"testing"
 	"time"
 
@@ -51,7 +50,6 @@ func newNotifier(mocks *mocks, opts ...testOption) *Notifier {
 	return &Notifier{
 		logger: zap.NewNop(),
 		mailer: mocks.mailer,
-		puller: mocks.puller,
 		user:   mocks.user,
 		teacherWebURL: func() *url.URL {
 			url := *webURL
@@ -84,7 +82,7 @@ func TestNotifier_Run(t *testing.T) {
 	notifier := newNotifier(mocks)
 	msgCh := make(chan *pubsub.Message, 1)
 	go func() {
-		assert.NoError(t, notifier.Run(ctx, msgCh, 1, 1))
+		assert.NoError(t, notifier.Run(ctx, msgCh, 1))
 	}()
 	time.Sleep(3 * time.Second)
 	cancel()
@@ -211,11 +209,5 @@ func TestNotifier_Dispatch(t *testing.T) {
 			assert.Equal(t, tt.isErr, err != nil, err)
 			assert.Equal(t, tt.expect, actual)
 		})
-	}
-}
-
-func setEnv() {
-	if os.Getenv("PUBSUB_EMULATOR_HOST") == "" {
-		os.Setenv("PUBSUB_EMULATOR_HOST", "127.0.0.1:8085")
 	}
 }

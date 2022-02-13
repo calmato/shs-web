@@ -125,7 +125,7 @@ func Exec() error {
 		return
 	})
 	eg.Go(func() (err error) {
-		err = n.Run(ectx, msgCh, int(conf.Concurrency), int(conf.MailboxCapacity))
+		err = n.Run(ectx, msgCh, int(conf.Concurrency))
 		if err != nil {
 			logger.Error("Failed to run notifier", zap.Error(err))
 		}
