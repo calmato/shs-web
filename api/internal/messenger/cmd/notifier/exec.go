@@ -10,13 +10,14 @@ import (
 
 	config "github.com/calmato/shs-web/api/config/messenger/notifier"
 	"github.com/calmato/shs-web/api/internal/messenger/mailer"
-	"github.com/calmato/shs-web/api/internal/messenger/notifier"
 	"github.com/calmato/shs-web/api/pkg/http"
 	"github.com/calmato/shs-web/api/pkg/log"
 	"github.com/calmato/shs-web/api/pkg/pubsub"
 	"go.uber.org/zap"
 	"golang.org/x/sync/errgroup"
 	"google.golang.org/api/option"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	"gopkg.in/yaml.v3"
 )
 
@@ -89,29 +90,26 @@ func Exec() error {
 	// 依存関係の解決
 	regParams := &params{
 		insecure:       conf.GRPCInsecure,
+		logger:         logger,
+		teacherWebURL:  teacherWebURL,
+		studentWebURL:  studentWebURL,
+		mailer:         mailer,
 		userServiceURL: conf.UserServiceURL,
 	}
-	cli, err := newGRPCClient(regParams)
+	reg, err := newRegistry(regParams)
 	if err != nil {
 		return err
 	}
 
 	// Workerの設定
-	params := &notifier.Params{
-		Logger:        logger,
-		TeacherWebURL: teacherWebURL,
-		StudentWebURL: studentWebURL,
-		Mailer:        mailer,
-		Puller:        puller,
-		UserService:   cli.user,
-	}
-	n := notifier.NewNotifier(params)
+	n := reg.notifier
 
 	// Metrics Serverの設定
 	ms := http.NewMetricsServer(conf.MetricsPort)
 
 	// Workerの起動
 	eg, ectx := errgroup.WithContext(ctx)
+	msgCh := make(chan *pubsub.Message, 1)
 	eg.Go(func() (err error) {
 		err = ms.Serve()
 		if err != nil {
@@ -120,7 +118,14 @@ func Exec() error {
 		return
 	})
 	eg.Go(func() (err error) {
-		err = n.Run(ctx, int(conf.Concurrency), int(conf.MailboxCapacity))
+		err = puller.Pull(ectx, msgCh)
+		if status.Code(err) == codes.Canceled {
+			return nil
+		}
+		return
+	})
+	eg.Go(func() (err error) {
+		err = n.Run(ectx, msgCh, int(conf.Concurrency), int(conf.MailboxCapacity))
 		if err != nil {
 			logger.Error("Failed to run notifier", zap.Error(err))
 		}
@@ -134,8 +139,8 @@ func Exec() error {
 	select {
 	case <-ectx.Done():
 		logger.Error("Done context", zap.Error(ectx.Err()))
-	case <-signalCh:
-		logger.Info("Received signal")
+	case signal := <-signalCh:
+		logger.Info("Received signal", zap.String("signal", signal.String()))
 		cancel()
 	}
 
