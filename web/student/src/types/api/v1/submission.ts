@@ -1,14 +1,5 @@
 /**
  * ---------------------------
- * Request
- * ---------------------------
- */
-export interface SubmissionRequest {
-  shiftIds: number[]
-}
-
-/**
- * ---------------------------
  * Response
  * ---------------------------
  */
@@ -37,11 +28,27 @@ export interface SubmissionDetail {
   lessons: SubmissionDetailLesson[]
 }
 
+export interface SubmissionLesson {
+  subjectId: number
+  total: number
+}
+
 export interface SubmissionResponse {
   summary: SubmissionSummary
   shifts: SubmissionDetail[]
+  suggestedLessons: SubmissionLesson[]
 }
 
 export interface SubmissionsResponse {
   summaries: SubmissionSummary[]
+}
+
+/**
+ * ---------------------------
+ * Request
+ * ---------------------------
+ */
+export interface SubmissionRequest {
+  suggestedLessons: SubmissionLesson[]
+  shiftIds: number[]
 }
