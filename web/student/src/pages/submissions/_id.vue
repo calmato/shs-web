@@ -99,7 +99,7 @@ export default defineComponent({
 
       const shiftId = Number(route.value.params.id)
       const lessons: SubmissionLesson[] = suggestedLessons.map(
-        (lesson: ISubmissionSuggestedLesson): Submissionlesson => {
+        (lesson: ISubmissionSuggestedLesson): SubmissionLesson => {
           return { subjectId: lesson.subjectId, total: Number(lesson.total) }
         }
       )
