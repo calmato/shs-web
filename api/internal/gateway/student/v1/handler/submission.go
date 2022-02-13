@@ -245,7 +245,7 @@ func (h *apiV1Handler) GetSubmissionTemplate(ctx *gin.Context) {
 	eg.Go(func() error {
 		in := &lesson.GetStudentShiftTemplateRequest{StudentId: studentID}
 		out, err := h.lesson.GetStudentShiftTemplate(ectx, in)
-		if err != nil {
+		if err != nil && status.Code(err) != codes.NotFound {
 			return err
 		}
 		gtemplate = gentity.NewStudentShiftTemplate(out.Template)
