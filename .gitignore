@@ -25,6 +25,8 @@ pids
 .envrc
 !.env.temp
 !.envrc.temp
+*.tfvars
+*.tfstate*
 
 # secret directory
 secrets/
