@@ -10,18 +10,7 @@ export function authResponse2Auth(authResponse: AuthResponse): Auth {
   const name: string = getName(authResponse.lastName, authResponse.firstName)
   const nameKana: string = getName(authResponse.lastNameKana, authResponse.firstNameKana)
   const schoolType: SchoolType = schoolTypeNum2schoolTypeString(authResponse.schoolType)
-  const subjects: { [key in SchoolType]: Subject[] } = {
-    小学校: [],
-    中学校: [],
-    高校: [],
-    その他: [],
-  }
-
-  authResponse.subjects.forEach((item: SubjectResponse) => {
-    const subject = subjectResponse2Subject(item)
-    const fullname = `${subject.schoolType} ${subject.name}`
-    subjects[subject.schoolType].push({ ...subject, fullname })
-  })
+  const subjects: Subject[] = subjectResponses2Subjects(authResponse.subjects)
 
   const auth: Auth = {
     ...authResponse,

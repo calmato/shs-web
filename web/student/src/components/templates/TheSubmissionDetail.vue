@@ -1,6 +1,12 @@
 <template>
   <v-container>
     <div class="text-h6 my-2">{{ summary.year }}年 {{ summary.month }}月</div>
+    <the-submission-lesson-list
+      :subjects="subjects"
+      :lessons="lessons"
+      @click:add-lesson="onClickAddLesson"
+      @click:remove-lesson="onClickRemoveLesson"
+    />
     <v-divider />
     <v-container class="d-flex">
       <v-row>
@@ -9,7 +15,7 @@
       </v-row>
     </v-container>
     <v-divider />
-    <the-submission-list
+    <the-submission-shift-list
       :loading="loading"
       :shifts="shifts"
       :selected-items="enabledLessonIds"
@@ -21,12 +27,15 @@
 
 <script lang="ts">
 import { defineComponent, PropType, SetupContext } from '@nuxtjs/composition-api'
-import TheSubmissionList from '~/components/organisms/TheSubmissionList.vue'
-import { SubmissionDetail, SubmissionLesson, SubmissionSummary } from '~/types/store'
+import TheSubmissionLessonList from '~/components/organisms/TheSubmissionLessonList.vue'
+import TheSubmissionShiftList from '~/components/organisms/TheSubmissionShiftList.vue'
+import { ISubmissionSuggestedLesson } from '~/types/form'
+import { Subject, SubmissionDetail, SubmissionSummary } from '~/types/store'
 
 export default defineComponent({
   components: {
-    TheSubmissionList,
+    TheSubmissionLessonList,
+    TheSubmissionShiftList,
   },
 
   props: {
@@ -43,7 +52,11 @@ export default defineComponent({
       default: () => [],
     },
     lessons: {
-      type: Array as PropType<SubmissionLesson[]>,
+      type: Array as PropType<ISubmissionSuggestedLesson[]>,
+      default: () => [],
+    },
+    subjects: {
+      type: Array as ProptType<Subject[]>,
       default: () => [],
     },
     enabledLessonIds: {
@@ -61,9 +74,19 @@ export default defineComponent({
       emit('click:submit')
     }
 
+    const onClickAddLesson = (): void => {
+      emit('click:add-lesson')
+    }
+
+    const onClickRemoveLesson = (index: number): void => {
+      emit('click:remove-lesson', index)
+    }
+
     return {
       onChangeItems,
       onClickSave,
+      onClickAddLesson,
+      onClickRemoveLesson,
     }
   },
 })
