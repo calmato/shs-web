@@ -1,4 +1,4 @@
-name: '[Backend] Build and Deploy (Teacher Gateway)'
+name: '[Backend] Build and Deploy (Gateway)'
 on:
   push:
     branches:
