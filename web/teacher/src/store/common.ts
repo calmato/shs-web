@@ -2,9 +2,10 @@ import { Module, VuexModule, Mutation, Action } from 'vuex-module-decorators'
 import { MESSAGE } from '~/constants/exception'
 import { ApiError } from '~/types/exception'
 import { Snackbar } from '~/types/props/snackbar'
-import { CommonState, PromiseState } from '~/types/store'
+import { CommonState, InitialState, PromiseState } from '~/types/store'
 
 const initialState: CommonState = {
+  initialState: InitialState.PENDING,
   promiseState: PromiseState.NONE,
   snackbarColor: 'info',
   snackbarMessage: '',
@@ -16,9 +17,14 @@ const initialState: CommonState = {
   namespaced: true,
 })
 export default class CommonModule extends VuexModule {
+  private initialState: CommonState['initialState'] = initialState.initialState
   private promiseState: CommonState['promiseState'] = initialState.promiseState
   private snackbarColor: CommonState['snackbarColor'] = initialState.snackbarColor
   private snackbarMessage: CommonState['snackbarMessage'] = initialState.snackbarMessage
+
+  public get getInitialState(): InitialState {
+    return this.initialState
+  }
 
   public get getPromiseState(): PromiseState {
     return this.promiseState
@@ -30,6 +36,11 @@ export default class CommonModule extends VuexModule {
 
   public get getSnackbarMessage(): string {
     return this.snackbarMessage
+  }
+
+  @Mutation
+  private setInitialState(initialState: InitialState): void {
+    this.initialState = initialState
   }
 
   @Mutation
@@ -49,9 +60,20 @@ export default class CommonModule extends VuexModule {
 
   @Action({})
   public factory(): void {
+    this.setInitialState(initialState.initialState)
     this.setPromiseState(initialState.promiseState)
     this.setSnackbarColor(initialState.snackbarColor)
     this.setSnackbarMessage(initialState.snackbarMessage)
+  }
+
+  @Action({ rawError: true })
+  public startInitialize(): void {
+    this.setInitialState(InitialState.PROCESSING)
+  }
+
+  @Action({ rawError: true })
+  public endInitialize(): void {
+    this.setInitialState(InitialState.FINISHED)
   }
 
   @Action({ rawError: true })

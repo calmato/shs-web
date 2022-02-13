@@ -1,6 +1,6 @@
 import { setup, refresh } from '~~/test/helpers/store-helper'
 import { CommonStore } from '~/store'
-import { PromiseState } from '~/types/store'
+import { InitialState, PromiseState } from '~/types/store'
 import { Snackbar } from '~/types/props/snackbar'
 import { ApiError } from '~/types/exception'
 
@@ -14,6 +14,10 @@ describe('store/common', () => {
   })
 
   describe('getters', () => {
+    it('getInitialState', () => {
+      expect(CommonStore.getInitialState).toBe(InitialState.PENDING)
+    })
+
     it('getPromiseState', () => {
       expect(CommonStore.getPromiseState).toBe(PromiseState.NONE)
     })
@@ -28,6 +32,20 @@ describe('store/common', () => {
   })
 
   describe('actions', () => {
+    describe('startInitialize', () => {
+      it('stateが更新されること', () => {
+        CommonStore.startInitialize()
+        expect(CommonStore.getInitialState).toBe(InitialState.PROCESSING)
+      })
+    })
+
+    describe('endInitialize', () => {
+      it('stateが更新されること', () => {
+        CommonStore.endInitialize()
+        expect(CommonStore.getInitialState).toBe(InitialState.FINISHED)
+      })
+    })
+
     describe('startConnection', () => {
       it('stateが更新されること', () => {
         CommonStore.startConnection()
