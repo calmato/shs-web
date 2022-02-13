@@ -65,7 +65,7 @@ export default defineComponent({
       default: 'text',
     },
     value: {
-      type: [String, Number],
+      type: String,
       required: false,
       default: '',
     },
