@@ -47,7 +47,7 @@ export default defineComponent({
     const store = useStore()
 
     const enabledLessonIds = ref<number[]>([])
-    const suggestedLessons = reactive<ISubmissionSuggestedLesson>([])
+    const suggestedLessons = reactive<ISubmissionSuggestedLesson[]>([])
 
     const student = computed<Auth>(() => store.getters['auth/getAuth'])
     const summary = computed<SubmissionSummary>(() => store.getters['submission/getSummary'])
@@ -73,7 +73,7 @@ export default defineComponent({
               if (lesson.enabled) enabledLessonIds.value.push(lesson.id)
             })
           })
-          lessons.value.forEach((lesson: SubmissionDetail): void => {
+          lessons.value.forEach((lesson: SubmissionLesson): void => {
             suggestedLessons.push({ subjectId: lesson.subjectId, total: String(lesson.total) })
           })
         })
@@ -122,7 +122,7 @@ export default defineComponent({
     }
 
     const handleClickAddSuggestedLesson = (): void => {
-      suggestedLessons.push({ subjectId: 0, total: 0 })
+      suggestedLessons.push({ subjectId: 0, total: '0' })
     }
 
     const handleClickRemoveSuggestedLesson = (index: number): void => {

@@ -32,7 +32,7 @@ import { defineComponent, PropType, SetupContext } from '@nuxtjs/composition-api
 import TheTextField from '~/components/atoms/TheTextField.vue'
 import TheSelectWithSlot from '~/components/atoms/TheSelectWithSlot.vue'
 import { ISubmissionSuggestedLesson } from '~/types/form'
-import { Subject, SubmissionLesson } from '~/types/store'
+import { Subject } from '~/types/store'
 
 export default defineComponent({
   components: {
@@ -46,16 +46,16 @@ export default defineComponent({
       default: () => [],
     },
     subjects: {
-      type: Array as ProptType<Subject[]>,
+      type: Array as PropType<Subject[]>,
       default: () => [],
     },
   },
 
   setup(props, { emit }: SetupContext) {
-    const getSubjects = (select: number): void => {
+    const getSubjects = (select: number): Subject[] => {
       const items: Subject[] = []
       props.subjects.forEach((subject: Subject): void => {
-        const index = props.lessons.findIndex((val: SubmissionLesson): boolean => {
+        const index = props.lessons.findIndex((val: ISubmissionSuggestedLesson): boolean => {
           return val.subjectId !== select && val.subjectId === subject.id
         })
         if (index === -1) items.push(subject)

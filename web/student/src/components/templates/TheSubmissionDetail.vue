@@ -56,7 +56,7 @@ export default defineComponent({
       default: () => [],
     },
     subjects: {
-      type: Array as ProptType<Subject[]>,
+      type: Array as PropType<Subject[]>,
       default: () => [],
     },
     enabledLessonIds: {
