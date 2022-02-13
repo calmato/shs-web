@@ -12,7 +12,7 @@ export interface Auth {
   mail: string
   schoolType: SchoolType
   grade: number
-  subjects: { [key in SchoolType]: Subject[] }
+  subjects: Subject[]
 }
 
 export interface AuthState {

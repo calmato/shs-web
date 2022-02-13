@@ -37,12 +37,7 @@ describe('store/auth', () => {
         mail: '',
         schoolType: 'その他',
         grade: 0,
-        subjects: {
-          小学校: [],
-          中学校: [],
-          高校: [],
-          その他: [],
-        },
+        subjects: [],
       })
     })
   })
@@ -67,12 +62,7 @@ describe('store/auth', () => {
             mail: 'teacher-test001@calmato.jp',
             schoolType: '高校',
             grade: 2,
-            subjects: {
-              小学校: [],
-              中学校: [],
-              高校: [],
-              その他: [],
-            },
+            subjects: [],
           })
         })
       })

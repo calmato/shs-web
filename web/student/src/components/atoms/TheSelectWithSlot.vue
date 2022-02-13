@@ -1,17 +1,25 @@
 <template>
   <validation-provider v-slot="{ errors, valid }" :name="label" :vid="name" :rules="rules">
-    <v-text-field
+    <v-select
       v-model="formData"
-      :type="type"
+      :items="items"
+      :item-text="itemText"
+      :item-value="itemValue"
       :label="label"
       :error-messages="errors"
       :success="isSuccess(valid)"
       :autofocus="autofocus"
+      :disabled="disabled"
       :outlined="outlined"
-      :readonly="readonly"
-      :height="height"
-      :prepend-icon="prependIcon"
-    />
+      :multiple="multiple"
+      :chips="chips"
+      :append-outer-icon="appendOuterIcon"
+      @blur="onBlur"
+    >
+      <template #selection="{ item }">
+        <slot :item="item" />
+      </template>
+    </v-select>
   </validation-provider>
 </template>
 
@@ -25,10 +33,6 @@ export default defineComponent({
       required: false,
       default: false,
     },
-    height: {
-      type: String,
-      default: undefined,
-    },
     label: {
       type: String,
       required: false,
@@ -39,19 +43,24 @@ export default defineComponent({
       required: false,
       default: '',
     },
+    disabled: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
     outlined: {
       type: Boolean,
       required: false,
       default: false,
     },
-    prependIcon: {
-      type: String,
-      required: false,
-      default: undefined,
-    },
-    readonly: {
+    chips: {
       type: Boolean,
-      require: false,
+      required: false,
+      default: false,
+    },
+    multiple: {
+      type: Boolean,
+      required: false,
       default: false,
     },
     rules: {
@@ -59,31 +68,51 @@ export default defineComponent({
       required: false,
       default: undefined,
     },
-    type: {
+    items: {
+      type: Array,
+      required: false,
+      default: () => [],
+    },
+    itemText: {
       type: String,
       required: false,
-      default: 'text',
+      default: undefined,
+    },
+    itemValue: {
+      type: String,
+      required: false,
+      default: undefined,
     },
     value: {
-      type: String,
       required: false,
-      default: '',
+      default: undefined,
+      type: [String, Number, Array],
+    },
+    appendOuterIcon: {
+      required: false,
+      default: undefined,
+      type: String,
     },
   },
 
   setup(props, { emit }: SetupContext) {
     const formData = computed({
-      get: () => props.value,
-      set: (val: string) => emit('update:value', val),
+      get: (): any => props.value,
+      set: (val: any) => emit('update:value', val),
     })
 
     const isSuccess = (valid: boolean): boolean => {
       return props.rules ? valid : false
     }
 
+    const onBlur = (): void => {
+      emit('blur')
+    }
+
     return {
       formData,
       isSuccess,
+      onBlur,
     }
   },
 })

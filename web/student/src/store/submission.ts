@@ -117,7 +117,9 @@ export default class SubmissionModule extends VuexModule {
           )
           return { ...shift, lessons }
         })
-        const lessons: SubmissionLesson[] = { ...res.suggestedLessons }
+        const lessons: SubmissionLesson[] = res.suggestedLessons.map((lesson) => {
+          return { ...lesson }
+        })
         this.setShifts({ summary, shifts })
         this.setLessons({ lessons })
       })
