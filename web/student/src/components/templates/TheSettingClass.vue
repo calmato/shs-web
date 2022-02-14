@@ -17,7 +17,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, SetupContext } from '@vue/composition-api'
+import { defineComponent, PropType, SetupContext } from '@vue/composition-api'
 import TheSubmissionLessonList from '~/components/organisms/TheSubmissionLessonList.vue'
 import TheSubmissionScheduleList from '~/components/organisms/TheSubmissionScheduleList.vue'
 import { UserProps } from '~/types/props/setting'

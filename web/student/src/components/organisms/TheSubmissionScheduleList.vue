@@ -32,7 +32,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from '@nuxtjs/composition-api'
+import { defineComponent, PropType } from '@nuxtjs/composition-api'
 import dayjs from '~/plugins/dayjs'
 import { SubmissionTemplate, SubmissionTemplateLesson } from '~/types/store'
 

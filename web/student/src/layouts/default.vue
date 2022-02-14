@@ -1,5 +1,5 @@
 <template>
-  <v-app class="root" :style="{ background }">
+  <v-app class="root">
     <the-snackbar :snackbar.sync="snackbar" :color="snackbarColor" :message="snackbarMessage" />
     <the-header :overlay="overlay" @click="handleClickMenu" />
     <the-sidebar :items="items" :current="current" @click="handleClickMenuItem" />
@@ -38,9 +38,7 @@ export default defineComponent({
     const route = root.$route
     const router = root.$router
     const store = root.$store
-    const vuetify = root.$vuetify
 
-    const greyBackgroundPaths = []
     const items: Menu[] = [
       {
         name: 'トップ',
@@ -58,17 +56,6 @@ export default defineComponent({
         path: '/settings',
       },
     ]
-
-    const getBackgroundColor = (path: string): VuetifyThemeItem => {
-      const theme = vuetify.theme.dark ? 'dark' : 'light'
-
-      let color: VuetifyThemeItem = vuetify.theme.themes[theme].white
-      if (greyBackgroundPaths.includes(path)) {
-        color = vuetify.theme.themes[theme].grey
-      }
-
-      return color
-    }
 
     const current = ref<string>(route.path)
     const snackbar = ref<Boolean>(false)
