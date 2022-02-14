@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"fmt"
 	"sync"
 	"time"
 
@@ -51,6 +52,7 @@ func NewShifts(summary *ShiftSummary, schedules map[time.Weekday]*Schedule, clos
 				return
 			}
 			schedule, ok := schedules[date.Weekday()]
+			fmt.Println(">>>>debug: ", target, date.Weekday(), schedule)
 			if !ok || schedule.IsClosed {
 				return
 			}
