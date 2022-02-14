@@ -1,0 +1,1 @@
+ALTER TABLE `lessons`.`shifts` MODIFY COLUMN `date` DATETIME NOT NULL; -- DATE -> DATETIME
