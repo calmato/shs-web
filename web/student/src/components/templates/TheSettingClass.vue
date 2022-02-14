@@ -1,37 +1,33 @@
 <template>
   <v-container>
-    <div class="text-h6 my-2">{{ summary.year }}年 {{ summary.month }}月</div>
+    <p class="text-h6 my-2">授業希望のカスタム設定</p>
     <the-submission-lesson-list
       :subjects="subjects"
       :lessons="lessons"
       @click:add-lesson="onClickAddLesson"
       @click:remove-lesson="onClickRemoveLesson"
     />
-    <the-submission-shift-list
-      :loading="loading"
-      :shifts="shifts"
-      :selected-items="enabledLessonIds"
-      @click:change-items="onChangeItems"
-    />
+    <the-submission-schedule-list :schedules="schedules" />
     <v-container>
       <v-row class="justify-end">
-        <v-btn color="primary" class="right mt-4" large :disabled="loading" @click="onClickSubmit">提出</v-btn>
+        <v-btn color="primary" class="right mt-4" large :disabled="loading" @click="onClickSubmit">保存</v-btn>
       </v-row>
     </v-container>
   </v-container>
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, SetupContext } from '@nuxtjs/composition-api'
+import { defineComponent, PropType, SetupContext } from '@vue/composition-api'
 import TheSubmissionLessonList from '~/components/organisms/TheSubmissionLessonList.vue'
-import TheSubmissionShiftList from '~/components/organisms/TheSubmissionShiftList.vue'
+import TheSubmissionScheduleList from '~/components/organisms/TheSubmissionScheduleList.vue'
+import { UserProps } from '~/types/props/setting'
 import { ISubmissionSuggestedLesson } from '~/types/form'
-import { Subject, SubmissionDetail, SubmissionSummary } from '~/types/store'
+import { Subject, SubmissionTemplate } from '~/types/store'
 
 export default defineComponent({
   components: {
     TheSubmissionLessonList,
-    TheSubmissionShiftList,
+    TheSubmissionScheduleList,
   },
 
   props: {
@@ -39,33 +35,25 @@ export default defineComponent({
       type: Boolean,
       default: false,
     },
-    summary: {
-      type: Object as PropType<SubmissionSummary>,
+    user: {
+      type: Object as PropType<UserProps>,
       default: () => {},
     },
-    shifts: {
-      type: Array as PropType<SubmissionDetail[]>,
+    subjects: {
+      type: Array as PropType<Subject[]>,
+      default: () => [],
+    },
+    schedules: {
+      type: Array as PropType<SubmissionTemplate[]>,
       default: () => [],
     },
     lessons: {
       type: Array as PropType<ISubmissionSuggestedLesson[]>,
       default: () => [],
     },
-    subjects: {
-      type: Array as PropType<Subject[]>,
-      default: () => [],
-    },
-    enabledLessonIds: {
-      type: Array as PropType<number[]>,
-      default: () => [],
-    },
   },
 
   setup(_, { emit }: SetupContext) {
-    const onChangeItems = (lessonId: number): void => {
-      emit('click:change-items', lessonId)
-    }
-
     const onClickAddLesson = (): void => {
       emit('click:add-lesson')
     }
@@ -79,7 +67,6 @@ export default defineComponent({
     }
 
     return {
-      onChangeItems,
       onClickAddLesson,
       onClickRemoveLesson,
       onClickSubmit,
