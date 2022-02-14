@@ -13,4 +13,10 @@
 * コンテナの更新
   > $ helm upgrade [name] -f [dirname]/configs/[confname] [dirname]
 * コンテナの削除
-  > $  helm uninstall [name]
+  > $ helm uninstall [name]
+
+## 参考
+
+* https://helm.sh/ja/docs/intro/using_helm/
+* https://helm.sh/ja/docs/howto/charts_tips_and_tricks/
+* https://golang.hateblo.jp/entry/golang-text-html-template
