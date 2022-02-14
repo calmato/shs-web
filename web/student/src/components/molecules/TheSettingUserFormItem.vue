@@ -48,7 +48,7 @@ export default defineComponent({
   },
 
   setup(props) {
-    const getSubjectIds = (): string[] => {
+    const getSubjectIds = (): number[] => {
       return props.subjects.map((subject: Subject) => subject.id)
     }
 

@@ -15,7 +15,7 @@ import { computed, defineComponent, reactive, useAsync, useRouter, useStore } fr
 import TheSettingClass from '~/components/templates/TheSettingClass.vue'
 import { CommonStore, SubmissionStore } from '~/store'
 import { ISubmissionSuggestedLesson } from '~/types/form'
-import { Auth, SubmissionLesson, SubmissionTemplate } from '~/types/store'
+import { Auth, SubmissionLesson, SubmissionTemplate, SubmissionTemplateLesson } from '~/types/store'
 
 export default defineComponent({
   components: {
@@ -44,7 +44,9 @@ export default defineComponent({
         .then(() => {
           templates.value.forEach((template: SubmissionTemplate): void => {
             const lessons: SubmissionLesson[] = []
-            template.lessons.forEach((lesson: SubmissionTemplateLesson): void => lessons.push({ ...lesson }))
+            template.lessons.forEach((lesson: SubmissionTemplateLesson): void => {
+              lessons.push({ ...lesson })
+            })
             schedulesForm.push({ weekday: template.weekday, lessons })
           })
           lessons.value.forEach((lesson: SubmissionLesson): void => {

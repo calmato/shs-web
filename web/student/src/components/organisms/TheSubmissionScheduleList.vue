@@ -56,10 +56,10 @@ export default defineComponent({
     ]
 
     const isClosed = (weekday: number): boolean => {
-      const template: SubmissionTemplate = props.schedules.find(
+      const template: SubmissionTemplate | undefined = props.schedules.find(
         (schedule: SubmissionTemplate): boolean => schedule.weekday === weekday
       )
-      return template?.lessons.length === 0
+      return !template || template.lessons.length === 0
     }
 
     const newLessonId = (weekday: number, startTime: string): string => {
@@ -67,7 +67,7 @@ export default defineComponent({
     }
 
     const getLessons = (weekday: number): SubmissionTemplateLesson[] => {
-      const template: SubmissionTemplate = props.schedules.find(
+      const template: SubmissionTemplate | undefined = props.schedules.find(
         (schedule: SubmissionTemplate): boolean => schedule.weekday === weekday
       )
       return template?.lessons || []
