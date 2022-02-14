@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "gateway.fullname" . }}
+  labels:
+    {{- include "gateway.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  revisionHistoryLimit: {{ .Values.revisionHistoryLimit }}
+  selector:
+    matchLabels:
+      {{- include "gateway.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "gateway.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+      - name: {{ .Chart.Name }}
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        ports:
+        - name: default
+          protocol: TCP
+          containerPort: {{ .Values.app.port }}
+        {{- if .Values.metrics.enabled }}
+        - name: metrics
+          protocol: TCP
+          containerPort: {{ .Values.metrics.port }}
+        {{- end }}
+        resources:
+          {{- toYaml .Values.resources | nindent 10 }}
+        {{- if .Values.health.liveness.enabled }}
+        livenessProbe:
+          httpGet:
+            path: {{ .Values.health.liveness.path }}
+            port: {{ .Values.health.liveness.port }}
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          failureThreshold: 3
+        {{- end }}
+        {{- if .Values.health.readiness.enabled }}
+        readinessProbe:
+          httpGet:
+            path: {{ .Values.health.liveness.path }}
+            port: {{ .Values.health.liveness.port }}
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          failureThreshold: 3
+        {{- end }}
+        env:
+        - name: PORT
+          value: "{{ .Values.app.port }}"
+        {{- if .Values.metrics.enabled }}
+        - name: METRICS_PORT
+          value: "{{ .Values.metrics.port }}"
+        {{- end }}
+        {{- if .Values.gcpCredentials.enabled }}
+        - name: GCP_SERVICE_KEY_JSON
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.gcpCredentials.name }}
+              key: {{ .Values.gcpCredentials.key }}
+        {{- end }}
+        {{- toYaml .Values.env | nindent 8 }}

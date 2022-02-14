@@ -1,0 +1,131 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "service.fullname" . }}
+  labels:
+    {{- include "service.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  revisionHistoryLimit: {{ .Values.revisionHistoryLimit }}
+  selector:
+    matchLabels:
+      {{- include "service.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "service.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+      - name: {{ .Chart.Name }}
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        ports:
+        - name: default
+          protocol: TCP
+          containerPort: {{ .Values.app.port }}
+        {{- if .Values.metrics.enabled }}
+        - name: metrics
+          protocol: TCP
+          containerPort: {{ .Values.metrics.port }}
+        {{- end }}
+        resources:
+          {{- toYaml .Values.resources | nindent 10 }}
+        {{- if .Values.health.liveness.enabled }}
+        livenessProbe:
+          tcpSocket:
+            port: {{ .Values.health.liveness.port }}
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          failureThreshold: 3
+        {{- end }}
+        {{- if .Values.health.readiness.enabled }}
+        readinessProbe:
+          tcpSocket:
+            port: {{ .Values.health.liveness.port }}
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          failureThreshold: 3
+        {{- end }}
+        env:
+        - name: PORT
+          value: "{{ .Values.app.port }}"
+        {{- if .Values.metrics.enabled }}
+        - name: METRICS_PORT
+          value: "{{ .Values.metrics.port }}"
+        {{- end }}
+        {{- if .Values.database.enabled }}
+        - name: DB_HOST
+          value: "127.0.0.1"
+        - name: DB_PORT
+          value: "3306"
+        - name: DB_TIMEZONE
+          value: "UTC"
+        - name: DB_DATABASE
+          value: "{{ .Values.database.name }}"
+        - name: DB_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.database.secret.name }}
+              key: DB_USERNAME
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.database.secret.name }}
+              key: DB_PASSWORD
+        {{- end }}
+        {{- if .Values.gcpCredentials.enabled }}
+        - name: GCP_SERVICE_KEY_JSON
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.gcpCredentials.name }}
+              key: {{ .Values.gcpCredentials.key }}
+        {{- end }}
+        {{- toYaml .Values.env | nindent 8 }}
+      {{- if and .Values.sendgridCredentials .Values.sendgridCredentials.enabled }}
+        volumeMounts:
+        - name: sendgrid-volume
+          mountPath: /secrets/
+          readOnly: true
+      {{- end }}
+      {{- if .Values.database.enabled }}
+      - name: cloud-sql-proxy
+        image: "{{ .Values.database.proxy.repository }}:{{ .Values.database.proxy.tag }}"
+        imagePullPolicy: {{ .Values.database.proxy.pullPolicy }}
+        resources:
+          limits:
+            cpu: 50m
+            memory: 64Mi
+        securityContext:
+          runAsNonRoot: true
+        env:
+        - name: INSTANCE_CONNECTION_NAME
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.database.secret.name }}
+              key: INSTANCE_CONNECTION_NAME
+        volumeMounts:
+        - name: gcp-secret-volume
+          mountPath: /secrets/
+          readOnly: true
+        command:
+        - "/cloud_sql_proxy"
+        - "-instances=$(INSTANCE_CONNECTION_NAME)=tcp:3306"
+        - "-credential_file=/secrets/gcp-service-key.json"
+      {{- end }}
+      volumes:
+      {{- if and .Values.gcpCredentials .Values.gcpCredentials.enabled }}
+      - name: gcp-secret-volume
+        secret:
+          secretName: {{ .Values.gcpCredentials.name }}
+          items:
+          - key: {{ .Values.gcpCredentials.key }}
+            path: {{ .Values.gcpCredentials.key }}
+      {{- end }}
+      {{- if and .Values.sendgridCredentials .Values.sendgridCredentials.enabled }}
+      - name: sendgrid-volume
+        secret:
+          secretName: {{ .Values.sendgridCredentials.name }}
+          items:
+          - key: {{ .Values.sendgridCredentials.key }}
+            path: {{ .Values.sendgridCredentials.key }}
+      {{- end }}
