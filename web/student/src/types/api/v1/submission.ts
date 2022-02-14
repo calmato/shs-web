@@ -1,5 +1,36 @@
 /**
  * ---------------------------
+ * Request
+ * ---------------------------
+ */
+export interface SubmissionLesson {
+  subjectId: number
+  total: number
+}
+
+export interface SubmissionTemplateLesson {
+  enabled: boolean
+  startTime: string
+  endTime: string
+}
+
+export interface SubmissionTemplate {
+  weekday: number
+  lessons: SubmissionTemplateLesson[]
+}
+
+export interface SubmissionRequest {
+  suggestedLessons: SubmissionLesson[]
+  shiftIds: number[]
+}
+
+export interface SubmissionTemplateRequest {
+  schedules: SubmissionTemplate[]
+  suggestedLessons: SubmissionLesson[]
+}
+
+/**
+ * ---------------------------
  * Response
  * ---------------------------
  */
@@ -28,11 +59,6 @@ export interface SubmissionDetail {
   lessons: SubmissionDetailLesson[]
 }
 
-export interface SubmissionLesson {
-  subjectId: number
-  total: number
-}
-
 export interface SubmissionResponse {
   summary: SubmissionSummary
   shifts: SubmissionDetail[]
@@ -43,12 +69,7 @@ export interface SubmissionsResponse {
   summaries: SubmissionSummary[]
 }
 
-/**
- * ---------------------------
- * Request
- * ---------------------------
- */
-export interface SubmissionRequest {
+export interface SubmissionTemplateResponse {
+  schedules: SubmissionTemplate[]
   suggestedLessons: SubmissionLesson[]
-  shiftIds: number[]
 }

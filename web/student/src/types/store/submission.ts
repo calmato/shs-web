@@ -30,13 +30,6 @@ export interface SubmissionLesson {
   total: number
 }
 
-export interface SubmissionState {
-  summary: SubmissionSummary
-  summaries: SubmissionSummary[]
-  shifts: SubmissionDetail[]
-  suggestedLessons: SubmissionLesson[]
-}
-
 export interface SummaryParams {
   id: number
   year: number
@@ -63,4 +56,23 @@ export interface ShiftParams {
 export interface SubmissionEditState {
   summary: SummaryParams
   shifts: ShiftParams[]
+}
+
+export interface SubmissionTemplateLesson {
+  enabled: boolean
+  startTime: string
+  endTime: string
+}
+
+export interface SubmissionTemplate {
+  weekday: number
+  lessons: SubmissionTemplateLesson[]
+}
+
+export interface SubmissionState {
+  summary: SubmissionSummary
+  summaries: SubmissionSummary[]
+  shifts: SubmissionDetail[]
+  templates: SubmissionTemplate[]
+  suggestedLessons: SubmissionLesson[]
 }

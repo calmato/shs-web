@@ -92,7 +92,7 @@ func (h *apiV1Handler) GetSubmission(ctx *gin.Context) {
 	eg.Go(func() error {
 		in := &lesson.GetStudentShiftTemplateRequest{StudentId: studentID}
 		out, err := h.lesson.GetStudentShiftTemplate(ectx, in)
-		if st, ok := status.FromError(err); ok && st.Code() == codes.NotFound {
+		if status.Code(err) == codes.NotFound {
 			gtemplate = &gentity.StudentShiftTemplate{
 				Lessons:   gentity.StudentSuggestedLessons{},
 				Schedules: gentity.StudentShiftSchedules{},
@@ -113,7 +113,7 @@ func (h *apiV1Handler) GetSubmission(ctx *gin.Context) {
 			ShiftSummaryId: shiftSummaryID,
 		}
 		out, err := h.lesson.GetStudentShifts(ectx, in)
-		if st, ok := status.FromError(err); ok && st.Code() == codes.NotFound {
+		if status.Code(err) == codes.NotFound {
 			return nil
 		}
 		if err != nil {
@@ -136,7 +136,7 @@ func (h *apiV1Handler) GetSubmission(ctx *gin.Context) {
 
 	var suggestedLessons entity.StudentSuggestedLessons
 	var shifts entity.StudentShiftDetails
-	if gsubmission == nil {
+	if gsubmission == nil || gsubmission.StudentID == "" {
 		// 未提出 -> テンプレート使用
 		suggestedLessons = entity.NewStudentSuggestedLessons(gtemplate.Lessons)
 		shifts = entity.NewStudentShiftDetailsWithTemplate(summary, shiftsMap, gtemplate.Schedules)

@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <the-setting-user-form-item :user="user" />
+    <the-setting-user-form-item :user="user" :subjects="subjects" />
     <v-row class="py-4">
       <v-col cols="12">
         <v-card
@@ -29,6 +29,7 @@
 import { defineComponent, PropType, SetupContext } from '@nuxtjs/composition-api'
 import TheSettingUserFormItem from '~/components/molecules/TheSettingUserFormItem.vue'
 import { Menu, UserProps } from '~/types/props/setting'
+import { Subject } from '~/types/store'
 
 export default defineComponent({
   components: {
@@ -48,6 +49,10 @@ export default defineComponent({
         lastNameKana: '',
         firstNameKana: '',
       }),
+    },
+    subjects: {
+      type: Array as PropType<Subject[]>,
+      default: () => [],
     },
   },
 

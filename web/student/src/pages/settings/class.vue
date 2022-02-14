@@ -1,83 +1,103 @@
 <template>
-  <v-container>
-    <p class="text-h5 mb-2">授業希望のカスタム設定</p>
-    <div class="d-flex align-center my-2">
-      <p class="text-subtitle-1 mr-4 mb-0">科目とコマ数を指定</p>
-      <v-tooltip right>
-        <template #activator="{ on, attrs }">
-          <v-btn class="suffix-btn" color="primary" fab elevation="0" v-bind="attrs" v-on="on">
-            <v-icon>mdi-plus</v-icon>
-          </v-btn>
-        </template>
-        <span>コマを増やす</span>
-      </v-tooltip>
-    </div>
-    <div class="d-flex h-stack align-center">
-      <v-select chips label="科目" />
-      <v-text-field type="number" label="コマ数" height="42" />
-      <v-tooltip right>
-        <template #activator="{ on, attrs }">
-          <v-btn class="suffix-btn" color="error" fab elevation="0" v-bind="attrs" v-on="on">
-            <v-icon>mdi-minus</v-icon>
-          </v-btn>
-        </template>
-        <span>コマを削除する</span>
-      </v-tooltip>
-    </div>
-
-    <div class="my-4">
-      <v-row v-for="date in dateList" :key="date" class="border ma-0" align="center">
-        <v-col cols="2" class="align-center">
-          <p class="mb-0">{{ date }}</p>
-        </v-col>
-        <v-col cols="10" align-self="end">
-          <v-chip-group active-class="primary--text" column class="chips">
-            <v-chip v-for="time in timeList" :key="time" small>
-              {{ time }}
-            </v-chip>
-          </v-chip-group>
-        </v-col>
-      </v-row>
-    </div>
-    <div class="d-flex mt-4">
-      <v-spacer />
-      <v-btn color="primary">保存</v-btn>
-    </div>
-  </v-container>
+  <the-setting-class
+    :user="student"
+    :subjects="student.subjects"
+    :schedules="schedulesForm"
+    :lessons="suggestedLessons"
+    @click:add-lesson="handleClickAddSuggestedLesson"
+    @click:remove-lesson="handleClickRemoveSuggestedLesson"
+    @click:submit="handleClickSubmit"
+  />
 </template>
 
 <script lang="ts">
-import { defineComponent } from '@vue/composition-api'
+import { computed, defineComponent, reactive, useAsync, useRouter, useStore } from '@nuxtjs/composition-api'
+import TheSettingClass from '~/components/templates/TheSettingClass.vue'
+import { CommonStore, SubmissionStore } from '~/store'
+import { ISubmissionSuggestedLesson } from '~/types/form'
+import { Auth, SubmissionLesson, SubmissionTemplate } from '~/types/store'
 
 export default defineComponent({
+  components: {
+    TheSettingClass,
+  },
+
   setup() {
-    const dateList: string[] = ['月', '火', '水', '木', '金', '土', '日']
-    const timeList: string[] = ['17:00~18:30', '18:30~20:00', '20:00~21:30']
-    return { dateList, timeList }
+    const store = useStore()
+    const router = useRouter()
+
+    const schedulesForm = reactive<SubmissionTemplate[]>([])
+    const suggestedLessons = reactive<ISubmissionSuggestedLesson[]>([])
+
+    const student = computed<Auth>(() => store.getters['auth/getAuth'])
+    const templates = computed<SubmissionTemplate[]>(() => store.getters['submission/getTemplates'])
+    const lessons = computed<SubmissionLesson[]>(() => store.getters['submission/getLessons'])
+
+    useAsync(async () => {
+      await getTemplate()
+    })
+
+    async function getTemplate(): Promise<void> {
+      CommonStore.startConnection()
+
+      await SubmissionStore.getSubmissionTemplate()
+        .then(() => {
+          templates.value.forEach((template: SubmissionTemplate): void => {
+            const lessons: SubmissionLesson[] = []
+            template.lessons.forEach((lesson: SubmissionTemplateLesson): void => lessons.push({ ...lesson }))
+            schedulesForm.push({ weekday: template.weekday, lessons })
+          })
+          lessons.value.forEach((lesson: SubmissionLesson): void => {
+            suggestedLessons.push({ subjectId: lesson.subjectId, total: String(lesson.total) })
+          })
+          if (suggestedLessons.length === 0) handleClickAddSuggestedLesson()
+        })
+        .catch((err: Error) => {
+          console.log('failed to get submission template', err)
+        })
+        .finally(() => {
+          CommonStore.endConnection()
+        })
+    }
+
+    const handleClickAddSuggestedLesson = (): void => {
+      suggestedLessons.push({ subjectId: 0, total: '0' })
+    }
+
+    const handleClickRemoveSuggestedLesson = (index: number): void => {
+      suggestedLessons.splice(index, 1)
+    }
+
+    const handleClickSubmit = async (): Promise<void> => {
+      CommonStore.startConnection()
+
+      const lessons: SubmissionLesson[] = suggestedLessons.map(
+        (lesson: ISubmissionSuggestedLesson): SubmissionLesson => {
+          return { subjectId: lesson.subjectId, total: Number(lesson.total) }
+        }
+      )
+
+      await SubmissionStore.upsertSubmissionTemplate({ schedules: schedulesForm, lessons })
+        .then(() => {
+          router.push('/settings')
+          CommonStore.showSnackbar({ color: 'success', message: '設定を更新しました' })
+        })
+        .catch((err: Error) => {
+          CommonStore.showErrorInSnackbar(err)
+        })
+        .finally(() => {
+          CommonStore.endConnection()
+        })
+    }
+
+    return {
+      student,
+      schedulesForm,
+      suggestedLessons,
+      handleClickAddSuggestedLesson,
+      handleClickRemoveSuggestedLesson,
+      handleClickSubmit,
+    }
   },
 })
 </script>
-
-<style lang="scss" scoped>
-.suffix-btn {
-  height: 24px;
-  width: 24px;
-}
-
-.h-stack {
-  gap: 1rem;
-}
-
-::v-deep .chips > .v-slide-group__wrapper > .v-slide-group__content {
-  flex-direction: row-reverse;
-}
-
-.border {
-  border-top: 1px solid #e0e0e0;
-  border-bottom: 1px solid #e0e0e0;
-}
-
-.border + .border {
-  border-top: none;
-}
-</style>

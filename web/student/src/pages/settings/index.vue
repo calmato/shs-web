@@ -1,5 +1,11 @@
 <template>
-  <the-setting-top class="px-2 mt-4" :menu-items="menuItems" :user="auth" @click="handleClick" />
+  <the-setting-top
+    class="px-2 mt-4"
+    :menu-items="menuItems"
+    :user="auth"
+    :subjects="auth.subjects"
+    @click="handleClick"
+  />
 </template>
 
 <script lang="ts">
@@ -29,7 +35,7 @@ export default defineComponent({
       },
       {
         title: '授業希望のカスタム設定',
-        path: '/settings/custom',
+        path: '/settings/class',
       },
       {
         title: 'サインアウト',

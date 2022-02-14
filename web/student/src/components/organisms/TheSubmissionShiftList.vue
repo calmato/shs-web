@@ -1,6 +1,14 @@
 <template>
   <div>
-    <v-container v-for="shift in shifts" :key="shift.date" cols="12" class="shift-lessons">
+    <v-divider />
+    <v-container class="d-flex">
+      <v-row>
+        <v-col cols="4">授業日</v-col>
+        <v-col cols="8">授業希望</v-col>
+      </v-row>
+    </v-container>
+    <v-divider />
+    <v-container v-for="shift in shifts" :key="shift.date" cols="12" class="border">
       <v-row align="center">
         <v-col cols="4">{{ getDay(shift.date) }}</v-col>
         <v-col cols="8">
@@ -18,11 +26,6 @@
             </v-chip>
           </v-chip-group>
         </v-col>
-      </v-row>
-    </v-container>
-    <v-container>
-      <v-row class="justify-end">
-        <v-btn color="primary" class="right mt-4" large :disabled="loading" @click="onClick">提出</v-btn>
       </v-row>
     </v-container>
   </div>
@@ -65,22 +68,17 @@ export default defineComponent({
       emit('click:change-items', lessonId)
     }
 
-    const onClick = (): void => {
-      emit('click:submit')
-    }
-
     return {
       getDay,
       getLessonDuration,
       onChange,
-      onClick,
     }
   },
 })
 </script>
 
 <style scoped>
-.shift-lessons {
-  border-bottom: 0.5px solid #e5e5e5;
+.border {
+  border-bottom: 1px solid #e5e5e5;
 }
 </style>

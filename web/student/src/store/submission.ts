@@ -4,9 +4,14 @@ import {
   SubmissionResponse,
   SubmissionDetail as v1SubmissionDetail,
   SubmissionDetailLesson as v1SubmissionDetailLesson,
+  SubmissionLesson as v1SubmissionLesson,
+  SubmissionRequest,
   SubmissionSummary as v1SubmissionSummary,
   SubmissionsResponse,
-  SubmissionRequest,
+  SubmissionTemplate as v1SubmissionTemplate,
+  SubmissionTemplateLesson as v1SubmissionTemplateLesson,
+  SubmissionTemplateResponse,
+  SubmissionTemplateRequest,
 } from '~/types/api/v1'
 import {
   ShiftStatus,
@@ -14,8 +19,10 @@ import {
   SubmissionStatus,
   SubmissionDetail,
   SubmissionDetailLesson,
-  SubmissionSummary,
   SubmissionLesson,
+  SubmissionSummary,
+  SubmissionTemplate,
+  SubmissionTemplateLesson,
 } from '~/types/store'
 import { $axios } from '~/plugins/axios'
 import { ErrorResponse } from '~/types/api/exception'
@@ -35,6 +42,7 @@ const initialState: SubmissionState = {
   },
   summaries: [],
   shifts: [],
+  templates: [],
   suggestedLessons: [],
 }
 
@@ -47,6 +55,7 @@ export default class SubmissionModule extends VuexModule {
   private summary: SubmissionState['summary'] = initialState.summary
   private summaries: SubmissionState['summaries'] = initialState.summaries
   private shifts: SubmissionState['shifts'] = initialState.shifts
+  private templates: SubmissionState['templates'] = initialState.templates
   private lessons: SubmissionState['suggestedLessons'] = initialState.suggestedLessons
 
   public get getSummary(): SubmissionSummary {
@@ -59,6 +68,10 @@ export default class SubmissionModule extends VuexModule {
 
   public get getShifts(): SubmissionDetail[] {
     return this.shifts
+  }
+
+  public get getTemplates(): SubmissionTemplate[] {
+    return this.templates
   }
 
   public get getLessons(): SubmissionLesson[] {
@@ -77,7 +90,12 @@ export default class SubmissionModule extends VuexModule {
   }
 
   @Mutation
-  private setLessons({ lessons }: { lessons: SubmissionLesson[] }): void {
+  private setTemplates(templates: SubmissionTemplate[]): void {
+    this.templates = templates
+  }
+
+  @Mutation
+  private setLessons(lessons: SubmissionLesson[]): void {
     this.lessons = lessons
   }
 
@@ -117,11 +135,11 @@ export default class SubmissionModule extends VuexModule {
           )
           return { ...shift, lessons }
         })
-        const lessons: SubmissionLesson[] = res.suggestedLessons.map((lesson) => {
+        const lessons: SubmissionLesson[] = res.suggestedLessons.map((lesson: v1SubmissionLesson): SubmissionLesson => {
           return { ...lesson }
         })
         this.setShifts({ summary, shifts })
-        this.setLessons({ lessons })
+        this.setLessons(lessons)
       })
       .catch((err: AxiosError) => {
         const res: ErrorResponse = { ...err.response?.data }
@@ -145,6 +163,55 @@ export default class SubmissionModule extends VuexModule {
     }
 
     await $axios.$post(`/v1/submissions/${shiftId}`, req).catch((err: AxiosError) => {
+      const res: ErrorResponse = { ...err.response?.data }
+      throw new ApiError(res.status, res.message, res)
+    })
+  }
+
+  @Action({ rawError: true })
+  public async getSubmissionTemplate(): Promise<void> {
+    await $axios
+      .$get('/v1/me/submission')
+      .then((res: SubmissionTemplateResponse) => {
+        const templates: SubmissionTemplate[] = res.schedules.map(
+          (schedule: v1SubmissionTemplate): SubmissionTemplate => {
+            const lessons: SubmissionTemplateLesson[] = schedule.lessons.map(
+              (lesson: v1SubmissionTemplateLesson): SubmissionTemplateLesson => ({ ...lesson })
+            )
+            return { weekday: schedule.weekday, lessons }
+          }
+        )
+        const lessons: SubmissionLesson[] = res.suggestedLessons.map((lesson: v1SubmissionLesson): SubmissionLesson => {
+          return { ...lesson }
+        })
+        this.setTemplates(templates)
+        this.setLessons(lessons)
+      })
+      .catch((err: AxiosError) => {
+        console.log('debug', err)
+        const res: ErrorResponse = { ...err.response?.data }
+        throw new ApiError(res.status, res.message, res)
+      })
+  }
+
+  @Action({ rawError: true })
+  public async upsertSubmissionTemplate(payload: {
+    schedules: SubmissionTemplate[]
+    lessons: SubmissionLesson[]
+  }): Promise<void> {
+    const req: SubmissionTemplateRequest = {
+      schedules: payload.schedules.map(
+        (schedule: SubmissionTemplate): v1SubmissionTemplate => ({
+          weekday: schedule.weekday,
+          lessons: schedule.lessons.map(
+            (lesson: SubmissionTemplateLesson): v1SubmissionTemplateLesson => ({ ...lesson })
+          ),
+        })
+      ),
+      suggestedLessons: payload.lessons.map((lesson: SubmissionLesson): v1SubmissionLesson => ({ ...lesson })),
+    }
+
+    await $axios.$post('/v1/me/submission', req).catch((err: AxiosError) => {
       const res: ErrorResponse = { ...err.response?.data }
       throw new ApiError(res.status, res.message, res)
     })
