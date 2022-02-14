@@ -43,7 +43,7 @@ export default defineComponent({
       await SubmissionStore.getSubmissionTemplate()
         .then(() => {
           templates.value.forEach((template: SubmissionTemplate): void => {
-            const lessons: SubmissionLesson[] = []
+            const lessons: SubmissionTemplateLesson[] = []
             template.lessons.forEach((lesson: SubmissionTemplateLesson): void => {
               lessons.push({ ...lesson })
             })
