@@ -49,7 +49,7 @@ export default defineComponent({
   setup(props, { emit }: SetupContext) {
     const regularHolidayFormData = computed({
       get: () => props.regularHolidayValue,
-      set: (val: number[]) => emit('update:regularHolidayValue', val),
+      set: (val: number[]) => emit('change:regular-holiday-value', val),
     })
 
     const boothFormData = computed({

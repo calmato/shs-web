@@ -1,10 +1,11 @@
 <template>
   <the-classroom-setting
     class="mt-4"
-    :regular-holiday-value.sync="selectedRegularHoliday"
+    :regular-holiday-value="selectedRegularHoliday"
     :booth-value.sync="boothRef"
     :weekday-hour-form="weekdayHourForm"
     :holiday-hour-form="holidayHourForm"
+    @change:regular-holiday-value="changeSelectedRegularHoliday"
     @click:addWeekdayHourForm="handleWeekdayHourFormAddButton"
     @click:removeWeekdayHourForm="handleWeekdayHourFormRemoveButton"
     @click:addHolidayHourForm="handleHolidayHourFormAddButton"
@@ -15,7 +16,16 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, reactive, ref, Ref, useRouter } from '@nuxtjs/composition-api'
+import {
+  computed,
+  ComputedRef,
+  defineComponent,
+  reactive,
+  ref,
+  Ref,
+  useAsync,
+  useRouter,
+} from '@nuxtjs/composition-api'
 import customParseFormat from 'dayjs/plugin/customParseFormat'
 import dayjs from '~/plugins/dayjs'
 import TheClassroomSetting from '~/components/templates/TheClassroomSetting.vue'
@@ -47,19 +57,36 @@ export default defineComponent({
   setup() {
     const router = useRouter()
 
-    const selectedRegularHoliday = reactive<number[]>(ClassroomStore.regularHoliday)
-    const boothRef: Ref<number> = ref<number>(ClassroomStore.getTotalRooms)
-    const weekdayHourForm = reactive<HourForm[]>(ClassroomStore.weekdayHourFormValue)
-    const holidayHourForm = reactive<HourForm[]>(ClassroomStore.holidayHourFormValue)
+    const boothRef: Ref<number> = ref<number>(0)
+    const selectedRegularHoliday = reactive<number[]>([])
+    const weekdayHourForm = reactive<HourForm[]>([])
+    const holidayHourForm = reactive<HourForm[]>([])
 
     const isChanged: ComputedRef<boolean> = computed(() => {
       return boothRef.value !== ClassroomStore.getTotalRooms
     })
 
+    useAsync(async () => {
+      await initialize()
+    })
+
+    async function initialize(): Promise<void> {
+      await Promise.all([ClassroomStore.getTotalRoomsByApi(), ClassroomStore.getSchedulesByApi()]).then(() => {
+        boothRef.value = ClassroomStore.getTotalRooms
+        ClassroomStore.regularHoliday.forEach((val) => selectedRegularHoliday.push(val))
+        ClassroomStore.weekdayHourFormValue.forEach((val) => weekdayHourForm.push(val))
+        ClassroomStore.holidayHourFormValue.forEach((val) => holidayHourForm.push(val))
+      })
+    }
+
+    const changeSelectedRegularHoliday = (items: number[]): void => {
+      selectedRegularHoliday.splice(0, selectedRegularHoliday.length, ...items)
+    }
+
     const handleWeekdayHourFormAddButton = () => {
       // 一つ前のコマを基準に開始時刻と終了時刻を設定しておく
       const lastElement = weekdayHourForm.slice(-1)[0]
-      const baseTime = dayjs(lastElement.endAt, 'HH:mm')
+      const baseTime = dayjs(lastElement?.endAt || '00:00', 'HH:mm')
       const startAt = baseTime.add(REST_TIME, 'minutes')
       const endAt = baseTime.add(BASE_HOUR_TIME, 'minutes')
 
@@ -87,7 +114,7 @@ export default defineComponent({
     const handleHolidayHourFormAddButton = () => {
       // 一つ前のコマを基準に開始時刻と終了時刻を設定しておく
       const lastElement = holidayHourForm.slice(-1)[0]
-      const baseTime = dayjs(lastElement.endAt, 'HH:mm')
+      const baseTime = dayjs(lastElement?.endAt || '00:00', 'HH:mm')
       const startAt = baseTime.add(REST_TIME, 'minutes')
       const endAt = baseTime.add(BASE_HOUR_TIME, 'minutes')
 
@@ -128,6 +155,7 @@ export default defineComponent({
       weekdayHourForm,
       holidayHourForm,
       isChanged,
+      changeSelectedRegularHoliday,
       handleBackButton,
       handleWeekdayHourFormAddButton,
       handleWeekdayHourFormRemoveButton,

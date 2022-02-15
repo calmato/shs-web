@@ -32,7 +32,7 @@ export default defineComponent({
       { label: '木曜日', value: 4 },
       { label: '金曜日', value: 5 },
       { label: '土曜日', value: 6 },
-      { label: '日曜日', value: 7 },
+      { label: '日曜日', value: 0 },
     ]
 
     const selectedValues = computed({
