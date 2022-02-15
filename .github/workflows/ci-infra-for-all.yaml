@@ -1,0 +1,56 @@
+name: '[Infra] Build and Test'
+on:
+  push:
+    paths:
+    - '.github/workflows/ci-infra-for-all.yaml'
+    - 'infra/helm/**'
+
+jobs:
+  helm:
+    name: Helm
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./infra/helm
+    strategy:
+      matrix:
+        on: [ubuntu-latest] # exclude: macos-latest, windows-latest
+        python: ['3.7']
+        helm: ['3.8.0']
+        helm-testing: ['2.2.0']
+
+    steps:
+    - name: Chack out code
+      uses: actions/checkout@v2
+
+    - name: Use Helm ${{ matrix.helm }}
+      uses: azure/setup-helm@v1
+      with:
+        version: ${{ matrix.helm }}
+
+    - name: Use Python ${{ matrix.python }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python }}
+
+    - name: Use Helm Chart Testing ${{ matrix.helm-testing }}
+      uses: helm/chart-testing-action@v${{ matrix.helm-testing }}
+
+    - name: Run chart-testing (list-changed)
+      id: list-changed
+      run: |
+        changed=$(ct list-changed)
+        if [[ -n "$changed" ]]; then
+          echo "::set-output name=changed::true"
+        fi
+
+    - name: Run chart-testing (lint)
+      run: ct lint
+
+    - name: Create kind cluster
+      uses: helm/kind-action@v1.2.0
+      if: steps.list-changed.outputs.changed == 'true'
+
+    - name: Run chart-testing (install)
+      run: ct install
