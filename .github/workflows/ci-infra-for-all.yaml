@@ -33,10 +33,3 @@ jobs:
         for dir in ${dirs}; do
           helm lint ${dir} -f ${dir}/values.yaml --strict --debug
         done
-
-    - name: Dry Run
-      run: |
-        dirs=$(echo $(ls -d */) | sed 's/\///g')
-        for dir in ${dirs}; do
-          helm install test -f ${dir}/values.yaml ${dir} --dry-run
-        done
