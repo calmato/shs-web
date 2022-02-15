@@ -18,7 +18,6 @@ jobs:
         on: [ubuntu-latest] # exclude: macos-latest, windows-latest
         python: ['3.7']
         helm: ['3.8.0']
-        helm-testing: ['2.2.0']
 
     steps:
     - name: Chack out code
@@ -34,8 +33,8 @@ jobs:
       with:
         python-version: ${{ matrix.python }}
 
-    - name: Use Helm Chart Testing ${{ matrix.helm-testing }}
-      uses: helm/chart-testing-action@v${{ matrix.helm-testing }}
+    - name: Use Helm Chart Testing
+      uses: helm/chart-testing-action@v2.2.0
 
     - name: Run chart-testing (list-changed)
       id: list-changed
