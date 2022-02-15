@@ -10,4 +10,6 @@ variable "zone" {
   default = "asia-northeast1-a"
 }
 
-variable "password" {}
+variable "root_password" {}
+
+variable "user_password" {}

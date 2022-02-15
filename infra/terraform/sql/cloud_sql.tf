@@ -1,7 +1,8 @@
 variable "credentials" {}
 variable "project" {}
 variable "region" {}
-variable "password" {}
+variable "root_password" {}
+variable "user_password" {}
 
 resource "google_sql_database_instance" "master" {
   name             = "shs-web-sql"
@@ -22,10 +23,11 @@ resource "google_sql_database_instance" "master" {
 resource "google_sql_user" "root" {
     name = "root"
     instance = google_sql_database_instance.master.name
-    password = var.password
+    password = var.root_password
 }
 
 resource "google_sql_user" "user" {
     name = "user"
     instance = google_sql_database_instance.master.name
+    password = var.user_password
 }
