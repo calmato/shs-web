@@ -17,12 +17,7 @@ export default async ({ route, store, redirect }: Context) => {
       }
 
       store.dispatch('common/startInitialize')
-      Promise.all([
-        store.dispatch('auth/showAuth'),
-        store.dispatch('lesson/getAllSubjects'),
-        store.dispatch('classroom/getTotalRoomsByApi'),
-        store.dispatch('classroom/getSchedulesByApi'),
-      ])
+      Promise.all([store.dispatch('auth/showAuth'), store.dispatch('lesson/getAllSubjects')])
     })
     .catch(() => {
       redirect('/signin')
