@@ -21,14 +21,6 @@ module "vpc" {
       subnet_region = var.region
     },
   ]
-  secondary_ranges = {
-    shs-subnet = [
-      {
-        range_name    = "shs-subnet-secondary"
-        ip_cidr_range = "192.168.64.0/24"
-      }
-    ]
-  }
 
   routes = [
         {
