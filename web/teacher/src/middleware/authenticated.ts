@@ -5,6 +5,7 @@ const excludedPaths: string[] = ['/signin']
 
 export default async ({ route, store, redirect }: Context) => {
   if (excludedPaths.includes(route.path)) {
+    store.dispatch('common/factory')
     return
   }
 
