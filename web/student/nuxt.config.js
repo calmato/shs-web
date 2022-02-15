@@ -1,5 +1,5 @@
 import colors from 'vuetify/es5/util/colors'
-import ja from 'vuetify/lib/locale/ja'
+import { en, ja } from 'vuetify/src/locale'
 
 export default {
   srcDir: 'src',
@@ -81,10 +81,10 @@ export default {
       options: {
         customProperties: true,
       },
-      lang: {
-        locales: { ja },
-        current: 'ja',
-      },
+    },
+    lang: {
+      locales: { en, ja },
+      current: 'ja',
     },
   },
 

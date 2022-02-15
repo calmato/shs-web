@@ -81,10 +81,10 @@ export default {
       options: {
         customProperties: true,
       },
-      lang: {
-        locales: { ja },
-        current: 'ja',
-      },
+    },
+    lang: {
+      locales: { ja },
+      current: 'ja',
     },
   },
 
