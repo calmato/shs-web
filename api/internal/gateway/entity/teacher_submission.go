@@ -29,3 +29,11 @@ func (ss TeacherSubmissions) MapByShiftSummaryID() map[int64]*TeacherSubmission 
 	}
 	return res
 }
+
+func (ss TeacherSubmissions) MapByTeacherID() map[string]*TeacherSubmission {
+	res := make(map[string]*TeacherSubmission, len(ss))
+	for _, s := range ss {
+		res[s.TeacherId] = s
+	}
+	return res
+}

@@ -30,6 +30,7 @@ type StudentSuggestedLessons []*StudentSuggestedLesson
 
 type StudentSubmissionDetail struct {
 	Student               *Student                `json:"student"`               // 生徒情報
+	IsSubmit              bool                    `json:"isSubmit"`              // 授業希望提出フラグ
 	SuggestedLessons      StudentSuggestedLessons `json:"suggestedLessons"`      // 希望受講授業一覧
 	SuggestedLessonsTotal int64                   `json:"suggestedLessonsTotal"` // 希望受講授業数
 	LessonTotal           int64                   `json:"lessonTotal"`           // 登録受講授業数
@@ -64,7 +65,7 @@ func NewStudentSubmissions(
 ) StudentSubmissions {
 	ss := make(StudentSubmissions, len(summaries))
 	for i, s := range summaries {
-		submission := submissions[s.Id] // null: 出勤不可
+		submission := submissions[s.Id] // null: 受講不可
 		ss[i] = NewStudentSubmission(s, submission)
 	}
 	return ss
@@ -92,15 +93,18 @@ func NewStudentSubmissionDetail(
 	lessons entity.Lessons,
 ) *StudentSubmissionDetail {
 	var suggestedLessonsTotal int64
+	var isSubmit bool
 	suggestedLessons := StudentSuggestedLessons{}
 	if submission != nil {
 		for _, l := range submission.SuggestedLessons {
 			suggestedLessonsTotal += l.Total
 		}
 		suggestedLessons = NewStudentSuggestedLessons(submission.SuggestedLessons)
+		isSubmit = submission.Decided
 	}
 	return &StudentSubmissionDetail{
 		Student:               NewStudent(student, subjects),
+		IsSubmit:              isSubmit,
 		SuggestedLessons:      suggestedLessons,
 		SuggestedLessonsTotal: suggestedLessonsTotal,
 		LessonTotal:           int64(len(lessons)),

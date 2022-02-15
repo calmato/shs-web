@@ -292,6 +292,7 @@ func TestStudentSubmissionDetail(t *testing.T) {
 					CreatedAt: now,
 					UpdatedAt: now,
 				},
+				IsSubmit: true,
 				SuggestedLessons: StudentSuggestedLessons{
 					{SubjectID: 1, Total: 4},
 					{SubjectID: 2, Total: 4},
@@ -423,6 +424,7 @@ func TestStudentSubmissionDetails(t *testing.T) {
 						CreatedAt: now,
 						UpdatedAt: now,
 					},
+					IsSubmit: true,
 					SuggestedLessons: StudentSuggestedLessons{
 						{SubjectID: 1, Total: 4},
 						{SubjectID: 2, Total: 4},
@@ -444,6 +446,7 @@ func TestStudentSubmissionDetails(t *testing.T) {
 						CreatedAt:     now,
 						UpdatedAt:     now,
 					},
+					IsSubmit:              false,
 					SuggestedLessons:      StudentSuggestedLessons{},
 					SuggestedLessonsTotal: 0,
 					LessonTotal:           1,

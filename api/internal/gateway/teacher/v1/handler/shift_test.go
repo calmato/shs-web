@@ -1091,6 +1091,7 @@ func TestListShifts(t *testing.T) {
 									},
 								},
 							},
+							IsSubmit:    false,
 							LessonTotal: 1,
 						},
 					},
@@ -1118,6 +1119,7 @@ func TestListShifts(t *testing.T) {
 									},
 								},
 							},
+							IsSubmit: true,
 							SuggestedLessons: entity.StudentSuggestedLessons{
 								{SubjectID: 1, Total: 4},
 								{SubjectID: 2, Total: 4},
