@@ -3,5 +3,7 @@
 *.deployment.yaml
 *.secret.yaml
 
+secret.*.yaml
+
 cert.pem
 privkey.pem

@@ -27,12 +27,16 @@ backend (workbook):
 ##################################################
 # Infrastructure
 ##################################################
-infra (docker):
+infra (container):
 - infra/docker/**/*
+- infra/helm/**
+- infra/kubernetes/**
 infra (functions):
 - infra/functions/**/*
 infra (terraform):
 - infra/terraform/**/*
+infra (database):
+- infra/mysq/**/*
 
 ##################################################
 # Other

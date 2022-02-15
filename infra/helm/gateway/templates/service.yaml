@@ -1,0 +1,26 @@
+{{- if .Values.service.enabled -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "gateway.fullname" . }}
+  labels:
+    {{- include "gateway.labels" . | nindent 4 }}
+spec:
+  selector:
+    {{- include "gateway.selectorLabels" . | nindent 4 }}
+  type: {{ .Values.service.type }}
+  {{- if .Values.service.clusterIP }}
+  clusterIP: {{ .Values.service.clusterIP }}
+  {{- end }}
+  ports:
+  - name: http
+    protocol: TCP
+    port: {{ .Values.service.externalPort }}
+    targetPort: {{ .Values.service.internalPort }}
+  {{- if .Values.metrics.enabled }}
+  - name: metrics
+    protocol: TCP
+    port: {{ .Values.metrics.port }}
+    targetPort: {{ .Values.metrics.port }}
+  {{- end }}
+{{- end -}}
