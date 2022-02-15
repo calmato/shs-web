@@ -15,7 +15,7 @@ jobs:
         working-directory: ./infra/helm
     strategy:
       matrix:
-        on: [ubuntu-latest] # exclude: macos-latest, windows-latest
+        os: [ubuntu-latest] # exclude: macos-latest, windows-latest
         python: ['3.7']
         helm: ['3.8.0']
 
