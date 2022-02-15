@@ -488,7 +488,6 @@ shiftLessonsResponse:
       createdAt: '2021-12-12T12:12:30.100Z'
       updatedAt: '2021-12-12T12:12:30.100Z'
     total: 1
-
 shiftsResponse:
   type: object
   properties:
@@ -684,6 +683,9 @@ shiftsResponse:
                         updatedAt:
                           type: string
                           description: 更新日時
+          isSubmit:
+            type: boolean
+            description: シフト提出フラグ
           lessonTotal:
             type: integer
             format: int64
@@ -757,6 +759,9 @@ shiftsResponse:
                     updatedAt:
                       type: string
                       description: 更新日時
+          isSubmit:
+            type: boolean
+            description: 授業希望提出フラグ
           suggestedLessons:
             type: array
             description: 受講希望授業一覧
