@@ -41,8 +41,9 @@ module "gke" {
 module "mysql" {
   source = "./sql"
 
-  credentials = var.credentials_file
-  project     = var.project
-  region      = var.region
-  password    = var.password
+  credentials   = var.credentials_file
+  project       = var.project
+  region        = var.region
+  root_password = var.root_password
+  user_password = var.user_password
 }

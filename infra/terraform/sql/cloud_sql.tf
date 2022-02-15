@@ -11,12 +11,10 @@ resource "google_sql_database_instance" "master" {
 
   settings {
     tier = "db-f1-micro"
-    database_flags = [
-      {
-        name = "default_time_zone"
-        value = "+09:00"
-      },
-    ]
+    database_flags {
+      name = "default_time_zone"
+      value = "+09:00"
+    }
   }
 }
 
