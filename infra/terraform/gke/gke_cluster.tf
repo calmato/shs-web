@@ -20,6 +20,6 @@ resource "google_container_node_pool" "microservices_nodes" {
 
   node_config {
     preemptible = true
-    machine_type = "e2-micro"
+    machine_type = "e2-small"
   }
 }
