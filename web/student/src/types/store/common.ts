@@ -2,6 +2,13 @@
 export const SchoolTypeArray = ['小学校', '中学校', '高校', 'その他'] as const
 export type SchoolType = typeof SchoolTypeArray[number]
 
+// InitialState 初回実行の状態
+export enum InitialState {
+  PENDING = 1, // 実行前
+  PROCESSING = 2, // 実行中
+  FINISHED = 3, // 実行完了
+}
+
 // PromiseState 通信状態
 export enum PromiseState {
   NONE = 0, // 未接続
@@ -26,5 +33,6 @@ export enum SubmissionStatus {
 export interface CommonState {
   snackbarColor: string
   snackbarMessage: string
+  initialState: InitialState
   promiseState: PromiseState
 }
