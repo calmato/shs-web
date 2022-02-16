@@ -113,7 +113,7 @@ func TestTeacherSubmission_ListByTeacherIDs(t *testing.T) {
 
 	submissions := make(entity.TeacherSubmissions, 2)
 	submissions[0] = testTeacherSubmission("teacherid01", 1, true, now)
-	submissions[1] = testTeacherSubmission("teacherid02", 2, false, now)
+	submissions[1] = testTeacherSubmission("teacherid02", 1, false, now)
 	err = m.db.DB.Create(&submissions).Error
 	require.NoError(t, err)
 
