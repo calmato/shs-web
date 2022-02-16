@@ -60,20 +60,22 @@
         <!-- 講師情報一覧 -->
         <the-shift-teacher-table
           :teachers="teachers"
-          class="py-2"
+          class="pb-2"
           @click:show-submissions="onClickTeacherSubmissions"
           @click:show-lessons="onClickTeacherLessons"
         />
         <!-- 生徒情報一覧 -->
         <the-shift-student-table
           :students="students"
-          class="py-2"
           @click:show-submissions="onClickStudentSubmissions"
           @click:show-lessons="onClickStudentLessons"
         />
       </div>
+      <div class="d-flex">
+        <span class="ml-auto text-caption red--text">*赤字: シフト/授業希望未提出</span>
+      </div>
       <!-- シフトタイトル -->
-      <div class="d-flex align-center py-2">
+      <div class="d-flex align-center pb-2">
         <h3>{{ getTitle() }}</h3>
         <v-btn v-if="summary.decided" color="warning" class="ml-auto" @click="onClickDecidedLesson">修正する</v-btn>
         <v-btn v-else color="primary" class="ml-auto" @click="onClickDecidedLesson">授業を確定</v-btn>

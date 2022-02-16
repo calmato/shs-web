@@ -61,6 +61,7 @@ export interface TeacherShift {
   id: string
   name: string
   nameKana: string
+  isSubmit: boolean
   lessonTotal: number
 }
 
@@ -89,6 +90,7 @@ export interface StudentShift {
   id: string
   name: string
   nameKana: string
+  isSubmit: boolean
   suggestedLessons: SuggestedLesson[]
   suggestedLessonsTotal: number
   lessonTotal: number

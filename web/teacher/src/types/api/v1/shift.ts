@@ -88,6 +88,7 @@ export interface SuggestedLesson {
 
 export interface TeacherShift {
   teacher: Teacher
+  isSubmit: boolean
   lessonTotal: number
 }
 
@@ -105,6 +106,7 @@ export interface TeacherShiftSummary {
 
 export interface StudentShift {
   student: Student
+  isSubmit: boolean
   suggestedLessons: SuggestedLesson[]
   suggestedLessonsTotal: number
   lessonTotal: number

@@ -3,7 +3,11 @@
     <tr>
       <th class="fixed">生徒名</th>
       <td v-for="student in students" :key="student.id">
-        <a class="black--text text-decoration-underline" @click="onClickSubmissions(student)">
+        <a
+          class="text-decoration-underline"
+          :class="[student.isSubmit ? 'black--text' : 'red--text']"
+          @click="onClickSubmissions(student)"
+        >
           {{ student.name }}
         </a>
       </td>
