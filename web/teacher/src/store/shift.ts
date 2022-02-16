@@ -381,6 +381,12 @@ export default class ShiftModule extends VuexModule {
     }
     submission.name = student.name
     submission.nameKana = student.nameKana
+    submission.suggestedLessons.forEach((val: SuggestedLesson, index: number): void => {
+      const items = this.lessons.filter((lesson: Lesson): boolean => {
+        return lesson.studentId === student.id && lesson.subjectId === val.subjectId
+      })
+      submission.suggestedLessons[index].remainingTotal = val.total - items.length
+    })
     this.studentSubmission = submission
   }
 
@@ -848,7 +854,7 @@ function convertStudentShifts(students: v1StudentShift[]): StudentShift[] {
 }
 
 function convertSuggestedLessons(lessons: v1SuggestedLesson[]): SuggestedLesson[] {
-  return lessons.map((lesson: v1SuggestedLesson): SuggestedLesson => ({ ...lesson }))
+  return lessons.map((lesson: v1SuggestedLesson): SuggestedLesson => ({ ...lesson, remainingTotal: lesson.total }))
 }
 
 function convertShiftDetails(details: v1ShiftDetail[]): { details: ShiftDetail[]; total: number } {

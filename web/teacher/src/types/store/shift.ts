@@ -29,6 +29,7 @@ export interface ShiftDetail {
 export interface SuggestedLesson {
   subjectId: number
   total: number
+  remainingTotal: number
 }
 
 export interface ShiftLesson {

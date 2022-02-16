@@ -84,7 +84,8 @@ export default defineComponent({
   setup(props, { emit }: SetupContext) {
     const suggestedLessonHeaders: TableHeader[] = [
       { text: '科目', value: 'subjectId', align: 'center' },
-      { text: 'コマ数', value: 'total', align: 'center' },
+      { text: '希望コマ数', value: 'total', align: 'center' },
+      { text: '残り登録数', value: 'remainingTotal', align: 'center' },
     ]
 
     const submissionHeaders: TableHeader[] = [
