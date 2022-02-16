@@ -1,5 +1,4 @@
 *.tfvars
 *.tfstate*
 
-terraform-provider-google
-terraform-provider-google-beta
+**/.terraform/*
