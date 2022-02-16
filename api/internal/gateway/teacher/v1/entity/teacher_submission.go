@@ -23,6 +23,7 @@ type TeacherSubmissions []*TeacherSubmission
 
 type TeacherSubmissionDetail struct {
 	Teacher     *Teacher `json:"teacher"`     // 講師情報
+	IsSubmit    bool     `json:"isSubmit"`    // シフト提出フラグ
 	LessonTotal int64    `json:"lessonTotal"` // 登録担当授業数
 }
 
@@ -62,21 +63,34 @@ func NewTeacherSubmissions(
 }
 
 func NewTeacherSubmissionDetail(
-	teacher *entity.Teacher, subjects entity.Subjects, lessons entity.Lessons,
+	teacher *entity.Teacher,
+	subjects entity.Subjects,
+	submission *entity.TeacherSubmission,
+	lessons entity.Lessons,
 ) *TeacherSubmissionDetail {
+	var isSubmit bool
+	if submission != nil {
+		isSubmit = submission.Decided
+	}
 	return &TeacherSubmissionDetail{
 		Teacher:     NewTeacher(teacher, subjects),
+		IsSubmit:    isSubmit,
 		LessonTotal: int64(len(lessons)),
 	}
 }
 
 func NewTeacherSubmissionDetails(
-	teachers entity.Teachers, subjects map[string]entity.Subjects, lessonsMap map[string]entity.Lessons,
+	teachers entity.Teachers,
+	subjectsMap map[string]entity.Subjects,
+	submissionMap map[string]*entity.TeacherSubmission,
+	lessonsMap map[string]entity.Lessons,
 ) TeacherSubmissionDetails {
 	ss := make(TeacherSubmissionDetails, len(teachers))
 	for i, teacher := range teachers {
+		subjects := subjectsMap[teacher.Id]
+		submission := submissionMap[teacher.Id]
 		lessons := lessonsMap[teacher.Id]
-		ss[i] = NewTeacherSubmissionDetail(teacher, subjects[teacher.Id], lessons)
+		ss[i] = NewTeacherSubmissionDetail(teacher, subjects, submission, lessons)
 	}
 	return ss
 }
