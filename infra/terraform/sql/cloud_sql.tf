@@ -5,7 +5,7 @@ variable "root_password" {}
 variable "user_password" {}
 
 resource "google_sql_database_instance" "master" {
-  name             = "shs-web-sql"
+  name             = "shs-sql"
   database_version = "MYSQL_8_0"
   region = var.region
 

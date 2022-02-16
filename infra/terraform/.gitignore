@@ -1,0 +1,6 @@
+*.tfvars
+*.tfstate*
+
+**/.terraform/*
+shs-web-test001*
+.terraform.lock.hcl

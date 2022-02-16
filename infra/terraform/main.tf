@@ -11,7 +11,7 @@ module "vpc" {
   source = "terraform-google-modules/network/google"
   version = "4.1.0"
   project_id = var.project
-  network_name = "shs-web-test001-vpc"
+  network_name = "shs-web-vpc"
   routing_mode = "GLOBAL"
 
   subnets = [
