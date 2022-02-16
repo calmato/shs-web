@@ -107,9 +107,8 @@ func TestTeacherSubmission_ListByTeacherIDs(t *testing.T) {
 
 	now := jst.Date(2021, 12, 10, 12, 0, 0, 0)
 
-	summaries := make(entity.ShiftSummaries, 3)
-	summaries[0] = testShiftSummary(1, 202202, jst.Date(2022, 1, 1, 0, 0, 0, 0), jst.Date(2022, 1, 15, 0, 0, 0, 0), now)
-	err = m.db.DB.Create(&summaries).Error
+	summary := testShiftSummary(1, 202202, jst.Date(2022, 1, 1, 0, 0, 0, 0), jst.Date(2022, 1, 15, 0, 0, 0, 0), now)
+	err = m.db.DB.Create(&summary).Error
 	require.NoError(t, err)
 
 	submissions := make(entity.TeacherSubmissions, 2)
