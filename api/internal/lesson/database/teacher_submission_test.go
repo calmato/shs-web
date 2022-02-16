@@ -97,6 +97,88 @@ func TestTeacherSubmission_ListByShiftSummaryIDs(t *testing.T) {
 	}
 }
 
+func TestTeacherSubmission_ListByTeacherIDs(t *testing.T) {
+	m, err := newMock()
+	require.NoError(t, err)
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	_ = m.dbDelete(ctx, teacherSubmissionTable, shiftSummaryTable)
+
+	now := jst.Date(2021, 12, 10, 12, 0, 0, 0)
+
+	summaries := make(entity.ShiftSummaries, 3)
+	summaries[0] = testShiftSummary(1, 202202, jst.Date(2022, 1, 1, 0, 0, 0, 0), jst.Date(2022, 1, 15, 0, 0, 0, 0), now)
+	err = m.db.DB.Create(&summaries).Error
+	require.NoError(t, err)
+
+	submissions := make(entity.TeacherSubmissions, 2)
+	submissions[0] = testTeacherSubmission("teacherid01", 1, true, now)
+	submissions[1] = testTeacherSubmission("teacherid02", 2, false, now)
+	err = m.db.DB.Create(&submissions).Error
+	require.NoError(t, err)
+
+	type args struct {
+		teacherIDs []string
+		summaryID  int64
+	}
+	type want struct {
+		submissions entity.TeacherSubmissions
+		isErr       bool
+	}
+	tests := []struct {
+		name  string
+		setup func(ctx context.Context, t *testing.T, m *mocks)
+		args  args
+		want  want
+	}{
+		{
+			name:  "success",
+			setup: func(ctx context.Context, t *testing.T, m *mocks) {},
+			args: args{
+				teacherIDs: []string{"teacherid01", "teacherid02"},
+				summaryID:  1,
+			},
+			want: want{
+				submissions: submissions,
+				isErr:       false,
+			},
+		},
+		{
+			name:  "success is empty",
+			setup: func(ctx context.Context, t *testing.T, m *mocks) {},
+			args: args{
+				teacherIDs: []string{"teacherid00"},
+				summaryID:  0,
+			},
+			want: want{
+				submissions: entity.TeacherSubmissions{},
+				isErr:       false,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			ctx, cancel := context.WithCancel(context.Background())
+			defer cancel()
+
+			tt.setup(ctx, t, m)
+
+			db := NewTeacherSubmission(m.db)
+			actual, err := db.ListByTeacherIDs(ctx, tt.args.teacherIDs, tt.args.summaryID)
+			assert.Equal(t, tt.want.isErr, err != nil, err)
+			assert.Len(t, actual, len(tt.want.submissions))
+			for i, expect := range tt.want.submissions {
+				expect.CreatedAt, expect.UpdatedAt = actual[i].CreatedAt, actual[i].UpdatedAt
+				assert.Contains(t, actual, expect)
+			}
+		})
+	}
+}
+
 func TestTeacherSubmission_Get(t *testing.T) {
 	m, err := newMock()
 	require.NoError(t, err)

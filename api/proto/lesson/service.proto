@@ -29,6 +29,7 @@ service LessonService {
   rpc ListShifts(ListShiftsRequest) returns (ListShiftsResponse);
   rpc CreateShifts(CreateShiftsRequest) returns (CreateShiftsResponse);
   rpc ListSubmissions(ListSubmissionsRequest) returns (ListSubmissionsResponse);
+  rpc ListTeacherSubmissionsByTeacherIDs(ListTeacherSubmissionsByTeacherIDsRequest) returns (ListTeacherSubmissionsByTeacherIDsResponse);
   rpc ListTeacherSubmissionsByShiftSummaryIDs(ListTeacherSubmissionsByShiftSummaryIDsRequest) returns (ListTeacherSubmissionsByShiftSummaryIDsResponse);
   rpc ListTeacherShifts(ListTeacherShiftsRequest) returns (ListTeacherShiftsResponse);
   rpc GetTeacherShifts(GetTeacherShiftsRequest) returns (GetTeacherShiftsResponse);
@@ -176,6 +177,15 @@ message ListSubmissionsRequest {
 message ListSubmissionsResponse {
   repeated TeacherShift teacher_shifts = 1;
   repeated StudentShift student_shifts = 2;
+}
+
+message ListTeacherSubmissionsByTeacherIDsRequest {
+  repeated string teacher_ids      = 1 [(validate.rules).repeated = { unique: true, items: { string: { min_len: 1 }}}];
+  int64           shift_summary_id = 2 [(validate.rules).int64 = { gt: 0 }];
+}
+
+message ListTeacherSubmissionsByTeacherIDsResponse {
+  repeated TeacherSubmission submissions = 1;
 }
 
 message ListTeacherSubmissionsByShiftSummaryIDsRequest {
