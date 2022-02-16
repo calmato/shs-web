@@ -2,7 +2,6 @@ import { setup, setSafetyMode, refresh } from '~~/test/helpers/store-helper'
 import { AuthStore } from '~/store'
 import { ApiError } from '~/types/exception'
 import { ErrorResponse } from '~/types/api/exception'
-import { SchoolType } from '~/types/store'
 
 describe('store/auth', () => {
   beforeEach(() => {
@@ -29,13 +28,16 @@ describe('store/auth', () => {
     it('getAuth', () => {
       expect(AuthStore.getAuth).toEqual({
         id: '',
+        name: '',
+        nameKana: '',
         lastName: '',
         firstName: '',
         lastNameKana: '',
         firstNameKana: '',
         mail: '',
-        schoolType: SchoolType.UNKNOWN,
+        schoolType: 'その他',
         grade: 0,
+        subjects: [],
       })
     })
   })
@@ -51,13 +53,16 @@ describe('store/auth', () => {
           await AuthStore.showAuth()
           expect(AuthStore.getAuth).toEqual({
             id: 'kSByoE6FetnPs5Byk3a9Zx',
+            name: '中村 広大',
+            nameKana: 'なかむら こうだい',
             lastName: '中村',
             firstName: '広大',
             lastNameKana: 'なかむら',
             firstNameKana: 'こうだい',
             mail: 'teacher-test001@calmato.jp',
-            schoolType: SchoolType.HIGH_SCHOOL,
+            schoolType: '高校',
             grade: 2,
+            subjects: [],
           })
         })
       })

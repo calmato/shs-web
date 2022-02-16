@@ -5,10 +5,11 @@
       :type="type"
       :label="label"
       :error-messages="errors"
-      :success="valid"
+      :success="isSuccess(valid)"
       :autofocus="autofocus"
       :outlined="outlined"
       :readonly="readonly"
+      :height="height"
       :prepend-icon="prependIcon"
     />
   </validation-provider>
@@ -23,6 +24,10 @@ export default defineComponent({
       type: Boolean,
       required: false,
       default: false,
+    },
+    height: {
+      type: String,
+      default: undefined,
     },
     label: {
       type: String,
@@ -52,7 +57,7 @@ export default defineComponent({
     rules: {
       type: Object,
       required: false,
-      default: () => ({}),
+      default: undefined,
     },
     type: {
       type: String,
@@ -72,8 +77,13 @@ export default defineComponent({
       set: (val: string) => emit('update:value', val),
     })
 
+    const isSuccess = (valid: boolean): boolean => {
+      return props.rules ? valid : false
+    }
+
     return {
       formData,
+      isSuccess,
     }
   },
 })

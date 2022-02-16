@@ -7,6 +7,8 @@ import (
 	"cloud.google.com/go/pubsub"
 	"github.com/calmato/shs-web/api/pkg/backoff"
 	"go.uber.org/zap"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type puller struct {
@@ -18,10 +20,16 @@ type puller struct {
  * options
  */
 type PullerOptions struct {
-	timeout     time.Duration
-	maxRetries  int64
-	concurrency int
-	logger      *zap.Logger
+	timeout                time.Duration
+	concurrency            int
+	logger                 *zap.Logger
+	maxRetries             int64
+	maxExtension           time.Duration
+	maxExtensionPeriod     time.Duration
+	maxOutstandingMessages int
+	maxOutstandingBytes    int
+	numGoroutines          int
+	synchronous            bool
 }
 
 type PullerOption func(*PullerOptions)
@@ -29,12 +37,6 @@ type PullerOption func(*PullerOptions)
 func WithPullerTimeout(timeout time.Duration) PullerOption {
 	return func(o *PullerOptions) {
 		o.timeout = timeout
-	}
-}
-
-func WithPullerMaxRetries(max int64) PullerOption {
-	return func(o *PullerOptions) {
-		o.maxRetries = max
 	}
 }
 
@@ -50,6 +52,48 @@ func WithPullerLogger(logger *zap.Logger) PullerOption {
 	}
 }
 
+func WithPullerMaxRetries(max int64) PullerOption {
+	return func(o *PullerOptions) {
+		o.maxRetries = max
+	}
+}
+
+func WithPullerMaxExtension(max time.Duration) PullerOption {
+	return func(o *PullerOptions) {
+		o.maxExtension = max
+	}
+}
+
+func WithPullerMaxExtensionPeriod(max time.Duration) PullerOption {
+	return func(o *PullerOptions) {
+		o.maxExtensionPeriod = max
+	}
+}
+
+func WithPullerMaxOutstandingMessages(max int) PullerOption {
+	return func(o *PullerOptions) {
+		o.maxOutstandingMessages = max
+	}
+}
+
+func WithPullerMaxOutstandingBytes(max int) PullerOption {
+	return func(o *PullerOptions) {
+		o.maxOutstandingBytes = max
+	}
+}
+
+func WithPullerNumGoroutines(max int) PullerOption {
+	return func(o *PullerOptions) {
+		o.numGoroutines = max
+	}
+}
+
+func WithPullerSync(sync bool) PullerOption {
+	return func(o *PullerOptions) {
+		o.synchronous = sync
+	}
+}
+
 /**
  * main
  */
@@ -58,6 +102,14 @@ func NewPuller(cli *Client, subscriptionID string, opts ...PullerOption) Puller 
 	dopts := &PullerOptions{}
 	for i := range opts {
 		opts[i](dopts)
+	}
+	subscription.ReceiveSettings = pubsub.ReceiveSettings{
+		MaxExtension:           dopts.maxExtension,
+		MaxExtensionPeriod:     dopts.maxExtensionPeriod,
+		MaxOutstandingMessages: dopts.maxOutstandingMessages,
+		MaxOutstandingBytes:    dopts.maxOutstandingBytes,
+		NumGoroutines:          dopts.numGoroutines,
+		Synchronous:            dopts.synchronous,
 	}
 	return &puller{
 		Subscription: subscription,
@@ -94,15 +146,16 @@ func (p *puller) Pull(ctx context.Context, msgCh chan<- *Message) error {
 		if err == nil {
 			return nil
 		}
-		if p.opts.logger != nil {
+		switch {
+		case status.Code(err) == codes.Canceled:
+		default:
 			p.opts.logger.Error("Failed to receive", zap.Error(err))
 		}
-		if !isRetryable(err) {
-			return err
-		}
-		if p.opts.logger != nil {
+		if isRetryable(err) {
 			p.opts.logger.Info("Retry to receive from subscription")
+			continue
 		}
+		return err
 	}
 	return err
 }

@@ -1,4 +1,5 @@
 import colors from 'vuetify/es5/util/colors'
+import ja from 'vuetify/lib/locale/ja'
 
 export default {
   srcDir: 'src',
@@ -10,8 +11,8 @@ export default {
 
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
-    titleTemplate: '%s - shs-web',
-    title: 'shs-web',
+    titleTemplate: 'SHS WEB',
+    title: 'SHS WEB',
     htmlAttrs: {
       lang: 'ja',
     },
@@ -21,7 +22,7 @@ export default {
       { hid: 'description', name: 'description', content: '' },
       { name: 'format-detection', content: 'telephone=no' },
     ],
-    link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
+    link: [{ rel: 'icon', type: 'image/x-icon', href: '/2ndhomespace.ico' }],
   },
 
   // Global CSS: https://go.nuxtjs.dev/config-css
@@ -80,6 +81,10 @@ export default {
       options: {
         customProperties: true,
       },
+    },
+    lang: {
+      locales: { ja },
+      current: 'ja',
     },
   },
 

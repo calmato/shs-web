@@ -151,11 +151,12 @@ func TestTeacherSubmissionDetail(t *testing.T) {
 	t.Parallel()
 	now := jst.Date(2021, 8, 2, 18, 30, 0, 0)
 	tests := []struct {
-		name     string
-		teacher  *entity.Teacher
-		subjects entity.Subjects
-		lessons  entity.Lessons
-		expect   *TeacherSubmissionDetail
+		name       string
+		teacher    *entity.Teacher
+		subjects   entity.Subjects
+		submission *entity.TeacherSubmission
+		lessons    entity.Lessons
+		expect     *TeacherSubmissionDetail
 	}{
 		{
 			name: "success",
@@ -182,6 +183,15 @@ func TestTeacherSubmissionDetail(t *testing.T) {
 						CreatedAt:  now.Unix(),
 						UpdatedAt:  now.Unix(),
 					},
+				},
+			},
+			submission: &entity.TeacherSubmission{
+				TeacherSubmission: &lesson.TeacherSubmission{
+					TeacherId:      "teacherid",
+					ShiftSummaryId: 1,
+					Decided:        true,
+					CreatedAt:      now.Unix(),
+					UpdatedAt:      now.Unix(),
 				},
 			},
 			lessons: entity.Lessons{
@@ -226,6 +236,7 @@ func TestTeacherSubmissionDetail(t *testing.T) {
 						},
 					},
 				},
+				IsSubmit:    true,
 				LessonTotal: 1,
 			},
 		},
@@ -235,7 +246,7 @@ func TestTeacherSubmissionDetail(t *testing.T) {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			assert.Equal(t, tt.expect, NewTeacherSubmissionDetail(tt.teacher, tt.subjects, tt.lessons))
+			assert.Equal(t, tt.expect, NewTeacherSubmissionDetail(tt.teacher, tt.subjects, tt.submission, tt.lessons))
 		})
 	}
 }
@@ -244,11 +255,12 @@ func TestTeacherSubmissionDetails(t *testing.T) {
 	t.Parallel()
 	now := jst.Date(2021, 8, 2, 18, 30, 0, 0)
 	tests := []struct {
-		name     string
-		teachers entity.Teachers
-		subjects map[string]entity.Subjects
-		lessons  map[string]entity.Lessons
-		expect   TeacherSubmissionDetails
+		name        string
+		teachers    entity.Teachers
+		subjects    map[string]entity.Subjects
+		submissions map[string]*entity.TeacherSubmission
+		lessons     map[string]entity.Lessons
+		expect      TeacherSubmissionDetails
 	}{
 		{
 			name: "success",
@@ -291,6 +303,17 @@ func TestTeacherSubmissionDetails(t *testing.T) {
 							CreatedAt:  now.Unix(),
 							UpdatedAt:  now.Unix(),
 						},
+					},
+				},
+			},
+			submissions: map[string]*entity.TeacherSubmission{
+				"teacherid": {
+					TeacherSubmission: &lesson.TeacherSubmission{
+						TeacherId:      "teacherid",
+						ShiftSummaryId: 1,
+						Decided:        true,
+						CreatedAt:      now.Unix(),
+						UpdatedAt:      now.Unix(),
 					},
 				},
 			},
@@ -339,6 +362,7 @@ func TestTeacherSubmissionDetails(t *testing.T) {
 							},
 						},
 					},
+					IsSubmit:    false,
 					LessonTotal: 0,
 				},
 				{
@@ -358,6 +382,7 @@ func TestTeacherSubmissionDetails(t *testing.T) {
 							SchoolTypeHighSchool:       {},
 						},
 					},
+					IsSubmit:    true,
 					LessonTotal: 1,
 				},
 			},
@@ -368,7 +393,7 @@ func TestTeacherSubmissionDetails(t *testing.T) {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			assert.Equal(t, tt.expect, NewTeacherSubmissionDetails(tt.teachers, tt.subjects, tt.lessons))
+			assert.Equal(t, tt.expect, NewTeacherSubmissionDetails(tt.teachers, tt.subjects, tt.submissions, tt.lessons))
 		})
 	}
 }

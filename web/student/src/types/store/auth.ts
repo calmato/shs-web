@@ -1,7 +1,10 @@
 import { SchoolType } from './common'
+import { Subject } from './lesson'
 
 export interface Auth {
   id: string
+  name?: string
+  nameKana?: string
   lastName: string
   firstName: string
   lastNameKana: string
@@ -9,6 +12,7 @@ export interface Auth {
   mail: string
   schoolType: SchoolType
   grade: number
+  subjects: Subject[]
 }
 
 export interface AuthState {

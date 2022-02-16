@@ -131,6 +131,152 @@ func TestSchoolTypeFromClassroom(t *testing.T) {
 	}
 }
 
+func TestSubjects_SortByColor(t *testing.T) {
+	t.Parallel()
+	tests := []struct {
+		name     string
+		subjects Subjects
+		expect   Subjects
+	}{
+		{
+			name: "success",
+			subjects: Subjects{
+				{
+					ID:         1,
+					Name:       "現代文",
+					Color:      "#F8BBD0",
+					SchoolType: SchoolTypeHighSchool,
+				},
+				{
+					ID:         3,
+					Name:       "数学Ⅰ",
+					Color:      "#BBDEFB",
+					SchoolType: SchoolTypeHighSchool,
+				},
+				{
+					ID:         2,
+					Name:       "古典",
+					Color:      "#F8BBD0",
+					SchoolType: SchoolTypeHighSchool,
+				},
+				{
+					ID:         4,
+					Name:       "数学Ⅱ",
+					Color:      "#BBDEFB",
+					SchoolType: SchoolTypeHighSchool,
+				},
+			},
+			expect: Subjects{
+				{
+					ID:         3,
+					Name:       "数学Ⅰ",
+					Color:      "#BBDEFB",
+					SchoolType: SchoolTypeHighSchool,
+				},
+				{
+					ID:         4,
+					Name:       "数学Ⅱ",
+					Color:      "#BBDEFB",
+					SchoolType: SchoolTypeHighSchool,
+				},
+				{
+					ID:         1,
+					Name:       "現代文",
+					Color:      "#F8BBD0",
+					SchoolType: SchoolTypeHighSchool,
+				},
+				{
+					ID:         2,
+					Name:       "古典",
+					Color:      "#F8BBD0",
+					SchoolType: SchoolTypeHighSchool,
+				},
+			},
+		},
+		{
+			name:     "success when subjects is length 0",
+			subjects: Subjects{},
+			expect:   Subjects{},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			tt.subjects.SortByColor()
+			assert.Equal(t, tt.expect, tt.subjects)
+		})
+	}
+}
+
+func TestSubjects_SortBySchoolType(t *testing.T) {
+	t.Parallel()
+	tests := []struct {
+		name     string
+		subjects Subjects
+		expect   Subjects
+	}{
+		{
+			name: "success",
+			subjects: Subjects{
+				{
+					ID:         3,
+					Name:       "国語",
+					Color:      "#F8BBD0",
+					SchoolType: SchoolTypeHighSchool,
+				},
+				{
+					ID:         1,
+					Name:       "国語",
+					Color:      "#F8BBD0",
+					SchoolType: SchoolTypeElementarySchool,
+				},
+				{
+					ID:         2,
+					Name:       "国語",
+					Color:      "#F8BBD0",
+					SchoolType: SchoolTypeJuniorHighSchool,
+				},
+			},
+			expect: Subjects{
+				{
+					ID:         1,
+					Name:       "国語",
+					Color:      "#F8BBD0",
+					SchoolType: SchoolTypeElementarySchool,
+				},
+				{
+					ID:         2,
+					Name:       "国語",
+					Color:      "#F8BBD0",
+					SchoolType: SchoolTypeJuniorHighSchool,
+				},
+				{
+					ID:         3,
+					Name:       "国語",
+					Color:      "#F8BBD0",
+					SchoolType: SchoolTypeHighSchool,
+				},
+			},
+		},
+		{
+			name:     "success when subjects is length 0",
+			subjects: Subjects{},
+			expect:   Subjects{},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			tt.subjects.SortBySchoolType()
+			assert.Equal(t, tt.expect, tt.subjects)
+		})
+	}
+}
+
 func TestSchoolType_ClassroomSchoolType(t *testing.T) {
 	t.Parallel()
 	tests := []struct {

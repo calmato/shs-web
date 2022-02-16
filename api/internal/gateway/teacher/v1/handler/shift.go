@@ -304,8 +304,21 @@ func (h *apiV1Handler) ListShifts(ctx *gin.Context) {
 		gshifts, err = h.listShiftsBySummaryID(ectx, shiftSummaryID)
 		return
 	})
+	var gteacherSubmissions gentity.TeacherSubmissions
+	eg.Go(func() error {
+		in := &lesson.ListTeacherSubmissionsByTeacherIDsRequest{
+			TeacherIds:     gteachers.IDs(),
+			ShiftSummaryId: shiftSummaryID,
+		}
+		out, err := h.lesson.ListTeacherSubmissionsByTeacherIDs(ectx, in)
+		if err != nil {
+			return err
+		}
+		gteacherSubmissions = gentity.NewTeacherSubmissions(out.Submissions)
+		return nil
+	})
 	var gstudentSubmissions gentity.StudentSubmissions
-	eg.Go((func() error {
+	eg.Go(func() error {
 		in := &lesson.ListStudentSubmissionsByStudentIDsRequest{
 			StudentIds:     gstudents.IDs(),
 			ShiftSummaryId: shiftSummaryID,
@@ -316,7 +329,7 @@ func (h *apiV1Handler) ListShifts(ctx *gin.Context) {
 		}
 		gstudentSubmissions = gentity.NewStudentSubmissions(out.Submissions)
 		return nil
-	}))
+	})
 	var glessons gentity.Lessons
 	eg.Go(func() error {
 		in := &lesson.ListLessonsRequest{
@@ -346,13 +359,14 @@ func (h *apiV1Handler) ListShifts(ctx *gin.Context) {
 	}
 	teacherLessonsMap := glessons.GroupByTeacherID()
 	studentLessonsMap := glessons.GroupByStudentID()
+	teacherSubmissionMap := gteacherSubmissions.MapByTeacherID()
 	studentSubmissionMap := gstudentSubmissions.MapByStudentID()
 	summary := entity.NewShiftSummary(gsummary)
 	res := &response.ShiftsResponse{
 		Summary:  summary,
 		Shifts:   entity.NewShiftDetailsForMonth(summary, shiftsMap),
 		Rooms:    rooms,
-		Teachers: entity.NewTeacherSubmissionDetails(gteachers, gteacherSubjects, teacherLessonsMap),
+		Teachers: entity.NewTeacherSubmissionDetails(gteachers, gteacherSubjects, teacherSubmissionMap, teacherLessonsMap),
 		Students: entity.NewStudentSubmissionDetails(gstudents, gstudentSubjects, studentSubmissionMap, studentLessonsMap),
 		Lessons:  lessons,
 	}

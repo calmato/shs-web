@@ -1,0 +1,35 @@
+name: '[Infra] Build and Test'
+on:
+  push:
+    paths:
+    - '.github/workflows/ci-infra-for-all.yaml'
+    - 'infra/helm/**'
+
+jobs:
+  helm:
+    name: Helm
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./infra/helm
+    strategy:
+      matrix:
+        os: [ubuntu-latest] # exclude: macos-latest, windows-latest
+        helm: ['3.8.0']
+
+    steps:
+    - name: Chack out code
+      uses: actions/checkout@v2
+
+    - name: Use Helm ${{ matrix.helm }}
+      uses: azure/setup-helm@v1
+      with:
+        version: ${{ matrix.helm }}
+
+    - name: Lint
+      run: |
+        dirs=$(echo $(ls -d */) | sed 's/\///g')
+        for dir in ${dirs}; do
+          helm lint ${dir} -f ${dir}/values.yaml --strict --debug
+        done

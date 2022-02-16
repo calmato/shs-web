@@ -106,6 +106,97 @@ func TestListTeacherSubmissionsByShiftSummaryID(t *testing.T) {
 	}
 }
 
+func TestListTeacherSubmissionsByTeacherIDs(t *testing.T) {
+	t.Parallel()
+	now := jst.Now()
+	req := &lesson.ListTeacherSubmissionsByTeacherIDsRequest{
+		TeacherIds:     []string{"teacherid"},
+		ShiftSummaryId: 1,
+	}
+	submissions := entity.TeacherSubmissions{
+		{
+			TeacherID:      "teacherid1",
+			ShiftSummaryID: 1,
+			Decided:        true,
+			CreatedAt:      now,
+			UpdatedAt:      now,
+		},
+		{
+			TeacherID:      "teacherid2",
+			ShiftSummaryID: 1,
+			Decided:        false,
+			CreatedAt:      now,
+			UpdatedAt:      now,
+		},
+	}
+
+	tests := []struct {
+		name   string
+		setup  func(ctx context.Context, t *testing.T, mocks *mocks)
+		req    *lesson.ListTeacherSubmissionsByTeacherIDsRequest
+		expect *testResponse
+	}{
+		{
+			name: "success",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				mocks.validator.EXPECT().ListTeacherSubmissionsByTeacherIDs(req).Return(nil)
+				mocks.db.TeacherSubmission.EXPECT().ListByTeacherIDs(ctx, []string{"teacherid"}, int64(1)).Return(submissions, nil)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.OK,
+				body: &lesson.ListTeacherSubmissionsByTeacherIDsResponse{
+					Submissions: []*lesson.TeacherSubmission{
+						{
+							TeacherId:      "teacherid1",
+							ShiftSummaryId: 1,
+							Decided:        true,
+							CreatedAt:      now.Unix(),
+							UpdatedAt:      now.Unix(),
+						},
+						{
+							TeacherId:      "teacherid2",
+							ShiftSummaryId: 1,
+							Decided:        false,
+							CreatedAt:      now.Unix(),
+							UpdatedAt:      now.Unix(),
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "invalid argument",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				req := &lesson.ListTeacherSubmissionsByTeacherIDsRequest{}
+				mocks.validator.EXPECT().ListTeacherSubmissionsByTeacherIDs(req).Return(validation.ErrRequestValidation)
+			},
+			req: &lesson.ListTeacherSubmissionsByTeacherIDsRequest{},
+			expect: &testResponse{
+				code: codes.InvalidArgument,
+			},
+		},
+		{
+			name: "failed to list teacher submissions",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks) {
+				mocks.validator.EXPECT().ListTeacherSubmissionsByTeacherIDs(req).Return(nil)
+				mocks.db.TeacherSubmission.EXPECT().ListByTeacherIDs(ctx, []string{"teacherid"}, int64(1)).Return(nil, errmock)
+			},
+			req: req,
+			expect: &testResponse{
+				code: codes.Internal,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, testGRPC(tt.setup, tt.expect, func(ctx context.Context, service *lessonService) (proto.Message, error) {
+			return service.ListTeacherSubmissionsByTeacherIDs(ctx, tt.req)
+		}))
+	}
+}
+
 func TestListTeacherShifts(t *testing.T) {
 	t.Parallel()
 	req := &lesson.ListTeacherShiftsRequest{

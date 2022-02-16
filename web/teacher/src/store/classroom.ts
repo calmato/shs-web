@@ -54,12 +54,16 @@ export default class ClassroomModule extends VuexModule {
   }
 
   public get weekdayHourFormValue(): HourForm[] {
-    const target = this.getSchedules.find((item) => item.weekday === 1)
+    const weekdays: number[] = [1, 2, 3, 4, 5] // 1: 月 ~ 5:金
+    const schedules: Schedule[] = this.getSchedules.filter((item) => weekdays.includes(item.weekday))
+    const target: Schedule | undefined = schedules.find((item): boolean => !item.isClosed)
     return target ? extractHourFormBySchedule(target) : []
   }
 
   public get holidayHourFormValue(): HourForm[] {
-    const target = this.getSchedules.find((item) => item.weekday === 6)
+    const holidays: number[] = [0, 6] // 0: 日, 6: 土
+    const schedules: Schedule[] = this.getSchedules.filter((item) => holidays.includes(item.weekday))
+    const target: Schedule | undefined = schedules.find((item): boolean => !item.isClosed)
     return target ? extractHourFormBySchedule(target) : []
   }
 

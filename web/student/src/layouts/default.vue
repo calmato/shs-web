@@ -1,5 +1,5 @@
 <template>
-  <v-app class="root" :style="{ background }">
+  <v-app class="root">
     <the-snackbar :snackbar.sync="snackbar" :color="snackbarColor" :message="snackbarMessage" />
     <the-header :overlay="overlay" @click="handleClickMenu" />
     <the-sidebar :items="items" :current="current" @click="handleClickMenuItem" />
@@ -18,7 +18,6 @@
 
 <script lang="ts">
 import { computed, defineComponent, ref, SetupContext, watch } from '@nuxtjs/composition-api'
-import { VuetifyThemeItem } from 'vuetify/types/services/theme'
 import TheHeader from '~/components/organisms/TheHeader.vue'
 import TheMenu from '~/components/organisms/TheMenu.vue'
 import TheSidebar from '~/components/organisms/TheSidebar.vue'
@@ -38,9 +37,7 @@ export default defineComponent({
     const route = root.$route
     const router = root.$router
     const store = root.$store
-    const vuetify = root.$vuetify
 
-    const greyBackgroundPaths = ['/settings']
     const items: Menu[] = [
       {
         name: 'トップ',
@@ -59,21 +56,9 @@ export default defineComponent({
       },
     ]
 
-    const getBackgroundColor = (path: string): VuetifyThemeItem => {
-      const theme = vuetify.theme.dark ? 'dark' : 'light'
-
-      let color: VuetifyThemeItem = vuetify.theme.themes[theme].white
-      if (greyBackgroundPaths.includes(path)) {
-        color = vuetify.theme.themes[theme].grey
-      }
-
-      return color
-    }
-
     const current = ref<string>(route.path)
     const snackbar = ref<Boolean>(false)
     const overlay = ref<boolean>(false)
-    const background = ref<VuetifyThemeItem>(getBackgroundColor(root.$route.path))
 
     const snackbarColor = computed(() => store.getters['common/getSnackbarColor'])
     const snackbarMessage = computed(() => store.getters['common/getSnackbarMessage'])
@@ -82,7 +67,6 @@ export default defineComponent({
       () => root.$route,
       (): void => {
         current.value = root.$route.path
-        background.value = getBackgroundColor(root.$route.path)
       }
     )
 
@@ -109,7 +93,6 @@ export default defineComponent({
       items,
       overlay,
       current,
-      background,
       snackbar,
       snackbarColor,
       snackbarMessage,

@@ -21,14 +21,12 @@ type Params struct {
 	TeacherWebURL *url.URL
 	StudentWebURL *url.URL
 	Mailer        mailer.Client
-	Puller        pubsub.Puller
 	UserService   user.UserServiceClient
 }
 
 type Notifier struct {
 	logger        *zap.Logger
 	mailer        mailer.Client
-	puller        pubsub.Puller
 	user          user.UserServiceClient
 	teacherWebURL func() *url.URL
 	studentWebURL func() *url.URL
@@ -38,7 +36,6 @@ func NewNotifier(params *Params) *Notifier {
 	return &Notifier{
 		logger: params.Logger,
 		mailer: params.Mailer,
-		puller: params.Puller,
 		user:   params.UserService,
 		teacherWebURL: func() *url.URL {
 			url := *params.TeacherWebURL // copy
@@ -51,12 +48,8 @@ func NewNotifier(params *Params) *Notifier {
 	}
 }
 
-func (n *Notifier) Run(ctx context.Context, concurrency int, mailboxCapacity int) error {
-	msgCh := make(chan *pubsub.Message, mailboxCapacity)
+func (n *Notifier) Run(ctx context.Context, msgCh <-chan *pubsub.Message, concurrency int) error {
 	eg, ectx := errgroup.WithContext(ctx)
-	eg.Go(func() error {
-		return n.puller.Pull(ectx, msgCh)
-	})
 	// 指定された並列実行数分goroutineを実行
 	for i := 0; i < concurrency; i++ {
 		eg.Go(func() error {

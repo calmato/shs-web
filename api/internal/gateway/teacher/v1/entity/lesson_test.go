@@ -326,3 +326,108 @@ func TestLessons(t *testing.T) {
 		})
 	}
 }
+
+func TestLessons_SortByStartAt(t *testing.T) {
+	t.Parallel()
+	now := jst.Date(2022, 1, 15, 12, 30, 0, 0)
+	tests := []struct {
+		name    string
+		lessons Lessons
+		expect  Lessons
+	}{
+		{
+			name: "success",
+			lessons: Lessons{
+				{
+					ID:        1,
+					ShiftID:   1,
+					SubjectID: 1,
+					Room:      1,
+					TeacherID: "teacherid",
+					StudentID: "studentid",
+					Notes:     "感想",
+					StartAt:   jst.Date(2022, 2, 2, 17, 0, 0, 0),
+					EndAt:     jst.Date(2022, 2, 2, 18, 30, 0, 0),
+					CreatedAt: now,
+					UpdatedAt: now,
+				},
+				{
+					ID:        3,
+					ShiftID:   3,
+					SubjectID: 1,
+					Room:      1,
+					TeacherID: "teacherid",
+					StudentID: "studentid",
+					Notes:     "感想",
+					StartAt:   jst.Date(2022, 2, 2, 20, 0, 0, 0),
+					EndAt:     jst.Date(2022, 2, 2, 21, 30, 0, 0),
+					CreatedAt: now,
+					UpdatedAt: now,
+				},
+				{
+					ID:        2,
+					ShiftID:   2,
+					SubjectID: 1,
+					Room:      1,
+					TeacherID: "teacherid",
+					StudentID: "studentid",
+					Notes:     "感想",
+					StartAt:   jst.Date(2022, 2, 2, 18, 30, 0, 0),
+					EndAt:     jst.Date(2022, 2, 2, 20, 0, 0, 0),
+					CreatedAt: now,
+					UpdatedAt: now,
+				},
+			},
+			expect: Lessons{
+				{
+					ID:        1,
+					ShiftID:   1,
+					SubjectID: 1,
+					Room:      1,
+					TeacherID: "teacherid",
+					StudentID: "studentid",
+					Notes:     "感想",
+					StartAt:   jst.Date(2022, 2, 2, 17, 0, 0, 0),
+					EndAt:     jst.Date(2022, 2, 2, 18, 30, 0, 0),
+					CreatedAt: now,
+					UpdatedAt: now,
+				},
+				{
+					ID:        2,
+					ShiftID:   2,
+					SubjectID: 1,
+					Room:      1,
+					TeacherID: "teacherid",
+					StudentID: "studentid",
+					Notes:     "感想",
+					StartAt:   jst.Date(2022, 2, 2, 18, 30, 0, 0),
+					EndAt:     jst.Date(2022, 2, 2, 20, 0, 0, 0),
+					CreatedAt: now,
+					UpdatedAt: now,
+				},
+				{
+					ID:        3,
+					ShiftID:   3,
+					SubjectID: 1,
+					Room:      1,
+					TeacherID: "teacherid",
+					StudentID: "studentid",
+					Notes:     "感想",
+					StartAt:   jst.Date(2022, 2, 2, 20, 0, 0, 0),
+					EndAt:     jst.Date(2022, 2, 2, 21, 30, 0, 0),
+					CreatedAt: now,
+					UpdatedAt: now,
+				},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			tt.lessons.SortByStartAt()
+			assert.Equal(t, tt.expect, tt.lessons)
+		})
+	}
+}

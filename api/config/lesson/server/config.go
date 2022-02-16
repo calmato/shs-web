@@ -18,6 +18,7 @@ type Config struct {
 	DBUsername          string `envconfig:"DB_USERNAME" default:"root"`
 	DBPassword          string `envconfig:"DB_PASSWORD" default:""`
 	DBDatabase          string `envconfig:"DB_DATABASE" default:"lessons"`
+	DBTimeZone          string `envconfig:"DB_TIMEZONE" default:""`
 	GRPCInsecure        bool   `envconfig:"GRPC_INSECURE" default:"true"`
 	ClassroomServiceURL string `envconfig:"CLASSROOM_SERVICE_URL" default:""`
 	UserServiceURL      string `envconfig:"USER_SERVICE_URL" default:""`

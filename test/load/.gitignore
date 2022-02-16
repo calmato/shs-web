@@ -1,0 +1,5 @@
+# log files
+out.json
+
+# libraries
+node_modules/

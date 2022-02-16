@@ -1035,6 +1035,36 @@ func TestGetSubmissionTemplate(t *testing.T) {
 			},
 		},
 		{
+			name: "success to template not found",
+			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
+				schedulesIn := &classroom.ListSchedulesRequest{}
+				schedulesOut := &classroom.ListSchedulesResponse{Schedules: schedules}
+				templateIn := &lesson.GetStudentShiftTemplateRequest{StudentId: idmock}
+				err := status.Error(codes.NotFound, "not found")
+				mocks.classroom.EXPECT().ListSchedules(gomock.Any(), schedulesIn).Return(schedulesOut, nil)
+				mocks.lesson.EXPECT().GetStudentShiftTemplate(gomock.Any(), templateIn).Return(nil, err)
+			},
+			expect: &testResponse{
+				code: http.StatusOK,
+				body: &response.SubmissionTemplateResponse{
+					Schedules: entity.StudentSchedules{
+						{
+							Weekday: time.Sunday,
+							Lessons: entity.StudentScheduleLessons{},
+						},
+						{
+							Weekday: time.Monday,
+							Lessons: entity.StudentScheduleLessons{
+								{StartTime: "1700", EndTime: "1830", Enabled: false},
+								{StartTime: "1830", EndTime: "2000", Enabled: false},
+							},
+						},
+					},
+					SuggestedLessons: entity.StudentSuggestedLessons{},
+				},
+			},
+		},
+		{
 			name: "failed to list schedules",
 			setup: func(ctx context.Context, t *testing.T, mocks *mocks, ctrl *gomock.Controller) {
 				schedulesIn := &classroom.ListSchedulesRequest{}

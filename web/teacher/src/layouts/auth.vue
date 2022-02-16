@@ -1,6 +1,6 @@
 <template>
   <v-app class="root" :style="{ background }">
-    <the-header :overlay="overlay" @click="handleClickMenu" />
+    <the-header :overlay="overlay" :show-menu="false" @click="handleClickMenu" />
     <v-main>
       <nuxt />
     </v-main>

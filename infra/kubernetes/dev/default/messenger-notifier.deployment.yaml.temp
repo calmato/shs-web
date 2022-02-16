@@ -1,0 +1,91 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: messenger-notifier
+  labels:
+    app: messenger-notifier
+spec:
+  replicas: 1
+  revisionHistoryLimit: 5
+  selector:
+    matchLabels:
+      app: messenger-notifier
+  template:
+    metadata:
+      labels:
+        app: messenger-notifier
+    spec:
+      containers:
+      # User Service
+      - name: messenger-notifier
+        image: asia-northeast1-docker.pkg.dev/<PROJECT-ID>/<REPOSITORY-NAME>/messenger-notifier:latest
+        imagePullPolicy: Always
+        resources:
+          limits:
+            cpu: 100m
+            memory: 128Mi
+        ports:
+        - name: default
+          containerPort: 8080
+        env:
+        - name: METRICS_PORT
+          value: '9090'
+        - name: LOG_LEVEL
+          value: 'info'
+        - name: USER_SERVICE_URL
+          value: 'user-api.default.svc.cluster.local:8080'
+        - name: SENDGRID_TEMPLATE_PATH
+          value: '/secrets/sendgrid-template-id.yaml'
+        - name: GCP_PROJECT_ID
+          valueFrom:
+            secretKeyRef:
+              name: messenger-notifier-secret
+              key: GCP_PROJECT_ID
+        - name: PUBSUB_SUBSCRIPTION_ID
+          valueFrom:
+            secretKeyRef:
+              name: messenger-notifier-secret
+              key: PUBSUB_SUBSCRIPTION_ID
+        - name: SENDGRID_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: messenger-notifier-secret
+              key: SENDGRID_API_KEY
+        - name: MAIL_FROM_NAME
+          valueFrom:
+            secretKeyRef:
+              name: messenger-notifier-secret
+              key: MAIL_FROM_NAME
+        - name: MAIL_FROM_ADDRESS
+          valueFrom:
+            secretKeyRef:
+              name: messenger-notifier-secret
+              key: MAIL_FROM_ADDRESS
+        - name: TEACHER_WEB_URL
+          valueFrom:
+            secretKeyRef:
+              name: messenger-notifier-secret
+              key: TEACHER_WEB_URL
+        - name: STUDENT_WEB_URL
+          valueFrom:
+            secretKeyRef:
+              name: messenger-notifier-secret
+              key: STUDENT_WEB_URL
+        - name: GCP_SERVICE_KEY_JSON
+          valueFrom:
+            secretKeyRef:
+              name: common-secret
+              key: gcp-service-key.json
+        volumeMounts:
+        - name: secret-volume
+          mountPath: /secrets/
+          readOnly: true
+      volumes:
+      - name: secret-volume
+        secret:
+          secretName: common-secret
+          items:
+          - key: gcp-service-key.json
+            path: gcp-service-key.json
+          - key: sendgrid-template-id.yaml
+            path: sendgrid-template-id.yaml

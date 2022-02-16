@@ -29,6 +29,7 @@ export interface ShiftDetail {
 export interface SuggestedLesson {
   subjectId: number
   total: number
+  remainingTotal: number
 }
 
 export interface ShiftLesson {
@@ -61,6 +62,7 @@ export interface TeacherShift {
   id: string
   name: string
   nameKana: string
+  isSubmit: boolean
   lessonTotal: number
 }
 
@@ -89,6 +91,7 @@ export interface StudentShift {
   id: string
   name: string
   nameKana: string
+  isSubmit: boolean
   suggestedLessons: SuggestedLesson[]
   suggestedLessonsTotal: number
   lessonTotal: number

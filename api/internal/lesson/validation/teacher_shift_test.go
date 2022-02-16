@@ -60,6 +60,59 @@ func TestListTeacherSubmissionsByShiftSummaryIDs(t *testing.T) {
 	}
 }
 
+func TestListTeacherSubmissionsByTeacherIDs(t *testing.T) {
+	t.Parallel()
+	validator := NewRequestValidation()
+
+	tests := []struct {
+		name  string
+		req   *lesson.ListTeacherSubmissionsByTeacherIDsRequest
+		isErr bool
+	}{
+		{
+			name: "success",
+			req: &lesson.ListTeacherSubmissionsByTeacherIDsRequest{
+				TeacherIds:     []string{"teacherid"},
+				ShiftSummaryId: 1,
+			},
+			isErr: false,
+		},
+		{
+			name: "TeacherIds is unique",
+			req: &lesson.ListTeacherSubmissionsByTeacherIDsRequest{
+				TeacherIds:     []string{"teacherid", "teacherid"},
+				ShiftSummaryId: 1,
+			},
+			isErr: true,
+		},
+		{
+			name: "TeacherIds is items.min_len",
+			req: &lesson.ListTeacherSubmissionsByTeacherIDsRequest{
+				TeacherIds:     []string{""},
+				ShiftSummaryId: 1,
+			},
+			isErr: true,
+		},
+		{
+			name: "ShiftSummaryId is gt",
+			req: &lesson.ListTeacherSubmissionsByTeacherIDsRequest{
+				TeacherIds:     []string{"teacherid"},
+				ShiftSummaryId: 0,
+			},
+			isErr: true,
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			err := validator.ListTeacherSubmissionsByTeacherIDs(tt.req)
+			assert.Equal(t, tt.isErr, err != nil, err)
+		})
+	}
+}
+
 func TestListTeacherShifts(t *testing.T) {
 	t.Parallel()
 	validator := NewRequestValidation()

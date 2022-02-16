@@ -2,7 +2,7 @@
   <v-app-bar app dark clipped-left color="primary" class="px-2">
     <v-toolbar-title>SHS Web</v-toolbar-title>
     <v-spacer />
-    <v-btn class="hidden-md-and-up" icon @click="onClick">
+    <v-btn v-show="showMenu" class="hidden-md-and-up" icon @click="onClick">
       <v-icon v-if="overlay">mdi-close</v-icon>
       <v-icon v-else>mdi-menu</v-icon>
     </v-btn>

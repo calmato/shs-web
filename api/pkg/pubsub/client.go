@@ -54,6 +54,8 @@ func isRetryable(err error) bool {
 		return false
 	}
 	switch s.Code() {
+	case codes.Canceled, codes.DeadlineExceeded:
+		return true
 	case codes.Internal, codes.Unavailable:
 		return true
 	default:

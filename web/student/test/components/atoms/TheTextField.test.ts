@@ -80,7 +80,7 @@ describe('components/atoms/TheTextField', () => {
 
       describe('rules', () => {
         it('初期値', () => {
-          expect(wrapper.props().rules).toEqual({})
+          expect(wrapper.props().rules).toBeUndefined()
         })
 
         it('値が代入されること', async () => {

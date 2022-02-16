@@ -1,0 +1,13 @@
+{
+  "name": "2022021001",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "k6:run": "k6 run --out json=out.json index.js"
+  },
+  "dependencies": {
+    "firebase": "^9.6.6",
+    "k6": "^0.0.0"
+  }
+}

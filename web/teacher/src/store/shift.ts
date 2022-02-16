@@ -381,6 +381,12 @@ export default class ShiftModule extends VuexModule {
     }
     submission.name = student.name
     submission.nameKana = student.nameKana
+    submission.suggestedLessons.forEach((val: SuggestedLesson, index: number): void => {
+      const items = this.lessons.filter((lesson: Lesson): boolean => {
+        return lesson.studentId === student.id && lesson.subjectId === val.subjectId
+      })
+      submission.suggestedLessons[index].remainingTotal = val.total - items.length
+    })
     this.studentSubmission = submission
   }
 
@@ -827,6 +833,7 @@ function convertTeacherShifts(teachers: v1TeacherShift[]): TeacherShift[] {
       id: val.teacher.id,
       name: getName(val.teacher.lastName, val.teacher.firstName),
       nameKana: getName(val.teacher.lastNameKana, val.teacher.firstNameKana),
+      isSubmit: val.isSubmit,
       lessonTotal: val.lessonTotal,
     })
   )
@@ -838,6 +845,7 @@ function convertStudentShifts(students: v1StudentShift[]): StudentShift[] {
       id: val.student.id,
       name: getName(val.student.lastName, val.student.firstName),
       nameKana: getName(val.student.lastNameKana, val.student.firstNameKana),
+      isSubmit: val.isSubmit,
       suggestedLessons: convertSuggestedLessons(val.suggestedLessons),
       suggestedLessonsTotal: val.suggestedLessonsTotal,
       lessonTotal: val.lessonTotal,
@@ -846,7 +854,7 @@ function convertStudentShifts(students: v1StudentShift[]): StudentShift[] {
 }
 
 function convertSuggestedLessons(lessons: v1SuggestedLesson[]): SuggestedLesson[] {
-  return lessons.map((lesson: v1SuggestedLesson): SuggestedLesson => ({ ...lesson }))
+  return lessons.map((lesson: v1SuggestedLesson): SuggestedLesson => ({ ...lesson, remainingTotal: lesson.total }))
 }
 
 function convertShiftDetails(details: v1ShiftDetail[]): { details: ShiftDetail[]; total: number } {

@@ -50,9 +50,14 @@ func TestPuller(t *testing.T) {
 
 	opts := []PullerOption{
 		WithPullerTimeout(time.Second * 2),
-		WithPullerMaxRetries(2),
 		WithPullerConcurrency(2),
 		WithPullerLogger(zap.NewNop()),
+		WithPullerMaxRetries(2),
+		WithPullerMaxExtension(20 * time.Second),
+		WithPullerMaxExtensionPeriod(0),
+		WithPullerMaxOutstandingMessages(3),
+		WithPullerMaxOutstandingBytes(512),
+		WithPullerSync(true),
 	}
 	puller := NewPuller(client, testTopic, opts...)
 	assert.NotNil(t, puller)

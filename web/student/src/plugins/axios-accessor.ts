@@ -4,9 +4,9 @@ import { initializeAxios } from '~/plugins/axios'
 
 const accessor: Plugin = ({ store, $axios }) => {
   initializeAxios($axios)
+  $axios.setBaseURL(process.env.apiURL || '')
 
   $axios.onRequest((config: AxiosRequestConfig) => {
-    config.baseURL = process.env.apiURL
     config.timeout = 10000 // 10sec
     config.withCredentials = true
 
