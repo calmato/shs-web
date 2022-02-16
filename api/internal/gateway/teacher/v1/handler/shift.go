@@ -306,7 +306,15 @@ func (h *apiV1Handler) ListShifts(ctx *gin.Context) {
 	})
 	var gteacherSubmissions gentity.TeacherSubmissions
 	eg.Go(func() error {
-		// TODO: lesson-apiの実装後、詳細実装
+		in := &lesson.ListTeacherSubmissionsByTeacherIDsRequest{
+			TeacherIds:     gteachers.IDs(),
+			ShiftSummaryId: shiftSummaryID,
+		}
+		out, err := h.lesson.ListTeacherSubmissionsByTeacherIDs(ectx, in)
+		if err != nil {
+			return err
+		}
+		gteacherSubmissions = gentity.NewTeacherSubmissions(out.Submissions)
 		return nil
 	})
 	var gstudentSubmissions gentity.StudentSubmissions
