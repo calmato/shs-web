@@ -314,18 +314,21 @@ describe('store/shift', () => {
               id: '000000000000000000001',
               name: '中村 太郎',
               nameKana: 'なかむら たろう',
+              isSubmit: false,
               lessonTotal: 0,
             },
             {
               id: '000000000000000000002',
               name: '西山 幸子',
               nameKana: 'にしやま さちこ',
+              isSubmit: false,
               lessonTotal: 2,
             },
             {
               id: '000000000000000000003',
               name: '鈴木 小太郎',
               nameKana: 'すずき こたろう',
+              isSubmit: false,
               lessonTotal: 1,
             },
           ])
@@ -336,6 +339,7 @@ describe('store/shift', () => {
               nameKana: 'なかむら たろう',
               suggestedLessons: [],
               suggestedLessonsTotal: 0,
+              isSubmit: false,
               lessonTotal: 0,
             },
             {
@@ -344,6 +348,7 @@ describe('store/shift', () => {
               nameKana: 'にしやま さちこ',
               suggestedLessons: [],
               suggestedLessonsTotal: 0,
+              isSubmit: false,
               lessonTotal: 2,
             },
           ])

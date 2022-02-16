@@ -827,6 +827,7 @@ function convertTeacherShifts(teachers: v1TeacherShift[]): TeacherShift[] {
       id: val.teacher.id,
       name: getName(val.teacher.lastName, val.teacher.firstName),
       nameKana: getName(val.teacher.lastNameKana, val.teacher.firstNameKana),
+      isSubmit: val.isSubmit,
       lessonTotal: val.lessonTotal,
     })
   )
@@ -838,6 +839,7 @@ function convertStudentShifts(students: v1StudentShift[]): StudentShift[] {
       id: val.student.id,
       name: getName(val.student.lastName, val.student.firstName),
       nameKana: getName(val.student.lastNameKana, val.student.firstNameKana),
+      isSubmit: val.isSubmit,
       suggestedLessons: convertSuggestedLessons(val.suggestedLessons),
       suggestedLessonsTotal: val.suggestedLessonsTotal,
       lessonTotal: val.lessonTotal,
