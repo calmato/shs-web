@@ -434,6 +434,26 @@ func (mr *MockTeacherSubmissionMockRecorder) ListByShiftSummaryIDs(ctx, teacherI
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListByShiftSummaryIDs", reflect.TypeOf((*MockTeacherSubmission)(nil).ListByShiftSummaryIDs), varargs...)
 }
 
+// ListByTeacherIDs mocks base method.
+func (m *MockTeacherSubmission) ListByTeacherIDs(ctx context.Context, teacherIDs []string, summaryID int64, fields ...string) (entity.TeacherSubmissions, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, teacherIDs, summaryID}
+	for _, a := range fields {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "ListByTeacherIDs", varargs...)
+	ret0, _ := ret[0].(entity.TeacherSubmissions)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListByTeacherIDs indicates an expected call of ListByTeacherIDs.
+func (mr *MockTeacherSubmissionMockRecorder) ListByTeacherIDs(ctx, teacherIDs, summaryID interface{}, fields ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, teacherIDs, summaryID}, fields...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListByTeacherIDs", reflect.TypeOf((*MockTeacherSubmission)(nil).ListByTeacherIDs), varargs...)
+}
+
 // MockTeacherShift is a mock of TeacherShift interface.
 type MockTeacherShift struct {
 	ctrl     *gomock.Controller
