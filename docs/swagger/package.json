@@ -10,6 +10,7 @@
     "generate:student": "make build-student",
     "generate:html": "make build-html",
     "generate:yaml": "make build-yaml",
+    "generate:typescript": "make build-typescript",
     "lint": "make lint",
     "watch": "npm-run-all --parallel watch:*",
     "watch:teacher": "chokidar 'teacher/**/*.yaml' -c 'yarn generate:teacher' --initial",

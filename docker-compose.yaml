@@ -304,6 +304,7 @@ services:
     volumes:
       - ./docs/swagger:/var/swagger:cached
       - ./tmp/data/swagger:/tmp/data/swagger:cached
+      - ./web:/web:cached
     command: yarn watch
 
   swagger_teacher:
@@ -312,7 +313,7 @@ services:
       context: ./infra/docker/infra/swagger/teacher
       dockerfile: Dockerfile
     volumes:
-      - ./tmp/data/swagger/teacher/openapi:/var/swagger:cached
+      - ./tmp/data/swagger/teacher/docs/openapi:/var/swagger:cached
     ports:
       - 9000:8080
     environment:
@@ -326,7 +327,7 @@ services:
       context: ./infra/docker/infra/swagger/student
       dockerfile: Dockerfile
     volumes:
-      - ./tmp/data/swagger/student/openapi:/var/swagger:cached
+      - ./tmp/data/swagger/student/docs/openapi:/var/swagger:cached
     ports:
       - 9010:8080
     environment:
