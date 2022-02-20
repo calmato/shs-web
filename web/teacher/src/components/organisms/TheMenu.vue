@@ -1,6 +1,6 @@
 <template>
   <v-overlay :value="overlay" :absolute="absolute" class="align-start">
-    <v-row align="start" class="py-8">
+    <v-row align="start" class="py-8 ma-0 mt-4">
       <v-col v-for="item in items" :key="item.name" cols="4" md="3" align="center" class="py-8">
         <v-btn dark icon x-large @click="onClickItem(item)">
           <div class="d-flex flex-column align-center">
