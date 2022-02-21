@@ -1,5 +1,5 @@
 <template>
-  <v-app-bar app dark clipped-left color="primary" class="px-2">
+  <v-app-bar app dark clipped-left color="primary" class="px-2 header">
     <v-toolbar-title>SHS Web</v-toolbar-title>
     <v-spacer />
     <v-btn v-show="showMenu" class="hidden-md-and-up" icon @click="onClick">
@@ -35,3 +35,9 @@ export default defineComponent({
   },
 })
 </script>
+
+<style lang="scss" scoped>
+.header {
+  z-index: 10;
+}
+</style>

@@ -7,7 +7,7 @@
       <nuxt />
       <the-menu
         :overlay="overlay"
-        :absolute="true"
+        :absolute="false"
         :items="items"
         @click:item="handleClickMenuItem"
         @click:close="handleClickMenu"
